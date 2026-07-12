@@ -8,6 +8,128 @@ importers:
 
   .:
     dependencies:
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:packages/typescript-config
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.61.0
+        version: 1.61.0
+      '@turbo/gen':
+        specifier: ^2.9.4
+        version: 2.9.4(@types/node@24.7.2)
+      '@types/node':
+        specifier: ^24.7.2
+        version: 24.7.2
+      baseline-browser-mapping:
+        specifier: ^2.9.19
+        version: 2.9.19
+      eslint:
+        specifier: ^9.37.0
+        version: 9.37.0(jiti@2.6.1)
+      prettier:
+        specifier: ^3.6.2
+        version: 3.6.2
+      prettier-plugin-tailwindcss:
+        specifier: ^0.6.14
+        version: 0.6.14(prettier@3.6.2)
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      turbo:
+        specifier: ^2.9.4
+        version: 2.9.4
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  apps/docker-api:
+    dependencies:
+      '@hono/node-server':
+        specifier: 2.0.6
+        version: 2.0.6(hono@4.12.27)
+      '@hono/node-ws':
+        specifier: ^1.3.1
+        version: 1.3.1(@hono/node-server@2.0.6(hono@4.12.27))(hono@4.12.27)
+      '@hono/zod-validator':
+        specifier: ^0.8.0
+        version: 0.8.0(hono@4.12.27)(zod@4.3.6)
+      '@workspace/schemas-zod':
+        specifier: workspace:*
+        version: link:../../packages/schemas-zod
+      '@workspace/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@workspace/typescript-interface':
+        specifier: workspace:*
+        version: link:../../packages/typescript-interface
+      byline:
+        specifier: ^5.0.0
+        version: 5.0.0
+      dayjs:
+        specifier: ^1.11.19
+        version: 1.11.19
+      dockerode:
+        specifier: ^5.0.0
+        version: 5.0.0
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.4.2
+      hono:
+        specifier: 4.12.27
+        version: 4.12.27
+      ky:
+        specifier: ^1.14.1
+        version: 1.14.1
+      pino:
+        specifier: ^10.1.0
+        version: 10.1.0
+      pino-pretty:
+        specifier: ^13.1.3
+        version: 13.1.3
+      tar-fs:
+        specifier: ^3.1.2
+        version: 3.1.2
+      ws:
+        specifier: ^8.20.0
+        version: 8.20.0
+      yaml:
+        specifier: ^2.8.3
+        version: 2.8.3
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@types/byline':
+        specifier: ^4.2.36
+        version: 4.2.36
+      '@types/dockerode':
+        specifier: ^4.0.1
+        version: 4.0.1
+      '@types/node':
+        specifier: ^24.7.2
+        version: 24.7.2
+      '@types/tar-fs':
+        specifier: ^2.0.4
+        version: 2.0.4
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
+      '@workspace/eslint-config':
+        specifier: workspace:^
+        version: link:../../packages/eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  apps/nexploy:
+    dependencies:
       '@ai-sdk/anthropic':
         specifier: ^3.0.81
         version: 3.0.81(zod@4.3.6)
@@ -43,25 +165,13 @@ importers:
         version: 3.1045.0
       '@better-auth/api-key':
         specifier: ^1.6.20
-        version: 1.6.20(@better-auth/core@1.6.20(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@opentelemetry/api@1.9.0)(better-call@1.3.6(zod@4.3.6))(jose@6.2.1)(kysely@0.29.2)(nanostores@1.2.0))(@better-auth/utils@0.4.2)(better-auth@1.6.20(@opentelemetry/api@1.9.0)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3))(mongodb@7.1.0(socks@2.8.6))(mysql2@3.15.3)(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.20.0)(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3)))(better-call@1.3.6(zod@4.3.6))
+        version: 1.6.20(@better-auth/core@1.6.20(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@opentelemetry/api@1.9.0)(better-call@1.3.6(zod@4.3.6))(jose@6.2.1)(kysely@0.29.2)(nanostores@1.2.0))(@better-auth/utils@0.4.2)(better-auth@1.6.20(@opentelemetry/api@1.9.0)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3))(mongodb@7.1.0(socks@2.8.6))(mysql2@3.15.3)(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.20.0)(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3)))(better-call@1.3.6(zod@4.3.6))
       '@dicebear/core':
         specifier: ^10.3.0
         version: 10.3.0
       '@dicebear/styles':
         specifier: ^10.2.0
         version: 10.2.0
-      '@eslint/js':
-        specifier: ^9.39.1
-        version: 9.39.1
-      '@hono/node-server':
-        specifier: 2.0.6
-        version: 2.0.6(hono@4.12.27)
-      '@hono/node-ws':
-        specifier: ^1.3.1
-        version: 1.3.1(@hono/node-server@2.0.6(hono@4.12.27))(hono@4.12.27)
-      '@hono/zod-validator':
-        specifier: ^0.8.0
-        version: 0.8.0(hono@4.12.27)(zod@4.3.6)
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.68.0(react@19.2.3))
@@ -73,7 +183,7 @@ importers:
         version: 4.7.0(monaco-editor@0.55.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@next-safe-action/adapter-react-hook-form':
         specifier: ^2.0.0
-        version: 2.0.0(@hookform/resolvers@5.2.2(react-hook-form@7.68.0(react@19.2.3)))(next-safe-action@8.5.3(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)
+        version: 2.0.0(@hookform/resolvers@5.2.2(react-hook-form@7.68.0(react@19.2.3)))(next-safe-action@8.5.3(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)
       '@openrouter/ai-sdk-provider':
         specifier: ^2.9.0
         version: 2.9.0(ai@6.0.193(zod@4.3.6))(zod@4.3.6)
@@ -86,6 +196,313 @@ importers:
       '@prisma/client-runtime-utils':
         specifier: ^7.8.0
         version: 7.8.0
+      '@radix-ui/react-alert-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@radix-ui/react-tooltip':
+        specifier: ^1.2.8
+        version: 1.2.8(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@tanstack/react-table':
+        specifier: ^8.21.3
+        version: 8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@thesvg/react':
+        specifier: ^3.0.10
+        version: 3.0.10(react@19.2.3)
+      '@workspace/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@workspace/schemas-zod':
+        specifier: workspace:*
+        version: link:../../packages/schemas-zod
+      '@workspace/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@workspace/typescript-interface':
+        specifier: workspace:*
+        version: link:../../packages/typescript-interface
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@wrksz/themes':
+        specifier: ^0.9.3
+        version: 0.9.3(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
+      '@xterm/addon-fit':
+        specifier: ^0.11.0
+        version: 0.11.0
+      '@xterm/xterm':
+        specifier: ^6.0.0
+        version: 6.0.0
+      '@xyflow/react':
+        specifier: ^12.11.1
+        version: 12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      ai:
+        specifier: ^6.0.193
+        version: 6.0.193(zod@4.3.6)
+      better-auth:
+        specifier: ^1.6.20
+        version: 1.6.20(@opentelemetry/api@1.9.0)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3))(mongodb@7.1.0(socks@2.8.6))(mysql2@3.15.3)(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.20.0)(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3))
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      dayjs:
+        specifier: ^1.11.19
+        version: 1.11.19
+      dockerode:
+        specifier: ^5.0.0
+        version: 5.0.0
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.4.2
+      embla-carousel-autoplay:
+        specifier: ^8.6.0
+        version: 8.6.0(embla-carousel@8.6.0)
+      http-proxy-middleware:
+        specifier: ^4.0.0
+        version: 4.0.0
+      inngest:
+        specifier: ^4.5.1
+        version: 4.5.1(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.0))(encoding@0.1.13)(express@5.2.1)(hono@4.12.27)(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@6.0.3)(zod@4.3.6)
+      input-otp:
+        specifier: ^1.4.2
+        version: 1.4.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      ky:
+        specifier: ^1.14.1
+        version: 1.14.1
+      lucide-react:
+        specifier: ^1.17.0
+        version: 1.17.0(react@19.2.3)
+      next:
+        specifier: 16.2.7
+        version: 16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-intl:
+        specifier: ^4.9.1
+        version: 4.9.1(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
+      next-safe-action:
+        specifier: ^8.5.3
+        version: 8.5.3(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-zod-route:
+        specifier: ^1.0.0
+        version: 1.0.0
+      nuqs:
+        specifier: ^2.8.5
+        version: 2.8.5(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+      pg:
+        specifier: ^8.20.0
+        version: 8.20.0
+      prisma:
+        specifier: ^7.8.0
+        version: 7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
+      react:
+        specifier: ^19.2.3
+        version: 19.2.3
+      react-dom:
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
+      react-hook-form:
+        specifier: ^7.68.0
+        version: 7.68.0(react@19.2.3)
+      react-joyride:
+        specifier: ^3.1.0
+        version: 3.1.0(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      react-markdown:
+        specifier: ^10.1.0
+        version: 10.1.0(@types/react@19.2.2)(react@19.2.3)
+      react-qr-code:
+        specifier: ^2.0.18
+        version: 2.0.18(react@19.2.3)
+      recharts:
+        specifier: 3.8.1
+        version: 3.8.1(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react-is@18.3.1)(react@19.2.3)(redux@5.0.1)
+      remark-gfm:
+        specifier: ^4.0.1
+        version: 4.0.1
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      swr:
+        specifier: ^2.4.1
+        version: 2.4.1(react@19.2.3)
+      usehooks-ts:
+        specifier: ^3.1.1
+        version: 3.1.1(react@19.2.3)
+      yaml:
+        specifier: ^2.8.3
+        version: 2.8.3
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+      zustand:
+        specifier: ^5.0.12
+        version: 5.0.12(@types/react@19.2.2)(immer@11.0.1)(react@19.2.3)(use-sync-external-store@1.6.0(react@19.2.3))
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.1.14
+        version: 4.1.14
+      '@types/dockerode':
+        specifier: ^4.0.1
+        version: 4.0.1
+      '@types/node':
+        specifier: ^24.7.2
+        version: 24.7.2
+      '@types/pg':
+        specifier: ^8.18.0
+        version: 8.18.0
+      '@types/react':
+        specifier: ^19.2.2
+        version: 19.2.2
+      '@types/react-dom':
+        specifier: ^19.2.1
+        version: 19.2.1(@types/react@19.2.2)
+      '@workspace/eslint-config':
+        specifier: workspace:^
+        version: link:../../packages/eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9.37.0
+        version: 9.37.0(jiti@2.6.1)
+      tailwindcss:
+        specifier: ^4.3.1
+        version: 4.3.1
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  packages/eslint-config:
+    dependencies:
+      '@eslint/js':
+        specifier: ^9.39.1
+        version: 9.39.1
+      '@next/eslint-plugin-next':
+        specifier: ^15.5.4
+        version: 15.5.4
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^8.46.0
+        version: 8.46.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@6.0.3))(eslint@9.37.0(jiti@2.6.1))(typescript@6.0.3)
+      '@typescript-eslint/parser':
+        specifier: ^8.46.0
+        version: 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@6.0.3)
+      eslint-config-prettier:
+        specifier: ^10.1.8
+        version: 10.1.8(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-only-warn:
+        specifier: ^1.1.0
+        version: 1.1.0
+      eslint-plugin-react:
+        specifier: ^7.37.5
+        version: 7.37.5(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-react-hooks:
+        specifier: ^7.0.0
+        version: 7.0.0(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-turbo:
+        specifier: ^2.5.8
+        version: 2.5.8(eslint@9.37.0(jiti@2.6.1))(turbo@2.9.4)
+      globals:
+        specifier: ^16.4.0
+        version: 16.4.0
+      typescript-eslint:
+        specifier: ^8.46.0
+        version: 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@6.0.3)
+    devDependencies:
+      eslint:
+        specifier: ^9.37.0
+        version: 9.37.0(jiti@2.6.1)
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  packages/i18n:
+    dependencies:
+      next-intl:
+        specifier: ^4.9.1
+        version: 4.9.1(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
+
+  packages/schemas-zod:
+    dependencies:
+      '@workspace/typescript-interface':
+        specifier: workspace:*
+        version: link:../typescript-interface
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  packages/shared:
+    dependencies:
+      '@workspace/typescript-interface':
+        specifier: workspace:*
+        version: link:../typescript-interface
+    devDependencies:
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  packages/typescript-config: {}
+
+  packages/typescript-interface:
+    dependencies:
+      '@xyflow/react':
+        specifier: ^12.11.1
+        version: 12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      dockerode:
+        specifier: ^5.0.0
+        version: 5.0.0
+      hono:
+        specifier: 4.12.27
+        version: 4.12.27
+      inngest:
+        specifier: ^4.5.1
+        version: 4.5.1(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.0))(encoding@0.1.13)(express@5.2.1)(hono@4.12.27)(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@6.0.3)(zod@4.3.6)
+      lucide-react:
+        specifier: ^1.17.0
+        version: 1.17.0(react@19.2.3)
+      react:
+        specifier: ^19.2.3
+        version: 19.2.3
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@types/dockerode':
+        specifier: ^4.0.1
+        version: 4.0.1
+      '@types/node':
+        specifier: ^24.7.2
+        version: 24.7.2
+      '@types/react':
+        specifier: ^19.2.2
+        version: 19.2.2
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  packages/ui:
+    dependencies:
+      '@headless-tree/core':
+        specifier: ^1.7.0
+        version: 1.7.0
+      '@headless-tree/react':
+        specifier: ^1.7.0
+        version: 1.7.0(@headless-tree/core@1.7.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -152,51 +569,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@tanstack/react-table':
-        specifier: ^8.21.3
-        version: 8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@thesvg/react':
-        specifier: ^3.0.10
-        version: 3.0.10(react@19.2.3)
-      '@types/byline':
-        specifier: ^4.2.36
-        version: 4.2.36
-      '@workspace/i18n':
-        specifier: workspace:*
-        version: link:packages/i18n
-      '@workspace/schemas-zod':
-        specifier: workspace:*
-        version: link:packages/schemas-zod
-      '@workspace/shared':
-        specifier: workspace:*
-        version: link:packages/shared
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:packages/typescript-config
-      '@workspace/ui':
-        specifier: workspace:*
-        version: link:packages/ui
       '@wrksz/themes':
         specifier: ^0.9.3
-        version: 0.9.3(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
-      '@xterm/addon-fit':
-        specifier: ^0.11.0
-        version: 0.11.0
-      '@xterm/xterm':
-        specifier: ^6.0.0
-        version: 6.0.0
-      '@xyflow/react':
-        specifier: ^12.11.1
-        version: 12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      ai:
-        specifier: ^6.0.193
-        version: 6.0.193(zod@4.3.6)
-      better-auth:
-        specifier: ^1.6.20
-        version: 1.6.20(@opentelemetry/api@1.9.0)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3))(mongodb@7.1.0(socks@2.8.6))(mysql2@3.15.3)(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.20.0)(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3))
-      byline:
-        specifier: ^5.0.0
-        version: 5.0.0
+        version: 0.9.3(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -206,69 +581,18 @@ importers:
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      dayjs:
-        specifier: ^1.11.19
-        version: 1.11.19
-      dockerode:
-        specifier: ^5.0.0
-        version: 5.0.0
-      dotenv:
-        specifier: ^17.2.3
-        version: 17.2.3
-      embla-carousel-autoplay:
-        specifier: ^8.6.0
-        version: 8.6.0(embla-carousel@8.6.0)
       embla-carousel-react:
         specifier: ^8.6.0
         version: 8.6.0(react@19.2.3)
-      hono:
-        specifier: 4.12.27
-        version: 4.12.27
-      http-proxy-middleware:
-        specifier: ^4.0.0
-        version: 4.0.0
-      inngest:
-        specifier: ^4.5.1
-        version: 4.5.1(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.0))(encoding@0.1.13)(express@5.2.1)(hono@4.12.27)(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@6.0.3)(zod@4.3.6)
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      ky:
-        specifier: ^1.14.1
-        version: 1.14.1
       lucide-react:
         specifier: ^1.17.0
         version: 1.17.0(react@19.2.3)
       motion:
         specifier: ^12.40.0
         version: 12.40.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      next:
-        specifier: 16.2.7
-        version: 16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      next-intl:
-        specifier: ^4.9.1
-        version: 4.9.1(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
-      next-safe-action:
-        specifier: ^8.5.3
-        version: 8.5.3(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      next-zod-route:
-        specifier: ^1.0.0
-        version: 1.0.0
-      nuqs:
-        specifier: ^2.8.5
-        version: 2.8.5(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
-      pg:
-        specifier: ^8.20.0
-        version: 8.20.0
-      pino:
-        specifier: ^10.1.0
-        version: 10.1.0
-      pino-pretty:
-        specifier: ^13.1.3
-        version: 13.1.3
-      prisma:
-        specifier: ^7.8.0
-        version: 7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       radix-ui:
         specifier: ^1.4.3
         version: 1.4.3(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -281,186 +605,49 @@ importers:
       react-hook-form:
         specifier: ^7.68.0
         version: 7.68.0(react@19.2.3)
-      react-joyride:
-        specifier: ^3.1.0
-        version: 3.1.0(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      react-markdown:
-        specifier: ^10.1.0
-        version: 10.1.0(@types/react@19.2.2)(react@19.2.3)
-      react-qr-code:
-        specifier: ^2.0.18
-        version: 2.0.18(react@19.2.3)
+      react-resizable-panels:
+        specifier: ^4.11.2
+        version: 4.11.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       recharts:
         specifier: 3.8.1
         version: 3.8.1(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react-is@18.3.1)(react@19.2.3)(redux@5.0.1)
-      remark-gfm:
-        specifier: ^4.0.1
-        version: 4.0.1
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      swr:
-        specifier: ^2.4.1
-        version: 2.4.1(react@19.2.3)
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
-      tar-fs:
-        specifier: ^3.1.2
-        version: 3.1.2
-      tsx:
-        specifier: ^4.20.6
-        version: 4.20.6
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
-      usehooks-ts:
-        specifier: ^3.1.1
-        version: 3.1.1(react@19.2.3)
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      ws:
-        specifier: ^8.20.0
-        version: 8.20.0
-      yaml:
-        specifier: ^2.8.3
-        version: 2.8.3
-      zod:
-        specifier: ^4.3.6
-        version: 4.3.6
-      zustand:
-        specifier: ^5.0.12
-        version: 5.0.12(@types/react@19.2.2)(immer@11.0.1)(react@19.2.3)(use-sync-external-store@1.6.0(react@19.2.3))
     devDependencies:
-      '@next/eslint-plugin-next':
-        specifier: ^15.5.4
-        version: 15.5.4
-      '@playwright/test':
-        specifier: ^1.61.0
-        version: 1.61.0
       '@tailwindcss/postcss':
         specifier: ^4.1.14
         version: 4.1.14
-      '@turbo/gen':
-        specifier: ^2.9.4
-        version: 2.9.4(@types/node@24.7.2)
-      '@types/dockerode':
-        specifier: ^4.0.1
-        version: 4.0.1
-      '@types/node':
-        specifier: ^24.7.2
-        version: 24.7.2
-      '@types/pg':
-        specifier: ^8.18.0
-        version: 8.18.0
       '@types/react':
         specifier: ^19.2.2
         version: 19.2.2
       '@types/react-dom':
         specifier: ^19.2.1
         version: 19.2.1(@types/react@19.2.2)
-      '@types/tar-fs':
-        specifier: ^2.0.4
-        version: 2.0.4
-      '@types/ws':
-        specifier: ^8.18.1
-        version: 8.18.1
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^8.46.0
-        version: 8.46.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@6.0.3))(eslint@9.37.0(jiti@2.6.1))(typescript@6.0.3)
-      '@typescript-eslint/parser':
-        specifier: ^8.46.0
-        version: 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@6.0.3)
       '@workspace/eslint-config':
         specifier: workspace:^
-        version: link:packages/eslint-config
-      '@workspace/typescript-interface':
+        version: link:../eslint-config
+      '@workspace/typescript-config':
         specifier: workspace:*
-        version: link:packages/typescript-interface
-      baseline-browser-mapping:
-        specifier: ^2.9.19
-        version: 2.9.19
+        version: link:../typescript-config
       eslint:
         specifier: ^9.37.0
         version: 9.37.0(jiti@2.6.1)
-      eslint-config-prettier:
-        specifier: ^10.1.8
-        version: 10.1.8(eslint@9.37.0(jiti@2.6.1))
-      eslint-plugin-only-warn:
-        specifier: ^1.1.0
-        version: 1.1.0
-      eslint-plugin-react:
-        specifier: ^7.37.5
-        version: 7.37.5(eslint@9.37.0(jiti@2.6.1))
-      eslint-plugin-react-hooks:
-        specifier: ^7.0.0
-        version: 7.0.0(eslint@9.37.0(jiti@2.6.1))
-      eslint-plugin-turbo:
-        specifier: ^2.5.8
-        version: 2.5.8(eslint@9.37.0(jiti@2.6.1))(turbo@2.9.4)
-      globals:
-        specifier: ^16.4.0
-        version: 16.4.0
-      prettier:
-        specifier: ^3.6.2
-        version: 3.6.2
-      prettier-plugin-tailwindcss:
-        specifier: ^0.6.14
-        version: 0.6.14(prettier@3.6.2)
       tailwindcss:
         specifier: ^4.3.1
         version: 4.3.1
-      turbo:
-        specifier: ^2.9.4
-        version: 2.9.4
       typescript:
         specifier: 6.0.3
         version: 6.0.3
-      typescript-eslint:
-        specifier: ^8.46.0
-        version: 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@6.0.3)
-
-  apps/docker-api: {}
-
-  apps/nexploy:
-    dependencies:
-      react-joyride:
-        specifier: ^3.1.0
-        version: 3.1.0(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-
-  packages/eslint-config: {}
-
-  packages/i18n: {}
-
-  packages/schemas-zod: {}
-
-  packages/shared: {}
-
-  packages/typescript-config: {}
-
-  packages/typescript-interface: {}
-
-  packages/ui:
-    dependencies:
-      '@headless-tree/core':
-        specifier: ^1.7.0
-        version: 1.7.0
-      '@headless-tree/react':
-        specifier: ^1.7.0
-        version: 1.7.0(@headless-tree/core@1.7.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      cmdk:
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      motion:
-        specifier: ^12.23.25
-        version: 12.23.25(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      radix-ui:
-        specifier: ^1.4.3
-        version: 1.4.3(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      react-resizable-panels:
-        specifier: ^4.11.2
-        version: 4.11.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
 
 packages:
 
@@ -1264,32 +1451,17 @@ packages:
   '@fastify/deepmerge@3.2.1':
     resolution: {integrity: sha512-N5Oqvltoa2r9z1tbx4xjky0oRR60v+T47Ic4J1ukoVQcptLOrIdRnCSdTGmOmajZuHVKlTnfcmrjyqsGEW1ztA==}
 
-  '@floating-ui/core@1.7.3':
-    resolution: {integrity: sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==}
-
   '@floating-ui/core@1.7.5':
     resolution: {integrity: sha512-1Ih4WTWyw0+lKyFMcBHGbb5U5FtuHJuujoyyr5zTaWS5EYMeT6Jb2AuDeftsCsEuchO+mM2ij5+q9crhydzLhQ==}
 
-  '@floating-ui/dom@1.7.4':
-    resolution: {integrity: sha512-OOchDgh4F2CchOX94cRVqhvy7b3AFb+/rQXyswmzmGakRfkMgoWVjfnLWkRirfLEfuD4ysVW16eXzwt3jHIzKA==}
-
   '@floating-ui/dom@1.7.6':
     resolution: {integrity: sha512-9gZSAI5XM36880PPMm//9dfiEngYoC6Am2izES1FF406YFsjvyBMmeJ2g4SAju3xWwtuynNRFL2s9hgxpLI5SQ==}
-
-  '@floating-ui/react-dom@2.1.6':
-    resolution: {integrity: sha512-4JX6rEatQEvlmgU80wZyq9RT96HZJa88q8hp0pBd+LrczeDI4o6uA2M+uvxngVHo4Ihr8uibXxH6+70zhAFrVw==}
-    peerDependencies:
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
 
   '@floating-ui/react-dom@2.1.8':
     resolution: {integrity: sha512-cC52bHwM/n/CxS87FH0yWdngEZrjdtLW/qVruo68qg+prK7ZQ4YGdut2GyDVpoGeAYe/h899rVeOVm6Oi40k2A==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
-
-  '@floating-ui/utils@0.2.10':
-    resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
   '@floating-ui/utils@0.2.11':
     resolution: {integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==}
@@ -1316,10 +1488,6 @@ packages:
 
   '@gilbarbara/types@0.2.2':
     resolution: {integrity: sha512-QuQDBRRcm1Q8AbSac2W1YElurOhprj3Iko/o+P1fJxUWS4rOGKMVli98OXS7uo4z+cKAif6a+L9bcZFSyauQpQ==}
-
-  '@grpc/grpc-js@1.14.0':
-    resolution: {integrity: sha512-N8Jx6PaYzcTRNzirReJCtADVoq4z7+1KQ4E70jTg/koQiMoUSN1kbNjPOqpPbhMFhfU1/l7ixspPl8dNY+FoUg==}
-    engines: {node: '>=12.10.0'}
 
   '@grpc/grpc-js@1.14.4':
     resolution: {integrity: sha512-k9Dj3DV/itK9D06Y8f190Qgop7/Ui+D0njFV3LHMPwPT75DpXLQohE9Wmz0QElrJnzsjB7KPWiKJbOl7IPDArQ==}
@@ -4733,9 +4901,6 @@ packages:
     resolution: {integrity: sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg==}
     engines: {node: '>= 0.4'}
 
-  defu@6.1.4:
-    resolution: {integrity: sha512-mEQCMmwJu317oSz8CwdIOdwf3xMif1ttiM8LTufzc3g6kR+9Pe236twL8j3IYT1F7GfRgGcW6MWxzZjLIkuHIg==}
-
   defu@6.1.7:
     resolution: {integrity: sha512-7z22QmUWiQ/2d0KkdYmANbRUVABpZ9SNYyH5vx6PZ+nE5bcC0l7uFvEfHlyld/HcGBFTL536ClDt3DEcSlEJAQ==}
 
@@ -4753,10 +4918,6 @@ packages:
 
   destr@2.0.5:
     resolution: {integrity: sha512-ugFTXCtDZunbzasqBxrK93Ik/DRYsO6S/fedkWEMKqt04xZ4csmnmwGDBAb07QWNaGMAmnTIemsYZCksjATwsA==}
-
-  detect-libc@2.0.4:
-    resolution: {integrity: sha512-3UDv+G9CsCKO1WKMGw9fwq/SWJYbI0c5Y7LU1AXYoDdbhE2AHQ6N6Nb34sG8Fj7T5APy8qXDCKuuIHd1BR0tVA==}
-    engines: {node: '>=8'}
 
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
@@ -4785,10 +4946,6 @@ packages:
 
   dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
-    engines: {node: '>=12'}
-
-  dotenv@17.2.3:
-    resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
     engines: {node: '>=12'}
 
   dotenv@17.4.2:
@@ -5000,10 +5157,6 @@ packages:
   events-universal@1.0.1:
     resolution: {integrity: sha512-LUd5euvbMLpwOF8m6ivPCbhQeSiYVNb8Vs0fQ8QjXo0JTkEHpz8pxdQf0gStltaPpw0Cca8b39KxvK9cfKRiAw==}
 
-  eventsource-parser@3.0.6:
-    resolution: {integrity: sha512-Vo1ab+QXPzZ4tCa8SwIHJFaSzy4R6SHf7BY79rFBDf0idraZWAkYrDjDj8uWaSm3S2TK+hJ7/t1CEmZ7jXw+pg==}
-    engines: {node: '>=18.0.0'}
-
   eventsource-parser@3.1.0:
     resolution: {integrity: sha512-kJezFj9YFAMLeORyi7aCLxLbD5/qWMQnoMVlVPyHIll7lgRJCc3JVln9Vgl9nwQi0YkMnhdGTMNn7CkRRAptMg==}
     engines: {node: '>=18.0.0'}
@@ -5129,20 +5282,6 @@ packages:
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
-
-  framer-motion@12.23.25:
-    resolution: {integrity: sha512-gUHGl2e4VG66jOcH0JHhuJQr6ZNwrET9g31ZG0xdXzT0CznP7fHX4P8Bcvuc4MiUB90ysNnWX2ukHRIggkl6hQ==}
-    peerDependencies:
-      '@emotion/is-prop-valid': '*'
-      react: ^18.0.0 || ^19.0.0
-      react-dom: ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@emotion/is-prop-valid':
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
 
   framer-motion@12.40.0:
     resolution: {integrity: sha512-uaBd3qC1v3KQqBEjwTUd183K6PbS+j0yR9w9VmEOLWA/tnUcSn8Xa3uck7t4dgpDoUss8xQTcj8W2L07lrnLFg==}
@@ -5774,9 +5913,6 @@ packages:
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  magic-string@0.30.19:
-    resolution: {integrity: sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw==}
-
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
@@ -6009,31 +6145,11 @@ packages:
       socks:
         optional: true
 
-  motion-dom@12.23.23:
-    resolution: {integrity: sha512-n5yolOs0TQQBRUFImrRfs/+6X4p3Q4n1dUEqt/H58Vx7OW6RF+foWEgmTVDhIWJIMXOuNNL0apKH2S16en9eiA==}
-
   motion-dom@12.40.0:
     resolution: {integrity: sha512-HxU3ZaBwNPVQUBQf1xxgq+7JrPNZvjLVxgbpEZL7RrWJnsxOf0/OM+yrHG9ogLQ31Do/r57Oz2gQWPK+6q62mg==}
 
-  motion-utils@12.23.6:
-    resolution: {integrity: sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==}
-
   motion-utils@12.39.0:
     resolution: {integrity: sha512-8nadJAJjTtqRkmRF36FoJTrywK9nnFmnPwnSMyxaOCU7GDjN9RTMJIxx9De8ErM+vpPhMccr/6fo5WciyQLnMQ==}
-
-  motion@12.23.25:
-    resolution: {integrity: sha512-Fk5Y1kcgxYiTYOUjmwfXQAP7tP+iGqw/on1UID9WEL/6KpzxPr9jY2169OsjgZvXJdpraKXy0orkjaCVIl5fgQ==}
-    peerDependencies:
-      '@emotion/is-prop-valid': '*'
-      react: ^18.0.0 || ^19.0.0
-      react-dom: ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@emotion/is-prop-valid':
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
 
   motion@12.40.0:
     resolution: {integrity: sha512-yjrHUrBFW6kQvjJwRsoiPSAhC5tRwRqNGJWmiJ4CrGnbKp0V88AdzkhBmDoqIsIPfarOe0Uddd37Xq43/gIocA==}
@@ -6284,9 +6400,6 @@ packages:
     resolution: {integrity: sha512-gB+R+Xud1gLFuRD/QgOIgGOBE2KCQPaPwkzBBGC9oG69pHTkhQeIuejVIk3/cnDyX39av2AxomQiyPT13WKHQA==}
     peerDependencies:
       pg: '>=8.0'
-
-  pg-protocol@1.10.3:
-    resolution: {integrity: sha512-6DIBgBQaTKDJyxnXaLiLR8wBpQQcGWuAESkRBX/t6OwA8YsqP+iVSiond2EDy6Y/dsGk8rh/jtax3js5NeV7JQ==}
 
   pg-protocol@1.13.0:
     resolution: {integrity: sha512-zzdvXfS6v89r6v7OcFCHfHlyG/wvry1ALxZo4LqgUoy7W9xhBDMaqOuMiF3qEV45VqsN6rdlcehHrfDtlCPc8w==}
@@ -7573,7 +7686,7 @@ snapshots:
     dependencies:
       '@ai-sdk/provider': 3.0.8
       '@standard-schema/spec': 1.1.0
-      eventsource-parser: 3.0.6
+      eventsource-parser: 3.1.0
       zod: 4.3.6
 
   '@ai-sdk/provider-utils@4.0.27(zod@4.3.6)':
@@ -8204,11 +8317,11 @@ snapshots:
 
   '@balena/dockerignore@1.0.2': {}
 
-  '@better-auth/api-key@1.6.20(@better-auth/core@1.6.20(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@opentelemetry/api@1.9.0)(better-call@1.3.6(zod@4.3.6))(jose@6.2.1)(kysely@0.29.2)(nanostores@1.2.0))(@better-auth/utils@0.4.2)(better-auth@1.6.20(@opentelemetry/api@1.9.0)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3))(mongodb@7.1.0(socks@2.8.6))(mysql2@3.15.3)(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.20.0)(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3)))(better-call@1.3.6(zod@4.3.6))':
+  '@better-auth/api-key@1.6.20(@better-auth/core@1.6.20(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@opentelemetry/api@1.9.0)(better-call@1.3.6(zod@4.3.6))(jose@6.2.1)(kysely@0.29.2)(nanostores@1.2.0))(@better-auth/utils@0.4.2)(better-auth@1.6.20(@opentelemetry/api@1.9.0)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3))(mongodb@7.1.0(socks@2.8.6))(mysql2@3.15.3)(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.20.0)(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3)))(better-call@1.3.6(zod@4.3.6))':
     dependencies:
       '@better-auth/core': 1.6.20(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@opentelemetry/api@1.9.0)(better-call@1.3.6(zod@4.3.6))(jose@6.2.1)(kysely@0.29.2)(nanostores@1.2.0)
       '@better-auth/utils': 0.4.2
-      better-auth: 1.6.20(@opentelemetry/api@1.9.0)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3))(mongodb@7.1.0(socks@2.8.6))(mysql2@3.15.3)(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.20.0)(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3))
+      better-auth: 1.6.20(@opentelemetry/api@1.9.0)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3))(mongodb@7.1.0(socks@2.8.6))(mysql2@3.15.3)(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.20.0)(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3))
       better-call: 1.3.6(zod@4.3.6)
       zod: 4.3.6
 
@@ -8473,7 +8586,7 @@ snapshots:
   '@eslint/eslintrc@3.3.1':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.1
+      debug: 4.4.3
       espree: 10.4.0
       globals: 14.0.0
       ignore: 5.3.2
@@ -8497,37 +8610,20 @@ snapshots:
 
   '@fastify/deepmerge@3.2.1': {}
 
-  '@floating-ui/core@1.7.3':
-    dependencies:
-      '@floating-ui/utils': 0.2.10
-
   '@floating-ui/core@1.7.5':
     dependencies:
       '@floating-ui/utils': 0.2.11
-
-  '@floating-ui/dom@1.7.4':
-    dependencies:
-      '@floating-ui/core': 1.7.3
-      '@floating-ui/utils': 0.2.10
 
   '@floating-ui/dom@1.7.6':
     dependencies:
       '@floating-ui/core': 1.7.5
       '@floating-ui/utils': 0.2.11
 
-  '@floating-ui/react-dom@2.1.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
-    dependencies:
-      '@floating-ui/dom': 1.7.4
-      react: 19.2.3
-      react-dom: 19.2.3(react@19.2.3)
-
   '@floating-ui/react-dom@2.1.8(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@floating-ui/dom': 1.7.6
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
-
-  '@floating-ui/utils@0.2.10': {}
 
   '@floating-ui/utils@0.2.11': {}
 
@@ -8553,11 +8649,6 @@ snapshots:
   '@gilbarbara/types@0.2.2':
     dependencies:
       type-fest: 4.41.0
-
-  '@grpc/grpc-js@1.14.0':
-    dependencies:
-      '@grpc/proto-loader': 0.8.0
-      '@js-sdsl/ordered-map': 4.4.2
 
   '@grpc/grpc-js@1.14.4':
     dependencies:
@@ -8924,11 +9015,11 @@ snapshots:
       sparse-bitfield: 3.0.3
     optional: true
 
-  '@next-safe-action/adapter-react-hook-form@2.0.0(@hookform/resolvers@5.2.2(react-hook-form@7.68.0(react@19.2.3)))(next-safe-action@8.5.3(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)':
+  '@next-safe-action/adapter-react-hook-form@2.0.0(@hookform/resolvers@5.2.2(react-hook-form@7.68.0(react@19.2.3)))(next-safe-action@8.5.3(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@hookform/resolvers': 5.2.2(react-hook-form@7.68.0(react@19.2.3))
-      next: 16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      next-safe-action: 8.5.3(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-safe-action: 8.5.3(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       react-hook-form: 7.68.0(react@19.2.3)
@@ -10270,7 +10361,7 @@ snapshots:
 
   '@radix-ui/react-popper@1.2.8(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@floating-ui/react-dom': 2.1.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@radix-ui/react-arrow': 1.1.7(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.2.2)(react@19.2.3)
       '@radix-ui/react-context': 1.1.2(@types/react@19.2.2)(react@19.2.3)
@@ -11150,7 +11241,7 @@ snapshots:
       enhanced-resolve: 5.18.3
       jiti: 2.6.1
       lightningcss: 1.30.1
-      magic-string: 0.30.19
+      magic-string: 0.30.21
       source-map-js: 1.2.1
       tailwindcss: 4.1.14
 
@@ -11192,7 +11283,7 @@ snapshots:
 
   '@tailwindcss/oxide@4.1.14':
     dependencies:
-      detect-libc: 2.0.4
+      detect-libc: 2.1.2
       tar: 7.5.1
     optionalDependencies:
       '@tailwindcss/oxide-android-arm64': 4.1.14
@@ -11400,7 +11491,7 @@ snapshots:
   '@types/pg@8.18.0':
     dependencies:
       '@types/node': 24.7.2
-      pg-protocol: 1.10.3
+      pg-protocol: 1.13.0
       pg-types: 2.2.0
 
   '@types/react-dom@19.2.1(@types/react@19.2.2)':
@@ -11472,7 +11563,7 @@ snapshots:
       '@typescript-eslint/types': 8.46.0
       '@typescript-eslint/typescript-estree': 8.46.0(typescript@6.0.3)
       '@typescript-eslint/visitor-keys': 8.46.0
-      debug: 4.4.1
+      debug: 4.4.3
       eslint: 9.37.0(jiti@2.6.1)
       typescript: 6.0.3
     transitivePeerDependencies:
@@ -11594,13 +11685,13 @@ snapshots:
       tinyrainbow: 3.0.3
     optional: true
 
-  '@wrksz/themes@0.9.3(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3)':
+  '@wrksz/themes@0.9.3(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3)':
     dependencies:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       typescript: 6.0.3
     optionalDependencies:
-      next: 16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
 
   '@xterm/addon-fit@0.11.0': {}
 
@@ -11819,7 +11910,7 @@ snapshots:
     dependencies:
       tweetnacl: 0.14.5
 
-  better-auth@1.6.20(@opentelemetry/api@1.9.0)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3))(mongodb@7.1.0(socks@2.8.6))(mysql2@3.15.3)(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.20.0)(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3)):
+  better-auth@1.6.20(@opentelemetry/api@1.9.0)(@prisma/client@7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3))(mongodb@7.1.0(socks@2.8.6))(mysql2@3.15.3)(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.20.0)(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3)):
     dependencies:
       '@better-auth/core': 1.6.20(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@opentelemetry/api@1.9.0)(better-call@1.3.6(zod@4.3.6))(jose@6.2.1)(kysely@0.29.2)(nanostores@1.2.0)
       '@better-auth/drizzle-adapter': 1.6.20(@better-auth/core@1.6.20(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@opentelemetry/api@1.9.0)(better-call@1.3.6(zod@4.3.6))(jose@6.2.1)(kysely@0.29.2)(nanostores@1.2.0))(@better-auth/utils@0.4.2)
@@ -11833,7 +11924,7 @@ snapshots:
       '@noble/ciphers': 2.1.1
       '@noble/hashes': 2.0.1
       better-call: 1.3.6(zod@4.3.6)
-      defu: 6.1.4
+      defu: 6.1.7
       jose: 6.2.1
       kysely: 0.29.2
       nanostores: 1.2.0
@@ -11842,7 +11933,7 @@ snapshots:
       '@prisma/client': 7.8.0(prisma@7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(typescript@6.0.3)
       mongodb: 7.1.0(socks@2.8.6)
       mysql2: 3.15.3
-      next: 16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       pg: 8.20.0
       prisma: 7.8.0(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       react: 19.2.3
@@ -12196,8 +12287,6 @@ snapshots:
       has-property-descriptors: 1.0.2
       object-keys: 1.1.1
 
-  defu@6.1.4: {}
-
   defu@6.1.7: {}
 
   denque@2.1.0: {}
@@ -12207,8 +12296,6 @@ snapshots:
   dequal@2.0.3: {}
 
   destr@2.0.5: {}
-
-  detect-libc@2.0.4: {}
 
   detect-libc@2.1.2: {}
 
@@ -12230,7 +12317,7 @@ snapshots:
   dockerode@5.0.0:
     dependencies:
       '@balena/dockerignore': 1.0.2
-      '@grpc/grpc-js': 1.14.0
+      '@grpc/grpc-js': 1.14.4
       '@grpc/proto-loader': 0.7.15
       docker-modem: 5.0.7
       protobufjs: 7.5.4
@@ -12247,8 +12334,6 @@ snapshots:
       '@types/trusted-types': 2.0.7
 
   dotenv@16.0.3: {}
-
-  dotenv@17.2.3: {}
 
   dotenv@17.4.2: {}
 
@@ -12609,8 +12694,6 @@ snapshots:
     transitivePeerDependencies:
       - bare-abort-controller
 
-  eventsource-parser@3.0.6: {}
-
   eventsource-parser@3.1.0: {}
 
   eventsource@3.0.7:
@@ -12769,15 +12852,6 @@ snapshots:
   forwarded-parse@2.1.2: {}
 
   forwarded@0.2.0: {}
-
-  framer-motion@12.23.25(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
-    dependencies:
-      motion-dom: 12.23.23
-      motion-utils: 12.23.6
-      tslib: 2.8.1
-    optionalDependencies:
-      react: 19.2.3
-      react-dom: 19.2.3(react@19.2.3)
 
   framer-motion@12.40.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
@@ -13038,7 +13112,7 @@ snapshots:
 
   inline-style-parser@0.2.7: {}
 
-  inngest@4.5.1(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.0))(encoding@0.1.13)(express@5.2.1)(hono@4.12.27)(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@6.0.3)(zod@4.3.6):
+  inngest@4.5.1(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.0))(encoding@0.1.13)(express@5.2.1)(hono@4.12.27)(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@6.0.3)(zod@4.3.6):
     dependencies:
       '@bufbuild/protobuf': 2.10.1
       '@inngest/ai': 0.1.7
@@ -13067,7 +13141,7 @@ snapshots:
     optionalDependencies:
       express: 5.2.1
       hono: 4.12.27
-      next: 16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
       typescript: 6.0.3
     transitivePeerDependencies:
@@ -13374,14 +13448,9 @@ snapshots:
     dependencies:
       react: 19.2.3
 
-  magic-string@0.30.19:
-    dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
-
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
-    optional: true
 
   markdown-table@3.0.4: {}
 
@@ -13795,25 +13864,11 @@ snapshots:
       socks: 2.8.6
     optional: true
 
-  motion-dom@12.23.23:
-    dependencies:
-      motion-utils: 12.23.6
-
   motion-dom@12.40.0:
     dependencies:
       motion-utils: 12.39.0
 
-  motion-utils@12.23.6: {}
-
   motion-utils@12.39.0: {}
-
-  motion@12.23.25(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
-    dependencies:
-      framer-motion: 12.23.25(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      tslib: 2.8.1
-    optionalDependencies:
-      react: 19.2.3
-      react-dom: 19.2.3(react@19.2.3)
 
   motion@12.40.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
@@ -13856,14 +13911,14 @@ snapshots:
 
   next-intl-swc-plugin-extractor@4.9.1: {}
 
-  next-intl@4.9.1(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@6.0.3):
+  next-intl@4.9.1(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@6.0.3):
     dependencies:
       '@formatjs/intl-localematcher': 0.8.4
       '@parcel/watcher': 2.5.6
       '@swc/core': 1.15.3
       icu-minify: 4.9.1
       negotiator: 1.0.0
-      next: 16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-intl-swc-plugin-extractor: 4.9.1
       po-parser: 2.1.1
       react: 19.2.3
@@ -13873,9 +13928,9 @@ snapshots:
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  next-safe-action@8.5.3(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  next-safe-action@8.5.3(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
-      next: 16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
@@ -13883,7 +13938,7 @@ snapshots:
     dependencies:
       zod: 4.3.6
 
-  next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       '@next/env': 16.2.7
       '@swc/helpers': 0.5.15
@@ -13892,7 +13947,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
-      styled-jsx: 5.1.6(@babel/core@7.28.4)(react@19.2.3)
+      styled-jsx: 5.1.6(react@19.2.3)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.2.7
       '@next/swc-darwin-x64': 16.2.7
@@ -13927,12 +13982,12 @@ snapshots:
 
   node-releases@2.0.23: {}
 
-  nuqs@2.8.5(next@16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3):
+  nuqs@2.8.5(next@16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3):
     dependencies:
       '@standard-schema/spec': 1.0.0
       react: 19.2.3
     optionalDependencies:
-      next: 16.2.7(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.2.7(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
 
   object-assign@4.1.1: {}
 
@@ -14048,8 +14103,6 @@ snapshots:
   pg-pool@3.13.0(pg@8.20.0):
     dependencies:
       pg: 8.20.0
-
-  pg-protocol@1.10.3: {}
 
   pg-protocol@1.13.0: {}
 
@@ -14916,12 +14969,10 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.7
 
-  styled-jsx@5.1.6(@babel/core@7.28.4)(react@19.2.3):
+  styled-jsx@5.1.6(react@19.2.3):
     dependencies:
       client-only: 0.0.1
       react: 19.2.3
-    optionalDependencies:
-      '@babel/core': 7.28.4
 
   supports-color@7.2.0:
     dependencies:

@@ -6,5 +6,13 @@
     "exports": {
         "./*": "./src/*.ts",
         "./pipeline/*": "./src/pipeline/*.ts"
+    },
+    "dependencies": {
+        "@workspace/typescript-interface": "workspace:*",
+        "zod": "^4.3.6"
+    },
+    "devDependencies": {
+        "@workspace/typescript-config": "workspace:*",
+        "typescript": "6.0.3"
     }
 }

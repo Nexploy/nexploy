@@ -63,14 +63,17 @@ ENV NODE_ENV=production
 ENV PORT=3300
 
 # Copy bundled output
-COPY --from=build /app/apps/docker-api/dist ./dist
+COPY --from=build /app/apps/docker-api/dist ./apps/docker-api/dist
 
 # Copy node_modules for external packages
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/docker-api/node_modules ./apps/docker-api/node_modules
 
 # Copy entrypoint script
 COPY --from=build /app/apps/docker-api/scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+WORKDIR /app/apps/docker-api
 
 # Runs as root to access /var/run/docker.sock
 
