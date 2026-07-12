@@ -6,29 +6,29 @@ import { cn } from '@workspace/ui/lib/utils';
 import { Loader2 } from 'lucide-react';
 
 const buttonVariants = cva(
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md cursor-pointer text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm cursor-pointer text-[12px] font-bold tracking-[0.12em] transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-invalid:border-destructive",
     {
         variants: {
             variant: {
-                default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
+                default: 'bg-primary text-primary-foreground hover:bg-primary/90',
                 destructive:
                     'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
                 destructiveGhost:
                     'hover:bg-accent hover:text-destructive dark:hover:bg-accent/50 text-destructive',
                 outline:
-                    'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
+                    'border border-input bg-transparent hover:bg-foreground hover:text-background',
                 destructiveOutline:
-                    'border bg-background shadow-xs hover:bg-accent hover:text-destructive dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
-                secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
-                ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
-                link: 'text-primary underline-offset-4 hover:underline',
-                white: 'bg-white text-gray-900 border border-gray-200 shadow-sm hover:bg-gray-50 active:bg-gray-100 dark:bg-white/90 dark:text-gray-900 dark:hover:bg-white',
+                    'border border-input bg-transparent hover:border-destructive hover:text-destructive',
+                secondary: 'bg-secondary text-secondary-foreground hover:bg-accent',
+                ghost: 'hover:bg-accent hover:text-accent-foreground',
+                link: 'font-sans text-sm font-medium normal-case tracking-normal text-foreground underline-offset-4 hover:underline hover:text-primary',
+                white: 'bg-chalk text-base-12 border border-border hover:bg-base-2',
             },
             size: {
                 default: 'h-9 px-4 py-2 has-[>svg]:px-3',
-                sm: 'h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5',
-                xs: 'h-7 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5',
-                lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
+                sm: 'h-8 gap-1.5 px-3 has-[>svg]:px-2.5',
+                xs: 'h-7 gap-1.5 px-2.5 text-[11px] has-[>svg]:px-2',
+                lg: 'h-10 px-6 has-[>svg]:px-4',
                 icon: 'size-9',
             },
         },

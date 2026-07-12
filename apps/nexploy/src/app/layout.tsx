@@ -1,16 +1,24 @@
 import '@workspace/ui/globals.css';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google';
 import { Providers } from '@/providers/Providers';
 import type { Metadata } from 'next';
 
-const fontSans = Geist({
+const fontDisplay = Archivo({
     subsets: ['latin'],
-    variable: '--font-sans',
+    weight: ['600', '700', '800'],
+    variable: '--font-archivo',
 });
 
-const fontMono = Geist_Mono({
+const fontSans = IBM_Plex_Sans({
     subsets: ['latin'],
-    variable: '--font-mono',
+    weight: ['400', '500', '600'],
+    variable: '--font-plex-sans',
+});
+
+const fontMono = IBM_Plex_Mono({
+    subsets: ['latin'],
+    weight: ['400', '500', '600'],
+    variable: '--font-plex-mono',
 });
 
 export const metadata: Metadata = {
@@ -84,7 +92,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}>
+            <body
+                className={`${fontDisplay.variable} ${fontSans.variable} ${fontMono.variable} font-sans antialiased`}
+            >
                 <Providers>{children}</Providers>
             </body>
         </html>
