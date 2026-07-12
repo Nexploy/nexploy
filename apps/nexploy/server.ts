@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { createProxyMiddleware, Options } from 'http-proxy-middleware';
-import { existsSync, readdirSync, rmSync, statSync } from 'fs';
+import { existsSync, readdirSync, readFileSync, rmSync, statSync } from 'fs';
 import { join } from 'path';
 import next from 'next';
 import { terminalSchema } from '@workspace/schemas-zod/websocket/terminal.schema';
@@ -14,12 +14,23 @@ const dev = process.env.NODE_ENV !== 'production';
 const port = parseInt(process.env.NEXPLOY_PORT || '3000', 10);
 const nextHostname = dev ? '0.0.0.0' : 'localhost';
 
+const loadStandaloneConf = () => {
+    const requiredServerFiles = join(process.cwd(), '.next', 'required-server-files.json');
+    return JSON.parse(readFileSync(requiredServerFiles, 'utf-8')).config;
+};
+
+const standaloneConf = dev ? undefined : loadStandaloneConf();
+
+if (standaloneConf) {
+    process.env.__NEXT_PRIVATE_STANDALONE_CONFIG = JSON.stringify(standaloneConf);
+}
+
 const app = next({
     dev,
     hostname: nextHostname,
     port,
     turbopack: dev,
-    conf: dev ? undefined : { output: 'standalone' },
+    conf: standaloneConf,
 });
 
 const handle = app.getRequestHandler();

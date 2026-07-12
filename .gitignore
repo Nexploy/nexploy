@@ -39,6 +39,7 @@ npm-debug.log*
 
 infra/traefik/letsencrypt/
 infra/traefik/logs/
+infra/traefik/*.generated.yml
 acme.json
 infra/traefik/service/acme.json
 *.log

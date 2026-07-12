@@ -1,10 +1,29 @@
 {
-  "name": "@workspace/typescript-interface",
-  "version": "1.0.0",
-  "private": true,
-  "exports": {
-    "./*": "./src/*.ts",
-    "./pipeline/*": "./src/pipeline/*.ts",
-    "./stores/*": "./src/stores/*.ts"
-  }
+    "name": "@workspace/typescript-interface",
+    "version": "1.0.0",
+    "private": true,
+    "exports": {
+        "./*": "./src/*.ts",
+        "./pipeline/*": "./src/pipeline/*.ts",
+        "./stores/*": "./src/stores/*.ts"
+    },
+    "dependencies": {
+        "@xyflow/react": "^12.11.1",
+        "dockerode": "^5.0.0",
+        "hono": "4.12.27",
+        "inngest": "^4.5.1",
+        "lucide-react": "^1.17.0",
+        "react": "^19.2.3",
+        "zod": "^4.3.6"
+    },
+    "devDependencies": {
+        "@types/dockerode": "^4.0.1",
+        "@types/node": "^24.7.2",
+        "@types/react": "^19.2.2",
+        "@workspace/typescript-config": "workspace:*",
+        "typescript": "6.0.3"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit"
+    }
 }

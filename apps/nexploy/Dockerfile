@@ -1,11 +1,11 @@
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
 ENV DO_NOT_TRACK=1
 ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
 RUN apk add --no-cache libc6-compat su-exec git
-RUN corepack enable && corepack prepare pnpm@10.33.2 --activate
+RUN corepack enable && corepack prepare pnpm@11.9.0 --activate
 
 FROM base AS prepare
 WORKDIR /app
@@ -21,9 +21,8 @@ RUN pnpm install --frozen-lockfile
 
 FROM base AS migrate-tools
 WORKDIR /tools
-RUN pnpm init && pnpm add --node-linker=hoisted \
-    prisma@7.5.0 tsx@^4 dotenv@^17 \
-    @prisma/client@7.5.0 @prisma/adapter-pg@7.5.0 pg
+COPY apps/nexploy/docker/migrate-tools/ ./
+RUN pnpm install --node-linker=hoisted
 
 FROM base AS builder
 WORKDIR /app
@@ -74,7 +73,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/tsconfig.json ./apps
 COPY --from=builder --chown=nextjs:nodejs /app/packages ./packages
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
-COPY --from=migrate-tools --chown=nextjs:nodejs /tools/node_modules ./node_modules
+COPY --from=migrate-tools --chown=nextjs:nodejs /tools/node_modules ./migrate-tools/node_modules
+RUN for tool in /app/migrate-tools/node_modules/*; do \
+        [ -e "/app/node_modules/$(basename "$tool")" ] || ln -s "$tool" "/app/node_modules/$(basename "$tool")"; \
+    done
 
 COPY --from=builder --chown=nextjs:nodejs /app/packages/typescript-config ./node_modules/@workspace/typescript-config
 

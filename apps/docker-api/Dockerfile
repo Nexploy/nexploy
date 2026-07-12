@@ -1,13 +1,13 @@
 # ---- Base ----
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 # Disable anonymous telemetry/update notices for a quiet, reproducible build
 ENV TURBO_TELEMETRY_DISABLED=1
 ENV DO_NOT_TRACK=1
 # pnpm global bin dir (used for turbo, esbuild)
 ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
 RUN apk add --no-cache libc6-compat
-RUN corepack enable && corepack prepare pnpm@10.18.3 --activate
+RUN corepack enable && corepack prepare pnpm@11.9.0 --activate
 
 # ---- Prepare (prune monorepo) ----
 FROM base AS prepare
@@ -53,7 +53,7 @@ RUN pnpm add -g esbuild && esbuild apps/docker-api/src/index.ts \
 FROM docker:27-cli AS docker-cli
 
 # ---- Runner ----
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 COPY --from=docker-cli /usr/local/bin/docker /usr/local/bin/docker
@@ -63,14 +63,17 @@ ENV NODE_ENV=production
 ENV PORT=3300
 
 # Copy bundled output
-COPY --from=build /app/apps/docker-api/dist ./dist
+COPY --from=build /app/apps/docker-api/dist ./apps/docker-api/dist
 
 # Copy node_modules for external packages
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/docker-api/node_modules ./apps/docker-api/node_modules
 
 # Copy entrypoint script
 COPY --from=build /app/apps/docker-api/scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+WORKDIR /app/apps/docker-api
 
 # Runs as root to access /var/run/docker.sock
 
