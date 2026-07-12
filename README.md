@@ -1,16 +1,8 @@
-<p align="center">
-  <img src="apps/nexploy/public/logo.svg" alt="Nexploy" width="80" height="80" />
-</p>
-
 <h1 align="center">Nexploy</h1>
 
 <p align="center">
   <strong>Self-hosted deployment platform for Docker</strong><br />
   Deploy applications from Git repositories to Docker containers with automatic HTTPS, real-time monitoring, and a modern interface.
-</p>
-
-<p align="center">
-  Think <strong>Vercel</strong> or <strong>Netlify</strong>, but self-hosted with Docker.
 </p>
 
 ---
