@@ -3,7 +3,6 @@ import { Key, Plus } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { EnvForm } from '@/components/docker/container/forms/EnvForm';
@@ -72,20 +71,13 @@ export function CardEnv() {
                 <div className="flex items-center justify-between gap-3">
                     <CardHeaderWithIcon as={'div'} icon={Key} title={t('title')} />
                     {!isSwarmContainer && (
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    className="size-9 md:size-fit"
-                                    icon={Plus}
-                                    onClick={() => handleOpenDialog('add')}
-                                >
-                                    <span className="hidden md:flex">{t('addVariable')}</span>
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="flex xl:hidden">
-                                <span>{t('addVariable')}</span>
-                            </TooltipContent>
-                        </Tooltip>
+                        <Button
+                            className="size-9 md:size-fit"
+                            icon={Plus}
+                            onClick={() => handleOpenDialog('add')}
+                        >
+                            <span className="hidden md:flex">{t('addVariable')}</span>
+                        </Button>
                     )}
                 </div>
             </CardHeader>
