@@ -96,13 +96,20 @@ export function CardExposedPorts() {
             <CardHeaderWithIcon icon={Network} title={t('title')} className={'justify-between'}>
                 {!isSwarmContainer && (
                     <Can resource={'container'} action={'manage'}>
-                        <Button
-                            className={'size-9 xl:size-fit'}
-                            icon={Plus}
-                            onClick={handleAddPort}
-                        >
-                            <span className={'hidden xl:flex'}>{t('addPort')}</span>
-                        </Button>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    className={'size-9 xl:size-fit'}
+                                    icon={Plus}
+                                    onClick={handleAddPort}
+                                >
+                                    <span className={'hidden xl:flex'}>{t('addPort')}</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className={'flex xl:hidden'}>
+                                <span>{t('addPort')}</span>
+                            </TooltipContent>
+                        </Tooltip>
                     </Can>
                 )}
             </CardHeaderWithIcon>
@@ -125,7 +132,7 @@ export function CardExposedPorts() {
                                         <div
                                             key={idx}
                                             className={cn(
-                                                'bg-muted/60 group relative flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2',
+                                                'group bg-muted/60 relative flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2',
                                             )}
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">
@@ -220,7 +227,7 @@ export function CardExposedPorts() {
                                     return (
                                         <div
                                             key={`new-${idx}`}
-                                            className="bg-muted/60 group relative flex items-center justify-between gap-2 rounded-md px-3 py-2"
+                                            className="group bg-muted/60 relative flex items-center justify-between gap-2 rounded-md px-3 py-2"
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">
                                                 {hasPublicPort ? (

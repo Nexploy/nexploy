@@ -50,7 +50,7 @@ export function CardNetworks() {
             >
                 {!isSwarmContainer && (
                     <Button className="size-9 md:size-fit" icon={Plus} onClick={handleOpenDialog}>
-                        <span className="hidden md:flex">{t('addTitle')}</span>
+                        <span className="hidden md:flex">{t('add')}</span>
                     </Button>
                 )}
             </CardHeaderWithIcon>

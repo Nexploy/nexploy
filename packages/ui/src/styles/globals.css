@@ -8,71 +8,67 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-    --background: #edeef2;
-    --foreground: #171a21;
-    --card: #fbfbfc;
-    --card-foreground: #171a21;
-    --popover: #fbfbfc;
-    --popover-foreground: #171a21;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
     --primary: oklch(0.5465 0.2455 262.8657);
-    --primary-foreground: #fbfbfc;
-    --secondary: #e3e5eb;
-    --secondary-foreground: #171a21;
-    --muted: #e3e5eb;
-    --muted-foreground: #545b6c;
-    --online: #15803d;
-    --offline: #b91c1c;
-    --maintenance: #0e7490;
-    --degraded: #b45309;
-    --accent: #d9dce4;
-    --accent-foreground: #171a21;
-    --destructive: #b91c1c;
-    --destructive-foreground: #fbfbfc;
-    --border: #cdd1db;
-    --input: #bcc1ce;
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --online: theme('colors.emerald.500');
+    --offline: theme('colors.red.500');
+    --maintenance: theme('colors.blue.500');
+    --degraded: theme('colors.amber.500');
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.5465 0.2455 262.8657);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(1 0 0);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
     --ring: oklch(0.5465 0.2455 262.8657);
-    --chart-1: oklch(0.5465 0.2455 262.8657);
-    --chart-2: #0e7490;
-    --chart-3: #848b9e;
-    --chart-4: #15803d;
-    --chart-5: #b45309;
-    --radius: 0.25rem;
-    --sidebar: #f5f6f8;
-    --sidebar-foreground: #171a21;
+    --chart-1: oklch(0.81 0.1 252);
+    --chart-2: oklch(0.62 0.19 260);
+    --chart-3: oklch(0.55 0.22 263);
+    --chart-4: oklch(0.49 0.22 264);
+    --chart-5: oklch(0.42 0.18 266);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
     --sidebar-primary: oklch(0.5465 0.2455 262.8657);
-    --sidebar-primary-foreground: #fbfbfc;
-    --sidebar-accent: #d9dce4;
-    --sidebar-accent-foreground: #171a21;
-    --sidebar-border: #cdd1db;
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.5465 0.2455 262.8657);
+    --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.5465 0.2455 262.8657);
-    --base-1: #fbfbfc;
-    --base-2: #f5f6f8;
-    --base-3: #edeef2;
-    --base-4: #e3e5eb;
-    --base-5: #d9dce4;
-    --base-6: #cdd1db;
-    --base-7: #bcc1ce;
-    --base-8: #a5abbb;
-    --base-9: #848b9e;
-    --base-10: #737a8d;
-    --base-11: #545b6c;
-    --base-12: #171a21;
-    --accent-1: #f5f8ff;
-    --accent-2: #ebf1fe;
-    --accent-3: #dbe6fd;
-    --accent-4: #c7d7fc;
-    --accent-5: #adc3fa;
-    --accent-6: #8eabf7;
-    --accent-7: #6b8ef2;
-    --accent-8: #4a6feb;
-    --accent-9: oklch(0.5465 0.2455 262.8657);
-    --accent-10: oklch(0.4965 0.2355 262.8657);
-    --accent-11: oklch(0.4465 0.2055 262.8657);
-    --accent-12: #17275c;
-    --steel: #171a21;
-    --steel-2: #21252f;
-    --steel-3: #2f3542;
-    --chalk: #fbfbfc;
+    --base-1: hsl(0 0% 98.82352941176471%);
+    --base-2: hsl(0 0% 97.6470588235294%);
+    --base-3: hsl(0 0% 94.11764705882352%);
+    --base-4: hsl(0 0% 90.98039215686275%);
+    --base-5: hsl(0 0% 87.84313725490196%);
+    --base-6: hsl(0 0% 85.09803921568627%);
+    --base-7: hsl(0 0% 80.7843137254902%);
+    --base-8: hsl(0 0% 73.33333333333333%);
+    --base-9: hsl(0 0% 55.294117647058826%);
+    --base-10: hsl(0 0% 51.37254901960784%);
+    --base-11: hsl(0 0% 39.21568627450981%);
+    --base-12: hsl(0 0% 12.549019607843137%);
+    --accent-1: hsl(209.99999999999977 100% 99.2156862745098%);
+    --accent-2: hsl(207.27272727272737 100% 97.84313725490196%);
+    --accent-3: hsl(205 92.30769230769234% 94.90196078431372%);
+    --accent-4: hsl(202.85714285714286 100% 91.76470588235294%);
+    --accent-5: hsl(205.5737704918033 100% 88.0392156862745%);
+    --accent-6: hsl(207 93.02325581395351% 83.13725490196079%);
+    --accent-7: hsl(206.53846153846155 85.2459016393443% 76.07843137254902%);
+    --accent-8: hsl(205.6551724137931 81.92090395480226% 65.29411764705883%);
+    --accent-9: hsl(206.11764705882354 100% 50%);
+    --accent-10: hsl(206.5531914893617 95.91836734693877% 48.03921568627451%);
+    --accent-11: hsl(207.97927461139895 88.12785388127853% 42.94117647058824%);
+    --accent-12: hsl(216.14457831325302 70.94017094017094% 22.941176470588236%);
     --shadow-color: oklch(0 0 0);
     --shadow-opacity: 0.1;
     --shadow-blur: 3px;
@@ -90,79 +86,77 @@
     --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
     --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
     --tracking-normal: 0em;
-    --font-display: var(--font-archivo), 'Archivo', ui-sans-serif, system-ui, sans-serif;
-    --font-sans: var(--font-plex-sans), 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
     --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    --waiting: #848b9e;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+    --waiting: theme('colors.yellow.500');
 }
 
 .dark {
-    --background: #171a21;
-    --foreground: #f0f2f6;
-    --card: #21252f;
-    --card-foreground: #f0f2f6;
-    --popover: #21252f;
-    --popover-foreground: #f0f2f6;
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.269 0 0);
+    --popover-foreground: oklch(0.985 0 0);
     --primary: oklch(0.5465 0.2455 262.8657);
-    --primary-foreground: #fbfbfc;
-    --secondary: #2f3542;
-    --secondary-foreground: #f0f2f6;
-    --muted: #2f3542;
-    --muted-foreground: #a2aaba;
-    --online: #4ade80;
-    --offline: #f87171;
-    --maintenance: #67e8f9;
-    --degraded: #fbbf24;
-    --accent: #272c37;
-    --accent-foreground: #f0f2f6;
-    --destructive: #f87171;
-    --destructive-foreground: #171a21;
-    --border: rgba(255, 255, 255, 0.12);
-    --input: rgba(255, 255, 255, 0.18);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --online: theme('colors.emerald.500');
+    --offline: theme('colors.red.500');
+    --maintenance: theme('colors.blue.500');
+    --degraded: theme('colors.amber.500');
+    --accent: oklch(0.371 0 0);
+    --accent-foreground: oklch(0.5465 0.2455 262.8657);
+    --destructive: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.985 0 0);
+    --border: oklch(0.313 0 89.876);
+    --input: oklch(0.325 0 0);
     --ring: oklch(0.5465 0.2455 262.8657);
-    --chart-1: oklch(0.68 0.19 262.8657);
-    --chart-2: #67e8f9;
-    --chart-3: #a2aaba;
-    --chart-4: #4ade80;
-    --chart-5: #fbbf24;
-    --sidebar: #12141a;
-    --sidebar-foreground: #f0f2f6;
+    --chart-1: oklch(0.81 0.1 252);
+    --chart-2: oklch(0.62 0.19 260);
+    --chart-3: oklch(0.55 0.22 263);
+    --chart-4: oklch(0.49 0.22 264);
+    --chart-5: oklch(0.42 0.18 266);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.5465 0.2455 262.8657);
-    --sidebar-primary-foreground: #fbfbfc;
-    --sidebar-accent: #272c37;
-    --sidebar-accent-foreground: #f0f2f6;
-    --sidebar-border: rgba(255, 255, 255, 0.12);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.5465 0.2455 262.8657);
+    --sidebar-border: oklch(0.275 0 0);
     --sidebar-ring: oklch(0.5465 0.2455 262.8657);
-    --base-1: #12141a;
-    --base-2: #171a21;
-    --base-3: #1c1f28;
-    --base-4: #21252f;
-    --base-5: #272c37;
-    --base-6: #2f3542;
-    --base-7: #3a4150;
-    --base-8: #4c5568;
-    --base-9: #6a7386;
-    --base-10: #7d8698;
-    --base-11: #a2aaba;
-    --base-12: #f0f2f6;
-    --accent-1: #14171f;
-    --accent-2: #171b26;
-    --accent-3: #1b2338;
-    --accent-4: #1f2a47;
-    --accent-5: #243155;
-    --accent-6: #2b3c6b;
-    --accent-7: #344b8a;
-    --accent-8: #3f5eb5;
-    --accent-9: oklch(0.5465 0.2455 262.8657);
-    --accent-10: oklch(0.62 0.2255 262.8657);
-    --accent-11: oklch(0.75 0.1655 262.8657);
-    --accent-12: #dce6ff;
-    --steel: #171a21;
-    --steel-2: #21252f;
-    --steel-3: #2f3542;
-    --chalk: #fbfbfc;
-    --radius: 0.25rem;
+    --base-1: hsl(0 0% 6.666666666666667%);
+    --base-2: hsl(0 0% 9.803921568627452%);
+    --base-3: hsl(0 0% 13.333333333333334%);
+    --base-4: hsl(0 0% 16.470588235294116%);
+    --base-5: hsl(0 0% 19.215686274509807%);
+    --base-6: hsl(0 0% 22.745098039215687%);
+    --base-7: hsl(0 0% 28.235294117647058%);
+    --base-8: hsl(0 0% 37.64705882352941%);
+    --base-9: hsl(0 0% 43.13725490196079%);
+    --base-10: hsl(0 0% 48.23529411764706%);
+    --base-11: hsl(0 0% 70.58823529411765%);
+    --base-12: hsl(0 0% 93.33333333333333%);
+    --accent-1: hsl(214.73684210526315 42.22222222222223% 8.823529411764705%);
+    --accent-2: hsl(218.1818181818182 39.28571428571429% 10.980392156862745%);
+    --accent-3: hsl(212.06896551724137 69.04761904761905% 16.470588235294116%);
+    --accent-4: hsl(208.77551020408166 100% 19.215686274509807%);
+    --accent-5: hsl(206.8965517241379 100% 22.745098039215687%);
+    --accent-6: hsl(209.2436974789916 78.80794701986756% 29.607843137254903%);
+    --accent-7: hsl(210.95238095238096 66.31578947368422% 37.254901960784316%);
+    --accent-8: hsl(211.00671140939596 65.06550218340611% 44.90196078431373%);
+    --accent-9: hsl(206.11764705882354 100% 50%);
+    --accent-10: hsl(209.6938775510204 100% 61.568627450980394%);
+    --accent-11: hsl(209.79020979020981 100% 71.96078431372548%);
+    --accent-12: hsl(204.59016393442622 100% 88.0392156862745%);
+    --radius: 0.625rem;
     --shadow-color: oklch(0 0 0);
     --shadow-opacity: 0.1;
     --shadow-blur: 3px;
@@ -179,18 +173,16 @@
     --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
     --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
     --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
-    --font-display: var(--font-archivo), 'Archivo', ui-sans-serif, system-ui, sans-serif;
-    --font-sans: var(--font-plex-sans), 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
     --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    --waiting: #848b9e;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+    --waiting: theme('colors.yellow.500');
 }
 
 @theme inline {
-    --color-steel: var(--steel);
-    --color-steel-2: var(--steel-2);
-    --color-steel-3: var(--steel-3);
-    --color-chalk: var(--chalk);
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --color-card: var(--card);
@@ -278,9 +270,11 @@
     --shadow-blur: var(--shadow-blur);
     --shadow-opacity: var(--shadow-opacity);
     --color-shadow-color: var(--shadow-color);
-    --font-display: var(--font-archivo), 'Archivo', ui-sans-serif, system-ui, sans-serif;
-    --font-sans: var(--font-plex-sans), 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
-    --font-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
     --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
     --color-waiting: var(--waiting);
 }
@@ -383,55 +377,6 @@
     position: absolute !important;
 }
 
-.stencil {
-    font-family: var(--font-display);
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-}
-
-.hazard {
-    background-image: repeating-linear-gradient(
-        -45deg,
-        var(--accent-9) 0 6px,
-        transparent 6px 12px
-    );
-}
-
-.bg-yard {
-    background-image:
-        linear-gradient(to right, color-mix(in srgb, var(--foreground) 5%, transparent) 1px, transparent 1px),
-        linear-gradient(to bottom, color-mix(in srgb, var(--foreground) 5%, transparent) 1px, transparent 1px);
-    background-size: 72px 72px;
-}
-
-.panel-steel {
-    background: var(--steel);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: var(--chalk);
-}
-
-@keyframes beacon {
-    0%, 100% {
-        opacity: 0.35;
-    }
-    50% {
-        opacity: 1;
-    }
-}
-
-.beacon {
-    animation: beacon 1.2s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
 @layer base {
     * {
         @apply border-border outline-ring/50;
@@ -442,7 +387,7 @@
     }
 
     body {
-        @apply bg-background text-foreground font-normal;
+        @apply bg-sidebar text-foreground font-medium;
         letter-spacing: var(--tracking-normal);
     }
 }
