@@ -5,6 +5,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { Button } from '@workspace/ui/components/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { LabelForm } from '@/components/docker/container/forms/LabelForm';
@@ -68,13 +69,20 @@ export function CardLabels() {
         <Card>
             <CardHeaderWithIcon icon={Tags} title={t('title')} className={'justify-between'}>
                 {!isSwarmContainer && (
-                    <Button
-                        className="size-9 md:size-fit"
-                        icon={Plus}
-                        onClick={() => handleOpenDialog('add')}
-                    >
-                        <span className="hidden md:flex">{t('addLabel')}</span>
-                    </Button>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                className="size-9 md:size-fit"
+                                icon={Plus}
+                                onClick={() => handleOpenDialog('add')}
+                            >
+                                <span className="hidden md:flex">{t('add')}</span>
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="flex xl:hidden">
+                            <span>{t('add')}</span>
+                        </TooltipContent>
+                    </Tooltip>
                 )}
             </CardHeaderWithIcon>
             <CardContent className="px-0">
