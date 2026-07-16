@@ -390,4 +390,9 @@
         @apply bg-sidebar text-foreground font-medium;
         letter-spacing: var(--tracking-normal);
     }
+
+    ::selection {
+        background: var(--primary);
+        color: var(--primary-foreground);
+    }
 }
