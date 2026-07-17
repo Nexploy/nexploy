@@ -27,14 +27,12 @@ export const PIPELINE_TEMPLATES: PipelineTemplate[] = [
         icon: 'dockerfile',
         nodes: [
             { type: 'clone-repository', offsetX: 0, offsetY: 0 },
-            { type: 'env-vars', offsetX: 240, offsetY: 0 },
-            { type: 'build-docker-image', offsetX: 480, offsetY: 0 },
-            { type: 'create-container', offsetX: 720, offsetY: 0 },
+            { type: 'build-docker-image', offsetX: 240, offsetY: 0 },
+            { type: 'create-container', offsetX: 480, offsetY: 0 },
         ],
         edges: [
             { sourceIndex: 0, targetIndex: 1, sourceHandle: 'output', targetHandle: 'input' },
             { sourceIndex: 1, targetIndex: 2, sourceHandle: 'output', targetHandle: 'input' },
-            { sourceIndex: 2, targetIndex: 3, sourceHandle: 'output', targetHandle: 'input' },
         ],
     },
     {
@@ -42,18 +40,16 @@ export const PIPELINE_TEMPLATES: PipelineTemplate[] = [
         icon: 'compose',
         nodes: [
             { type: 'clone-repository', offsetX: 0, offsetY: 0 },
-            { type: 'env-vars', offsetX: 220, offsetY: 0 },
-            { type: 'validate-compose', offsetX: 420, offsetY: 0 },
-            { type: 'deploy-compose', offsetX: 620, offsetY: 0 },
-            { type: 'clean-workdir', offsetX: 1020, offsetY: 0 },
-            { type: 'save-version', offsetX: 680, offsetY: 260 },
+            { type: 'validate-compose', offsetX: 220, offsetY: 0 },
+            { type: 'deploy-compose', offsetX: 420, offsetY: 0 },
+            { type: 'clean-workdir', offsetX: 820, offsetY: 0 },
+            { type: 'save-version', offsetX: 480, offsetY: 260 },
         ],
         edges: [
             { sourceIndex: 0, targetIndex: 1, sourceHandle: 'output', targetHandle: 'input' },
             { sourceIndex: 1, targetIndex: 2, sourceHandle: 'output', targetHandle: 'input' },
             { sourceIndex: 2, targetIndex: 3, sourceHandle: 'output', targetHandle: 'input' },
-            { sourceIndex: 3, targetIndex: 4, sourceHandle: 'output', targetHandle: 'input' },
-            { sourceIndex: 3, targetIndex: 5, sourceHandle: 'save-version', targetHandle: 'input' },
+            { sourceIndex: 2, targetIndex: 4, sourceHandle: 'save-version', targetHandle: 'input' },
         ],
     },
 ];

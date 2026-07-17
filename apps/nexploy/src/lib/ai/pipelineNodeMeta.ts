@@ -301,12 +301,6 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
         consumesFromUpstream: ['containerId'],
         outputs: [],
     },
-    'env-vars': {
-        schema: null,
-        category: 'config',
-        description: "Injects the repository's environment variables into downstream nodes.",
-        outputs: ['vars'],
-    },
     'set-env-vars': {
         schema: setEnvVarsConfigSchema,
         category: 'config',

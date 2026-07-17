@@ -383,10 +383,6 @@
                 "name": "Build Docker Image",
                 "description": "Build a Docker image from a Dockerfile"
             },
-            "env-vars": {
-                "name": "Environment Variables",
-                "description": "Injects repository environment variables into the pipeline for use by subsequent nodes."
-            },
             "send-notification": {
                 "name": "Send Notification",
                 "description": "Send a webhook notification"
@@ -659,7 +655,6 @@
             "save": "Save",
             "viewOnly": "view only",
             "cleanWorkdirInfo": "Removes the cloned repository directory from disk after the pipeline completes.",
-            "envVarsInfo": "Injects the repository environment variables into the pipeline, making them available to subsequent nodes. Variables accumulate throughout the pipeline.",
             "saveVersionInfo": "Saves the current build as a new numbered version using the built image tag and commit info.",
             "environment": "Environment",
             "selectEnvironment": "Select an environment",

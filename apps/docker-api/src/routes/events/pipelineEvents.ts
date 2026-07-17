@@ -48,6 +48,39 @@ function cleanupEnvFile(workDir: string): void {
     }
 }
 
+function ensureEnvIgnoredInBuildContext(workDir: string): void {
+    const dockerignorePath = path.join(workDir, '.dockerignore');
+    const requiredEntries = ['.env', '.env.*'];
+
+    let existing = '';
+    try {
+        if (fs.existsSync(dockerignorePath)) {
+            existing = fs.readFileSync(dockerignorePath, 'utf8');
+        }
+    } catch (error) {
+        logger.warn({ error, dockerignorePath }, 'Failed to read existing .dockerignore');
+        return;
+    }
+
+    const existingLines = new Set(existing.split('\n').map((line) => line.trim()));
+    const missingEntries = requiredEntries.filter((entry) => !existingLines.has(entry));
+
+    if (missingEntries.length === 0) {
+        return;
+    }
+
+    try {
+        const separator = existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
+        fs.writeFileSync(
+            dockerignorePath,
+            `${existing}${separator}${missingEntries.join('\n')}\n`,
+            'utf8',
+        );
+    } catch (error) {
+        logger.warn({ error, dockerignorePath }, 'Failed to update .dockerignore');
+    }
+}
+
 app.post('/stream/compose', async (c) => {
     const { workDir, projectName, composePath, envVars, labels, noCache } = await c.req.json<{
         workDir: string;
@@ -108,14 +141,7 @@ app.post('/stream/compose', async (c) => {
 
             const effectiveEnvVars: Record<string, string> = { ...(envVars || {}) };
 
-            if (Object.keys(effectiveEnvVars).length > 0) {
-                sendLog(
-                    `Writing ${Object.keys(effectiveEnvVars).length} environment variable(s) to .env file...`,
-                );
-                writeEnvFile(workDir, effectiveEnvVars);
-                envFileWritten = true;
-                sendLog('Environment variables written successfully');
-            }
+            ensureEnvIgnoredInBuildContext(workDir);
 
             const composeYamlContent = substituteEnvVars(composeYamlRaw, effectiveEnvVars);
 
@@ -385,6 +411,15 @@ app.post('/stream/compose', async (c) => {
                 }
             } catch {
                 sendLog('No existing containers to remove from project');
+            }
+
+            if (Object.keys(effectiveEnvVars).length > 0) {
+                sendLog(
+                    `Writing ${Object.keys(effectiveEnvVars).length} environment variable(s) to .env file...`,
+                );
+                writeEnvFile(workDir, effectiveEnvVars);
+                envFileWritten = true;
+                sendLog('Environment variables written successfully');
             }
 
             sendLog('Starting services...');

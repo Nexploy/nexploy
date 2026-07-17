@@ -8,7 +8,6 @@ import { pushToRegistryManifest } from './push-to-registry.manifest';
 import { pullFromRegistryManifest } from './pull-from-registry.manifest';
 import { setEnvironmentManifest } from './set-environment.manifest';
 import { deployComposeManifest } from './deploy-compose.manifest';
-import { envVarsManifest } from './env-vars.manifest';
 import { setEnvVarsManifest } from './set-env-vars.manifest';
 import { cleanWorkdirManifest } from './clean-workdir.manifest';
 import { sendNotificationManifest } from './send-notification.manifest';
@@ -71,7 +70,6 @@ export const allBuiltinManifests: NodeManifest[] = [
     setEnvironmentManifest,
     deployComposeManifest,
     // Utility
-    envVarsManifest,
     setEnvVarsManifest,
     cleanWorkdirManifest,
     // Notification

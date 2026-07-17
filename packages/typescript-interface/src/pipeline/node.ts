@@ -30,7 +30,6 @@ export type NodeId =
     | 'pull-from-registry'
     | 'validate-dockerfile'
     | 'validate-compose'
-    | 'env-vars'
     | 'set-env-vars'
     | 'clean-workdir'
     | 'send-notification'

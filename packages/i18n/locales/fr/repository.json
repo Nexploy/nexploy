@@ -383,10 +383,6 @@
                 "name": "Construire l'image Docker",
                 "description": "Construire une image Docker depuis un Dockerfile"
             },
-            "env-vars": {
-                "name": "Variables d'environnement",
-                "description": "Injecte les variables d'environnement du dépôt dans le pipeline pour les nœuds suivants."
-            },
             "send-notification": {
                 "name": "Envoyer une notification",
                 "description": "Envoyer une notification webhook"
@@ -659,7 +655,6 @@
             "save": "Sauvegarder",
             "viewOnly": "lecture seule",
             "cleanWorkdirInfo": "Supprime le répertoire du dépôt cloné du disque après l'exécution du pipeline.",
-            "envVarsInfo": "Injecte les variables d'environnement du dépôt dans le pipeline, les rendant disponibles aux nœuds suivants. Les variables s'accumulent tout au long du pipeline.",
             "saveVersionInfo": "Sauvegarde ce build comme version numérotée, accessible depuis l'onglet Versions pour effectuer un rollback.",
             "environment": "Environnement",
             "selectEnvironment": "Sélectionner un environnement",

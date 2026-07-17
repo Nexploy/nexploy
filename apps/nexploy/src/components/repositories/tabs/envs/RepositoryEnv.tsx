@@ -169,7 +169,7 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                                         >
                                             {isVisible ? <Eye /> : <EyeOff />}
                                         </Button>
-                                        <code className="text-muted-foreground min-w-0 flex-1 truncate font-mono text-sm">
+                                        <code className="text-muted-foreground min-w-0 flex-1 break-all font-mono text-sm">
                                             {isVisible ? (
                                                 variable.value
                                             ) : (
