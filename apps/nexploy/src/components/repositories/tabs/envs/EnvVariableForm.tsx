@@ -5,14 +5,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
 import { Eye, EyeOff } from 'lucide-react';
 import { onEnvVariableAction } from '@/actions/repository/updateEnvVariables.action';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
@@ -78,9 +71,6 @@ export function EnvVariableForm({ repositoryId, stageId, variable }: EnvVariable
                                 <Input
                                     {...field}
                                     autoComplete="off"
-                                    data-1p-ignore
-                                    data-lpignore="true"
-                                    data-form-type="other"
                                     placeholder={t('keyPlaceholder')}
                                     className="font-mono"
                                 />
@@ -99,19 +89,16 @@ export function EnvVariableForm({ repositoryId, stageId, variable }: EnvVariable
                                 <div className="relative">
                                     <Input
                                         {...field}
-                                        type={showValue ? 'text' : 'password'}
                                         autoComplete="new-password"
-                                        data-1p-ignore
-                                        data-lpignore="true"
-                                        data-form-type="other"
+                                        type={showValue ? 'text' : 'password'}
                                         placeholder={t('valuePlaceholder')}
                                         className="pr-10 font-mono"
                                     />
                                     <Button
                                         type="button"
                                         variant="ghost"
-                                        size="sm"
-                                        className="absolute top-1/2 right-1 -translate-y-1/2"
+                                        size="xs"
+                                        className="absolute right-1 top-1/2 -translate-y-1/2"
                                         onClick={() => setShowValue((v) => !v)}
                                     >
                                         {showValue ? <Eye /> : <EyeOff />}

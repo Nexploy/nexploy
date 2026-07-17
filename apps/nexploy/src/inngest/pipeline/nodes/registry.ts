@@ -1,7 +1,6 @@
 import { INodeExecutor } from '@workspace/typescript-interface/pipeline/pipeline';
 import { cloneRepositoryExecutor } from './executors/clone-repository.executor';
 import { webhookCloneExecutor } from './executors/webhook-clone.executor';
-import { envVarsExecutor } from './executors/env-vars.executor';
 import { buildDockerImageExecutor } from './executors/build-docker-image.executor';
 import { deployComposeExecutor } from './executors/deploy-compose.executor';
 import { pushToRegistryExecutor } from './executors/push-to-registry.executor';
@@ -70,7 +69,6 @@ const executors: INodeExecutor[] = [
     // Deploy
     deployComposeExecutor,
     // Utility
-    envVarsExecutor,
     setEnvVarsExecutor,
     cleanWorkdirExecutor,
     // Notification

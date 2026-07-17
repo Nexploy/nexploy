@@ -5,6 +5,7 @@ import { createContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nod
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { z } from 'zod';
+import { getAllEnvsBuild } from '@/services/repository/build.service';
 
 export class CreateContainerExecutor implements INodeExecutor {
     readonly type = 'create-container';
@@ -23,6 +24,13 @@ export class CreateContainerExecutor implements INodeExecutor {
         );
         const containerName = nodeConfig.containerName;
         const imageName = nodeConfig.imageName;
+
+        const repoEnvs = buildConfig.stageId ? await getAllEnvsBuild(buildConfig.stageId) : [];
+        const envVarMap = Object.fromEntries(repoEnvs.map((e) => [e.key, e.value]));
+        for (const e of [...(nodeConfig.envVarsSource ?? []), ...nodeConfig.envVars]) {
+            envVarMap[e.key] = e.value;
+        }
+        const envVars = Object.entries(envVarMap).map(([key, value]) => ({ key, value }));
 
         await logger.info(
             nodeId,
@@ -45,7 +53,7 @@ export class CreateContainerExecutor implements INodeExecutor {
                         autoRemove: false,
                         privileged: false,
                         ports: [...(nodeConfig.portsSource ?? []), ...nodeConfig.ports],
-                        envVars: [...(nodeConfig.envVarsSource ?? []), ...nodeConfig.envVars],
+                        envVars,
                         volumes: [...(nodeConfig.volumesSource ?? []), ...nodeConfig.volumes],
                         labels,
                     },

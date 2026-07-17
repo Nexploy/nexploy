@@ -5,6 +5,7 @@ import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+import { getAllEnvsBuild } from '@/services/repository/build.service';
 
 export class DeployComposeExecutor implements INodeExecutor {
     readonly type = 'deploy-compose';
@@ -30,16 +31,21 @@ export class DeployComposeExecutor implements INodeExecutor {
             : composeFileName;
         const projectName = `nexploy-${buildConfig.repositoryId}`;
 
-        const envVarsArray =
+        const repoEnvs = buildConfig.stageId ? await getAllEnvsBuild(buildConfig.stageId) : [];
+        const repoEnvMap = Object.fromEntries(repoEnvs.map((e) => [e.key, e.value]));
+
+        const ancestorEnvVarsArray =
             getFromClosestAncestor<{ key: string; value: string }[]>(
                 allOutputs,
                 edges,
                 nodeId,
                 'envVariables',
             ) ?? [];
-        const envVars: Record<string, string> = Object.fromEntries(
-            envVarsArray.map((e) => [e.key, e.value]),
+        const ancestorEnvMap = Object.fromEntries(
+            ancestorEnvVarsArray.map((e) => [e.key, e.value]),
         );
+
+        const envVars: Record<string, string> = { ...repoEnvMap, ...ancestorEnvMap };
 
         const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
         const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');
