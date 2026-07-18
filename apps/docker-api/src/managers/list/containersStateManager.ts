@@ -505,8 +505,13 @@ export class ContainersStateManager extends BaseStateManager {
 
         await this.removeExistingContainer(containerName);
 
-        const traefikNetworkExist =
-            await networksStateManager.ensureNetworkExists(TRAEFIK_NETWORK_NAME);
+        let traefikNetworkExist = true;
+        try {
+            await networksStateManager.createNetworkIfMissing(TRAEFIK_NETWORK_NAME);
+        } catch (err) {
+            logger.warn({ err, network: TRAEFIK_NETWORK_NAME }, 'Traefik network unavailable for deploy');
+            traefikNetworkExist = false;
+        }
 
         const envArray = options.envVars
             ? Object.entries(options.envVars).map(([key, value]) => `${key}=${value}`)

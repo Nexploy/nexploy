@@ -294,6 +294,23 @@ export class NetworksStateManager extends BaseStateManager {
         }
     }
 
+    async createNetworkIfMissing(networkName: string, driver = 'bridge'): Promise<void> {
+        const exists = await this.ensureNetworkExists(networkName);
+        if (exists) return;
+
+        try {
+            logger.info({ networkName, driver }, 'Creating missing Docker network');
+            await this.docker.createNetwork({ Name: networkName, Driver: driver });
+        } catch (error: any) {
+            if (error.statusCode === 409) {
+                logger.debug({ networkName }, 'Network was created concurrently, ignoring');
+                return;
+            }
+            logger.error({ error, networkName }, 'Failed to create network');
+            throw new Error(`Failed to create network ${networkName}: ${error.message}`);
+        }
+    }
+
     async hardRefresh(): Promise<void> {
         logger.info('Starting hard refresh of network state');
 

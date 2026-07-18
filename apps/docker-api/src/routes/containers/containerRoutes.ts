@@ -21,6 +21,8 @@ import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/contain
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { containersStateManager } from '@/managers/list/containersStateManager';
 import { pullImage as pullImageService } from '@/services/imageService';
+import { networksStateManager } from '@/managers/list/networksStateManager';
+import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 
 const NAMED_VOLUME_REGEX = /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/;
 
@@ -194,10 +196,24 @@ app.post(
             createOptions.HostConfig = {};
         }
 
-        if (networks.length > 0) {
-            createOptions.NetworkingConfig = {
-                EndpointsConfig: Object.fromEntries(networks.map((net) => [net.name, {}])),
-            };
+        const endpointsConfig: Record<string, {}> = Object.fromEntries(
+            networks.map((net) => [net.name, {}]),
+        );
+
+        if (!(TRAEFIK_NETWORK_NAME in endpointsConfig)) {
+            try {
+                await networksStateManager.createNetworkIfMissing(TRAEFIK_NETWORK_NAME);
+                endpointsConfig[TRAEFIK_NETWORK_NAME] = {};
+            } catch (error) {
+                logger.warn(
+                    { error, network: TRAEFIK_NETWORK_NAME },
+                    'Could not attach container to Traefik network, continuing without it',
+                );
+            }
+        }
+
+        if (Object.keys(endpointsConfig).length > 0) {
+            createOptions.NetworkingConfig = { EndpointsConfig: endpointsConfig };
         }
 
         if (ports.length > 0) {
