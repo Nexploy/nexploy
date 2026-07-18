@@ -50,7 +50,7 @@ node -v   # must be >= 22.13
 ## 1. Install dependencies
 
 ```bash
-git clone https://github.com/yourusername/nexploy.git
+git clone https://github.com/Nexploy/nexploy.git
 cd nexploy
 pnpm install
 ```
@@ -254,8 +254,9 @@ curl -fsSL https://nexploy.app/install.sh | sh
 Nothing is cloned and nothing is compiled — the installer pulls the published images
 (`nexploy/nexploy` and `nexploy/docker-api`), so a fresh install takes about a minute.
 
-It installs Docker if needed, asks for your domain and a Let's Encrypt email, generates every secret into
-`/etc/nexploy/nexploy.env`, writes the Traefik configuration, then starts five containers:
+It installs Docker if needed, asks for your domain and a Let's Encrypt email (or lets you skip both and run on
+the server's bare IP over plain HTTP), generates every secret into `/etc/nexploy/nexploy.env`, writes the
+Traefik configuration, then starts five containers:
 
 | Container | Role |
 |---|---|
@@ -265,8 +266,17 @@ It installs Docker if needed, asks for your domain and a Let's Encrypt email, ge
 | `nexploy_postgres` | Database |
 | `nexploy_inngest` | Build pipeline jobs |
 
-Requirements: DNS pointing at the machine, and ports **80** and **443** free and reachable — Let's Encrypt uses
-an HTTP challenge.
+Requirements: ports **80** and **443** free and reachable. If you use a domain, DNS must point at the machine
+before the install finishes — Let's Encrypt uses an HTTP challenge.
+
+### Installing without a domain (IP only)
+
+```bash
+NEXPLOY_NO_DOMAIN=true sh -c "$(curl -fsSL https://nexploy.app/install.sh)"
+```
+
+The installer detects the server's public IP and serves Nexploy over plain HTTP — no Let's Encrypt, no email
+needed. Switch to a real domain with HTTPS later from **Admin → Settings** in the app, no reinstall required.
 
 ### Non-interactive install
 
@@ -278,17 +288,18 @@ NEXPLOY_DOMAIN=nexploy.example.com NEXPLOY_EMAIL=you@example.com \
 | Variable | Default | Purpose |
 |---|---|---|
 | `NEXPLOY_DOMAIN` | *(prompted)* | Domain the app is served on |
-| `NEXPLOY_EMAIL` | *(prompted)* | Let's Encrypt contact address |
+| `NEXPLOY_EMAIL` | *(prompted if a domain is set)* | Let's Encrypt contact address |
+| `NEXPLOY_NO_DOMAIN` | `false` | Set to `true` to skip the domain and serve over the server's IP (plain HTTP) |
 | `NEXPLOY_VERSION` | *(latest release)* | Image tag to deploy, e.g. `v1.0.0` |
 | `NEXPLOY_DIR` | `/etc/nexploy` | Where secrets and Traefik config live |
 
 ### Upgrading
 
 ```bash
-curl -fsSL https://nexploy.app/install.sh | sh -s update
+curl -fsSL https://nexploy.app/install.sh | sh -s upgrade
 ```
 
-The update pulls the requested version and recreates the containers. Your secrets, database and domain are
+The upgrade pulls the requested version and recreates the containers. Your secrets, database and domain are
 untouched — re-running the installer never regenerates them.
 
 ### Managing the instance
