@@ -34,10 +34,10 @@ fi
 mkdir -p /tmp/deployer
 chown nextjs:nodejs /tmp/deployer
 
-# ---- Ensure Traefik dynamic config dir is writable by nextjs ----
+# ---- Ensure Traefik config dir is writable by nextjs ----
 if [ -n "$TRAEFIK_SERVICE_DIR" ]; then
     mkdir -p "$TRAEFIK_SERVICE_DIR"
-    chown -R nextjs:nodejs "$TRAEFIK_SERVICE_DIR"
+    chown -R nextjs:nodejs "$(dirname "$TRAEFIK_SERVICE_DIR")"
 fi
 
 # ---- Start server as nextjs user ----
