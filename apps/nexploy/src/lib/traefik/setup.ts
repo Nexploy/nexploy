@@ -36,23 +36,29 @@ async function renderStaticConfig(): Promise<void> {
     if (!target) return;
     if (await fileExists(target)) return;
 
-    const source = path.join(TEMPLATES_DIR, 'traefik.yml.template');
+    const useTls = process.env.TRAEFIK_USE_TLS !== 'false';
+    const templateName = useTls ? 'traefik.yml.template' : 'traefik.no-tls.yml.template';
+    const source = path.join(TEMPLATES_DIR, templateName);
     if (!(await fileExists(source))) {
         console.warn(`⚠️ Traefik setup: static config template not found at ${source}, skipping`);
         return;
     }
 
-    const acmeEmail = process.env.ACME_EMAIL;
-    if (!acmeEmail) {
-        console.warn(
-            '⚠️ Traefik setup: ACME_EMAIL is not set, cannot render traefik.yml — the reverse proxy will not start',
-        );
-        return;
+    let rendered = await fs.readFile(source, 'utf8');
+
+    if (useTls) {
+        const acmeEmail = process.env.ACME_EMAIL;
+        if (!acmeEmail) {
+            console.warn(
+                '⚠️ Traefik setup: ACME_EMAIL is not set, cannot render traefik.yml — the reverse proxy will not start',
+            );
+            return;
+        }
+        rendered = rendered.replaceAll('__ACME_EMAIL__', acmeEmail);
     }
 
-    const rendered = (await fs.readFile(source, 'utf8')).replaceAll('__ACME_EMAIL__', acmeEmail);
     await fs.writeFile(target, rendered, { mode: 0o644 });
-    console.log(`✓ Traefik setup: rendered static config at ${target}`);
+    console.log(`✓ Traefik setup: rendered static config (${templateName}) at ${target}`);
 }
 
 export async function ensureTraefikSetup(): Promise<void> {

@@ -71,7 +71,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/prisma.config.ts ./a
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/src ./apps/nexploy/src
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexploy/tsconfig.json ./apps/nexploy/tsconfig.json
 COPY --from=prepare --chown=nextjs:nodejs /app/infra/traefik/service ./apps/nexploy/traefik-templates
-COPY --from=prepare --chown=nextjs:nodejs /app/infra/traefik/templates/traefik.yml.template ./apps/nexploy/traefik-templates/traefik.yml.template
+COPY --from=prepare --chown=nextjs:nodejs /app/infra/traefik/templates/. ./apps/nexploy/traefik-templates/
 COPY --from=builder --chown=nextjs:nodejs /app/packages ./packages
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
