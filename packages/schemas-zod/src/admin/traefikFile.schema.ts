@@ -26,3 +26,16 @@ export const moveTraefikEntrySchema = z.object({
     // Destination folder, empty string means the service root.
     destinationDir: z.union([z.literal(''), traefikRelPath]),
 });
+
+export const instanceDomainSchema = z
+    .object({
+        domain: z.string().min(1, 'A domain or IP address is required'),
+        useTls: z.boolean(),
+        acmeEmail: z.string().email().optional(),
+    })
+    .refine((data) => !data.useTls || !!data.acmeEmail, {
+        message: 'An email is required to enable HTTPS via Let\'s Encrypt',
+        path: ['acmeEmail'],
+    });
+
+export type InstanceDomainInput = z.infer<typeof instanceDomainSchema>;

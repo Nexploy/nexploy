@@ -6,6 +6,8 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { getCleanupSettings, getCurrentEnvironmentKey } from '@/services/cleanupSettings.service';
 import { DiskUsageCard } from '@/components/admin/settings/DiskUsageCard';
 import { CleanupScheduleCard } from '@/components/admin/settings/CleanupScheduleCard';
+import { InstanceDomainCard } from '@/components/admin/settings/InstanceDomainCard';
+import { getInstanceDomainSettings } from '@/lib/instance/domain';
 import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 
 export const metadata: Metadata = {
@@ -27,6 +29,8 @@ export default async function SettingsPage() {
         diskUsage = null;
     }
 
+    const instanceDomainSettings = getInstanceDomainSettings();
+
     return (
         <div className="flex h-full flex-1 flex-col">
             <div className="flex h-full flex-col gap-5 overflow-hidden">
@@ -35,7 +39,7 @@ export default async function SettingsPage() {
                         <Settings className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight break-all">
+                        <h1 className="break-all text-3xl font-semibold tracking-tight">
                             {t('title')}
                         </h1>
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
@@ -46,6 +50,9 @@ export default async function SettingsPage() {
                     <div className="flex flex-col gap-5 pb-5">
                         <DiskUsageCard initialUsage={diskUsage} />
                         <CleanupScheduleCard settings={settings} />
+                        {instanceDomainSettings && (
+                            <InstanceDomainCard settings={instanceDomainSettings} />
+                        )}
                     </div>
                 </ScrollAreaWithShadow>
             </div>

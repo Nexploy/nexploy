@@ -1,11 +1,21 @@
+import * as fs from 'fs/promises';
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
+import { waitForFile } from '@/utils/wait';
+import { logger } from '@/utils/logger';
+import { HttpError } from '@workspace/shared/http-error';
 import {
     buildCachePruneSchema,
     type CleanupTarget,
 } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
+import { instanceDomainSchema } from '@workspace/schemas-zod/admin/traefikFile.schema';
 import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
+import {
+    NEXPLOY_APP_CONTAINER_NAME,
+    TRAEFIK_CONTAINER_NAME,
+    TRAEFIK_STATIC_CONFIG_PATH,
+} from '@/lib/config';
 
 const app = new Hono();
 
@@ -196,6 +206,90 @@ app.post(
             deletedCaches: result.CachesDeleted?.length ?? 0,
             reclaimedSpace: result.SpaceReclaimed ?? 0,
         };
+    }),
+);
+
+app.post(
+    '/instance-domain',
+    route({ json: instanceDomainSchema }, async (c) => {
+        const { domain, useTls, acmeEmail } = c.req.valid('json');
+
+        const appContainer = docker.getContainer(NEXPLOY_APP_CONTAINER_NAME);
+        let appInfo;
+        try {
+            appInfo = await appContainer.inspect();
+        } catch {
+            throw new HttpError(`Container '${NEXPLOY_APP_CONTAINER_NAME}' not found`, 404);
+        }
+
+        const publicUrl = `${useTls ? 'https' : 'http'}://${domain}`;
+
+        const envMap = new Map(
+            (appInfo.Config.Env ?? []).map((entry) => {
+                const idx = entry.indexOf('=');
+                return [entry.slice(0, idx), entry.slice(idx + 1)] as [string, string];
+            }),
+        );
+        envMap.set('BETTER_AUTH_URL', publicUrl);
+        envMap.set('NEXPLOY_URL', publicUrl);
+        envMap.set('TRAEFIK_USE_TLS', String(useTls));
+        envMap.set('ACME_EMAIL', acmeEmail ?? '');
+        const env = Array.from(envMap.entries()).map(([key, value]) => `${key}=${value}`);
+
+        const labels = { ...(appInfo.Config.Labels ?? {}) };
+        labels['traefik.http.routers.nexploy-app.rule'] = `Host(\`${domain}\`)`;
+        if (useTls) {
+            labels['traefik.http.routers.nexploy-app.entrypoints'] = 'websecure';
+            labels['traefik.http.routers.nexploy-app.tls.certresolver'] = 'letsencrypt';
+            delete labels['traefik.http.routers.nexploy-app.priority'];
+        } else {
+            labels['traefik.http.routers.nexploy-app.entrypoints'] = 'web';
+            delete labels['traefik.http.routers.nexploy-app.tls.certresolver'];
+            labels['traefik.http.routers.nexploy-app.priority'] = '1000';
+        }
+
+        await fs.rm(TRAEFIK_STATIC_CONFIG_PATH, { force: true });
+
+        if (appInfo.State.Running) await appContainer.stop();
+        await appContainer.remove();
+
+        const newContainer = await docker.createContainer({
+            name: appInfo.Name.replace('/', ''),
+            Image: appInfo.Config.Image,
+            Hostname: appInfo.Config.Hostname,
+            Env: env,
+            Cmd: appInfo.Config.Cmd,
+            Entrypoint: appInfo.Config.Entrypoint,
+            Volumes: appInfo.Config.Volumes,
+            WorkingDir: appInfo.Config.WorkingDir,
+            User: appInfo.Config.User,
+            Labels: labels,
+            ExposedPorts: appInfo.Config.ExposedPorts,
+            HostConfig: appInfo.HostConfig,
+            NetworkingConfig: {
+                EndpointsConfig: Object.fromEntries(
+                    Object.keys(appInfo.NetworkSettings.Networks ?? {}).map((name) => [name, {}]),
+                ),
+            },
+        });
+
+        await newContainer.start();
+
+        const configReady = await waitForFile(TRAEFIK_STATIC_CONFIG_PATH, 60_000);
+        if (!configReady) {
+            logger.warn(
+                { path: TRAEFIK_STATIC_CONFIG_PATH },
+                'Traefik static config was not regenerated in time after instance domain change',
+            );
+        }
+
+        try {
+            await docker.getContainer(TRAEFIK_CONTAINER_NAME).restart();
+        } catch (error) {
+            logger.error({ error }, 'Failed to restart Traefik after instance domain change');
+        }
+
+        return { id: newContainer.id, publicUrl };
     }),
 );
 
