@@ -47,6 +47,7 @@ import { NetworksStateManager } from '@/managers/list/networksStateManager';
 import { EventsStateManager } from '@/managers/list/eventsStateManager';
 import { SwarmStateManager } from '@/managers/list/swarmStateManager';
 import { TraefikLogsManager } from '@/managers/traefikLogsManager';
+import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 
 const app = new Hono();
 
@@ -172,6 +173,18 @@ const startServer = async () => {
                 },
                 '✓ All registered environments initialized successfully',
             );
+        }
+
+        const defaultEnvironment = environments.find((env) => env.isDefault);
+        if (defaultEnvironment && registeredEnvironmentIds.includes(defaultEnvironment.id)) {
+            try {
+                await stateManagerFactory
+                    .getManagers(defaultEnvironment.id)
+                    .networks.createNetworkIfMissing(TRAEFIK_NETWORK_NAME);
+                logger.info({ network: TRAEFIK_NETWORK_NAME }, '✓ Traefik network ready');
+            } catch (err) {
+                logger.error({ err, network: TRAEFIK_NETWORK_NAME }, 'Failed to provision Traefik network');
+            }
         }
 
         return app;

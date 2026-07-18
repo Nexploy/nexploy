@@ -40,7 +40,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${TRAEFIK_STATIC_CONFIG:-../traefik/traefik.prod.yml}:/etc/traefik/traefik.yml:ro
-      - ../traefik/service:/etc/traefik/dynamic
+      - ../traefik/service:/etc/nexploy/traefik/service
       - traefik_acme:/etc/traefik
     ports:
       - "80:80"
@@ -82,8 +82,11 @@ services:
       INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY}
       INNGEST_BASE_URL: http://inngest:8288
       TRUSTED_ORIGINS: ${TRUSTED_ORIGINS:-}
+      TRAEFIK_SERVICE_DIR: /etc/nexploy/traefik/service
+      TRAEFIK_CERTS_CONTAINER_PATH: /etc/nexploy/traefik/service/certs
     volumes:
       - deployer_workdir:/tmp/deployer
+      - ../traefik/service:/etc/nexploy/traefik/service
     depends_on:
       postgres:
         condition: service_healthy

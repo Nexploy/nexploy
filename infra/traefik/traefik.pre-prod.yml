@@ -44,7 +44,7 @@ providers:
     watch: true
 
   file:
-    directory: /etc/traefik/dynamic
+    directory: /etc/nexploy/traefik/service
     watch: true
 
 certificatesResolvers:

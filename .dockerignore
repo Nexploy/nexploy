@@ -7,6 +7,12 @@ out
 .env
 .env.*
 !.env.production.example
-infra
+infra/traefik/letsencrypt/
+infra/traefik/logs/
+infra/traefik/*.generated.yml
+infra/traefik/service/acme.json
+infra/traefik/service/certs/
+infra/traefik/service/logs/
+infra/traefik/service/.DS_Store
 BUILD.md
 CLAUDE.md

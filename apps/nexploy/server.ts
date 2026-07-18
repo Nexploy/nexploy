@@ -166,7 +166,16 @@ function matchAndTransformWsUrl(pathname: string): MatchResult {
 
 pruneTurbopackCache();
 
-app.prepare().then(() => {
+app.prepare().then(async () => {
+    const { ensureTraefikSetup } = await import('./src/lib/traefik/setup');
+    try {
+        await ensureTraefikSetup();
+        console.log(`✓ Traefik config directory ready: ${process.env.TRAEFIK_SERVICE_DIR ?? '(default)'}`);
+    } catch (err) {
+        console.error('❌ Failed to set up Traefik config directory:', err);
+        process.exit(1);
+    }
+
     const HEAP_SOFT_LIMIT_MB = Number(process.env.HEAP_SOFT_LIMIT_MB ?? 3200);
     if (typeof (global as any).gc === 'function') {
         const timer = setInterval(() => {

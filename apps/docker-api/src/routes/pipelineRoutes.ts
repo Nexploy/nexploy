@@ -20,6 +20,7 @@ import os from 'os';
 import { logger } from '@/utils/logger';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 import { docker } from '@/utils/dockerClient';
+import { networksStateManager } from '@/managers/list/networksStateManager';
 
 const app = new Hono();
 
@@ -163,6 +164,7 @@ app.post(
                 dockerEnv,
             );
 
+            await networksStateManager.createNetworkIfMissing(TRAEFIK_NETWORK_NAME);
             const traefikNetwork = docker.getNetwork(TRAEFIK_NETWORK_NAME);
             await Promise.all(
                 containerIds.map(async (containerId: string) => {

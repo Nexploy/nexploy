@@ -17,6 +17,7 @@ import {
 import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
+import { networksStateManager } from '@/managers/list/networksStateManager';
 import { docker } from '@/utils/dockerClient';
 
 const app = new Hono();
@@ -446,6 +447,13 @@ app.post('/stream/compose', async (c) => {
                     'Remote environment: routing via published host ports (skipping Traefik network attach)',
                 );
             } else {
+                try {
+                    await networksStateManager.createNetworkIfMissing(TRAEFIK_NETWORK_NAME);
+                } catch (e) {
+                    const reason = e instanceof Error ? e.message : String(e);
+                    sendLog(`Warning: Could not provision Traefik network: ${reason}`);
+                }
+
                 sendLog(`Connecting ${containerIds.length} containers to Traefik network...`);
                 for (const containerId of containerIds) {
                     try {
