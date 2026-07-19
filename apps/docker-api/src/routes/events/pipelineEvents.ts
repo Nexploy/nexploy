@@ -101,6 +101,7 @@ app.post('/stream/compose', async (c) => {
         let envFileWritten = false;
         let modifiedComposeFile: string | null = null;
         let volumeTransformResult: VolumeTransformationResult | null = null;
+        let composeDir: string = workDir;
         const abortController = new AbortController();
 
         const envConfig = environmentId
@@ -132,6 +133,7 @@ app.post('/stream/compose', async (c) => {
         try {
             const composeFile = composePath;
             const composeFilePath = path.join(workDir, composeFile);
+            composeDir = path.dirname(composeFilePath);
 
             logger.info(
                 { workDir, projectName, composeFile, environmentId, hasEnvVars: !!envVars },
@@ -183,7 +185,7 @@ app.post('/stream/compose', async (c) => {
                     serviceName,
                     dockerfileContent,
                 ] of volumeTransformResult.generatedDockerfiles) {
-                    const dockerfilePath = path.join(workDir, `.nexploy-${serviceName}.Dockerfile`);
+                    const dockerfilePath = path.join(composeDir, `.nexploy-${serviceName}.Dockerfile`);
                     fs.writeFileSync(dockerfilePath, dockerfileContent, 'utf8');
                     sendLog(`Generated Dockerfile for service: ${serviceName}`);
                 }
@@ -243,7 +245,7 @@ app.post('/stream/compose', async (c) => {
             }
 
             if (composeModified) {
-                modifiedComposeFile = path.join(workDir, '.nexploy-compose-processed.yml');
+                modifiedComposeFile = path.join(composeDir, '.nexploy-compose-processed.yml');
                 fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
             }
 
@@ -348,7 +350,7 @@ app.post('/stream/compose', async (c) => {
                     sendLog(`  ${serviceName} → ${builtRef}`);
                 }
 
-                modifiedComposeFile = path.join(workDir, '.nexploy-compose-processed.yml');
+                modifiedComposeFile = path.join(composeDir, '.nexploy-compose-processed.yml');
                 fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
             } else if (servicesToPull.length === 0) {
                 sendLog('No images to pull or build');
@@ -391,7 +393,8 @@ app.post('/stream/compose', async (c) => {
 
                 if (portsAdded) {
                     modifiedComposeFile =
-                        modifiedComposeFile || path.join(workDir, '.nexploy-compose-processed.yml');
+                        modifiedComposeFile ||
+                        path.join(composeDir, '.nexploy-compose-processed.yml');
                     fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
                     sendLog('Updated compose file with port mappings for remote environment');
                 }
@@ -534,7 +537,7 @@ app.post('/stream/compose', async (c) => {
 
             if (volumeTransformResult) {
                 for (const serviceName of volumeTransformResult.generatedDockerfiles.keys()) {
-                    const dockerfilePath = path.join(workDir, `.nexploy-${serviceName}.Dockerfile`);
+                    const dockerfilePath = path.join(composeDir, `.nexploy-${serviceName}.Dockerfile`);
                     try {
                         if (fs.existsSync(dockerfilePath)) {
                             fs.unlinkSync(dockerfilePath);
