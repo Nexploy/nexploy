@@ -5,7 +5,7 @@ import {
     volumeDeleteSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 export const volumesGroup: ToolGroup = {
@@ -84,7 +84,7 @@ export const volumesGroup: ToolGroup = {
                 inputSchema: volumeDeleteSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'volume', 'manage');
+                const g = guardDestructive(ctx, 'volume', 'manage', params.volumeNames.join(','));
                 if (g) return g;
                 try {
                     await kyDocker
@@ -104,7 +104,7 @@ export const volumesGroup: ToolGroup = {
             'pruneVolumes',
             { description: 'Remove all unused Docker volumes. Requires admin role.' },
             async () => {
-                const g = guard(ctx, 'volume', 'remove');
+                const g = guardDestructive(ctx, 'volume', 'remove', 'all-unused-volumes');
                 if (g) return g;
                 try {
                     const result = await kyDocker

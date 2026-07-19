@@ -11,6 +11,9 @@ model User {
   banReason            String?
   banExpires           DateTime?
   twoFactorEnabled     Boolean?              @default(false)
+  promotedById         String?
+  promotedBy           User?                  @relation("UserPromotions", fields: [promotedById], references: [id], onDelete: SetNull)
+  promoted             User[]                 @relation("UserPromotions")
   sessions             Session[]
   accounts             Account[]
   twofactors           TwoFactor[]

@@ -7,7 +7,7 @@ import {
 } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 export const imagesGroup: ToolGroup = {
@@ -115,7 +115,7 @@ export const imagesGroup: ToolGroup = {
                 inputSchema: imageDeleteSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'image', 'manage');
+                const g = guardDestructive(ctx, 'image', 'manage', params.imageIds.join(','));
                 if (g) return g;
                 try {
                     const result = await kyDocker
@@ -153,7 +153,7 @@ export const imagesGroup: ToolGroup = {
                 inputSchema: imagePruneSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'image', 'remove');
+                const g = guardDestructive(ctx, 'image', 'remove', 'all-unused-images');
                 if (g) return g;
                 try {
                     const result = await kyDocker

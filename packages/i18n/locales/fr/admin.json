@@ -216,6 +216,7 @@
         "cannotChangeOwnRole": "Vous ne pouvez pas modifier votre propre rôle",
         "cannotDeleteOwnAccount": "Vous ne pouvez pas supprimer votre propre compte",
         "cannotModifySystemUser": "L'utilisateur système ne peut pas être modifié",
+        "cannotModifyAnotherAdmin": "Seul l'admin qui a promu cet utilisateur peut modifier son rôle, le bannir ou le supprimer",
         "banFailed": "Échec du bannissement/débannissement de l'utilisateur"
     },
     "traefik": {

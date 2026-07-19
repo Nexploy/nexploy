@@ -26,6 +26,7 @@ export const confirmGroup: ToolGroup = {
                 }).shape,
             },
             async ({ action, target }) => {
+                ctx.confirmedTargets.add(target);
                 return ok(JSON.stringify({ __needsConfirmation: true, action, target }));
             },
         );

@@ -6,7 +6,7 @@ import {
     validateComposeSyntaxMcpSchema,
 } from '@workspace/schemas-zod/docker/composes/composesAction.schema';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 export const composeGroup: ToolGroup = {
@@ -137,7 +137,10 @@ export const composeGroup: ToolGroup = {
                 inputSchema: composeActionMcpSchema.shape,
             },
             async ({ stackName, action }) => {
-                const g = guard(ctx, 'container', 'manage');
+                const g =
+                    action === 'remove'
+                        ? guardDestructive(ctx, 'container', 'manage', stackName)
+                        : guard(ctx, 'container', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker

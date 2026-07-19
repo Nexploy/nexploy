@@ -5,7 +5,7 @@ import {
     networkDeleteSchema,
 } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 export const networksGroup: ToolGroup = {
@@ -89,7 +89,7 @@ export const networksGroup: ToolGroup = {
                 inputSchema: networkDeleteSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'network', 'manage');
+                const g = guardDestructive(ctx, 'network', 'manage', params.networkIds.join(','));
                 if (g) return g;
                 try {
                     await kyDocker

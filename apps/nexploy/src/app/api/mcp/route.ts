@@ -48,7 +48,7 @@ async function mcpRouteHandler(request: Request): Promise<Response> {
     }
 
     const aiSettings = await getAISettings();
-    if (!aiSettings?.mcpEnabled) {
+    if (!aiSettings?.aiEnabled || !aiSettings?.mcpEnabled) {
         const disabledSessionId = request.headers.get('mcp-session-id');
         if (disabledSessionId) {
             const existing = mcpSessions.get(disabledSessionId);

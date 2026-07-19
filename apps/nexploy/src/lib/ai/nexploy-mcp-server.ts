@@ -10,7 +10,13 @@ export function createNexployMCPServer(
     defaultEnvironmentId?: string,
 ): McpServer {
     const server = new McpServer({ name: 'nexploy-mcp', version: '1.0.0' });
-    const ctx: ToolContext = { userId, role, environmentId: defaultEnvironmentId, ...options };
+    const ctx: ToolContext = {
+        userId,
+        role,
+        environmentId: defaultEnvironmentId,
+        ...options,
+        confirmedTargets: new Set<string>(),
+    };
 
     for (const group of toolGroups) {
         group.register(server, ctx);

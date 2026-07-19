@@ -216,6 +216,7 @@
         "cannotChangeOwnRole": "You cannot change your own role",
         "cannotDeleteOwnAccount": "You cannot delete your own account",
         "cannotModifySystemUser": "System user cannot be modified",
+        "cannotModifyAnotherAdmin": "Only the admin who promoted this user can change their role, ban, or delete them",
         "banFailed": "Failed to ban/unban user"
     },
     "traefik": {

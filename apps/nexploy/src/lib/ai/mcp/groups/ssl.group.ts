@@ -10,7 +10,7 @@ import {
     deleteSslCertificate,
     getCertificates,
 } from '@/services/sslCertificate.service';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 export const sslGroup: ToolGroup = {
@@ -94,7 +94,7 @@ export const sslGroup: ToolGroup = {
                 inputSchema: deleteCertSchema.shape,
             },
             async ({ id }) => {
-                const g = guard(ctx, 'repository', 'update');
+                const g = guardDestructive(ctx, 'repository', 'update', id);
                 if (g) return g;
                 try {
                     await deleteSslCertificate(id);

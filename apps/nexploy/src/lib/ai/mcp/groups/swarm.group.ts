@@ -7,7 +7,7 @@ import {
 } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 import { swarmNodeActionSchema } from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 export const swarmGroup: ToolGroup = {
@@ -104,7 +104,7 @@ export const swarmGroup: ToolGroup = {
                 }).shape,
             },
             async ({ force }) => {
-                const g = guard(ctx, 'swarm', 'manage');
+                const g = guardDestructive(ctx, 'swarm', 'manage', 'this-swarm');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -127,7 +127,10 @@ export const swarmGroup: ToolGroup = {
                 inputSchema: swarmNodeActionSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'swarm', 'manage');
+                const g =
+                    params.action === 'remove'
+                        ? guardDestructive(ctx, 'swarm', 'manage', params.nodeId)
+                        : guard(ctx, 'swarm', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -199,7 +202,7 @@ export const swarmGroup: ToolGroup = {
                 inputSchema: removeServicesSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'swarm', 'manage');
+                const g = guardDestructive(ctx, 'swarm', 'manage', params.serviceIds.join(','));
                 if (g) return g;
                 try {
                     await kyDocker

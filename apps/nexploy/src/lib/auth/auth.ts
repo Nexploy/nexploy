@@ -26,6 +26,7 @@ export const auth = betterAuth({
     },
     emailAndPassword: {
         enabled: true,
+        disableSignUp: true,
     },
     session: {
         expiresIn: 60 * 60 * 24 * 7,

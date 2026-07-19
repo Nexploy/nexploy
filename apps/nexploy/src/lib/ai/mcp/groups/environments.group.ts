@@ -10,7 +10,7 @@ import {
     setDefaultEnvironmentById,
     updateEnvironment,
 } from '@/services/environment/environment.service';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 import { z } from 'zod';
 
@@ -146,7 +146,7 @@ export const environmentsGroup: ToolGroup = {
                 inputSchema: environmentIdSchema.shape,
             },
             async ({ environmentId }) => {
-                const g = guard(ctx, 'environment', 'delete');
+                const g = guardDestructive(ctx, 'environment', 'delete', environmentId);
                 if (g) return g;
                 try {
                     await deleteEnvironment(environmentId);
