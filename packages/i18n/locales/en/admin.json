@@ -60,7 +60,8 @@
         "upgradeWarning": "Upgrading restarts Nexploy and its Docker management API — this takes a few seconds and briefly interrupts access.",
         "upgradeRestarting": "Nexploy is upgrading — this takes a few seconds. Reload the page shortly.",
         "upgradeCheckFailed": "Failed to check for updates",
-        "upgradeCheckButton": "Check for updates"
+        "upgradeCheckButton": "Check for updates",
+        "upgradeConfirmTitle": "Upgrade Nexploy?"
     },
     "users": "Users",
     "user": "User",

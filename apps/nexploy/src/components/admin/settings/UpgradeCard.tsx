@@ -7,10 +7,12 @@ import { useTranslations } from 'next-intl';
 import { ArrowUpCircle, CheckCircle2, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Button } from '@workspace/ui/components/button';
+import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { triggerUpgradeAction } from '@/actions/admin/triggerUpgrade.action';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 interface VersionInfo {
     current: string;
@@ -20,6 +22,7 @@ interface VersionInfo {
 
 export function UpgradeCard() {
     const t = useTranslations('admin.settings');
+    const tCommon = useTranslations('common');
     const [isRestarting, setIsRestarting] = useState(false);
 
     const { data, isLoading, isValidating, mutate } = useSWR<VersionInfo | null>(
@@ -27,10 +30,34 @@ export function UpgradeCard() {
         fetcherApi,
     );
 
+    const { openDialog, closeDialog } = useConfirmationDialogStore();
+
     const { execute: upgrade, isPending: upgrading } = useAction(triggerUpgradeAction, {
         onSuccess: () => setIsRestarting(true),
         onError: () => setIsRestarting(true),
     });
+
+    const handleUpgrade = (version: string) => {
+        openDialog({
+            title: t('upgradeConfirmTitle'),
+            description: t('upgradeWarning'),
+            content: (
+                <DialogFooter>
+                    <Button variant="outline" onClick={closeDialog}>
+                        {tCommon('cancel')}
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            upgrade({ version });
+                            closeDialog();
+                        }}
+                    >
+                        {t('upgradeButton', { version })}
+                    </Button>
+                </DialogFooter>
+            ),
+        });
+    };
 
     return (
         <Card>
@@ -84,19 +111,14 @@ export function UpgradeCard() {
                             </div>
                         </div>
                         {data.updateAvailable ? (
-                            <>
-                                <p className="text-muted-foreground text-xs">
-                                    {t('upgradeWarning')}
-                                </p>
-                                <Button
-                                    disabled={upgrading}
-                                    isLoading={upgrading}
-                                    className="self-end"
-                                    onClick={() => upgrade({ version: data.latest })}
-                                >
-                                    {t('upgradeButton', { version: data.latest })}
-                                </Button>
-                            </>
+                            <Button
+                                disabled={upgrading}
+                                isLoading={upgrading}
+                                className="self-end"
+                                onClick={() => handleUpgrade(data.latest)}
+                            >
+                                {t('upgradeButton', { version: data.latest })}
+                            </Button>
                         ) : (
                             <div className="text-muted-foreground flex items-center gap-2 text-sm">
                                 <CheckCircle2 className="size-4" />
