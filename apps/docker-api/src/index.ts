@@ -48,6 +48,7 @@ import { EventsStateManager } from '@/managers/list/eventsStateManager';
 import { SwarmStateManager } from '@/managers/list/swarmStateManager';
 import { TraefikLogsManager } from '@/managers/traefikLogsManager';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
+import { runSelfUpgradeAndExit } from '@/lib/selfUpgrade';
 
 const app = new Hono();
 
@@ -194,23 +195,27 @@ const startServer = async () => {
     }
 };
 
-setupGracefulShutdown(async () => {
-    logger.info('Shutting down Docker management services...');
-    await stateManagerFactory.shutdownAll();
-    await dockerClientRegistry.shutdown();
-    logger.info('Docker management services stopped');
-});
-
-startServer().then((app) => {
-    const port = Number(process.env.PORT);
-
-    const server = serve({
-        fetch: app.fetch,
-        port,
+if (process.env.SELF_UPGRADE_TARGET_IMAGE) {
+    runSelfUpgradeAndExit();
+} else {
+    setupGracefulShutdown(async () => {
+        logger.info('Shutting down Docker management services...');
+        await stateManagerFactory.shutdownAll();
+        await dockerClientRegistry.shutdown();
+        logger.info('Docker management services stopped');
     });
 
-    injectWebSocket(server);
+    startServer().then((app) => {
+        const port = Number(process.env.PORT);
 
-    logger.info(`🚀 Server running on http://localhost:${port}`);
-    logger.info(`🔌 WebSocket available`);
-});
+        const server = serve({
+            fetch: app.fetch,
+            port,
+        });
+
+        injectWebSocket(server);
+
+        logger.info(`🚀 Server running on http://localhost:${port}`);
+        logger.info(`🔌 WebSocket available`);
+    });
+}

@@ -49,7 +49,17 @@
         "acmeEmailLabel": "Email Let's Encrypt",
         "acmeEmailPlaceholder": "toi@exemple.com",
         "domainWarning": "Enregistrer redémarre Nexploy et le reverse proxy — cela prend quelques secondes et interrompt brièvement l'accès.",
-        "domainRestarting": "Nexploy redémarre avec les nouveaux paramètres de domaine — cela prend quelques secondes. Recharge la page dans un instant."
+        "domainRestarting": "Nexploy redémarre avec les nouveaux paramètres de domaine — cela prend quelques secondes. Recharge la page dans un instant.",
+        "upgradeTitle": "Version de Nexploy",
+        "upgradeDescription": "Vérifie les mises à jour et met à niveau Nexploy vers la dernière version",
+        "upgradeCurrentVersion": "Version actuelle",
+        "upgradeLatestVersion": "Dernière version",
+        "upgradeUpToDate": "Vous utilisez la dernière version",
+        "upgradeAvailable": "Une nouvelle version est disponible",
+        "upgradeButton": "Mettre à niveau vers {version}",
+        "upgradeWarning": "La mise à niveau redémarre Nexploy et son API de gestion Docker — cela prend quelques secondes et interrompt brièvement l'accès.",
+        "upgradeRestarting": "Nexploy est en cours de mise à niveau — cela prend quelques secondes. Recharge la page dans un instant.",
+        "upgradeCheckFailed": "Échec de la vérification des mises à jour"
     },
     "users": "Utilisateurs",
     "user": "Utilisateur",

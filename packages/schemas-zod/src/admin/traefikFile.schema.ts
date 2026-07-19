@@ -39,3 +39,9 @@ export const instanceDomainSchema = z
     });
 
 export type InstanceDomainInput = z.infer<typeof instanceDomainSchema>;
+
+export const upgradeSchema = z.object({
+    version: z.string().regex(/^[\w.\-]+$/, 'Invalid version format'),
+});
+
+export type UpgradeInput = z.infer<typeof upgradeSchema>;

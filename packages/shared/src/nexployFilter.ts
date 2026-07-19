@@ -11,6 +11,8 @@ export const NEXPLOY_INFRASTRUCTURE_CONTAINERS = [
     'nexploy_traefik',
     'nexploy_postgres',
     'nexploy_inngest',
+    'nexploy_app',
+    'nexploy_docker_api',
 ];
 
 export const NEXPLOY_INFRASTRUCTURE_NETWORKS = ['nexploy_network'];
