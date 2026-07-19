@@ -59,7 +59,8 @@
         "upgradeButton": "Mettre à niveau vers {version}",
         "upgradeWarning": "La mise à niveau redémarre Nexploy et son API de gestion Docker — cela prend quelques secondes et interrompt brièvement l'accès.",
         "upgradeRestarting": "Nexploy est en cours de mise à niveau — cela prend quelques secondes. Recharge la page dans un instant.",
-        "upgradeCheckFailed": "Échec de la vérification des mises à jour"
+        "upgradeCheckFailed": "Échec de la vérification des mises à jour",
+        "upgradeCheckButton": "Vérifier les mises à jour"
     },
     "users": "Utilisateurs",
     "user": "Utilisateur",
