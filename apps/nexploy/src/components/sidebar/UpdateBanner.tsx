@@ -6,9 +6,11 @@ import { useAction } from 'next-safe-action/hooks';
 import { useTranslations } from 'next-intl';
 import { ArrowUpCircle, Loader2, X } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { DialogFooter } from '@workspace/ui/components/dialog';
 import { SidebarMenu, SidebarMenuItem } from '@workspace/ui/components/sidebar';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { triggerUpgradeAction } from '@/actions/admin/triggerUpgrade.action';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 interface VersionInfo {
     current: string;
@@ -20,6 +22,8 @@ const DISMISS_KEY = 'nexploy-update-dismissed-version';
 
 export function UpdateBanner() {
     const t = useTranslations('navigation');
+    const tSettings = useTranslations('admin.settings');
+    const tCommon = useTranslations('common');
     const [dismissedVersion, setDismissedVersion] = useLocalStorage<string | null>(
         DISMISS_KEY,
         null,
@@ -31,6 +35,8 @@ export function UpdateBanner() {
         { refreshInterval: 60 * 60 * 1000, shouldRetryOnError: false },
     );
 
+    const { openDialog, closeDialog } = useConfirmationDialogStore();
+
     const { execute: upgrade, isPending: upgrading } = useAction(triggerUpgradeAction);
 
     if (!data?.updateAvailable || data.latest === dismissedVersion) {
@@ -38,6 +44,28 @@ export function UpdateBanner() {
     }
 
     const dismiss = () => setDismissedVersion(data.latest);
+
+    const handleUpgrade = (version: string) => {
+        openDialog({
+            title: tSettings('upgradeConfirmTitle'),
+            description: tSettings('upgradeWarning'),
+            content: (
+                <DialogFooter>
+                    <Button variant="outline" onClick={closeDialog}>
+                        {tCommon('cancel')}
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            upgrade({ version });
+                            closeDialog();
+                        }}
+                    >
+                        {tSettings('upgradeButton', { version })}
+                    </Button>
+                </DialogFooter>
+            ),
+        });
+    };
 
     return (
         <SidebarMenu className="group-data-[state=collapsed]:hidden">
@@ -63,13 +91,9 @@ export function UpdateBanner() {
                         size="sm"
                         className="mt-2 h-7 w-full text-xs"
                         disabled={upgrading}
-                        onClick={() => upgrade({ version: data.latest })}
+                        onClick={() => handleUpgrade(data.latest)}
                     >
-                        {upgrading ? (
-                            <Loader2 className="size-3.5 animate-spin" />
-                        ) : (
-                            t('update')
-                        )}
+                        {upgrading ? <Loader2 className="size-3.5 animate-spin" /> : t('update')}
                     </Button>
                 </div>
             </SidebarMenuItem>
