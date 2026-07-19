@@ -5,7 +5,7 @@ import {
     updateRegistrySchema,
 } from '@workspace/schemas-zod/registry/registry.schema';
 import { getRegistries, createRegistry, updateRegistry, deleteRegistry } from '@/services/registry.service';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 export const registriesGroup: ToolGroup = {
@@ -79,7 +79,7 @@ export const registriesGroup: ToolGroup = {
                 inputSchema: deleteRegistrySchema.shape,
             },
             async ({ id }) => {
-                const g = guard(ctx, 'registry', 'delete');
+                const g = guardDestructive(ctx, 'registry', 'delete', id);
                 if (g) return g;
                 try {
                     await deleteRegistry(id);

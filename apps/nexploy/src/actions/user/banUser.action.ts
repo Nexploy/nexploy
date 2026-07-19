@@ -12,11 +12,17 @@ export const banUser = authActionServer
     .use(requirePermission('user', 'ban'))
     .use(preventSelfAction)
     .inputSchema(banUsersSchema)
-    .action(async ({ parsedInput: { userId, reason, action } }) => {
+    .action(async ({ parsedInput: { userId, reason, action }, ctx }) => {
         const t = await getTranslations('admin');
-        const targetUser = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+        const targetUser = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { role: true, promotedById: true },
+        });
         if (targetUser?.role === 'system') {
             throw new Error(t('errors.cannotModifySystemUser'));
+        }
+        if (targetUser?.role === 'admin' && targetUser.promotedById !== ctx.session.user.id) {
+            throw new Error(t('errors.cannotModifyAnotherAdmin'));
         }
 
         try {

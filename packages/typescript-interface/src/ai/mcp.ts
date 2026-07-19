@@ -17,4 +17,5 @@ export interface ToolContext extends McpServerOptions {
     userId: string;
     role: string;
     environmentId?: string;
+    confirmedTargets: Set<string>;
 }

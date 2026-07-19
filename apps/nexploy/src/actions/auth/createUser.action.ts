@@ -1,16 +1,17 @@
 'use server';
 
-import { actionServer } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { createUserFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { createUser } from '@/services/auth/createUser.service';
 import { revalidatePath } from 'next/cache';
 
-export const onCreateUserAction = actionServer
+export const onCreateUserAction = authActionServer
+    .use(requirePermission('user', 'create'))
     .inputSchema(createUserFormSchema)
-    .action(async ({ parsedInput }) => {
+    .action(async ({ parsedInput, ctx }) => {
         try {
-            const user = await createUser(parsedInput);
+            const user = await createUser(parsedInput, ctx.session.user.id);
             revalidatePath('/admin/users');
 
             return user;

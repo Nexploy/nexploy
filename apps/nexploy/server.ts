@@ -8,6 +8,8 @@ import { terminalSchema } from '@workspace/schemas-zod/websocket/terminal.schema
 import { Socket } from 'net';
 import { attachSchema } from '@workspace/schemas-zod/websocket/attach.schema';
 import type { MatchResult, WSRouteConfig } from '@workspace/typescript-interface/websocket';
+import { auth } from './src/lib/auth/auth';
+import { hasPermission } from './src/lib/auth/permissions';
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -204,7 +206,7 @@ app.prepare().then(async () => {
         socket.once('close', () => openSockets.delete(socket));
     });
 
-    server.on('upgrade', (req: IncomingMessage, socket: Socket, head: Buffer) => {
+    server.on('upgrade', async (req: IncomingMessage, socket: Socket, head: Buffer) => {
         const parsedUrl = new URL(req.url!, `http://${req.headers.host}`);
         const pathname = parsedUrl.pathname;
 
@@ -219,6 +221,18 @@ app.prepare().then(async () => {
 
             const result = matchAndTransformWsUrl(pathname!);
             if (result.matched) {
+                if (pathname?.startsWith('/api/ws/docker/terminal') || pathname?.startsWith('/api/ws/docker/attach')) {
+                    const headers = new Headers();
+                    if (req.headers.cookie) headers.set('cookie', req.headers.cookie);
+                    const session = await auth.api.getSession({ headers }).catch(() => null);
+                    const role = session?.user?.role ?? '';
+                    if (!session?.user || !hasPermission(role, 'container', 'manage')) {
+                        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+                        socket.destroy();
+                        return;
+                    }
+                }
+
                 const queryString = parsedUrl.search;
                 req.url = result.url! + queryString;
                 console.log('🔌 Proxying WebSocket:', result.original, '→', req.url);

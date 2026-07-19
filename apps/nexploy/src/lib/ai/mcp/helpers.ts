@@ -15,3 +15,23 @@ export function guard(ctx: ToolContext, resource: PermissionResource, action: st
     }
     return null;
 }
+
+export function guardDestructive(
+    ctx: ToolContext,
+    resource: PermissionResource,
+    action: string,
+    target: string,
+) {
+    const permissionError = guard(ctx, resource, action);
+    if (permissionError) return permissionError;
+
+    if (ctx.requireDestructiveConfirmation) {
+        if (!ctx.confirmedTargets.has(target)) {
+            return fail(
+                `Confirmation required before this destructive action can run. Call requestConfirmation with target "${target}" first, present it to the user, and only retry this call after they explicitly confirm.`,
+            );
+        }
+        ctx.confirmedTargets.delete(target);
+    }
+    return null;
+}

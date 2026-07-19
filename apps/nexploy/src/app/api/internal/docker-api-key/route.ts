@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import fs from 'fs';
 import { route } from '@/lib/api/nextRoute';
-import { auth } from '@/lib/auth/auth';
 
 const KEY_FILE = '/tmp/nexploy-api-key';
 
@@ -21,20 +20,8 @@ const matchesInternalSecret = (candidate: string) => {
 
 const isAuthorized = async (request: Request) => {
     const internalSecret = request.headers.get('x-internal-secret');
-
-    if (internalSecret) {
-        return matchesInternalSecret(internalSecret);
-    }
-
-    const apiKeyHeader = request.headers.get('x-api-key');
-
-    if (!apiKeyHeader) return false;
-
-    const result = await auth.api.verifyApiKey({
-        body: { key: apiKeyHeader },
-    });
-
-    return result.valid;
+    if (!internalSecret) return false;
+    return matchesInternalSecret(internalSecret);
 };
 
 export const GET = route.handler(async (request: Request) => {

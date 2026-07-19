@@ -22,7 +22,7 @@ import {
     removeBuild,
     startBuildRepository,
 } from '@/services/repository/build.service';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 export const repositoriesGroup: ToolGroup = {
@@ -227,7 +227,7 @@ export const repositoriesGroup: ToolGroup = {
                 inputSchema: deleteRepositorySchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'repository', 'delete');
+                const g = guardDestructive(ctx, 'repository', 'delete', params.confirmName);
                 if (g) return g;
                 try {
                     await deleteRepository(params, ctx.userId);

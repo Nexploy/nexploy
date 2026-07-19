@@ -16,9 +16,15 @@ export const deleteUser = authActionServer
             throw new Error(t('errors.cannotDeleteOwnAccount'));
         }
 
-        const targetUser = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+        const targetUser = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { role: true, promotedById: true },
+        });
         if (targetUser?.role === 'system') {
             throw new Error(t('errors.cannotModifySystemUser'));
+        }
+        if (targetUser?.role === 'admin' && targetUser.promotedById !== session.user.id) {
+            throw new Error(t('errors.cannotModifyAnotherAdmin'));
         }
 
         await prisma.user.delete({

@@ -11,7 +11,7 @@ import {
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { Container } from '@workspace/typescript-interface/docker/docker.container';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 async function resolveContainer(
@@ -138,6 +138,8 @@ export const containersGroup: ToolGroup = {
                     }
                     const name = match.name.replace(/^\//, '');
                     if (action === 'remove') {
+                        const gd = guardDestructive(ctx, 'container', 'manage', name);
+                        if (gd) return gd;
                         await kyDocker.delete('container/remove', {
                             json: { containerIds: [match.id] },
                             environmentId: ctx.environmentId,
@@ -282,7 +284,7 @@ export const containersGroup: ToolGroup = {
                 inputSchema: mcpExecInContainerSchema.shape,
             },
             async ({ idOrName, command }) => {
-                const g = guard(ctx, 'container', 'manage');
+                const g = guardDestructive(ctx, 'container', 'manage', idOrName);
                 if (g) return g;
                 try {
                     const result = await kyDocker
