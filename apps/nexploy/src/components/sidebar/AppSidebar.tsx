@@ -7,6 +7,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import Image from 'next/image';
 import { UpdateBanner } from './UpdateBanner';
 import { AppVersion } from './AppVersion';
+import { ExternalLinks } from './ExternalLinks';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -50,6 +51,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
             </SidebarContent>
             <SidebarFooter className={'mx-2'}>
                 <UpdateBanner />
+                <ExternalLinks />
                 <AccountMenu />
             </SidebarFooter>
         </Sidebar>

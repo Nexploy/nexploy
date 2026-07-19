@@ -46,5 +46,7 @@
     "updateAvailable": "Mise à jour disponible",
     "updateDescription": "La version {version} est disponible.",
     "update": "Mettre à jour",
-    "traefik": "Traefik"
+    "traefik": "Traefik",
+    "website": "Site web",
+    "documentation": "Documentation"
 }
