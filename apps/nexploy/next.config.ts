@@ -1,16 +1,9 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
-import path from 'path';
-import fs from 'fs';
-
-const rootPackage = JSON.parse(fs.readFileSync(path.resolve(__dirname, './package.json'), 'utf-8'));
 
 const nextConfig: NextConfig = {
     output: 'standalone',
     distDir: process.env.NEXT_DIST_DIR || '.next',
-    env: {
-        appVersion: rootPackage.version,
-    },
     images: {
         remotePatterns: [
             {

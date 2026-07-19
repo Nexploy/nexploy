@@ -1,9 +1,4 @@
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-} from '@workspace/ui/components/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, } from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
@@ -11,6 +6,7 @@ import { Environment } from '@/components/sidebar/environment/Environment';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import Image from 'next/image';
 import { UpdateBanner } from './UpdateBanner';
+import { AppVersion } from './AppVersion';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -36,11 +32,9 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                         width={28}
                         height={28}
                     />
-                    <div className="text-sx flex flex-1 flex-col text-sm leading-4 transition-[opacity] duration-200 ease-linear group-data-[state=collapsed]:opacity-0">
+                    <div className="text-sx flex flex-1 flex-col text-sm leading-4 transition-opacity duration-200 ease-linear group-data-[state=collapsed]:opacity-0">
                         <span className="truncate font-bold">Nexploy</span>
-                        <span className="text-muted-foreground truncate text-xs leading-3">
-                            v{process.env.appVersion}
-                        </span>
+                        <AppVersion />
                     </div>
                 </Link>
                 <Environment />

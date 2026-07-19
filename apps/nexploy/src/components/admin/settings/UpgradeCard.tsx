@@ -4,9 +4,10 @@ import { useState } from 'react';
 import useSWR from 'swr';
 import { useAction } from 'next-safe-action/hooks';
 import { useTranslations } from 'next-intl';
-import { ArrowUpCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { ArrowUpCircle, CheckCircle2, RefreshCw } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Button } from '@workspace/ui/components/button';
+import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { triggerUpgradeAction } from '@/actions/admin/triggerUpgrade.action';
@@ -21,7 +22,7 @@ export function UpgradeCard() {
     const t = useTranslations('admin.settings');
     const [isRestarting, setIsRestarting] = useState(false);
 
-    const { data, isLoading } = useSWR<VersionInfo | null>(
+    const { data, isLoading, isValidating, mutate } = useSWR<VersionInfo | null>(
         { url: '/api/admin/version', disableToast: true },
         fetcherApi,
     );
@@ -37,12 +38,35 @@ export function UpgradeCard() {
                 icon={ArrowUpCircle}
                 title={t('upgradeTitle')}
                 description={t('upgradeDescription')}
-            />
+            >
+                <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isValidating}
+                    className="ml-auto"
+                    onClick={() => mutate()}
+                >
+                    <RefreshCw className={isValidating ? 'size-4 animate-spin' : 'size-4'} />
+                    {t('upgradeCheckButton')}
+                </Button>
+            </CardHeaderWithIcon>
             <CardContent>
                 {isRestarting ? (
                     <p className="text-muted-foreground text-sm">{t('upgradeRestarting')}</p>
                 ) : isLoading || !data ? (
-                    <Loader2 className="text-muted-foreground size-5 animate-spin" />
+                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-3 rounded-lg border p-4">
+                            <div className="flex items-center justify-between">
+                                <Skeleton className="h-4 w-28" />
+                                <Skeleton className="h-4 w-16" />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <Skeleton className="h-4 w-24" />
+                                <Skeleton className="h-4 w-16" />
+                            </div>
+                        </div>
+                        <Skeleton className="h-4 w-40 self-end" />
+                    </div>
                 ) : (
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-2 rounded-lg border p-4 text-sm">
@@ -59,7 +83,6 @@ export function UpgradeCard() {
                                 <span className="font-medium">{data.latest}</span>
                             </div>
                         </div>
-
                         {data.updateAvailable ? (
                             <>
                                 <p className="text-muted-foreground text-xs">
