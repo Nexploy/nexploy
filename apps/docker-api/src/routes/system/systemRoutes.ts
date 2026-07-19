@@ -348,10 +348,19 @@ app.post(
             await docker.getContainer(helperName).remove({ force: true });
         } catch {}
 
+        const currentDockerApiInfo = await docker.getContainer(DOCKER_API_CONTAINER_NAME).inspect();
+        const inheritedEnv = (currentDockerApiInfo.Config.Env ?? []).filter(
+            (entry) =>
+                !entry.startsWith('SELF_UPGRADE_TARGET_IMAGE=') &&
+                !entry.startsWith('SELF_UPGRADE_CONTAINER_NAME=') &&
+                !entry.startsWith('DOCKER_SOCKET='),
+        );
+
         const helper = await docker.createContainer({
             name: helperName,
             Image: dockerApiImage,
             Env: [
+                ...inheritedEnv,
                 `SELF_UPGRADE_TARGET_IMAGE=${dockerApiImage}`,
                 `SELF_UPGRADE_CONTAINER_NAME=${DOCKER_API_CONTAINER_NAME}`,
                 `DOCKER_SOCKET=${DOCKER_SOCKET_PATH}`,
@@ -359,6 +368,14 @@ app.post(
             HostConfig: {
                 AutoRemove: true,
                 Binds: [`${DOCKER_SOCKET_PATH}:${DOCKER_SOCKET_PATH}`],
+            },
+            NetworkingConfig: {
+                EndpointsConfig: Object.fromEntries(
+                    Object.keys(currentDockerApiInfo.NetworkSettings.Networks ?? {}).map((name) => [
+                        name,
+                        {},
+                    ]),
+                ),
             },
         });
         await helper.start();
