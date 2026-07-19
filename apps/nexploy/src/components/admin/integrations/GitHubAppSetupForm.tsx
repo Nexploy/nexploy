@@ -36,7 +36,7 @@ function buildManifest(appUrl: string) {
         default_permissions: {
             contents: 'read',
             metadata: 'read',
-            administration: 'read',
+            administration: 'write',
             statuses: 'write',
         },
         default_events: ['push'],
