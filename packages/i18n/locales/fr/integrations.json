@@ -50,7 +50,7 @@
                 "permissionsTitle": "Permissions demandées",
                 "permContents": "Contents : Lecture",
                 "permMetadata": "Metadata : Lecture",
-                "permAdministration": "Administration : Lecture",
+                "permAdministration": "Administration : Lecture & écriture",
                 "permStatuses": "Commit statuses : Lecture & écriture"
             },
             "gitlab": {
