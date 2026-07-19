@@ -171,6 +171,27 @@ export async function githubGetAuthenticatedUser(): Promise<GitHubUserResponse> 
     return kyGithubApi.get('user').json<GitHubUserResponse>();
 }
 
+export async function githubRevokeGrant(
+    clientId: string,
+    clientSecret: string,
+    accessToken: string,
+): Promise<void> {
+    try {
+        await kyGithubApi.delete(`applications/${clientId}/grant`, {
+            withAuth: false,
+            headers: {
+                Accept: 'application/vnd.github+json',
+                Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+            },
+            json: { access_token: accessToken },
+        } as KyGithubOptions);
+    } catch (error: unknown) {
+        const status = (error as { response?: { status?: number } })?.response?.status;
+        if (status === 404) return;
+        throw error;
+    }
+}
+
 export async function githubExchangeManifestCode(code: string): Promise<GitHubManifestResponse> {
     return kyGithubApi
         .post(`app-manifests/${code}/conversions`, {

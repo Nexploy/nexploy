@@ -144,6 +144,21 @@ export async function disconnectGitAccount(userId: string, gitProviderId: string
             throw new Error(t('git.gitAccountNotFound'));
         }
 
+        const adapter = getGitAdapter(gitAccount.provider);
+        const credentials = await getGitProviderCredentials(gitAccount.provider, gitAccount.id);
+        if (adapter.revokeToken && credentials) {
+            try {
+                await adapter.revokeToken({
+                    token: {
+                        accessToken: gitAccount.accessToken,
+                        refreshToken: gitAccount.refreshToken,
+                        accessTokenExpiresAt: gitAccount.accessTokenExpiresAt,
+                    },
+                    credentials,
+                });
+            } catch {}
+        }
+
         await prisma.gitAccount.delete({
             where: { id: gitAccount.id },
         });

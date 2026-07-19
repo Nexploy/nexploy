@@ -38,6 +38,7 @@ function buildManifest(appUrl: string) {
             metadata: 'read',
             administration: 'write',
             statuses: 'write',
+            repository_hooks: 'write',
         },
         default_events: ['push'],
     };

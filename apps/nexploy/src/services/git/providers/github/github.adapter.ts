@@ -19,6 +19,7 @@ import {
     githubGetRepositoryBranches,
     githubGetUserInstallations,
     githubRefreshAccessToken,
+    githubRevokeGrant,
     githubUpdateCommitStatus,
 } from './github.client';
 
@@ -195,6 +196,11 @@ export const githubAdapter: GitProviderAdapter = {
                 ? dayjs().add(data.expires_in, 'second').toDate()
                 : null,
         };
+    },
+
+    async revokeToken({ token, credentials }): Promise<void> {
+        if (!token.accessToken) return;
+        await githubRevokeGrant(credentials.clientId, credentials.clientSecret, token.accessToken);
     },
 
     async createRelease({ token, owner, repo, tagName, targetBranch, title, notes, draft, prerelease }) {

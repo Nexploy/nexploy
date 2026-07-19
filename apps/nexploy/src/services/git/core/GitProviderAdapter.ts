@@ -139,6 +139,11 @@ export interface GitProviderAdapter {
         credentials: AdapterCredentials;
     }): Promise<GitProviderToken>;
 
+    revokeToken?(args: {
+        token: GitProviderToken;
+        credentials: AdapterCredentials;
+    }): Promise<void>;
+
     createRelease(args: CreateReleaseArgs): Promise<{ releaseId: string; releaseUrl: string }>;
 
     updateCommitStatus(args: CommitStatusArgs): Promise<void>;
