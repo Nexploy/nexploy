@@ -210,6 +210,7 @@
         "environmentFetchFailed": "Failed to fetch environment",
         "environmentNotFound": "Environment not found",
         "diskUsageFetchFailed": "Failed to fetch disk usage",
+        "versionCheckFailed": "Failed to check for updates",
         "stagesFetchFailed": "Failed to fetch stages",
         "pipelineConfigFetchFailed": "Failed to fetch pipeline config",
         "envVariablesFetchFailed": "Failed to fetch environment variables",

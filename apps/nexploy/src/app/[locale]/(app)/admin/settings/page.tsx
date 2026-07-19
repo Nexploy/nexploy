@@ -7,6 +7,7 @@ import { getCleanupSettings, getCurrentEnvironmentKey } from '@/services/cleanup
 import { DiskUsageCard } from '@/components/admin/settings/DiskUsageCard';
 import { CleanupScheduleCard } from '@/components/admin/settings/CleanupScheduleCard';
 import { InstanceDomainCard } from '@/components/admin/settings/InstanceDomainCard';
+import { UpgradeCard } from '@/components/admin/settings/UpgradeCard';
 import { getInstanceDomainSettings } from '@/lib/instance/domain';
 import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 
@@ -48,6 +49,7 @@ export default async function SettingsPage() {
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
                     <div className="flex flex-col gap-5 pb-5">
+                        <UpgradeCard />
                         <DiskUsageCard initialUsage={diskUsage} />
                         <CleanupScheduleCard settings={settings} />
                         {instanceDomainSettings && (

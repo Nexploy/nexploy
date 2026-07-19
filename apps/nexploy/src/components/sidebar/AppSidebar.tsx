@@ -10,6 +10,7 @@ import { SidebarNav } from '@/components/sidebar/SidebarNav';
 import { Environment } from '@/components/sidebar/environment/Environment';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import Image from 'next/image';
+import { UpdateBanner } from './UpdateBanner';
 
 interface AppSidebarProps {
     variant?: 'sidebar' | 'floating' | 'inset';
@@ -18,7 +19,7 @@ interface AppSidebarProps {
 export async function AppSidebar({ variant }: AppSidebarProps) {
     return (
         <Sidebar
-            className="z-50 px-0 whitespace-nowrap transition-all duration-300 ease-in-out"
+            className="z-50 whitespace-nowrap px-0 transition-all duration-300 ease-in-out"
             collapsible="icon"
             variant={variant}
         >
@@ -54,7 +55,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                 </ScrollAreaWithShadow>
             </SidebarContent>
             <SidebarFooter className={'mx-2'}>
-                {/*<UpdateBanner />*/}
+                <UpdateBanner />
                 <AccountMenu />
             </SidebarFooter>
         </Sidebar>

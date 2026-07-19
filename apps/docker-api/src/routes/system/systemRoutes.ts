@@ -5,17 +5,20 @@ import { route } from '@/utils/route';
 import { waitForFile } from '@/utils/wait';
 import { logger } from '@/utils/logger';
 import { HttpError } from '@workspace/shared/http-error';
-import {
-    buildCachePruneSchema,
-    type CleanupTarget,
-} from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
-import { instanceDomainSchema } from '@workspace/schemas-zod/admin/traefikFile.schema';
+import { buildCachePruneSchema, type CleanupTarget, } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
+import { instanceDomainSchema, upgradeSchema, } from '@workspace/schemas-zod/admin/traefikFile.schema';
 import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 import {
+    DOCKER_API_CONTAINER_NAME,
+    DOCKER_API_IMAGE_REPOSITORY,
+    DOCKER_SOCKET_PATH,
     NEXPLOY_APP_CONTAINER_NAME,
+    NEXPLOY_GITHUB_REPO,
+    NEXPLOY_IMAGE_REPOSITORY,
     TRAEFIK_CONTAINER_NAME,
     TRAEFIK_STATIC_CONFIG_PATH,
 } from '@/lib/config';
+import { recreateContainerWithImage } from '@/utils/recreateWithImage';
 
 const app = new Hono();
 
@@ -290,6 +293,77 @@ app.post(
         }
 
         return { id: newContainer.id, publicUrl };
+    }),
+);
+
+async function pullImage(image: string): Promise<void> {
+    await new Promise<void>((resolve, reject) => {
+        docker.pull(image, (err: Error | null, stream: NodeJS.ReadableStream) => {
+            if (err) return reject(err);
+            docker.modem.followProgress(stream, (pullErr: Error | null) =>
+                pullErr ? reject(pullErr) : resolve(),
+            );
+        });
+    });
+}
+
+app.get(
+    '/version',
+    route(async () => {
+        const appInfo = await docker.getContainer(NEXPLOY_APP_CONTAINER_NAME).inspect();
+        const current = appInfo.Config.Image.split(':').pop() ?? 'unknown';
+
+        let latest = current;
+        try {
+            const res = await fetch(
+                `https://api.github.com/repos/${NEXPLOY_GITHUB_REPO}/releases/latest`,
+                { headers: { Accept: 'application/vnd.github+json' } },
+            );
+            if (res.ok) {
+                const data = (await res.json()) as { tag_name?: string };
+                if (data.tag_name) latest = data.tag_name.replace(/^v/, '');
+            }
+        } catch (error) {
+            logger.warn({ error }, 'Failed to check latest Nexploy release');
+        }
+
+        return { current, latest, updateAvailable: latest !== current };
+    }),
+);
+
+app.post(
+    '/upgrade',
+    route({ json: upgradeSchema }, async (c) => {
+        const { version } = c.req.valid('json');
+        const appImage = `${NEXPLOY_IMAGE_REPOSITORY}:${version}`;
+        const dockerApiImage = `${DOCKER_API_IMAGE_REPOSITORY}:${version}`;
+
+        await pullImage(appImage);
+        await pullImage(dockerApiImage);
+
+        await recreateContainerWithImage(docker, NEXPLOY_APP_CONTAINER_NAME, appImage);
+
+        const helperName = `${DOCKER_API_CONTAINER_NAME}_upgrader`;
+        try {
+            await docker.getContainer(helperName).remove({ force: true });
+        } catch {}
+
+        const helper = await docker.createContainer({
+            name: helperName,
+            Image: dockerApiImage,
+            Env: [
+                `SELF_UPGRADE_TARGET_IMAGE=${dockerApiImage}`,
+                `SELF_UPGRADE_CONTAINER_NAME=${DOCKER_API_CONTAINER_NAME}`,
+                `DOCKER_SOCKET=${DOCKER_SOCKET_PATH}`,
+            ],
+            HostConfig: {
+                AutoRemove: true,
+                Binds: [`${DOCKER_SOCKET_PATH}:${DOCKER_SOCKET_PATH}`],
+            },
+        });
+        await helper.start();
+
+        return { status: 'upgrading', version };
     }),
 );
 
