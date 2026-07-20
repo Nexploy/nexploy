@@ -1,6 +1,7 @@
 {
     "name": "docker-api",
     "version": "1.0.0",
+    "description": "Docker operations API service for Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker",
     "type": "module",
     "scripts": {
         "dev": "tsx watch src/index.ts",

@@ -1,6 +1,6 @@
 # Nexploy Docker API
 
-Hono-based API service that manages all Docker operations (containers, images, volumes, networks, events) for [Nexploy](https://hub.docker.com/r/nexploy/nexploy), a self-hosted Docker deployment platform. Exposes a REST API, Server-Sent Events for real-time state, and a WebSocket terminal for interactive container shell access.
+Hono-based API service that manages all Docker operations (containers, images, volumes, networks, events) for [Nexploy](https://hub.docker.com/r/nexploy/nexploy), a self-hosted alternative to Vercel/Netlify, powered by Docker. Exposes a REST API, Server-Sent Events for real-time state, and a WebSocket terminal for interactive container shell access.
 
 - **Source:** https://github.com/Nexploy/nexploy
 - **Install script:** `curl -fsSL https://nexploy.app/install.sh | sh`

@@ -1,7 +1,7 @@
 <h1 align="center">Nexploy</h1>
 
 <p align="center">
-  <strong>Self-hosted deployment platform for Docker</strong><br />
+  <strong>Self-hosted alternative to Vercel/Netlify, powered by Docker</strong><br />
   Deploy applications from Git repositories to Docker containers with automatic HTTPS, real-time monitoring, and a modern interface.
 </p>
 

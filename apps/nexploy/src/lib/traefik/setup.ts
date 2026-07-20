@@ -1,5 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import * as yaml from 'yaml';
 import { TRAEFIK_SERVICE_DIR } from './paths';
 
 const TEMPLATES_DIR = process.env.TRAEFIK_TEMPLATES_DIR ?? path.join(process.cwd(), 'traefik-templates');
@@ -31,10 +32,24 @@ async function seedDynamicConfigFiles(): Promise<void> {
     }
 }
 
+async function ensureWebsecureEntryPoint(target: string): Promise<void> {
+    const content = await fs.readFile(target, 'utf8');
+    const parsed = yaml.parse(content) as { entryPoints?: Record<string, unknown> } | null;
+
+    if (!parsed?.entryPoints || parsed.entryPoints.websecure) return;
+
+    parsed.entryPoints.websecure = { address: ':443', http3: {} };
+    await fs.writeFile(target, yaml.stringify(parsed), { mode: 0o644 });
+    console.log(`✓ Traefik setup: patched missing 'websecure' entryPoint into ${target}`);
+}
+
 async function renderStaticConfig(): Promise<void> {
     const target = process.env.TRAEFIK_STATIC_CONFIG_PATH;
     if (!target) return;
-    if (await fileExists(target)) return;
+    if (await fileExists(target)) {
+        await ensureWebsecureEntryPoint(target);
+        return;
+    }
 
     const useTls = process.env.TRAEFIK_USE_TLS !== 'false';
     const templateName = useTls ? 'traefik.yml.template' : 'traefik.no-tls.yml.template';

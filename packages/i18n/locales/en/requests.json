@@ -13,6 +13,8 @@
     "redirect3xx": "3xx Redirect",
     "clientError4xx": "4xx Client Error",
     "serverError5xx": "5xx Server Error",
+    "service": "Service",
+    "allServices": "All",
     "table": {
         "timestamp": "Timestamp",
         "method": "Method",

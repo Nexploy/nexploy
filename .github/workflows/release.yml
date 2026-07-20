@@ -37,11 +37,6 @@ jobs:
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
 
-      - name: Sync package.json versions
-        env:
-          GIT_TAG: ${{ github.event.inputs.tag || github.ref_name }}
-        run: node scripts/sync-version.mjs "${GIT_TAG#v}"
-
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -164,34 +159,58 @@ jobs:
           echo "git=${GIT_TAG}" >> "$GITHUB_OUTPUT"
           echo "image=${GIT_TAG#v}" >> "$GITHUB_OUTPUT"
 
+      - name: Generate changelog
+        env:
+          GIT_TAG: ${{ steps.tags.outputs.git }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/generate-changelog.mjs "$GIT_TAG"
+
+      - name: Build release notes
+        env:
+          IMAGE_TAG: ${{ steps.tags.outputs.image }}
+          GIT_TAG: ${{ steps.tags.outputs.git }}
+        run: |
+          PREV_TAG=$(cat /tmp/prev-tag.txt)
+          {
+            echo "## Nexploy ${IMAGE_TAG}"
+            echo
+            if [ -n "$PREV_TAG" ]; then
+              echo "### Changes since \`${PREV_TAG}\`"
+            else
+              echo "### Changes"
+            fi
+            echo
+            cat /tmp/changelog.md
+            echo
+            echo "## Docker images"
+            echo
+            echo '```'
+            echo "docker pull nexploy/nexploy:${IMAGE_TAG}"
+            echo "docker pull nexploy/docker-api:${IMAGE_TAG}"
+            echo '```'
+            echo
+            echo "## Install"
+            echo
+            echo '```bash'
+            echo "curl -fsSL https://nexploy.app/install.sh | sh"
+            echo '```'
+            echo
+            echo "Or pin this exact version:"
+            echo
+            echo '```bash'
+            echo "NEXPLOY_VERSION=${GIT_TAG} \\"
+            echo "  sh -c \"\$(curl -fsSL https://nexploy.app/install.sh)\""
+            echo '```'
+            echo
+            echo "Already running Nexploy?"
+            echo
+            echo '```bash'
+            echo "curl -fsSL https://nexploy.app/install.sh | sh -s update"
+            echo '```'
+          } > /tmp/release-notes.md
+
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tags.outputs.git }}
-          generate_release_notes: true
-          body: |
-            ## Docker images
-
-            ```
-            docker pull nexploy/nexploy:${{ steps.tags.outputs.image }}
-            docker pull nexploy/docker-api:${{ steps.tags.outputs.image }}
-            ```
-
-            ## Install
-
-            ```bash
-            curl -fsSL https://nexploy.app/install.sh | sh
-            ```
-
-            Or pin this exact version:
-
-            ```bash
-            NEXPLOY_VERSION=${{ steps.tags.outputs.git }} \
-              sh -c "$(curl -fsSL https://nexploy.app/install.sh)"
-            ```
-
-            Already running Nexploy?
-
-            ```bash
-            curl -fsSL https://nexploy.app/install.sh | sh -s update
-            ```
+          body_path: /tmp/release-notes.md

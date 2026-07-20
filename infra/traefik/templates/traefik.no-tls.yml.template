@@ -16,6 +16,10 @@ entryPoints:
   web:
     address: ":80"
 
+  websecure:
+    address: ":443"
+    http3: { }
+
   maintenance:
     address: ":8090"
 
