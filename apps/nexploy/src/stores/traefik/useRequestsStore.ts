@@ -14,6 +14,7 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
     searchQuery: '',
     methodFilter: 'all',
     statusFilter: 'all',
+    serviceFilter: 'all',
 
     setSearchQuery: (query) => {
         set({ searchQuery: query });
@@ -27,6 +28,11 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
 
     setStatusFilter: (status) => {
         set({ statusFilter: status });
+        get().applyFilter();
+    },
+
+    setServiceFilter: (service) => {
+        set({ serviceFilter: service });
         get().applyFilter();
     },
 
@@ -56,12 +62,16 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
     setLastUpdate: (timestamp) => set({ lastUpdate: timestamp }),
 
     applyFilter: () => {
-        const { requests, searchQuery, methodFilter, statusFilter } = get();
+        const { requests, searchQuery, methodFilter, statusFilter, serviceFilter } = get();
 
         let filtered = requests;
 
         if (methodFilter !== 'all') {
             filtered = filtered.filter((r) => r.method === methodFilter);
+        }
+
+        if (serviceFilter !== 'all') {
+            filtered = filtered.filter((r) => r.serviceName === serviceFilter);
         }
 
         if (statusFilter !== 'all') {
@@ -168,6 +178,7 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
             searchQuery: '',
             methodFilter: 'all',
             statusFilter: 'all',
+            serviceFilter: 'all',
         });
     },
 }));

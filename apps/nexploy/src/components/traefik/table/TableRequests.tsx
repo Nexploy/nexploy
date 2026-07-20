@@ -46,15 +46,27 @@ export function TableRequests() {
         searchQuery,
         methodFilter,
         statusFilter,
+        serviceFilter,
         setSearchQuery,
         setMethodFilter,
         setStatusFilter,
+        setServiceFilter,
     } = useRequestsStore();
 
     const [sorting, setSorting] = useState<SortingState>([]);
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
     const columns = useMemo(() => getColumnsTableRequests(t), [t]);
+
+    const serviceOptions = useMemo(() => {
+        const names = new Set<string>();
+        for (const request of requests) {
+            if (request.serviceName) {
+                names.add(request.serviceName);
+            }
+        }
+        return Array.from(names).sort((a, b) => a.localeCompare(b));
+    }, [requests]);
 
     const isLoading = !lastUpdate;
     const isEmpty = requests.length === 0;
@@ -117,6 +129,22 @@ export function TableRequests() {
                                 <SelectItem value="3xx">{t('redirect3xx')}</SelectItem>
                                 <SelectItem value="4xx">{t('clientError4xx')}</SelectItem>
                                 <SelectItem value="5xx">{t('serverError5xx')}</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <Select value={serviceFilter} onValueChange={setServiceFilter}>
+                        <SelectTrigger className={'w-40'}>
+                            <SelectValue placeholder={t('service')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>{t('service')}</SelectLabel>
+                                <SelectItem value="all">{t('allServices')}</SelectItem>
+                                {serviceOptions.map((service) => (
+                                    <SelectItem key={service} value={service}>
+                                        {service}
+                                    </SelectItem>
+                                ))}
                             </SelectGroup>
                         </SelectContent>
                     </Select>

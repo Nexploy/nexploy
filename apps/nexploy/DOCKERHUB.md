@@ -1,8 +1,6 @@
 # Nexploy
 
-Self-hosted deployment platform for Docker. Deploy applications from Git repositories (GitHub/GitLab) to Docker containers with automatic HTTPS via Traefik, real-time monitoring, and a modern web interface.
-
-Think Vercel/Netlify, but self-hosted.
+Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker. Deploy applications from Git repositories (GitHub/GitLab) to Docker containers with automatic HTTPS via Traefik, real-time monitoring, and a modern web interface.
 
 - **Source:** https://github.com/Nexploy/nexploy
 - **Install script:** `curl -fsSL https://nexploy.app/install.sh | sh`

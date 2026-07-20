@@ -17,10 +17,12 @@ export interface RequestsState {
     searchQuery: string;
     methodFilter: string;
     statusFilter: string;
+    serviceFilter: string;
 
     setSearchQuery: (query: string) => void;
     setMethodFilter: (method: string) => void;
     setStatusFilter: (status: string) => void;
+    setServiceFilter: (service: string) => void;
 
     setRequests: (requests: TraefikRequest[]) => void;
     addRequest: (request: TraefikRequest) => void;
