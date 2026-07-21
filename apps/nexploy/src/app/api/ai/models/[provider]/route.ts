@@ -1,3 +1,4 @@
+import ky from 'ky';
 import { NextResponse } from 'next/server';
 import { authRouteServer, route } from '@/lib/api/nextRoute';
 import { getProviderApiKey } from '@/services/aiConfig.service';
@@ -6,41 +7,40 @@ import { providerParamSchema } from '@workspace/schemas-zod/api/params.schema';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 async function fetchOpenAIModels(apiKey: string): Promise<ModelOption[]> {
-    const res = await fetch('https://api.openai.com/v1/models', {
-        headers: { Authorization: `Bearer ${apiKey}` },
-        next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error(`OpenAI: ${res.status}`);
-    const json = await res.json();
-    return (json.data as { id: string }[])
+    const json = await ky
+        .get('https://api.openai.com/v1/models', {
+            headers: { Authorization: `Bearer ${apiKey}` },
+            next: { revalidate: 3600 },
+        })
+        .json<{ data: { id: string }[] }>();
+    return json.data
         .filter(({ id }) => /^(gpt-|o1|o3|o4|chatgpt-)/.test(id) && !id.includes('instruct'))
         .sort((a, b) => a.id.localeCompare(b.id))
         .map(({ id }) => ({ value: id, label: id }));
 }
 
 async function fetchAnthropicModels(apiKey: string): Promise<ModelOption[]> {
-    const res = await fetch('https://api.anthropic.com/v1/models', {
-        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-        next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error(`Anthropic: ${res.status}`);
-    const json = await res.json();
-    return (json.data as { id: string; display_name: string }[]).map(({ id, display_name }) => ({
+    const json = await ky
+        .get('https://api.anthropic.com/v1/models', {
+            headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+            next: { revalidate: 3600 },
+        })
+        .json<{ data: { id: string; display_name: string }[] }>();
+    return json.data.map(({ id, display_name }) => ({
         value: id,
         label: display_name,
     }));
 }
 
 async function fetchGoogleModels(apiKey: string): Promise<ModelOption[]> {
-    const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
-        { next: { revalidate: 3600 } },
-    );
-    if (!res.ok) throw new Error(`Google: ${res.status}`);
-    const json = await res.json();
-    return (
-        json.models as { name: string; displayName: string; supportedGenerationMethods: string[] }[]
-    )
+    const json = await ky
+        .get(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, {
+            next: { revalidate: 3600 },
+        })
+        .json<{
+            models: { name: string; displayName: string; supportedGenerationMethods: string[] }[];
+        }>();
+    return json.models
         .filter(
             (m) =>
                 m.supportedGenerationMethods.includes('generateContent') &&
@@ -50,65 +50,59 @@ async function fetchGoogleModels(apiKey: string): Promise<ModelOption[]> {
 }
 
 async function fetchOpenRouterModels(apiKey: string): Promise<ModelOption[]> {
-    const res = await fetch('https://openrouter.ai/api/v1/models', {
-        headers: { Authorization: `Bearer ${apiKey}` },
-        next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error(`OpenRouter: ${res.status}`);
-    const json = await res.json();
-    return (json.data as { id: string; name: string }[]).map(({ id, name }) => ({
+    const json = await ky
+        .get('https://openrouter.ai/api/v1/models', {
+            headers: { Authorization: `Bearer ${apiKey}` },
+            next: { revalidate: 3600 },
+        })
+        .json<{ data: { id: string; name: string }[] }>();
+    return json.data.map(({ id, name }) => ({
         value: id,
         label: name,
     }));
 }
 
 async function fetchMistralModels(apiKey: string): Promise<ModelOption[]> {
-    const res = await fetch('https://api.mistral.ai/v1/models', {
-        headers: { Authorization: `Bearer ${apiKey}` },
-        next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error(`Mistral: ${res.status}`);
-    const json = await res.json();
-    return (json.data as { id: string }[])
+    const json = await ky
+        .get('https://api.mistral.ai/v1/models', {
+            headers: { Authorization: `Bearer ${apiKey}` },
+            next: { revalidate: 3600 },
+        })
+        .json<{ data: { id: string }[] }>();
+    return json.data
         .filter(({ id }) => !id.includes('embed'))
         .sort((a, b) => a.id.localeCompare(b.id))
         .map(({ id }) => ({ value: id, label: id }));
 }
 
 async function fetchGroqModels(apiKey: string): Promise<ModelOption[]> {
-    const res = await fetch('https://api.groq.com/openai/v1/models', {
-        headers: { Authorization: `Bearer ${apiKey}` },
-        next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error(`Groq: ${res.status}`);
-    const json = await res.json();
-    return (json.data as { id: string }[])
-        .sort((a, b) => a.id.localeCompare(b.id))
-        .map(({ id }) => ({ value: id, label: id }));
+    const json = await ky
+        .get('https://api.groq.com/openai/v1/models', {
+            headers: { Authorization: `Bearer ${apiKey}` },
+            next: { revalidate: 3600 },
+        })
+        .json<{ data: { id: string }[] }>();
+    return json.data.sort((a, b) => a.id.localeCompare(b.id)).map(({ id }) => ({ value: id, label: id }));
 }
 
 async function fetchPerplexityModels(apiKey: string): Promise<ModelOption[]> {
-    const res = await fetch('https://api.perplexity.ai/v1/models', {
-        headers: { Authorization: `Bearer ${apiKey}` },
-        next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error(`Perplexity: ${res.status}`);
-    const json = await res.json();
-    return (json.data as { id: string }[])
-        .sort((a, b) => a.id.localeCompare(b.id))
-        .map(({ id }) => ({ value: id, label: id }));
+    const json = await ky
+        .get('https://api.perplexity.ai/v1/models', {
+            headers: { Authorization: `Bearer ${apiKey}` },
+            next: { revalidate: 3600 },
+        })
+        .json<{ data: { id: string }[] }>();
+    return json.data.sort((a, b) => a.id.localeCompare(b.id)).map(({ id }) => ({ value: id, label: id }));
 }
 
 async function fetchGrokModels(apiKey: string): Promise<ModelOption[]> {
-    const res = await fetch('https://api.x.ai/v1/models', {
-        headers: { Authorization: `Bearer ${apiKey}` },
-        next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error(`Grok: ${res.status}`);
-    const json = await res.json();
-    return (json.data as { id: string }[])
-        .sort((a, b) => a.id.localeCompare(b.id))
-        .map(({ id }) => ({ value: id, label: id }));
+    const json = await ky
+        .get('https://api.x.ai/v1/models', {
+            headers: { Authorization: `Bearer ${apiKey}` },
+            next: { revalidate: 3600 },
+        })
+        .json<{ data: { id: string }[] }>();
+    return json.data.sort((a, b) => a.id.localeCompare(b.id)).map(({ id }) => ({ value: id, label: id }));
 }
 
 export const GET = route

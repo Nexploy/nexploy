@@ -1,4 +1,5 @@
 import * as fs from 'fs/promises';
+import ky from 'ky';
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
@@ -315,14 +316,12 @@ app.get(
 
         let latest = current;
         try {
-            const res = await fetch(
-                `https://api.github.com/repos/${NEXPLOY_GITHUB_REPO}/releases/latest`,
-                { headers: { Accept: 'application/vnd.github+json' } },
-            );
-            if (res.ok) {
-                const data = (await res.json()) as { tag_name?: string };
-                if (data.tag_name) latest = data.tag_name.replace(/^v/, '');
-            }
+            const data = await ky
+                .get(`https://api.github.com/repos/${NEXPLOY_GITHUB_REPO}/releases/latest`, {
+                    headers: { Accept: 'application/vnd.github+json' },
+                })
+                .json<{ tag_name?: string }>();
+            if (data.tag_name) latest = data.tag_name.replace(/^v/, '');
         } catch (error) {
             logger.warn({ error }, 'Failed to check latest Nexploy release');
         }

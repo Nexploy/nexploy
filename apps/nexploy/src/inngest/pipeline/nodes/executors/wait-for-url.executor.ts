@@ -1,3 +1,4 @@
+import ky from 'ky';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { waitForUrlConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -28,7 +29,12 @@ export class WaitForUrlExecutor implements INodeExecutor {
             if (abortSignal.aborted) throw new Error('Aborted');
 
             try {
-                const response = await fetch(url, { method, signal: abortSignal });
+                const response = await ky(url, {
+                    method,
+                    signal: abortSignal,
+                    throwHttpErrors: false,
+                    timeout: false,
+                });
                 if (response.status === expectedStatus) {
                     await logger.info(nodeId, `URL ${url} returned ${response.status}`);
                     return { output: { url, status: response.status } };

@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { route } from '@/lib/api/nextRoute';
-import { prisma } from '@/../prisma/prisma';
-import { decrypt } from '@/lib/encryption';
-
-const DOCKER_API_KEY_NAME = 'docker-api';
+import { auth } from '@/lib/auth/auth';
 
 const matchesInternalSecret = (candidate: string) => {
     const expected = process.env.ENCRYPTION_KEY;
@@ -19,28 +16,23 @@ const matchesInternalSecret = (candidate: string) => {
     return crypto.timingSafeEqual(candidateBuffer, expectedBuffer);
 };
 
-const isAuthorized = async (request: Request) => {
+const isAuthorized = (request: Request) => {
     const internalSecret = request.headers.get('x-internal-secret');
     if (!internalSecret) return false;
     return matchesInternalSecret(internalSecret);
 };
 
-export const GET = route.handler(async (request: Request) => {
-    if (!(await isAuthorized(request))) {
+export const POST = route.handler(async (request: Request, { body }) => {
+    if (!isAuthorized(request)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const apikey = await prisma.apikey.findFirst({
-        where: { name: DOCKER_API_KEY_NAME },
-    });
-
-    const encryptedKey = apikey?.metadata
-        ? (JSON.parse(apikey.metadata).encryptedKey as string | undefined)
-        : undefined;
-
-    if (!encryptedKey) {
-        return NextResponse.json({ error: 'Key not available' }, { status: 503 });
+    const { key } = body as { key?: string };
+    if (!key) {
+        return NextResponse.json({ error: 'Missing key' }, { status: 400 });
     }
 
-    return NextResponse.json({ key: decrypt(encryptedKey) });
+    const result = await auth.api.verifyApiKey({ body: { key } });
+
+    return NextResponse.json({ valid: result.valid });
 });

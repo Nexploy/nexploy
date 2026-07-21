@@ -1,6 +1,7 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import * as os from 'node:os';
+import ky from 'ky';
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import {
     INodeExecutor,
@@ -39,14 +40,13 @@ export class DownloadFileExecutor implements INodeExecutor {
             `Downloading ${url} → ${path.join(destinationPath, finalFilename)}`,
         );
 
-        const response = await fetch(url, { signal: abortSignal });
-        if (!response.ok) {
-            throw new Error(`Download failed: HTTP ${response.status} ${response.statusText}`);
-        }
+        const arrayBuffer = await ky
+            .get(url, { signal: abortSignal, timeout: false })
+            .arrayBuffer();
 
         await fs.mkdir(resolvedDest, { recursive: true });
 
-        const buffer = Buffer.from(await response.arrayBuffer());
+        const buffer = Buffer.from(arrayBuffer);
         await fs.writeFile(outputFile, buffer);
 
         const sizeKb = (buffer.byteLength / 1024).toFixed(1);

@@ -1,3 +1,4 @@
+import ky, { HTTPError } from 'ky';
 import type {
     DockerHubImage,
     DockerHubRawResponse,
@@ -27,16 +28,18 @@ export async function searchDockerHubImages(
 
     const url = `${DOCKER_HUB_SEARCH_URL}?${params.toString()}`;
 
-    const res = await fetch(url, {
-        headers: { 'Search-Version': 'v3' },
-        next: { revalidate: 60 },
-    });
-
-    if (!res.ok) {
-        throw new Error(t('dockerHub.searchFailed', { status: res.status }));
+    let data: DockerHubRawResponse;
+    try {
+        data = await ky
+            .get(url, {
+                headers: { 'Search-Version': 'v3' },
+                next: { revalidate: 60 },
+            })
+            .json<DockerHubRawResponse>();
+    } catch (err) {
+        const status = err instanceof HTTPError ? err.response.status : 0;
+        throw new Error(t('dockerHub.searchFailed', { status }));
     }
-
-    const data = (await res.json()) as DockerHubRawResponse;
 
     return (data.results ?? [])
         .filter((r) => r.type === 'image')
