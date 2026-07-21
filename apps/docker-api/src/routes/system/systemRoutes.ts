@@ -3,7 +3,7 @@ import ky from 'ky';
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
-import { waitForFile } from '@/utils/wait';
+import { waitForContainerHealthy, waitForFile } from '@/utils/wait';
 import { logger } from '@/utils/logger';
 import { HttpError } from '@workspace/shared/http-error';
 import { buildCachePruneSchema, type CleanupTarget, } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
@@ -341,6 +341,14 @@ app.post(
         await pullImage(dockerApiImage);
 
         await recreateContainerWithImage(docker, NEXPLOY_APP_CONTAINER_NAME, appImage);
+
+        const appReady = await waitForContainerHealthy(docker, NEXPLOY_APP_CONTAINER_NAME, 180_000);
+        if (!appReady) {
+            logger.warn(
+                { container: NEXPLOY_APP_CONTAINER_NAME },
+                'Nexploy did not report healthy in time after upgrade, restarting docker-api anyway',
+            );
+        }
 
         const helperName = 'nexploy_upgrader';
         try {
