@@ -342,7 +342,7 @@ app.post(
 
         await recreateContainerWithImage(docker, NEXPLOY_APP_CONTAINER_NAME, appImage);
 
-        const helperName = `${DOCKER_API_CONTAINER_NAME}_upgrader`;
+        const helperName = 'nexploy_upgrader';
         try {
             await docker.getContainer(helperName).remove({ force: true });
         } catch {}
