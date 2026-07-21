@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-if [ -z "$NEXPLOY_API_KEY" ]; then
+if [ -z "$NEXPLOY_API_KEY" ] && [ -z "$SELF_UPGRADE_TARGET_IMAGE" ]; then
     echo "Fetching API key from nexploy..."
 
     RETRIES=0
