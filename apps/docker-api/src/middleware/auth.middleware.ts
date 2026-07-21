@@ -3,6 +3,7 @@ import { logger } from '@/utils/logger';
 import { kyNexploy } from '@/lib/kyNexploy';
 
 const VERIFY_CACHE_TTL_MS = 60_000;
+const VERIFY_FAILURE_CACHE_TTL_MS = 3_000;
 const verifyCache = new Map<string, { valid: boolean; expiresAt: number }>();
 
 async function verifyApiKey(token: string): Promise<boolean> {
@@ -12,6 +13,7 @@ async function verifyApiKey(token: string): Promise<boolean> {
     }
 
     let valid = false;
+    let ttl = VERIFY_CACHE_TTL_MS;
 
     try {
         const result = await kyNexploy
@@ -24,9 +26,10 @@ async function verifyApiKey(token: string): Promise<boolean> {
     } catch (error) {
         logger.error({ error }, 'Failed to verify API key against nexploy');
         valid = false;
+        ttl = VERIFY_FAILURE_CACHE_TTL_MS;
     }
 
-    verifyCache.set(token, { valid, expiresAt: Date.now() + VERIFY_CACHE_TTL_MS });
+    verifyCache.set(token, { valid, expiresAt: Date.now() + ttl });
 
     return valid;
 }

@@ -13,6 +13,7 @@ export const NEXPLOY_INFRASTRUCTURE_CONTAINERS = [
     'nexploy_inngest',
     'nexploy_app',
     'nexploy_docker_api',
+    'nexploy_upgrader',
 ];
 
 export const NEXPLOY_INFRASTRUCTURE_NETWORKS = ['nexploy_network'];
