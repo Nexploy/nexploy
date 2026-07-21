@@ -2,14 +2,12 @@ import { Settings } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
-import { kyDocker } from '@/lib/api/kyDocker';
 import { getCleanupSettings, getCurrentEnvironmentKey } from '@/services/cleanupSettings.service';
 import { DiskUsageCard } from '@/components/admin/settings/DiskUsageCard';
 import { CleanupScheduleCard } from '@/components/admin/settings/CleanupScheduleCard';
 import { InstanceDomainCard } from '@/components/admin/settings/InstanceDomainCard';
 import { UpgradeCard } from '@/components/admin/settings/UpgradeCard';
 import { getInstanceDomainSettings } from '@/lib/instance/domain';
-import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 
 export const metadata: Metadata = {
     title: 'Settings',
@@ -22,13 +20,6 @@ export default async function SettingsPage() {
         getTranslations('admin.settings'),
         getCleanupSettings(environmentId),
     ]);
-
-    let diskUsage: DiskUsage | null = null;
-    try {
-        diskUsage = await kyDocker.get('system/df').json<DiskUsage>();
-    } catch {
-        diskUsage = null;
-    }
 
     const instanceDomainSettings = getInstanceDomainSettings();
 
@@ -50,7 +41,7 @@ export default async function SettingsPage() {
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
                     <div className="flex flex-col gap-5 pb-5">
                         <UpgradeCard />
-                        <DiskUsageCard initialUsage={diskUsage} />
+                        <DiskUsageCard />
                         <CleanupScheduleCard settings={settings} />
                         {instanceDomainSettings && (
                             <InstanceDomainCard settings={instanceDomainSettings} />

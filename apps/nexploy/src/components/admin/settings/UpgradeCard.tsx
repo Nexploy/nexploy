@@ -106,23 +106,20 @@ export function UpgradeCard() {
                 {isRestarting ? (
                     <p className="text-muted-foreground text-sm">{t('upgradeRestarting')}</p>
                 ) : isLoading || !data ? (
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-1 items-center gap-4">
-                            <div className="flex flex-1 flex-col gap-2 rounded-lg border p-4 text-sm">
-                                <div className="flex items-center justify-between">
-                                    <Skeleton className="h-4 w-28" />
-                                    <Skeleton className="h-4 w-16" />
-                                </div>
-                            </div>
-                            <Skeleton className="h-4 w-4 shrink-0" />
-                            <div className="flex flex-1 flex-col gap-2 rounded-lg border p-4 text-sm">
-                                <div className="flex items-center justify-between">
-                                    <Skeleton className="h-4 w-24" />
-                                    <Skeleton className="h-4 w-16" />
-                                </div>
+                    <div className="flex flex-1 items-center gap-4">
+                        <div className="flex flex-1 flex-col gap-2 rounded-lg border p-4 text-sm">
+                            <div className="flex items-center justify-between">
+                                <Skeleton className="h-4 w-28" />
+                                <Skeleton className="h-4 w-16" />
                             </div>
                         </div>
-                        <Skeleton className="h-9 w-40 self-end" />
+                        <Skeleton className="h-4 w-4 shrink-0" />
+                        <div className="flex flex-1 flex-col gap-2 rounded-lg border p-4 text-sm">
+                            <div className="flex items-center justify-between">
+                                <Skeleton className="h-4 w-24" />
+                                <Skeleton className="h-4 w-16" />
+                            </div>
+                        </div>
                     </div>
                 ) : (
                     <div className="flex flex-col gap-4">
