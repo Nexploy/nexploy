@@ -1,4 +1,5 @@
 import { lookup } from 'dns/promises';
+import ky from 'ky';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { httpRequestConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -67,11 +68,13 @@ export class HttpRequestExecutor implements INodeExecutor {
         try {
             await assertUrlSafe(url);
 
-            const response = await fetch(url, {
+            const response = await ky(url, {
                 method,
                 headers,
                 ...(body && method !== 'GET' && method !== 'HEAD' ? { body } : {}),
                 signal: abortSignal,
+                throwHttpErrors: false,
+                timeout: false,
             });
 
             const responseText = await response.text().catch(() => '');

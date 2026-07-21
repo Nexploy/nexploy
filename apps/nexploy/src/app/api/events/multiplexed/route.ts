@@ -1,5 +1,6 @@
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import dayjs from 'dayjs';
+import ky from 'ky';
 import { NextResponse } from 'next/server';
 import { ChannelConfig, ChannelState, SSEChannel } from '@workspace/typescript-interface/sse';
 
@@ -223,9 +224,10 @@ export const GET = route
                         if (process.env.DOCKER_API_KEY) {
                             sseHeaders['Authorization'] = `Bearer ${process.env.DOCKER_API_KEY}`;
                         }
-                        const response = await fetch(url, {
+                        const response = await ky.get(url, {
                             headers: sseHeaders,
                             signal: abortController.signal,
+                            throwHttpErrors: false,
                         });
 
                         if (!response.ok) {
@@ -238,7 +240,11 @@ export const GET = route
                                 let environmentId = effectiveEnvironment ?? undefined;
 
                                 try {
-                                    const errorData = await response.json();
+                                    const errorData = (await response.json()) as {
+                                        code?: string;
+                                        error?: string;
+                                        environmentId?: string;
+                                    };
                                     if (
                                         errorData?.code === 'ENVIRONMENT_NOT_FOUND' ||
                                         errorData?.code === 'ENVIRONMENT_UNAVAILABLE'

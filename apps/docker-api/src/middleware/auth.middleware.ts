@@ -1,5 +1,35 @@
 import { Context, Next } from 'hono';
 import { logger } from '@/utils/logger';
+import { kyNexploy } from '@/lib/kyNexploy';
+
+const VERIFY_CACHE_TTL_MS = 60_000;
+const verifyCache = new Map<string, { valid: boolean; expiresAt: number }>();
+
+async function verifyApiKey(token: string): Promise<boolean> {
+    const cached = verifyCache.get(token);
+    if (cached && cached.expiresAt > Date.now()) {
+        return cached.valid;
+    }
+
+    let valid = false;
+
+    try {
+        const result = await kyNexploy
+            .post('internal/verify-api-key', {
+                json: { key: token },
+                headers: { 'x-internal-secret': process.env.ENCRYPTION_KEY ?? '' },
+            })
+            .json<{ valid?: boolean }>();
+        valid = Boolean(result.valid);
+    } catch (error) {
+        logger.error({ error }, 'Failed to verify API key against nexploy');
+        valid = false;
+    }
+
+    verifyCache.set(token, { valid, expiresAt: Date.now() + VERIFY_CACHE_TTL_MS });
+
+    return valid;
+}
 
 export async function authMiddleware(c: Context, next: Next) {
     const authHeader = c.req.header('Authorization');
@@ -19,20 +49,10 @@ export async function authMiddleware(c: Context, next: Next) {
         );
     }
 
-    const expected = process.env.NEXPLOY_API_KEY as string;
-    if (!constantTimeCompare(token, expected)) {
+    if (!(await verifyApiKey(token))) {
         logger.warn('Invalid API key');
         return c.json({ error: 'Invalid API key.' }, 401);
     }
 
     await next();
-}
-
-function constantTimeCompare(a: string, b: string): boolean {
-    const maxLen = Math.max(a.length, b.length);
-    let result = a.length ^ b.length;
-    for (let i = 0; i < maxLen; i++) {
-        result |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
-    }
-    return result === 0;
 }

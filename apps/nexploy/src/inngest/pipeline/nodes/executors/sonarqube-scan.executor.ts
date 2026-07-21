@@ -1,3 +1,4 @@
+import ky from 'ky';
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
@@ -393,15 +394,11 @@ export class SonarqubeScanExecutor implements INodeExecutor {
     private async generateLocalToken(serverUrl: string): Promise<string> {
         const auth = Buffer.from('admin:admin').toString('base64');
         const tokenName = `nexploy-scan-${Date.now()}`;
-        const res = await fetch(
-            `${serverUrl}/api/user_tokens/generate?name=${encodeURIComponent(tokenName)}`,
-            {
-                method: 'POST',
+        const data = await ky
+            .post(`${serverUrl}/api/user_tokens/generate?name=${encodeURIComponent(tokenName)}`, {
                 headers: { Authorization: `Basic ${auth}` },
-            },
-        );
-        if (!res.ok) throw new Error(`Failed to generate SonarQube token: HTTP ${res.status}`);
-        const data = (await res.json()) as { token: string };
+            })
+            .json<{ token: string }>();
         return data.token;
     }
 
@@ -414,12 +411,9 @@ export class SonarqubeScanExecutor implements INodeExecutor {
         const deadline = Date.now() + maxWaitSeconds * 1000;
         while (Date.now() < deadline) {
             try {
-                const res = await fetch(`${serverUrl}/api/system/status`);
-                if (res.ok) {
-                    const data = (await res.json()) as { status: string };
-                    if (data.status === 'UP') return;
-                    await logger.info(nodeId, `SonarQube status: ${data.status}, waiting...`);
-                }
+                const data = await ky.get(`${serverUrl}/api/system/status`).json<{ status: string }>();
+                if (data.status === 'UP') return;
+                await logger.info(nodeId, `SonarQube status: ${data.status}, waiting...`);
             } catch {}
             await new Promise((r) => setTimeout(r, 5000));
         }
@@ -439,18 +433,12 @@ export class SonarqubeScanExecutor implements INodeExecutor {
         const url = `${serverUrl}/api/qualitygates/project_status?projectKey=${encodeURIComponent(projectKey)}`;
 
         try {
-            const res = await fetch(url, {
-                headers: { Authorization: `Basic ${auth}` },
-                signal: AbortSignal.timeout(15000),
-            });
-            if (!res.ok) {
-                await logger.info(
-                    nodeId,
-                    `Quality gate API returned ${res.status}, assuming passed`,
-                );
-                return true;
-            }
-            const data = (await res.json()) as { projectStatus: { status: string } };
+            const data = await ky
+                .get(url, {
+                    headers: { Authorization: `Basic ${auth}` },
+                    timeout: 15000,
+                })
+                .json<{ projectStatus: { status: string } }>();
             const status = data.projectStatus?.status;
             await logger.info(nodeId, `Quality gate status: ${status}`);
             return status === 'OK' || status === 'NONE';
@@ -479,17 +467,14 @@ export class SonarqubeScanExecutor implements INodeExecutor {
         const auth = Buffer.from(`${token}:`).toString('base64');
         const url = `${serverUrl}/api/measures/component?component=${encodeURIComponent(projectKey)}&metricKeys=${encodeURIComponent(metric)}`;
 
-        const res = await fetch(url, {
-            headers: { Authorization: `Basic ${auth}` },
-            signal: AbortSignal.timeout(15000),
-        });
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${metric} from SonarQube (HTTP ${res.status})`);
-        }
-
-        const data = (await res.json()) as {
-            component?: { measures?: { metric: string; value?: string }[] };
-        };
+        const data = await ky
+            .get(url, {
+                headers: { Authorization: `Basic ${auth}` },
+                timeout: 15000,
+            })
+            .json<{
+                component?: { measures?: { metric: string; value?: string }[] };
+            }>();
         const measure = data.component?.measures?.find((m) => m.metric === metric);
         const rawValue = measure?.value;
 

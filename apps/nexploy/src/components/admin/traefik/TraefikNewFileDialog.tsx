@@ -8,6 +8,7 @@ import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
 import { toast } from 'sonner';
+import ky from 'ky';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 export function TraefikNewFileDialog({ baseDir }: { baseDir?: string }) {
@@ -30,10 +31,9 @@ export function TraefikNewFileDialog({ baseDir }: { baseDir?: string }) {
 
         setCreating(true);
         try {
-            const res = await fetch('/api/admin/traefik', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filename: name, content: '' }),
+            const res = await ky.post('/api/admin/traefik', {
+                json: { filename: name, content: '' },
+                throwHttpErrors: false,
             });
 
             if (res.status === 409) {

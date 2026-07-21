@@ -204,7 +204,7 @@ nexploy/
 │   ├── eslint-config/        # Shared ESLint config
 │   └── typescript-config/    # Shared TypeScript config
 └── infra/
-    ├── docker/               # Compose files (dev, test, pre-prod)
+    ├── docker/               # Compose files (dev, test, prod)
     └── traefik/              # Traefik static + dynamic configuration
 ```
 

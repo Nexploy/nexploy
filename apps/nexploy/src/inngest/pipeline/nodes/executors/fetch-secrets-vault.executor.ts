@@ -1,3 +1,4 @@
+import ky from 'ky';
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { fetchSecretsVaultConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -37,14 +38,9 @@ export class FetchSecretsVaultExecutor implements INodeExecutor {
         const headers: Record<string, string> = { 'X-Vault-Token': token };
         if (namespace) headers['X-Vault-Namespace'] = namespace;
 
-        const response = await fetch(vaultUrl, { headers, signal: abortSignal });
-        if (!response.ok) {
-            throw new Error(`Vault returned ${response.status}: ${response.statusText}`);
-        }
-
-        const data = (await response.json()) as {
+        const data = await ky.get(vaultUrl, { headers, signal: abortSignal }).json<{
             data?: { data?: Record<string, string>; [k: string]: unknown };
-        };
+        }>();
 
         const secrets: Record<string, string> =
             kvVersion === 'v2'

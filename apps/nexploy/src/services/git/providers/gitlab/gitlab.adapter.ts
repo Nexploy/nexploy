@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import ky from 'ky';
 import { GitProviderAdapter, ParsedRepoUrl } from '@/services/git/core/GitProviderAdapter';
 import {
     GitBranch,
@@ -160,12 +161,18 @@ export const gitlabAdapter: GitProviderAdapter = {
             redirect_uri: redirectUri,
         });
 
-        const tokenRes = await fetch(`${baseUrl}/oauth/token`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body,
-        });
-        const tokenData = await tokenRes.json();
+        const tokenData = await ky
+            .post(`${baseUrl}/oauth/token`, {
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body,
+                throwHttpErrors: false,
+            })
+            .json<{
+                error?: string;
+                access_token: string;
+                refresh_token?: string;
+                expires_in?: number;
+            }>();
         if (tokenData.error) throw new Error(GIT_OAUTH_EXCHANGE_FAILED);
 
         const accessToken = tokenData.access_token;
@@ -199,13 +206,13 @@ export const gitlabAdapter: GitProviderAdapter = {
             refresh_token: refreshToken,
         });
 
-        const response = await fetch(`${baseUrl}/oauth/token`, {
-            method: 'POST',
+        const response = await ky.post(`${baseUrl}/oauth/token`, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 Authorization: `Basic ${basicAuth}`,
             },
             body,
+            throwHttpErrors: false,
         });
 
         if (!response.ok) {
@@ -213,7 +220,11 @@ export const gitlabAdapter: GitProviderAdapter = {
             throw new Error(`GitLab token refresh failed (${response.status}): ${message}`);
         }
 
-        const data = await response.json();
+        const data = (await response.json()) as {
+            access_token: string;
+            refresh_token?: string;
+            expires_in?: number;
+        };
         return {
             accessToken: data.access_token,
             refreshToken: data.refresh_token ?? refreshToken,

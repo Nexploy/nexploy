@@ -1,4 +1,5 @@
 import { logger } from '@/utils/logger';
+import ky from 'ky';
 import { spawnSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -44,10 +45,10 @@ export async function pingRegistry(serveraddress: string): Promise<void> {
 
     for (const scheme of ['https', 'http'] as const) {
         try {
-            const res = await fetch(`${scheme}://${serveraddress}/v2/`, {
-                method: 'GET',
+            const res = await ky.get(`${scheme}://${serveraddress}/v2/`, {
                 redirect: 'follow',
-                signal: AbortSignal.timeout(10000),
+                timeout: 10000,
+                throwHttpErrors: false,
             });
 
             if (res.status === 200 || res.status === 401 || res.status === 403) {

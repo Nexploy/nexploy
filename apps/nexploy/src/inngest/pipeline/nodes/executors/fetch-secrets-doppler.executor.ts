@@ -1,3 +1,4 @@
+import ky from 'ky';
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { fetchSecretsDopplerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -22,19 +23,15 @@ export class FetchSecretsDopplerExecutor implements INodeExecutor {
         if (project) url.searchParams.set('project', project);
         if (config) url.searchParams.set('config', config);
 
-        const response = await fetch(url.toString(), {
-            headers: {
-                Authorization: `Bearer ${serviceToken}`,
-                Accept: 'application/json',
-            },
-            signal: abortSignal,
-        });
-
-        if (!response.ok) {
-            throw new Error(`Doppler returned ${response.status}: ${response.statusText}`);
-        }
-
-        const secrets = (await response.json()) as Record<string, string>;
+        const secrets = await ky
+            .get(url.toString(), {
+                headers: {
+                    Authorization: `Bearer ${serviceToken}`,
+                    Accept: 'application/json',
+                },
+                signal: abortSignal,
+            })
+            .json<Record<string, string>>();
         const count = Object.keys(secrets).length;
         await logger.info(nodeId, `Fetched ${count} secret(s) from Doppler`);
 

@@ -1,3 +1,4 @@
+import ky from 'ky';
 import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
 import { sendNotificationConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -38,16 +39,10 @@ export class SendNotificationExecutor implements INodeExecutor {
         await logger.info(nodeId, `Sending notification to ${webhookUrl}`);
 
         try {
-            const response = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
+            await ky.post(webhookUrl, {
+                json: payload,
                 signal: abortSignal,
             });
-
-            if (!response.ok) {
-                throw new Error(`Webhook returned ${response.status}: ${response.statusText}`);
-            }
 
             await logger.info(nodeId, 'Notification sent successfully');
             return { output: { sent: true } };

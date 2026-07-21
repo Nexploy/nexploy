@@ -176,18 +176,19 @@ export async function giteaExchangeCodeForToken(
     expires_in?: number;
     error?: string;
 }> {
-    const response = await fetch(`${baseUrl}/login/oauth/access_token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-            grant_type: 'authorization_code',
-            client_id: clientId,
-            client_secret: clientSecret,
-            code,
-            redirect_uri: redirectUri,
-        }),
-    });
-    return response.json();
+    return ky
+        .post(`${baseUrl}/login/oauth/access_token`, {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                grant_type: 'authorization_code',
+                client_id: clientId,
+                client_secret: clientSecret,
+                code,
+                redirect_uri: redirectUri,
+            }),
+            throwHttpErrors: false,
+        })
+        .json();
 }
 
 export async function giteaRefreshAccessToken(
@@ -201,15 +202,16 @@ export async function giteaRefreshAccessToken(
     expires_in?: number;
     error?: string;
 }> {
-    const response = await fetch(`${baseUrl}/login/oauth/access_token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-            grant_type: 'refresh_token',
-            refresh_token: refreshToken,
-            client_id: clientId,
-            client_secret: clientSecret,
-        }),
-    });
-    return response.json();
+    return ky
+        .post(`${baseUrl}/login/oauth/access_token`, {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken,
+                client_id: clientId,
+                client_secret: clientSecret,
+            }),
+            throwHttpErrors: false,
+        })
+        .json();
 }
