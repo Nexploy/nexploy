@@ -54,6 +54,7 @@
         "upgradeDescription": "Check for updates and upgrade Nexploy to the latest version",
         "upgradeCurrentVersion": "Current version",
         "upgradeLatestVersion": "Latest version",
+        "upgradeNewVersion": "New version",
         "upgradeUpToDate": "You're running the latest version",
         "upgradeAvailable": "A new version is available",
         "upgradeButton": "Upgrade to {version}",
