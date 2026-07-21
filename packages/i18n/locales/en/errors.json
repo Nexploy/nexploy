@@ -144,6 +144,7 @@
         "getPageFailed": "Failed to get builds page",
         "stageProtected": "This stage is protected: it can only be built by the \"{stage}\" stage via its \"Trigger Stage Build\" node.",
         "getBuildsFailed": "Failed to get builds",
+        "getActiveBuildsFailed": "Failed to get active builds",
         "noStageAssociated": "No deployment stage associated with this build"
     },
     "dockerVersion": {

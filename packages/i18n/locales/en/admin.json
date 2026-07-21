@@ -61,7 +61,8 @@
         "upgradeRestarting": "Nexploy is upgrading — this takes a few seconds. Reload the page shortly.",
         "upgradeCheckFailed": "Failed to check for updates",
         "upgradeCheckButton": "Check for updates",
-        "upgradeConfirmTitle": "Upgrade Nexploy?"
+        "upgradeConfirmTitle": "Upgrade Nexploy?",
+        "upgradeActiveBuildsWarning": "The following builds are currently running and will be cancelled if you upgrade now:"
     },
     "users": "Users",
     "user": "User",

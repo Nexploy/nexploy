@@ -18,6 +18,12 @@ interface VersionInfo {
     updateAvailable: boolean;
 }
 
+interface ActiveBuildInfo {
+    id: string;
+    repositoryName: string;
+    status: string;
+}
+
 const DISMISS_KEY = 'nexploy-update-dismissed-version';
 
 export function UpdateBanner() {
@@ -45,24 +51,43 @@ export function UpdateBanner() {
 
     const dismiss = () => setDismissedVersion(data.latest);
 
-    const handleUpgrade = (version: string) => {
+    const handleUpgrade = async (version: string) => {
+        const activeBuilds = await fetcherApi<{ builds: ActiveBuildInfo[] }>({
+            url: '/api/admin/active-builds',
+            disableToast: true,
+        }).catch(() => ({ builds: [] }));
+
         openDialog({
             title: tSettings('upgradeConfirmTitle'),
             description: tSettings('upgradeWarning'),
             content: (
-                <DialogFooter>
-                    <Button variant="outline" onClick={closeDialog}>
-                        {tCommon('cancel')}
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            upgrade({ version });
-                            closeDialog();
-                        }}
-                    >
-                        {tSettings('upgradeButton', { version })}
-                    </Button>
-                </DialogFooter>
+                <>
+                    {activeBuilds.builds.length > 0 && (
+                        <div className="border-destructive/30 bg-destructive/10 mb-4 rounded-lg border p-3 text-sm">
+                            <p className="text-destructive font-medium">
+                                {tSettings('upgradeActiveBuildsWarning')}
+                            </p>
+                            <ul className="text-destructive/90 mt-1.5 list-disc pl-4">
+                                {activeBuilds.builds.map((build) => (
+                                    <li key={build.id}>{build.repositoryName}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    <DialogFooter>
+                        <Button variant="outline" onClick={closeDialog}>
+                            {tCommon('cancel')}
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                upgrade({ version });
+                                closeDialog();
+                            }}
+                        >
+                            {tSettings('upgradeButton', { version })}
+                        </Button>
+                    </DialogFooter>
+                </>
             ),
         });
     };

@@ -61,7 +61,8 @@
         "upgradeRestarting": "Nexploy est en cours de mise à niveau — cela prend quelques secondes. Recharge la page dans un instant.",
         "upgradeCheckFailed": "Échec de la vérification des mises à jour",
         "upgradeCheckButton": "Vérifier les mises à jour",
-        "upgradeConfirmTitle": "Mettre à niveau Nexploy ?"
+        "upgradeConfirmTitle": "Mettre à niveau Nexploy ?",
+        "upgradeActiveBuildsWarning": "Les builds suivants sont actuellement en cours et seront annulés si vous effectuez la mise à niveau maintenant :"
     },
     "users": "Utilisateurs",
     "user": "Utilisateur",
