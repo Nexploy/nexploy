@@ -221,8 +221,8 @@ export const GET = route
                             Connection: 'keep-alive',
                             'X-Client-Id': connectionId,
                         };
-                        if (process.env.DOCKER_API_KEY) {
-                            sseHeaders['Authorization'] = `Bearer ${process.env.DOCKER_API_KEY}`;
+                        if (process.env.NEXPLOY_API_KEY) {
+                            sseHeaders['Authorization'] = `Bearer ${process.env.NEXPLOY_API_KEY}`;
                         }
                         const response = await ky.get(url, {
                             headers: sseHeaders,

@@ -12,17 +12,17 @@ echo "Migrations completed."
 
 # ---- Seed (Docker API key is created once in DB and reused on every subsequent boot) ----
 echo "Running database seed..."
-SEED_OUTPUT=$(tsx prisma/seed.ts 2>&1) || true
-echo "$SEED_OUTPUT"
+KEY_FILE="${NEXPLOY_API_KEY_FILE:-/tmp/nexploy-api-key}"
+rm -f "$KEY_FILE"
+tsx prisma/seed.ts
 
-API_KEY=$(echo "$SEED_OUTPUT" | grep "^NEXPLOY_API_KEY=" | cut -d'=' -f2-)
-
-if [ -z "$API_KEY" ]; then
-    echo "ERROR: Failed to extract API key from seed output."
+if [ ! -s "$KEY_FILE" ]; then
+    echo "ERROR: Failed to read API key from $KEY_FILE."
     exit 1
 fi
 
-export DOCKER_API_KEY="$API_KEY"
+export NEXPLOY_API_KEY="$(cat "$KEY_FILE")"
+rm -f "$KEY_FILE"
 
 # ---- Ensure deployer workdir is writable by nextjs ----
 mkdir -p /tmp/deployer

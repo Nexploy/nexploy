@@ -64,16 +64,16 @@ stack_up() {
     (cd "$APP_DIR" && pnpm exec prisma migrate deploy >/dev/null)
 
     echo "▶ Seeding (creates the docker-api API key + default environment)…"
-    local seed_out
-    seed_out="$(cd "$APP_DIR" && pnpm exec prisma db seed 2>&1)"
-    API_KEY="$(printf '%s\n' "$seed_out" | grep -oE 'NEXPLOY_API_KEY=.*' | head -1 | cut -d= -f2- | tr -d '[:space:]')"
-    if [ -z "${API_KEY:-}" ]; then
-        echo "✗ Could not capture the seeded API key. Seed output:"
-        printf '%s\n' "$seed_out"
+    local key_file="$LOG_DIR/nexploy-api-key"
+    rm -f "$key_file"
+    NEXPLOY_API_KEY_FILE="$key_file" bash -c "cd '$APP_DIR' && pnpm exec prisma db seed"
+    if [ ! -s "$key_file" ]; then
+        echo "✗ Could not capture the seeded API key."
         return 1
     fi
+    API_KEY="$(cat "$key_file")"
+    rm -f "$key_file"
     export NEXPLOY_API_KEY="$API_KEY"
-    export DOCKER_API_KEY="$API_KEY"
 
     echo "▶ Pointing the default Docker environment at the DinD daemon…"
     printf "UPDATE environment SET \"connectionType\"='TCP', host='127.0.0.1', port=12375, \"socketPath\"=NULL WHERE \"isDefault\"=true;" \
