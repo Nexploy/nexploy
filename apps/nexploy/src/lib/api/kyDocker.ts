@@ -5,7 +5,7 @@ export interface KyDockerOptions extends Options {
     environmentId?: string;
 }
 
-const DOCKER_API_KEY = process.env.DOCKER_API_KEY;
+const NEXPLOY_API_KEY = process.env.NEXPLOY_API_KEY;
 
 export const kyDocker = ky.create({
     prefixUrl: `${process.env.DOCKER_API_URL}/api`,
@@ -41,8 +41,8 @@ export const kyDocker = ky.create({
                     request.headers.set('X-Docker-Environment', environmentId);
                 }
 
-                if (DOCKER_API_KEY) {
-                    request.headers.set('Authorization', `Bearer ${DOCKER_API_KEY}`);
+                if (NEXPLOY_API_KEY) {
+                    request.headers.set('Authorization', `Bearer ${NEXPLOY_API_KEY}`);
                 }
 
                 try {

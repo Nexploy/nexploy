@@ -83,8 +83,8 @@ const proxyOptions: Options = {
         },
         proxyReqWs: (proxyReq, req) => {
             console.log('🔌 Proxying WebSocket:', req.url);
-            if (process.env.DOCKER_API_KEY) {
-                proxyReq.setHeader('Authorization', `Bearer ${process.env.DOCKER_API_KEY}`);
+            if (process.env.NEXPLOY_API_KEY) {
+                proxyReq.setHeader('Authorization', `Bearer ${process.env.NEXPLOY_API_KEY}`);
             }
         },
     },

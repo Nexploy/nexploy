@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { getPrismaClient } from './getPrismaClient';
 import { createSeedAuth } from './seedAuth';
 import { decrypt, encrypt } from '@/lib/encryption.ts';
@@ -7,6 +8,7 @@ const auth = createSeedAuth(prisma);
 
 const DOCKER_API_USER_ID = 'docker-api-system';
 const DOCKER_API_KEY_NAME = 'docker-api';
+const NEXPLOY_API_KEY_FILE = process.env.NEXPLOY_API_KEY_FILE || '/tmp/nexploy-api-key';
 
 async function seedEnvironment() {
     const existingDefault = await prisma.environment.findFirst({
@@ -33,16 +35,9 @@ async function seedEnvironment() {
     console.log('Created default environment:', defaultEnvironment.name);
 }
 
-function printDockerApiKey(plainKey: string) {
-    console.log('');
-    console.log('='.repeat(60));
-    console.log('Docker API Key');
-    console.log('='.repeat(60));
-    console.log('');
-    console.log(`NEXPLOY_API_KEY=${plainKey}`);
-    console.log('');
-    console.log('='.repeat(60));
-    console.log('');
+function writeApiKeyFile(plainKey: string) {
+    fs.writeFileSync(NEXPLOY_API_KEY_FILE, plainKey, { mode: 0o600 });
+    console.log(`Docker API key written to ${NEXPLOY_API_KEY_FILE}`);
 }
 
 async function seedDockerApiKey() {
@@ -62,7 +57,7 @@ async function seedDockerApiKey() {
         }
 
         console.log('Docker API key already exists, reusing it.');
-        printDockerApiKey(decrypt(encryptedKey));
+        writeApiKeyFile(decrypt(encryptedKey));
         return;
     }
 
@@ -108,7 +103,7 @@ async function seedDockerApiKey() {
     });
 
     console.log('Docker API key created successfully!');
-    printDockerApiKey(apiKey.key);
+    writeApiKeyFile(apiKey.key);
 }
 
 async function main() {
