@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useAction } from 'next-safe-action/hooks';
@@ -12,7 +11,10 @@ import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { formatBytes } from '@/utils/formatBytes';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { runCleanupAction } from '@/actions/admin/cleanup/runCleanup.action';
-import type { CleanupResult, DiskUsage, } from '@workspace/typescript-interface/docker/docker.system';
+import type {
+    CleanupResult,
+    DiskUsage,
+} from '@workspace/typescript-interface/docker/docker.system';
 import type { CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
 import { fetcherApi } from '@/lib/api/fetcherApi.ts';
 import useSWR from 'swr';
@@ -27,7 +29,6 @@ const ICONS = {
 export function DiskUsageCard() {
     const t = useTranslations('admin.settings');
     const tCommon = useTranslations('common');
-    const [pendingTarget, setPendingTarget] = useState<CleanupTarget | null>(null);
 
     const {
         data: usage,
@@ -37,21 +38,19 @@ export function DiskUsageCard() {
     } = useSWR<DiskUsage | null>({ url: '/api/system/disk-usage', disableToast: true }, fetcherApi);
 
     const { executeAsync } = useAction(runCleanupAction);
-    const { openAlertDialog } = useAlertConfirmationDialogStore();
+    const { openAlertDialog, closeAlertDialog } = useAlertConfirmationDialogStore();
 
     const refresh = () => mutate();
 
     const runClean = async (target: CleanupTarget) => {
-        setPendingTarget(target);
         try {
+            closeAlertDialog();
             const result = await executeAsync({ target });
             const reclaimed = (result?.data as CleanupResult | undefined)?.reclaimedSpace ?? 0;
             toast.success(t('cleanupDone', { space: formatBytes(reclaimed) }));
             await refresh();
         } catch {
             toast.error(t('cleanupFailed'));
-        } finally {
-            setPendingTarget(null);
         }
     };
 
@@ -154,14 +153,8 @@ export function DiskUsageCard() {
                                     {t('ofTotal', { total: formatBytes(usage.totalSize) })}
                                 </span>
                             </div>
-                            <Button
-                                variant="destructive"
-                                onClick={() => handleClean('all')}
-                                disabled={pendingTarget !== null}
-                            >
-                                <Trash2
-                                    className={pendingTarget === 'all' ? 'animate-pulse' : ''}
-                                />
+                            <Button variant="destructive" onClick={() => handleClean('all')}>
+                                <Trash2 />
                                 {t('cleanAll')}
                             </Button>
                         </div>
@@ -196,13 +189,8 @@ export function DiskUsageCard() {
                                             variant="outline"
                                             size="sm"
                                             onClick={() => handleClean(row.key)}
-                                            disabled={pendingTarget !== null}
                                         >
-                                            <Trash2
-                                                className={
-                                                    pendingTarget === row.key ? 'animate-pulse' : ''
-                                                }
-                                            />
+                                            <Trash2 />
                                             {t('clean')}
                                         </Button>
                                     </div>
