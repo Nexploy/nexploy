@@ -4,6 +4,7 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { upgradeSchema } from '@workspace/schemas-zod/admin/traefikFile.schema';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/lib/toastServer';
+import { enableUpgradeOverride } from '@/lib/traefik/upgradeOverride';
 
 export const triggerUpgradeAction = authActionServer
     .use(requirePermission('setting', 'manage'))
@@ -11,6 +12,12 @@ export const triggerUpgradeAction = authActionServer
     .action(async ({ parsedInput }) => {
         if (process.env.NODE_ENV !== 'production') {
             throw new Error('Upgrading is disabled outside of production.');
+        }
+
+        try {
+            await enableUpgradeOverride();
+        } catch (error) {
+            console.warn('Failed to enable upgrade maintenance page:', error);
         }
 
         try {

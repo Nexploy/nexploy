@@ -2,10 +2,11 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'yaml';
 import { TRAEFIK_SERVICE_DIR } from './paths';
+import { disableUpgradeOverride } from './upgradeOverride';
 
 const TEMPLATES_DIR = process.env.TRAEFIK_TEMPLATES_DIR ?? path.join(process.cwd(), 'traefik-templates');
 
-const SEED_FILES = ['middlewares.yml', 'routers.yml', 'maintenance.yml'];
+const SEED_FILES = ['middlewares.yml', 'routers.yml', 'maintenance.yml', 'upgrading.yml'];
 
 async function fileExists(filePath: string): Promise<boolean> {
     try {
@@ -80,6 +81,7 @@ export async function ensureTraefikSetup(): Promise<void> {
     await fs.mkdir(TRAEFIK_SERVICE_DIR, { recursive: true });
     await fs.mkdir(path.join(TRAEFIK_SERVICE_DIR, 'certs'), { recursive: true });
 
+    await disableUpgradeOverride();
     await seedDynamicConfigFiles();
     await renderStaticConfig();
 }

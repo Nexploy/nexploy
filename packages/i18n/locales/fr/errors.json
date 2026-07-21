@@ -144,6 +144,7 @@
         "getPageFailed": "Échec de la récupération de la page des builds",
         "stageProtected": "Cet environnement est protégé : il ne peut être buildé que par l'environnement « {stage} » via son nœud « Trigger Stage Build ».",
         "getBuildsFailed": "Échec de la récupération des builds",
+        "getActiveBuildsFailed": "Échec de la récupération des builds en cours",
         "noStageAssociated": "Aucun environnement de déploiement associé à ce build"
     },
     "dockerVersion": {

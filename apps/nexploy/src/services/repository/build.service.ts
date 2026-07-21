@@ -305,6 +305,19 @@ export async function assertStageProtectionSatisfied(
     throw new Error(t('build.stageProtected', { stage: requiredName }));
 }
 
+export async function getActiveBuilds() {
+    const t = await getErrorTranslator();
+    try {
+        return await prisma.build.findMany({
+            where: { status: { in: ['QUEUED', 'BUILDING'] } },
+            select: { id: true, status: true, repository: { select: { name: true } } },
+            orderBy: { createdAt: 'desc' },
+        });
+    } catch {
+        throw new Error(t('build.getActiveBuildsFailed'));
+    }
+}
+
 export async function getAllEnvsBuild(stageId: string) {
     const t = await getErrorTranslator();
     try {
