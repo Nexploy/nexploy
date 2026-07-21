@@ -14,9 +14,9 @@ export async function runSelfUpgradeAndExit(): Promise<void> {
     try {
         await recreateContainerWithImage(defaultDocker, containerName, targetImage);
         logger.info({ image: targetImage }, 'docker-api self-upgrade complete');
+        process.exit(0);
     } catch (error) {
         logger.error({ error }, 'docker-api self-upgrade failed');
-    } finally {
-        process.exit(0);
+        process.exit(1);
     }
 }

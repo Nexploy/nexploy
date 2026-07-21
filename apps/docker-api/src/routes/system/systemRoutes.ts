@@ -3,7 +3,7 @@ import ky from 'ky';
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
-import { waitForContainerHealthy, waitForFile } from '@/utils/wait';
+import { wait, waitForContainerHealthy, waitForFile } from '@/utils/wait';
 import { logger } from '@/utils/logger';
 import { HttpError } from '@workspace/shared/http-error';
 import { buildCachePruneSchema, type CleanupTarget, } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
@@ -297,6 +297,31 @@ app.post(
     }),
 );
 
+async function monitorSelfUpgradeHelper(helperName: string, timeoutMs: number): Promise<void> {
+    const helperContainer = docker.getContainer(helperName);
+
+    try {
+        const result = (await Promise.race([
+            helperContainer.wait(),
+            wait(timeoutMs).then(() => {
+                throw new Error(`Timed out after ${timeoutMs}ms waiting for ${helperName} to exit`);
+            }),
+        ])) as { StatusCode?: number };
+
+        if (result.StatusCode !== 0) {
+            logger.error(
+                { helper: helperName, exitCode: result.StatusCode },
+                'docker-api self-upgrade failed — docker-api remains on the previous version. Check: docker logs nexploy_upgrader',
+            );
+        }
+    } catch (error) {
+        logger.error(
+            { helper: helperName, error },
+            'docker-api self-upgrade could not be confirmed — it may still be on the previous version. Check: docker logs nexploy_upgrader',
+        );
+    }
+}
+
 async function pullImage(image: string): Promise<void> {
     await new Promise<void>((resolve, reject) => {
         docker.pull(image, (err: Error | null, stream: NodeJS.ReadableStream) => {
@@ -373,7 +398,7 @@ app.post(
                 `DOCKER_SOCKET=${DOCKER_SOCKET_PATH}`,
             ],
             HostConfig: {
-                AutoRemove: true,
+                AutoRemove: false,
                 Binds: [`${DOCKER_SOCKET_PATH}:${DOCKER_SOCKET_PATH}`],
             },
             NetworkingConfig: {
@@ -386,6 +411,8 @@ app.post(
             },
         });
         await helper.start();
+
+        monitorSelfUpgradeHelper(helperName, 120_000).catch(() => {});
 
         return { status: 'upgrading', version };
     }),
