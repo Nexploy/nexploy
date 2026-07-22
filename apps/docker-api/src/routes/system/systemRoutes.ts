@@ -14,6 +14,8 @@ import {
     DOCKER_API_IMAGE_REPOSITORY,
     DOCKER_SOCKET_PATH,
     NEXPLOY_APP_CONTAINER_NAME,
+    NEXPLOY_APP_HEALTHCHECK,
+    NEXPLOY_APP_NETWORK_ALIAS,
     NEXPLOY_GITHUB_REPO,
     NEXPLOY_IMAGE_REPOSITORY,
     TRAEFIK_CONTAINER_NAME,
@@ -365,7 +367,10 @@ app.post(
         await pullImage(appImage);
         await pullImage(dockerApiImage);
 
-        await recreateContainerWithImage(docker, NEXPLOY_APP_CONTAINER_NAME, appImage);
+        await recreateContainerWithImage(docker, NEXPLOY_APP_CONTAINER_NAME, appImage, {
+            aliases: [NEXPLOY_APP_NETWORK_ALIAS],
+            healthcheck: NEXPLOY_APP_HEALTHCHECK,
+        });
 
         const appReady = await waitForContainerHealthy(docker, NEXPLOY_APP_CONTAINER_NAME, 180_000);
         if (!appReady) {
