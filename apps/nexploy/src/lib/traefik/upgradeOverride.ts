@@ -7,24 +7,41 @@ const OVERRIDE_FILE = path.join(TRAEFIK_SERVICE_DIR, 'upgrade-override.yml');
 
 function resolveDomain(): string | null {
     const publicUrl = process.env.NEXPLOY_URL ?? process.env.BETTER_AUTH_URL ?? '';
-    const domain = publicUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '');
-    return domain || null;
+    if (!publicUrl) return null;
+
+    try {
+        return new URL(publicUrl).hostname || null;
+    } catch {
+        return null;
+    }
+}
+
+function resolveEntryPoints(): string[] {
+    const entryPoints = ['web'];
+    if (process.env.TRAEFIK_USE_TLS !== 'false') entryPoints.push('websecure');
+    return entryPoints;
 }
 
 export async function enableUpgradeOverride(): Promise<void> {
     const domain = resolveDomain();
-    if (!domain) return;
+    if (!domain) {
+        console.warn(
+            'Failed to enable upgrade maintenance page: could not resolve domain from NEXPLOY_URL/BETTER_AUTH_URL',
+        );
+        return;
+    }
 
+    const entryPoints = resolveEntryPoints();
     const config = {
         http: {
             routers: {
                 'nexploy-upgrade-override': {
-                    entryPoints: ['websecure'],
+                    entryPoints,
                     rule: `Host(\`${domain}\`)`,
-                    priority: 100,
+                    priority: 999_999,
                     middlewares: ['upgrading@file'],
                     service: 'noop@internal',
-                    tls: {},
+                    ...(entryPoints.includes('websecure') ? { tls: {} } : {}),
                 },
             },
         },
@@ -37,7 +54,5 @@ export async function enableUpgradeOverride(): Promise<void> {
 export async function disableUpgradeOverride(): Promise<void> {
     try {
         await fs.unlink(OVERRIDE_FILE);
-    } catch {
-        /* not present, nothing to do */
-    }
+    } catch {}
 }
