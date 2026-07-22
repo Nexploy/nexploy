@@ -70,7 +70,7 @@ openssl rand -hex 32   # -> ENCRYPTION_KEY
 ```
 
 Every other value already points at the dev stack (Postgres on `5433`, Inngest on `8288`).
-Leave `DOCKER_API_KEY` and `NEXPLOY_API_KEY` empty for now — step 5 produces them.
+Leave `NEXPLOY_API_KEY` empty in both `.env` files for now — step 5 produces it.
 
 ## 3. Start the infrastructure
 
@@ -98,8 +98,9 @@ pnpm --filter=nexploy db:migrate:dev
 
 ## 5. Seed, and wire the internal API key
 
-Nexploy and `docker-api` authenticate to each other with a shared **Better Auth API key**. The seed creates it —
-along with the default local Docker environment — and prints it:
+Nexploy and `docker-api` authenticate to each other with a shared **Better Auth API key**, sent as
+`Authorization: Bearer` by nexploy and as `x-api-key` by docker-api — both sides read it from the exact same
+env var, `NEXPLOY_API_KEY`. The seed creates it — along with the default local Docker environment — and prints it:
 
 ```bash
 pnpm --filter=nexploy db:seed
@@ -109,13 +110,13 @@ pnpm --filter=nexploy db:seed
 NEXPLOY_API_KEY=nxp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-Copy that value into **both** env files. The same key on both sides, or every call between the two services is a `401`:
+Copy that value into **both** env files, under the same variable name:
 
 ```env
-# apps/nexploy/.env      — the key nexploy sends to docker-api
-DOCKER_API_KEY=nxp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# apps/nexploy/.env
+NEXPLOY_API_KEY=nxp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-# apps/docker-api/.env   — the key docker-api expects, and uses to call nexploy back
+# apps/docker-api/.env
 NEXPLOY_API_KEY=nxp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -152,7 +153,7 @@ OOM-killed below that.
 
 | Symptom | Cause |
 |---|---|
-| `docker-api` answers `401` on every route | `NEXPLOY_API_KEY` and `DOCKER_API_KEY` differ, or the seed has been re-run since |
+| `docker-api` answers `401` on every route | `NEXPLOY_API_KEY` differs between the two `.env` files, or the seed has been re-run since |
 | `EADDRINUSE: :::3300` | A previous `docker-api` is still alive — `lsof -nP -iTCP:3300 -sTCP:LISTEN` |
 | Prisma cannot reach the database | The dev stack listens on **5433**, not 5432 |
 | `pnpm lint` fails | Known issue: `next lint` was removed in Next 16 and the lint scripts are not migrated yet — use `pnpm types` |
@@ -309,6 +310,44 @@ docker logs -f nexploy_app          # application logs
 docker restart nexploy_app          # restart the app
 docker ps --filter name=nexploy_    # every Nexploy container
 ```
+
+## Environment variables
+
+Day-to-day configuration lives in `.env` files, documented inline:
+
+- [`apps/nexploy/.env.example`](apps/nexploy/.env.example) — app URL, auth, database, encryption key, Inngest, Traefik paths, AI providers
+- [`apps/docker-api/.env.example`](apps/docker-api/.env.example) — port, Docker socket, and the shared internal API key
+
+The tables below cover variables that only apply to **production** (`install.sh`) deployments. `install.sh`
+sets them itself on `docker run`, so they're absent from the `.env.example` files above — listed here because
+they came up while debugging the upgrade flow (network aliases/healthchecks dropped on container recreation,
+maintenance page shown on the wrong entrypoint).
+
+### `docker-api`
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `TRAEFIK_CONTAINER_NAME` | `nexploy_traefik` | Container name used for Traefik health checks and restarts |
+| `TRAEFIK_NETWORK_NAME` | `nexploy_traefik_network` | Edge network shared with Traefik |
+| `TRAEFIK_STATIC_CONFIG_PATH` | `/etc/nexploy/traefik/traefik.yml` | Path to Traefik's static config (read to detect available entrypoints) |
+| `NEXPLOY_APP_CONTAINER_NAME` | `nexploy_app` | Container recreated on every app upgrade |
+| `DOCKER_API_CONTAINER_NAME` | `nexploy_docker_api` | docker-api's own container name, used by its self-upgrade helper |
+| `NEXPLOY_IMAGE_REPOSITORY` | `nexploy/nexploy` | Image repository pulled when upgrading the app |
+| `DOCKER_API_IMAGE_REPOSITORY` | `nexploy/docker-api` | Image repository pulled when upgrading docker-api |
+| `NEXPLOY_GITHUB_REPO` | `Nexploy/nexploy` | Repository checked for the latest available release/version |
+| `NEXPLOY_APP_NETWORK_ALIAS` | `nexploy` | Network alias re-applied to `nexploy_app` on every recreation — lets docker-api resolve it as `http://nexploy:3000` |
+| `DOCKER_API_NETWORK_ALIAS` | `docker-api` | Network alias re-applied to `nexploy_docker_api` on every recreation — lets the app resolve it as `http://docker-api:3300` |
+| `SELF_UPGRADE_TARGET_IMAGE` | *(unset)* | Set only on the ephemeral `nexploy_upgrader` helper container — never set manually |
+| `SELF_UPGRADE_CONTAINER_NAME` | *(unset)* | Set only on the ephemeral `nexploy_upgrader` helper container — never set manually |
+
+### `nexploy` app
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `TRAEFIK_USE_TLS` | `true` | Whether Traefik terminates TLS. Controls which entrypoint (`web` vs `websecure`) receives the maintenance-page override during an upgrade, and which static config template is rendered on first boot |
+| `ACME_EMAIL` | *(unset)* | Let's Encrypt contact email, required when `TRAEFIK_USE_TLS=true` and `traefik.yml` doesn't already exist |
+| `TRAEFIK_TEMPLATES_DIR` | `apps/nexploy/traefik-templates` (relative to cwd) | Where the Traefik dynamic-config templates are seeded from on first boot |
+| `NEXPLOY_API_KEY_FILE` | `/tmp/nexploy-api-key` | Temp file the seed writes the plaintext internal API key to; read once by `entrypoint.sh` |
 
 ## Security
 
