@@ -1,6 +1,7 @@
 import { defaultDocker } from '@/utils/dockerClient';
 import { recreateContainerWithImage } from '@/utils/recreateWithImage';
 import { logger } from '@/utils/logger';
+import { DOCKER_API_NETWORK_ALIAS } from '@/lib/config';
 
 export async function runSelfUpgradeAndExit(): Promise<void> {
     const targetImage = process.env.SELF_UPGRADE_TARGET_IMAGE;
@@ -12,7 +13,9 @@ export async function runSelfUpgradeAndExit(): Promise<void> {
     }
 
     try {
-        await recreateContainerWithImage(defaultDocker, containerName, targetImage);
+        await recreateContainerWithImage(defaultDocker, containerName, targetImage, {
+            aliases: [DOCKER_API_NETWORK_ALIAS],
+        });
         logger.info({ image: targetImage }, 'docker-api self-upgrade complete');
         process.exit(0);
     } catch (error) {

@@ -10,3 +10,14 @@ export const NEXPLOY_IMAGE_REPOSITORY = process.env.NEXPLOY_IMAGE_REPOSITORY ?? 
 export const DOCKER_API_IMAGE_REPOSITORY =
     process.env.DOCKER_API_IMAGE_REPOSITORY ?? 'nexploy/docker-api';
 export const NEXPLOY_GITHUB_REPO = process.env.NEXPLOY_GITHUB_REPO ?? 'Nexploy/nexploy';
+
+export const NEXPLOY_APP_NETWORK_ALIAS = process.env.NEXPLOY_APP_NETWORK_ALIAS ?? 'nexploy';
+export const DOCKER_API_NETWORK_ALIAS = process.env.DOCKER_API_NETWORK_ALIAS ?? 'docker-api';
+
+export const NEXPLOY_APP_HEALTHCHECK = {
+    Test: ['CMD-SHELL', 'wget -qO- http://0.0.0.0:3000 || exit 1'],
+    Interval: 5_000_000_000,
+    Timeout: 5_000_000_000,
+    Retries: 30,
+    StartPeriod: 60_000_000_000,
+};
