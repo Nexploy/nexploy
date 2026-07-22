@@ -1,4 +1,5 @@
 import type Docker from 'dockerode';
+import { logger } from '@/utils/logger';
 
 interface RecreateOverrides {
     aliases?: string[];
@@ -13,6 +14,7 @@ export async function recreateContainerWithImage(
 ): Promise<Docker.Container> {
     const container = docker.getContainer(containerName);
     const info = await container.inspect();
+    const oldImage = info.Config.Image;
 
     if (info.State.Running) await container.stop();
     await container.remove();
@@ -38,5 +40,14 @@ export async function recreateContainerWithImage(
     });
 
     await created.start();
+
+    if (oldImage && oldImage !== newImage) {
+        try {
+            await docker.getImage(oldImage).remove({ force: false });
+        } catch (error) {
+            logger.warn({ image: oldImage, error }, 'Failed to remove previous image after upgrade');
+        }
+    }
+
     return created;
 }
