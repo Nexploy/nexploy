@@ -12,21 +12,16 @@ export async function recreateContainerWithImage(
     await container.remove();
 
     const created = await docker.createContainer({
+        ...info.Config,
         name: info.Name.replace('/', ''),
         Image: newImage,
-        Hostname: info.Config.Hostname,
-        Env: info.Config.Env,
-        Cmd: info.Config.Cmd,
-        Entrypoint: info.Config.Entrypoint,
-        Volumes: info.Config.Volumes,
-        WorkingDir: info.Config.WorkingDir,
-        User: info.Config.User,
-        Labels: info.Config.Labels,
-        ExposedPorts: info.Config.ExposedPorts,
         HostConfig: info.HostConfig,
         NetworkingConfig: {
             EndpointsConfig: Object.fromEntries(
-                Object.keys(info.NetworkSettings.Networks ?? {}).map((name) => [name, {}]),
+                Object.entries(info.NetworkSettings.Networks ?? {}).map(([name, network]) => [
+                    name,
+                    { Aliases: network.Aliases ?? [] },
+                ]),
             ),
         },
     });
