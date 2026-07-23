@@ -5,10 +5,11 @@ import {
     stageQuerySchema,
 } from '@workspace/schemas-zod/api/params.schema';
 import { getVersionsByRepository } from '@/services/docker/version.service';
+import { byRepositoryIdParam } from '@/lib/auth/resolveOrgContext';
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('repository', 'read'))
+    .use(requirePermission('repository', 'read', byRepositoryIdParam))
     .params(repositoryIdParamSchema)
     .query(stageQuerySchema)
     .handler(async (_, { params, query }) => {

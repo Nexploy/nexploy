@@ -24,6 +24,7 @@ import {
 } from '@/services/repository/build.service';
 import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
+import { resolveOrganizationIdForBuild } from '@/lib/auth/resolveOrgContext';
 
 export const repositoriesGroup: ToolGroup = {
     name: 'repositories',
@@ -211,7 +212,9 @@ export const repositoriesGroup: ToolGroup = {
                 const g = guard(ctx, 'build', 'delete');
                 if (g) return g;
                 try {
-                    await removeBuild(buildId);
+                    const organizationId = await resolveOrganizationIdForBuild(buildId);
+                    if (!organizationId) return fail('Build not found');
+                    await removeBuild(buildId, organizationId);
                     return ok(`Build ${buildId} removed`);
                 } catch (e: any) {
                     return fail(e.message);

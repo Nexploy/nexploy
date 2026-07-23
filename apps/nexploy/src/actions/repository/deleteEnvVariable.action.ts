@@ -4,9 +4,10 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { updateEnvVariables } from '@/services/repository.service';
 import { z } from 'zod';
+import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const deleteEnvVariableAction = authActionServer
-    .use(requirePermission('envVar', 'write'))
+    .use(requirePermission('envVar', 'write', byRepositoryId))
     .inputSchema(z.object({ repositoryId: z.string(), envVariableId: z.string() }))
     .action(async ({ parsedInput, ctx }) => {
         const { repositoryId, envVariableId } = parsedInput;

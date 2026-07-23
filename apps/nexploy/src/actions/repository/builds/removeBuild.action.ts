@@ -6,13 +6,18 @@ import { removeBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { removeBuild } from '@/services/repository/build.service.ts';
 import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
+import { byBuildId, resolveOrganizationIdForBuild } from '@/lib/auth/resolveOrgContext';
 
 export const onRemoveBuild = authActionServer
-    .use(requirePermission('build', 'delete'))
+    .use(requirePermission('build', 'delete', byBuildId))
     .inputSchema(removeBuildSchema)
     .action(async ({ parsedInput: { buildId } }) => {
         try {
-            await removeBuild(buildId);
+            const organizationId = await resolveOrganizationIdForBuild(buildId);
+            if (!organizationId) {
+                throw new Error('Build not found');
+            }
+            await removeBuild(buildId, organizationId);
 
             const t = await getTranslations('repository.builds');
             await setToastServer({ type: 'success', message: t('removeSuccess') });

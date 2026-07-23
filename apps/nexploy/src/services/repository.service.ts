@@ -18,6 +18,7 @@ export async function createRepository(
     const t = await getErrorTranslator();
     try {
         const defaultEnvironment = await getDefaultEnvironment();
+        const organizationId = await resolveCallerOrganizationId(ctx.session);
 
         const repository = await prisma.repository.create({
             data: {
@@ -27,6 +28,7 @@ export async function createRepository(
                 gitId: repo.id,
                 repositoryUrl: repo.url,
                 userId: ctx.session.user.id,
+                organizationId,
                 stages: {
                     create: {
                         name: 'Production',
@@ -41,6 +43,24 @@ export async function createRepository(
     } catch (error: unknown) {
         throw new Error(t('repository.createFailed'));
     }
+}
+
+async function resolveCallerOrganizationId(session: Session): Promise<string> {
+    const activeOrganizationId = (session.session as { activeOrganizationId?: string })
+        .activeOrganizationId;
+    if (activeOrganizationId) return activeOrganizationId;
+
+    const member = await prisma.member.findFirst({
+        where: { userId: session.user.id },
+        select: { organizationId: true },
+        orderBy: { createdAt: 'asc' },
+    });
+
+    if (!member) {
+        throw new Error('No organization found for user');
+    }
+
+    return member.organizationId;
 }
 
 export async function getRepositorieById<

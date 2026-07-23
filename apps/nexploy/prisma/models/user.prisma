@@ -24,22 +24,25 @@ model User {
   oauthApplications    OauthApplication[]
   oauthAccessTokens    OauthAccessToken[]
   oauthConsents        OauthConsent[]
+  members              Member[]
+  sentInvitations      Invitation[]
 
   @@unique([email])
   @@map("user")
 }
 
 model Session {
-  id             String   @id
-  expiresAt      DateTime
-  token          String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  ipAddress      String?
-  userAgent      String?
-  userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  impersonatedBy String?
+  id                   String   @id
+  expiresAt            DateTime
+  token                String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  ipAddress            String?
+  userAgent            String?
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy       String?
+  activeOrganizationId String?
 
   @@unique([token])
   @@index([userId])

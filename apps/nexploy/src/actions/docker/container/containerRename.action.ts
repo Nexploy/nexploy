@@ -5,9 +5,10 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { containerRenameSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
+import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
 export const onContainerRenameAction = authActionServer
-    .use(requirePermission('container', 'manage'))
+    .use(requirePermission('container', 'manage', byContainerIds))
     .inputSchema(containerRenameSchema)
     .action(async ({ parsedInput: { containerId, name } }) => {
         try {

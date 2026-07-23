@@ -3,10 +3,11 @@ import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getBuildPipelineStatus } from '@/services/pipeline.service';
 import { buildParamSchema } from '@workspace/schemas-zod/api/params.schema';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
+import { byRepositoryIdParam } from '@/lib/auth/resolveOrgContext';
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('repository', 'read'))
+    .use(requirePermission('repository', 'read', byRepositoryIdParam))
     .params(buildParamSchema)
     .handler(async (_, { params }) => {
         const { buildId } = params;

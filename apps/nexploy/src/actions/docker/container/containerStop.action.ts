@@ -5,9 +5,10 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { containerActionsSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
+import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
 export const onContainerStopAction = authActionServer
-    .use(requirePermission('container', 'manage'))
+    .use(requirePermission('container', 'manage', byContainerIds))
     .inputSchema(containerActionsSchema)
     .action(async ({ parsedInput: { containerIds } }) => {
         try {
