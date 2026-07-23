@@ -46,7 +46,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
 
     const buildSocketUrl = (shell: string, user?: string) => {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const baseUrl = `${protocol}//${window.location.host}/api/ws/docker/terminal/${container?.id}/${shell}`;
+        const baseUrl = `${protocol}//${window.location.host}/_ws/docker/terminal/${container?.id}/${shell}`;
         const params = new URLSearchParams();
         if (selectedEnvironmentId) params.set('environment', selectedEnvironmentId);
         const resolvedUser = user !== undefined ? user : selectedUser;

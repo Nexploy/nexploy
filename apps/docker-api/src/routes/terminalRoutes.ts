@@ -7,6 +7,8 @@ import type Docker from 'dockerode';
 import { Exec, ExecCreateOptions } from 'dockerode';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 
+const EXEC_USER_PATTERN = /^[a-zA-Z0-9_.-]+(:[a-zA-Z0-9_.-]+)?$/;
+
 function getShellCommand(shell: string): string[] {
     switch (shell) {
         case 'bash':
@@ -37,7 +39,8 @@ export const createTerminalRoutes = (
             const containerId = c.req.param('containerId')!;
             const shell = c.req.param('shell') ?? 'auto';
             const environmentId = c.req.query('environment');
-            const user = c.req.query('user');
+            const userParam = c.req.query('user');
+            const user = userParam && EXEC_USER_PATTERN.test(userParam) ? userParam : undefined;
 
             let exec: Exec | null = null;
             let stream: Duplex | null = null;

@@ -234,29 +234,6 @@ export function ContainerBasicConfig() {
                         )}
                     />
 
-                    <FormField
-                        control={form.control}
-                        name="privileged"
-                        render={({ field }) => (
-                            <FormItem>
-                                <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
-                                    <div className="flex flex-col gap-0.5">
-                                        <span className="text-base">{t('privilegedMode')}</span>
-                                        <FormDescription className="m-0">
-                                            {t('privilegedModeDescription')}
-                                        </FormDescription>
-                                    </div>
-                                    <FormControl>
-                                        <Switch
-                                            className={'cursor-pointer'}
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                </Label>
-                            </FormItem>
-                        )}
-                    />
                 </div>
             </CardContent>
         </Card>

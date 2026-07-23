@@ -45,7 +45,6 @@ export const containerCreateFormSchema = z.object({
     networks: z.array(networkSchema).default([]),
     hostname: z.string().optional(),
     autoRemove: z.boolean().default(false),
-    privileged: z.boolean().default(false),
     ports: z.array(portMappingSchema).default([]),
     envVars: z.array(envVarSchema).default([]),
     volumes: z.array(volumeMountSchema).default([]),

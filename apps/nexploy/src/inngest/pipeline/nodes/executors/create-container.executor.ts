@@ -51,7 +51,6 @@ export class CreateContainerExecutor implements INodeExecutor {
                         restart: nodeConfig.restartPolicy,
                         network: nodeConfig.networkName || undefined,
                         autoRemove: false,
-                        privileged: false,
                         ports: [...(nodeConfig.portsSource ?? []), ...nodeConfig.ports],
                         envVars,
                         volumes: [...(nodeConfig.volumesSource ?? []), ...nodeConfig.volumes],
