@@ -1,4 +1,10 @@
 import { createAccessControl } from 'better-auth/plugins/access';
+import {
+    adminAc as orgAdminAc,
+    defaultStatements as orgDefaultStatements,
+    memberAc as orgMemberAc,
+    ownerAc as orgOwnerAc,
+} from 'better-auth/plugins/organization/access';
 
 export type OrgRole = 'owner' | 'admin' | 'member';
 
@@ -17,6 +23,7 @@ export type OrgPermissionActions = {
 export type OrgPermissionResource = keyof OrgPermissionActions;
 
 const statement = {
+    ...orgDefaultStatements,
     repository: ['create', 'read', 'update', 'delete'],
     build: ['read', 'run', 'cancel', 'delete'],
     deployment: ['deploy', 'rollback'],
@@ -31,6 +38,7 @@ const statement = {
 export const orgAc = createAccessControl(statement);
 
 export const orgMember = orgAc.newRole({
+    ...orgMemberAc.statements,
     repository: ['read'],
     build: ['read', 'run'],
     pipeline: ['read'],
@@ -42,6 +50,7 @@ export const orgMember = orgAc.newRole({
 });
 
 export const orgAdmin = orgAc.newRole({
+    ...orgAdminAc.statements,
     repository: ['create', 'read', 'update', 'delete'],
     build: ['read', 'run', 'cancel', 'delete'],
     deployment: ['deploy', 'rollback'],
@@ -54,7 +63,16 @@ export const orgAdmin = orgAc.newRole({
 });
 
 export const orgOwner = orgAc.newRole({
-    ...orgAdmin.statements,
+    repository: ['create', 'read', 'update', 'delete'],
+    build: ['read', 'run', 'cancel', 'delete'],
+    deployment: ['deploy', 'rollback'],
+    pipeline: ['read', 'update', 'webhook'],
+    envVar: ['read', 'write'],
+    stage: ['read', 'manage'],
+    domain: ['read', 'manage'],
+    ssl: ['read', 'manage'],
+    container: ['read', 'manage', 'remove'],
+    ...orgOwnerAc.statements,
 });
 
 export const orgRoles: Record<OrgRole, any> = {

@@ -5,6 +5,7 @@ import {
     Bot,
     Box,
     Bug,
+    Building2,
     ChevronRight,
     Container,
     Cpu,
@@ -66,6 +67,11 @@ const groups: PermissionedSidebarNavGroup[] = [
                 href: '/repositories',
                 icon: FolderGit2,
                 permission: { resource: 'repository', action: 'read' },
+            },
+            {
+                titleKey: 'organizations',
+                href: '/organizations',
+                icon: Building2,
             },
             {
                 titleKey: 'monitoring',

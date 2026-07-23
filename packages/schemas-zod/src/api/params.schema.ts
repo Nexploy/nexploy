@@ -34,6 +34,10 @@ export const buildNodeParamSchema = z.object({
     nodeId: z.string().min(1),
 });
 
+export const organizationIdParamSchema = z.object({
+    organizationId: z.string().min(1),
+});
+
 export const providerParamSchema = z.object({
     provider: z.enum([
         'OPENAI',

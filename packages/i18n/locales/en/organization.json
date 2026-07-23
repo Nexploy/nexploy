@@ -1,0 +1,79 @@
+{
+    "title": "Organizations",
+    "myOrganizations": "My Organizations",
+    "description": "Organizations group your repositories and let you invite teammates to collaborate on them",
+    "manage": "Manage organizations",
+    "noOrganizations": "You are not a member of any organization yet",
+    "createOrganization": "Create Organization",
+    "createOrganizationDescription": "Repositories created in this organization will be visible to its members",
+    "name": "Name",
+    "namePlaceholder": "Acme Inc.",
+    "slug": "Slug",
+    "slugPlaceholder": "acme-inc",
+    "roles": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "member": "Member"
+    },
+    "members": {
+        "title": "Members",
+        "member": "Member",
+        "role": "Role",
+        "you": "(you)",
+        "email": "Email",
+        "invite": "Invite member",
+        "inviteDescription": "The invited user must already have a Nexploy account",
+        "remove": "Remove member",
+        "confirmRemove": "Remove {name} from this organization?"
+    },
+    "invitations": {
+        "pending": "Pending invitations",
+        "pendingDescription": "Organizations you've been invited to join",
+        "noPendingInvitations": "No pending invitations",
+        "accept": "Accept",
+        "reject": "Reject"
+    },
+    "settings": {
+        "title": "Settings",
+        "general": "General",
+        "generalDescription": "Update your organization's name",
+        "save": "Save",
+        "dangerZone": "Danger zone",
+        "dangerZoneDescription": "Deleting an organization cannot be undone",
+        "deleteOrganization": "Delete organization",
+        "confirmDelete": "Delete \"{name}\"? This cannot be undone."
+    },
+    "errors": {
+        "guestCannotCreate": "Your role does not allow creating organizations",
+        "userNotFound": "No Nexploy account found for this email",
+        "alreadyMember": "This user is already a member of the organization",
+        "notFound": "Organization not found",
+        "cannotRemoveLastOwner": "Cannot remove the last owner of the organization",
+        "cannotDemoteLastOwner": "Cannot change the role of the last owner",
+        "cannotLeaveAsSoleOwner": "Transfer ownership or delete the organization before leaving",
+        "hasRepositories": "This organization still owns repositories. Reassign or delete them first",
+        "createFailed": "Failed to create organization",
+        "updateFailed": "Failed to update organization",
+        "inviteFailed": "Failed to invite member",
+        "acceptFailed": "Failed to accept invitation",
+        "rejectFailed": "Failed to reject invitation",
+        "cancelFailed": "Failed to cancel invitation",
+        "removeMemberFailed": "Failed to remove member",
+        "updateRoleFailed": "Failed to update member role",
+        "leaveFailed": "Failed to leave organization",
+        "deleteFailed": "Failed to delete organization",
+        "setActiveFailed": "Failed to switch organization"
+    },
+    "success": {
+        "created": "Organization created",
+        "renamed": "Organization updated",
+        "invited": "Invitation sent",
+        "accepted": "Invitation accepted",
+        "rejected": "Invitation rejected",
+        "cancelled": "Invitation cancelled",
+        "removed": "Member removed",
+        "roleUpdated": "Member role updated",
+        "left": "You left the organization",
+        "deleted": "Organization deleted"
+    }
+}
