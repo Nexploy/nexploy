@@ -5,9 +5,10 @@ import { setToastServer } from '@/lib/toastServer';
 import { cancelBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { cancelBuildRepository } from '@/services/repository/build.service.ts';
 import { getTranslations } from 'next-intl/server';
+import { byBuildId } from '@/lib/auth/resolveOrgContext';
 
 export const onCancelBuild = authActionServer
-    .use(requirePermission('build', 'cancel'))
+    .use(requirePermission('build', 'cancel', byBuildId))
     .inputSchema(cancelBuildSchema)
     .action(async ({ parsedInput }) => {
         try {

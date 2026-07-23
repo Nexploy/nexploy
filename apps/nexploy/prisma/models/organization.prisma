@@ -5,8 +5,9 @@ model Organization {
   logo        String?
   createdAt   DateTime
   metadata    String?
-  members     Member[]
-  invitations Invitation[]
+  members      Member[]
+  invitations  Invitation[]
+  repositories Repository[]
 
   @@unique([slug])
   @@map("organization")

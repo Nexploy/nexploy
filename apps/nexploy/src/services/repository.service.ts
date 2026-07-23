@@ -79,10 +79,14 @@ export async function getRepositorieById<
     }
 }
 
-export async function getRepositories() {
+export async function getRepositories(userId?: string, isGlobalAdmin = false) {
     const t = await getErrorTranslator();
     try {
         return prisma.repository.findMany({
+            where:
+                userId && !isGlobalAdmin
+                    ? { organization: { members: { some: { userId } } } }
+                    : undefined,
             include: {
                 build: {
                     orderBy: {

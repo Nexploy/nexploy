@@ -4,9 +4,10 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { domainFormSchema } from '@workspace/schemas-zod/repository/domain.schema';
 import { updateDomain } from '@/services/domain.service';
 import { setToastServer } from '@/lib/toastServer.ts';
+import { byDomainContainerName } from '@/lib/auth/resolveOrgContext';
 
 export const editDomain = authActionServer
-    .use(requirePermission('domain', 'manage'))
+    .use(requirePermission('domain', 'manage', byDomainContainerName))
     .inputSchema(domainFormSchema)
     .action(async ({ parsedInput: { domain } }) => {
         try {

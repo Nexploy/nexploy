@@ -5,9 +5,10 @@ import { deleteVersionSchema } from '@workspace/schemas-zod/repository/version.s
 import { deleteVersion } from '@/services/docker/version.service';
 import { setToastServer } from '@/lib/toastServer.ts';
 import { revalidatePath } from 'next/cache';
+import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const onDeleteVersion = authActionServer
-    .use(requirePermission('build', 'delete'))
+    .use(requirePermission('build', 'delete', byRepositoryId))
     .inputSchema(deleteVersionSchema)
     .action(async ({ parsedInput }) => {
         try {
