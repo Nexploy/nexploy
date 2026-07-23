@@ -24,14 +24,12 @@ interface ActiveBuildInfo {
     status: string;
 }
 
-const DISMISS_KEY = 'nexploy-update-dismissed-version';
-
 export function UpdateBanner() {
     const t = useTranslations('navigation');
     const tSettings = useTranslations('admin.settings');
     const tCommon = useTranslations('common');
     const [dismissedVersion, setDismissedVersion] = useLocalStorage<string | null>(
-        DISMISS_KEY,
+        'nexploy-update-dismissed-version',
         null,
     );
 

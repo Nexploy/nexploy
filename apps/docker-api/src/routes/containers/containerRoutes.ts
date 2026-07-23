@@ -23,6 +23,9 @@ import { containersStateManager } from '@/managers/list/containersStateManager';
 import { pullImage as pullImageService } from '@/services/imageService';
 import { networksStateManager } from '@/managers/list/networksStateManager';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
+import { assertSafeBindPath } from '@/utils/hostBindGuard';
+
+const DEFAULT_PIDS_LIMIT = 512;
 
 const NAMED_VOLUME_REGEX = /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/;
 
@@ -173,10 +176,11 @@ app.post(
             ports,
             restart,
             image,
-            privileged,
             autoRemove,
             auth,
         } = c.req.valid('json');
+
+        volumes.forEach((vol) => assertSafeBindPath(vol.hostPath));
 
         const createOptions: ContainerCreateOptions = {
             name,
@@ -188,7 +192,8 @@ app.post(
                     MaximumRetryCount: restart === 'on-failure' ? 3 : 0,
                 },
                 AutoRemove: autoRemove,
-                Privileged: privileged,
+                Privileged: false,
+                PidsLimit: DEFAULT_PIDS_LIMIT,
             },
         };
 
@@ -381,6 +386,10 @@ app.post(
                     const namedVolumeMatch = hostPath.match(NAMED_VOLUME_REGEX);
                     if (namedVolumeMatch) {
                         hostPath = namedVolumeMatch[1];
+                    }
+
+                    if (!namedVolumeMatch) {
+                        assertSafeBindPath(hostPath);
                     }
 
                     bindsSet.add(

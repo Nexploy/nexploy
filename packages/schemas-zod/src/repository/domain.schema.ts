@@ -1,13 +1,36 @@
 import { z } from 'zod';
 
+const HOSTNAME_PATTERN =
+    /^(\*\.)?[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*$/;
+const URL_PATH_PATTERN = /^\/[a-zA-Z0-9\-._~/]*$/;
+const CONTAINER_NAME_PATTERN = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/;
+
 export const domainSchema = z
     .object({
         id: z.string().optional(),
-        host: z.string().min(1, 'Host is required'),
-        path: z.string().min(1).default('/'),
-        internalPath: z.string().min(1).default('/'),
+        host: z
+            .string()
+            .min(1, 'Host is required')
+            .max(253, 'Host is too long')
+            .regex(HOSTNAME_PATTERN, 'Host contains invalid characters'),
+        path: z
+            .string()
+            .min(1)
+            .max(1024, 'Path is too long')
+            .regex(URL_PATH_PATTERN, 'Path contains invalid characters')
+            .default('/'),
+        internalPath: z
+            .string()
+            .min(1)
+            .max(1024, 'Path is too long')
+            .regex(URL_PATH_PATTERN, 'Path contains invalid characters')
+            .default('/'),
         stripPath: z.boolean().default(false),
-        containerName: z.string(),
+        containerName: z
+            .string()
+            .min(1, 'Container is required')
+            .max(253, 'Container name is too long')
+            .regex(CONTAINER_NAME_PATTERN, 'Container name contains invalid characters'),
         containerPort: z.number().min(1).max(65535).default(3000),
         https: z.boolean().default(false),
         certificateId: z.string().optional(),
