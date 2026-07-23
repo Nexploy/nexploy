@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { writeFileSync } from 'node:fs';
 
 function git(args) {
     return execFileSync('git', args, { encoding: 'utf8' }).trim();
@@ -32,6 +31,8 @@ const currentIndex = allTags.indexOf(currentTag);
 const prevTag = currentIndex >= 0 ? allTags[currentIndex + 1] : allTags[0];
 
 const range = prevTag ? `${prevTag}..${currentTag}` : currentTag;
+
+const repo = gh(['repo', 'view', '--json', 'nameWithOwner', '-q', '.nameWithOwner']);
 
 const SECTIONS = [
     { key: 'breaking', title: '### Breaking Changes' },
@@ -70,9 +71,14 @@ const commits = rawLog
           .filter(Boolean)
           .map((entry) => {
               const [sha, subject, body] = entry.split('\x1f');
-              return { sha, subject: subject ?? '', body: body ?? '' };
+              return { sha: sha ?? '', subject: subject ?? '', body: body ?? '' };
           })
     : [];
+
+function formatCommitRef(sha) {
+    const short = sha.slice(0, 7);
+    return repo ? `[\`${short}\`](https://github.com/${repo}/commit/${sha})` : `\`${short}\``;
+}
 
 const buckets = new Map(SECTIONS.map((section) => [section.key, []]));
 
@@ -93,17 +99,19 @@ for (const commit of commits) {
     const sectionKey = isBreaking ? 'breaking' : (TYPE_TO_SECTION[match?.groups?.type] ?? 'other');
     const label = scope ? `**${scope}**: ${title}` : title;
 
-    buckets.get(sectionKey).push(`- ${label}${suffix}`);
+    buckets.get(sectionKey).push(`- ${label}${suffix} — ${formatCommitRef(commit.sha)}`);
 }
 
-const changelogParts = [];
+const output = [];
 for (const section of SECTIONS) {
     const entries = buckets.get(section.key);
     if (!entries.length) continue;
-    changelogParts.push(section.title, '', ...entries, '');
+    output.push(section.title, '', ...entries, '');
 }
 
-const repo = gh(['repo', 'view', '--json', 'nameWithOwner', '-q', '.nameWithOwner']);
+if (!output.length) {
+    output.push('_No notable changes._', '');
+}
 
 const contributorLogins = new Set();
 if (repo && prevTag) {
@@ -136,27 +144,6 @@ if (!contributorLogins.size) {
 }
 
 const contributors = [...contributorLogins].sort((a, b) => a.localeCompare(b));
-
-const curatedPath = join(process.cwd(), '.github', 'release-notes', `${currentTag}.md`);
-const curated = existsSync(curatedPath) ? readFileSync(curatedPath, 'utf8').trim() : '';
-
-const output = [];
-
-if (curated) {
-    output.push(curated, '');
-}
-
-if (changelogParts.length) {
-    if (curated) {
-        output.push('<details>', '<summary><b>All commits in this release</b></summary>', '');
-    }
-    output.push(...changelogParts);
-    if (curated) {
-        output.push('</details>', '');
-    }
-} else if (!curated) {
-    output.push('_No notable changes._', '');
-}
 
 const footer = [];
 
