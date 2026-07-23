@@ -5,6 +5,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { getTranslations } from 'next-intl/server';
 import { deployDockerfileVersion } from '@/services/docker/version.service';
+import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 const ERROR_TRANSLATION_MAP: Record<string, string> = {
     repository_not_found: 'builds.buildNotFound',
@@ -12,7 +13,7 @@ const ERROR_TRANSLATION_MAP: Record<string, string> = {
 };
 
 export const onDeployDockerfileVersion = authActionServer
-    .use(requirePermission('deployment', 'deploy'))
+    .use(requirePermission('deployment', 'deploy', byRepositoryId))
     .inputSchema(deployVersionSchema)
     .action(async ({ parsedInput }) => {
         const { imageTag, repositoryId, environmentId } = parsedInput;

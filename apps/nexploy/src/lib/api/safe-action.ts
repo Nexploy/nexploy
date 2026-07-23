@@ -45,36 +45,41 @@ export const requirePermission = <R extends PermissionResource>(
     action: PermissionActions[R],
     orgResolver?: OrgResolver,
 ) =>
-    createMiddleware<{ ctx: { session: Session } }>().define(async ({ ctx, clientInput, next }) => {
-        const role = ctx.session.user.role as string;
-        const t = await getTranslations('common');
+    createMiddleware<{ ctx: { session: Session } }>().define(
+        async ({ ctx, clientInput, bindArgsClientInputs, next }) => {
+            const role = ctx.session.user.role as string;
+            const t = await getTranslations('common');
 
-        if (isOrgScopedResource(resource) && role !== 'admin' && orgResolver) {
-            const resolved = await orgResolver(clientInput);
-            const organizationIds = Array.isArray(resolved) ? resolved : resolved ? [resolved] : [];
+            if (isOrgScopedResource(resource) && role !== 'admin' && orgResolver) {
+                const resolved = await orgResolver(clientInput, bindArgsClientInputs);
+                const organizationIds = Array.isArray(resolved) ? resolved : resolved ? [resolved] : [];
 
-            if (organizationIds.length === 0) {
-                await setToastServer({ type: 'error', message: t('forbidden') });
-                throw new Error(t('forbidden'));
-            }
-
-            for (const organizationId of organizationIds) {
-                const orgRole = await getCallerOrgRole(ctx.session.user.id, organizationId);
-                if (!orgRole || !hasOrgPermission(orgRole, resource as OrgPermissionResource, action as string)) {
+                if (organizationIds.length === 0) {
                     await setToastServer({ type: 'error', message: t('forbidden') });
                     throw new Error(t('forbidden'));
                 }
+
+                for (const organizationId of organizationIds) {
+                    const orgRole = await getCallerOrgRole(ctx.session.user.id, organizationId);
+                    if (
+                        !orgRole ||
+                        !hasOrgPermission(orgRole, resource as OrgPermissionResource, action as string)
+                    ) {
+                        await setToastServer({ type: 'error', message: t('forbidden') });
+                        throw new Error(t('forbidden'));
+                    }
+                }
+
+                return next({ ctx });
             }
 
+            if (!hasPermission(role, resource, action)) {
+                await setToastServer({ type: 'error', message: t('forbidden') });
+                throw new Error(t('forbidden'));
+            }
             return next({ ctx });
-        }
-
-        if (!hasPermission(role, resource, action)) {
-            await setToastServer({ type: 'error', message: t('forbidden') });
-            throw new Error(t('forbidden'));
-        }
-        return next({ ctx });
-    });
+        },
+    );
 
 export const preventInfrastructureNetworkAction = createMiddleware().define(
     async ({ clientInput, next }) => {

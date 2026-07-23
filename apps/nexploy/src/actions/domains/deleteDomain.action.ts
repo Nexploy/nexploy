@@ -5,9 +5,10 @@ import { deleteDomainSchema } from '@workspace/schemas-zod/repository/domain.sch
 import { removeDomain } from '@/services/domain.service';
 import { setToastServer } from '@/lib/toastServer.ts';
 import { revalidatePath } from 'next/cache';
+import { byDomainId } from '@/lib/auth/resolveOrgContext';
 
 export const deleteDomain = authActionServer
-    .use(requirePermission('domain', 'manage'))
+    .use(requirePermission('domain', 'manage', byDomainId))
     .inputSchema(deleteDomainSchema)
     .action(async ({ parsedInput: { domainId } }) => {
         try {

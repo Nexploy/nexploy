@@ -6,9 +6,10 @@ import { startBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { startBuildRepository } from '@/services/repository/build.service';
 import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
+import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const onStartBuild = authActionServer
-    .use(requirePermission('build', 'run'))
+    .use(requirePermission('build', 'run', byRepositoryId))
     .inputSchema(startBuildSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('repository');

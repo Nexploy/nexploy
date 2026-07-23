@@ -7,9 +7,10 @@ import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
 import { relinkGitAccount } from '@/services/repository.service';
 import { getTranslations } from 'next-intl/server';
+import { byBoundRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const relinkGitAccountAction = authActionServer
-    .use(requirePermission('repository', 'update'))
+    .use(requirePermission('repository', 'update', byBoundRepositoryId))
     .inputSchema(relinkGitAccountSchema)
     .bindArgsSchemas(repositoryIdSchema)
     .action(async ({ parsedInput, bindArgsParsedInputs: [repositoryId], ctx: { session } }) => {

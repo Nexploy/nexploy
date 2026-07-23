@@ -6,9 +6,10 @@ import { HTTPError } from 'ky';
 import { getSubscriptionToken } from 'inngest/realtime';
 import { inngest } from '@/inngest/client';
 import { tokenBuildIdSchema } from '@workspace/schemas-zod/inngest/token.schema';
+import { byBuildId } from '@/lib/auth/resolveOrgContext';
 
 export const onGetTokenBuildIdAction = authActionServer
-    .use(requirePermission('build', 'read'))
+    .use(requirePermission('build', 'read', byBuildId))
     .inputSchema(tokenBuildIdSchema)
     .action(async ({ parsedInput: { buildId, topics } }) => {
         try {

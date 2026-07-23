@@ -5,9 +5,10 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setupRepositoryWebhook } from '@/services/webhook/repoWebhook.service';
 import { setupWebhookSchema } from '@workspace/schemas-zod/repository/setupWebhook.schema';
 import { setToastServer } from '@/lib/toastServer.ts';
+import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const setupWebhookAction = authActionServer
-    .use(requirePermission('pipeline', 'webhook'))
+    .use(requirePermission('pipeline', 'webhook', byRepositoryId))
     .inputSchema(setupWebhookSchema)
     .action(async ({ parsedInput }) => {
         try {

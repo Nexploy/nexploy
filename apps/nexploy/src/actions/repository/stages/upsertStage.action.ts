@@ -5,9 +5,10 @@ import { setToastServer } from '@/lib/toastServer';
 import { createStage, updateStage } from '@/services/repository/deploymentStage.service';
 import { deploymentStageSchema } from '@workspace/schemas-zod/repository/deploymentStage.schema';
 import { revalidatePath } from 'next/cache';
+import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const upsertStageAction = authActionServer
-    .use(requirePermission('stage', 'manage'))
+    .use(requirePermission('stage', 'manage', byRepositoryId))
     .inputSchema(deploymentStageSchema)
     .action(async ({ parsedInput }) => {
         try {

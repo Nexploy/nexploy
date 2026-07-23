@@ -4,9 +4,10 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { deployComposeVersion } from '@/services/docker/version.service';
+import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const onDeployComposeVersion = authActionServer
-    .use(requirePermission('deployment', 'deploy'))
+    .use(requirePermission('deployment', 'deploy', byRepositoryId))
     .inputSchema(deployVersionSchema)
     .action(async ({ parsedInput }) => {
         const { imageTag, repositoryId, environmentId } = parsedInput;

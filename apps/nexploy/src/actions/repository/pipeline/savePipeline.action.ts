@@ -5,9 +5,10 @@ import { savePipelineSchema } from '@workspace/schemas-zod/pipeline/pipelineGrap
 import { savePipelineConfig } from '@/services/pipeline.service';
 import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
+import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const savePipelineAction = authActionServer
-    .use(requirePermission('pipeline', 'update'))
+    .use(requirePermission('pipeline', 'update', byRepositoryId))
     .inputSchema(savePipelineSchema)
     .action(async ({ parsedInput }) => {
         const t = await getTranslations('repository');
