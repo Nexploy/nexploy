@@ -6,9 +6,10 @@ import { redirect, RedirectType } from 'next/navigation';
 import { deleteRepository } from '@/services/repository.service';
 import { deleteRepositorySchema } from '@workspace/schemas-zod/repository/settings/deleteRepository.schema';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
+import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const deleteRepositoryAction = authActionServer
-    .use(requirePermission('repository', 'delete'))
+    .use(requirePermission('repository', 'delete', byRepositoryId))
     .inputSchema(deleteRepositorySchema)
     .action(async ({ parsedInput, ctx }) => {
         try {

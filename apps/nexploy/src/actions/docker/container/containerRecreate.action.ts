@@ -5,9 +5,10 @@ import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
+import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
 export const onContainerRecreateAction = authActionServer
-    .use(requirePermission('container', 'manage'))
+    .use(requirePermission('container', 'manage', byContainerIds))
     .inputSchema(ContainerRecreateFormSchema)
     .action(async ({ parsedInput }) => {
         try {

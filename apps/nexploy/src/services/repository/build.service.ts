@@ -66,8 +66,17 @@ export async function startBuildRepository(
     return { id: build.id, numberBuild: build.number };
 }
 
-export async function removeBuild(buildId: string) {
+export async function removeBuild(buildId: string, organizationId: string) {
     const t = await getErrorTranslator();
+    const build = await prisma.build.findUnique({
+        where: { id: buildId },
+        select: { repository: { select: { organizationId: true } } },
+    });
+
+    if (!build || build.repository.organizationId !== organizationId) {
+        throw new Error(t('build.notFound'));
+    }
+
     try {
         return await prisma.build.delete({ where: { id: buildId } });
     } catch {

@@ -8,11 +8,12 @@ import { join } from 'path';
 import { getTranslations } from 'next-intl/server';
 import { revalidatePath } from 'next/cache';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
+import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 const clearCacheSchema = z.object({ repositoryId: z.string() });
 
 export const clearCacheAction = authActionServer
-    .use(requirePermission('repository', 'delete'))
+    .use(requirePermission('repository', 'delete', byRepositoryId))
     .inputSchema(clearCacheSchema)
     .action(async ({ parsedInput }) => {
         const t = await getTranslations('repository.settings.dangerZone');

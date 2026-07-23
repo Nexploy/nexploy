@@ -6,10 +6,11 @@ import {
 } from '@workspace/schemas-zod/api/params.schema';
 import { getBuildsPage } from '@/services/repository/build.service';
 import { BUILDS_PAGE_SIZE } from '@/lib/constants';
+import { byRepositoryIdParam } from '@/lib/auth/resolveOrgContext';
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('repository', 'read'))
+    .use(requirePermission('repository', 'read', byRepositoryIdParam))
     .params(repositoryIdParamSchema)
     .query(buildsQuerySchema)
     .handler(async (_, { params, query }) => {

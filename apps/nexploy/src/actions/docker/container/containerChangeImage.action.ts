@@ -6,9 +6,10 @@ import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { containerChangeImageSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { getRegistryWithPassword } from '@/services/registry.service';
+import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
 export const onContainerChangeImageAction = authActionServer
-    .use(requirePermission('container', 'manage'))
+    .use(requirePermission('container', 'manage', byContainerIds))
     .inputSchema(containerChangeImageSchema)
     .action(async ({ parsedInput: { containerId, image, registryId, pullImage } }) => {
         let auth: { username: string; password: string; serveraddress: string } | undefined;

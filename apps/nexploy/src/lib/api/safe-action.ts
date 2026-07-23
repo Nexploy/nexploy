@@ -5,6 +5,9 @@ import { redirect } from 'next/navigation';
 import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
 import { hasPermission, type PermissionActions, type PermissionResource, } from '@/lib/auth/permissions';
+import { hasOrgPermission, type OrgPermissionResource } from '@/lib/auth/orgPermissions';
+import { isOrgScopedResource } from '@/lib/auth/orgScopedResources';
+import { getCallerOrgRole, type OrgResolver } from '@/lib/auth/resolveOrgContext';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { isNexployInfrastructureNetworkName } from '@workspace/shared/nexployFilter';
 
@@ -40,10 +43,33 @@ export const authActionServer = actionServer.use(async ({ next }) => {
 export const requirePermission = <R extends PermissionResource>(
     resource: R,
     action: PermissionActions[R],
+    orgResolver?: OrgResolver,
 ) =>
-    createMiddleware<{ ctx: { session: Session } }>().define(async ({ ctx, next }) => {
-        if (!hasPermission(ctx.session.user.role as string, resource, action)) {
-            const t = await getTranslations('common');
+    createMiddleware<{ ctx: { session: Session } }>().define(async ({ ctx, clientInput, next }) => {
+        const role = ctx.session.user.role as string;
+        const t = await getTranslations('common');
+
+        if (isOrgScopedResource(resource) && role !== 'admin' && orgResolver) {
+            const resolved = await orgResolver(clientInput);
+            const organizationIds = Array.isArray(resolved) ? resolved : resolved ? [resolved] : [];
+
+            if (organizationIds.length === 0) {
+                await setToastServer({ type: 'error', message: t('forbidden') });
+                throw new Error(t('forbidden'));
+            }
+
+            for (const organizationId of organizationIds) {
+                const orgRole = await getCallerOrgRole(ctx.session.user.id, organizationId);
+                if (!orgRole || !hasOrgPermission(orgRole, resource as OrgPermissionResource, action as string)) {
+                    await setToastServer({ type: 'error', message: t('forbidden') });
+                    throw new Error(t('forbidden'));
+                }
+            }
+
+            return next({ ctx });
+        }
+
+        if (!hasPermission(role, resource, action)) {
             await setToastServer({ type: 'error', message: t('forbidden') });
             throw new Error(t('forbidden'));
         }

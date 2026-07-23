@@ -18,11 +18,15 @@ model Repository {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
   build           Build[]
   envVariables    EnvVariable[]
   versions        Version[]
   stages          DeploymentStage[]
   pipelineConfigs PipelineConfig[]
 
+  @@index([organizationId])
   @@map("repository")
 }
