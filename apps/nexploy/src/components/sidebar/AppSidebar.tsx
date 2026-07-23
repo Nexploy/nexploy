@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
 import { Environment } from '@/components/sidebar/environment/Environment';
+import { Organization } from '@/components/sidebar/organization/Organization';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import Image from 'next/image';
 import { UpdateBanner } from './UpdateBanner';
@@ -38,6 +39,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                         <AppVersion />
                     </div>
                 </Link>
+                <Organization />
                 <Environment />
             </SidebarHeader>
             <SidebarContent className="overflow-hidden">

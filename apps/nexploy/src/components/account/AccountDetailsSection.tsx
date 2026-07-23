@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { Bell, Plug, Shield } from 'lucide-react';
+import { Bell, Building2, Plug, Shield } from 'lucide-react';
 import { TwoFactorAuth } from '@/components/account/2fa/TwoFactorAuth';
 import { ProfileInfoForm } from '@/components/account/2fa/forms/ProfileInfoForm';
 import { NotificationPreferences } from '@/components/account/NotificationPreferences';
@@ -8,14 +8,27 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { getTranslations } from 'next-intl/server';
 import { AcountIntegrations } from '@/components/account/AccountIntegrations';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
+import { PendingInvitations } from '@/components/account/PendingInvitations';
 
 export async function AccountDetailsSection() {
     const session = await getUserSession();
     const t = await getTranslations('account');
+    const tOrganization = await getTranslations('organization');
 
     return (
         <div className="flex flex-col gap-5">
             <ProfileInfoForm user={session?.user} />
+
+            <Card id="invitations">
+                <CardHeaderWithIcon
+                    icon={Building2}
+                    title={tOrganization('invitations.pending')}
+                    description={tOrganization('invitations.pendingDescription')}
+                />
+                <CardContent>
+                    <PendingInvitations />
+                </CardContent>
+            </Card>
 
             <Card id="security">
                 <CardHeaderWithIcon

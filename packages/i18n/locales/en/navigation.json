@@ -1,6 +1,7 @@
 {
     "home": "Home",
     "repositories": "Repositories",
+    "organizations": "Organizations",
     "monitoring": "Monitoring",
     "docker": "Docker",
     "containers": "Containers",

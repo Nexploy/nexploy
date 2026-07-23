@@ -1,0 +1,79 @@
+{
+    "title": "Organisations",
+    "myOrganizations": "Mes organisations",
+    "description": "Les organisations regroupent tes dépôts et te permettent d'inviter des coéquipiers à collaborer dessus",
+    "manage": "Gérer les organisations",
+    "noOrganizations": "Tu n'es membre d'aucune organisation pour l'instant",
+    "createOrganization": "Créer une organisation",
+    "createOrganizationDescription": "Les dépôts créés dans cette organisation seront visibles par ses membres",
+    "name": "Nom",
+    "namePlaceholder": "Acme Inc.",
+    "slug": "Identifiant",
+    "slugPlaceholder": "acme-inc",
+    "roles": {
+        "owner": "Propriétaire",
+        "admin": "Admin",
+        "member": "Membre"
+    },
+    "members": {
+        "title": "Membres",
+        "member": "Membre",
+        "role": "Rôle",
+        "you": "(toi)",
+        "email": "Email",
+        "invite": "Inviter un membre",
+        "inviteDescription": "L'utilisateur invité doit déjà avoir un compte Nexploy",
+        "remove": "Retirer le membre",
+        "confirmRemove": "Retirer {name} de cette organisation ?"
+    },
+    "invitations": {
+        "pending": "Invitations en attente",
+        "pendingDescription": "Organisations qui t'ont invité à les rejoindre",
+        "noPendingInvitations": "Aucune invitation en attente",
+        "accept": "Accepter",
+        "reject": "Refuser"
+    },
+    "settings": {
+        "title": "Paramètres",
+        "general": "Général",
+        "generalDescription": "Modifier le nom de ton organisation",
+        "save": "Enregistrer",
+        "dangerZone": "Zone dangereuse",
+        "dangerZoneDescription": "La suppression d'une organisation est irréversible",
+        "deleteOrganization": "Supprimer l'organisation",
+        "confirmDelete": "Supprimer \"{name}\" ? Cette action est irréversible."
+    },
+    "errors": {
+        "guestCannotCreate": "Ton rôle ne permet pas de créer une organisation",
+        "userNotFound": "Aucun compte Nexploy trouvé pour cet email",
+        "alreadyMember": "Cet utilisateur est déjà membre de l'organisation",
+        "notFound": "Organisation introuvable",
+        "cannotRemoveLastOwner": "Impossible de retirer le dernier propriétaire de l'organisation",
+        "cannotDemoteLastOwner": "Impossible de changer le rôle du dernier propriétaire",
+        "cannotLeaveAsSoleOwner": "Transfère la propriété ou supprime l'organisation avant de la quitter",
+        "hasRepositories": "Cette organisation possède encore des dépôts. Réassigne-les ou supprime-les d'abord",
+        "createFailed": "Échec de la création de l'organisation",
+        "updateFailed": "Échec de la mise à jour de l'organisation",
+        "inviteFailed": "Échec de l'invitation du membre",
+        "acceptFailed": "Échec de l'acceptation de l'invitation",
+        "rejectFailed": "Échec du refus de l'invitation",
+        "cancelFailed": "Échec de l'annulation de l'invitation",
+        "removeMemberFailed": "Échec de la suppression du membre",
+        "updateRoleFailed": "Échec de la mise à jour du rôle du membre",
+        "leaveFailed": "Échec de la sortie de l'organisation",
+        "deleteFailed": "Échec de la suppression de l'organisation",
+        "setActiveFailed": "Échec du changement d'organisation"
+    },
+    "success": {
+        "created": "Organisation créée",
+        "renamed": "Organisation mise à jour",
+        "invited": "Invitation envoyée",
+        "accepted": "Invitation acceptée",
+        "rejected": "Invitation refusée",
+        "cancelled": "Invitation annulée",
+        "removed": "Membre retiré",
+        "roleUpdated": "Rôle du membre mis à jour",
+        "left": "Tu as quitté l'organisation",
+        "deleted": "Organisation supprimée"
+    }
+}

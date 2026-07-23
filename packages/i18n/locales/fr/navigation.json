@@ -1,6 +1,7 @@
 {
     "home": "Accueil",
     "repositories": "Dépôts",
+    "organizations": "Organisations",
     "monitoring": "Monitoring",
     "docker": "Docker",
     "containers": "Conteneurs",

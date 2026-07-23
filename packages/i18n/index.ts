@@ -12,6 +12,7 @@ import enMonitoring from './locales/en/monitoring.json';
 import enAi from './locales/en/ai.json';
 import enRequests from './locales/en/requests.json';
 import enErrors from './locales/en/errors.json';
+import enOrganization from './locales/en/organization.json';
 
 import frCommon from './locales/fr/common.json';
 import frAuth from './locales/fr/auth.json';
@@ -27,6 +28,7 @@ import frMonitoring from './locales/fr/monitoring.json';
 import frAi from './locales/fr/ai.json';
 import frRequests from './locales/fr/requests.json';
 import frErrors from './locales/fr/errors.json';
+import frOrganization from './locales/fr/organization.json';
 
 export const locales = {
     en: {
@@ -44,6 +46,7 @@ export const locales = {
         ai: enAi,
         requests: enRequests,
         errors: enErrors,
+        organization: enOrganization,
     },
     fr: {
         common: frCommon,
@@ -60,6 +63,7 @@ export const locales = {
         ai: frAi,
         requests: frRequests,
         errors: frErrors,
+        organization: frOrganization,
     },
 };
 
