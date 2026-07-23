@@ -206,6 +206,12 @@ jobs:
             fi
           } > /tmp/release-notes.md
 
+      - name: Drop stale release
+        env:
+          GIT_TAG: ${{ steps.tags.outputs.git }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release delete "$GIT_TAG" --yes --repo "$GITHUB_REPOSITORY" || true
+
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
