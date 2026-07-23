@@ -170,15 +170,8 @@ jobs:
           IMAGE_TAG: ${{ steps.tags.outputs.image }}
           GIT_TAG: ${{ steps.tags.outputs.git }}
         run: |
-          PREV_TAG=$(cat /tmp/prev-tag.txt)
           {
-            echo "## Nexploy ${IMAGE_TAG}"
-            echo
-            if [ -n "$PREV_TAG" ]; then
-              echo "### Changes since \`${PREV_TAG}\`"
-            else
-              echo "### Changes"
-            fi
+            echo "# Nexploy ${IMAGE_TAG}"
             echo
             cat /tmp/changelog.md
             echo
@@ -207,6 +200,10 @@ jobs:
             echo '```bash'
             echo "curl -fsSL https://nexploy.app/install.sh | sh -s update"
             echo '```'
+            if [ -s /tmp/changelog-footer.md ]; then
+              echo
+              cat /tmp/changelog-footer.md
+            fi
           } > /tmp/release-notes.md
 
       - name: Create release
