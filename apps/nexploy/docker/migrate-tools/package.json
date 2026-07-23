@@ -6,7 +6,7 @@
         "@better-auth/api-key": "^1.6.20",
         "@prisma/adapter-pg": "7.8.0",
         "@prisma/client": "7.8.0",
-        "better-auth": "^1.6.20",
+        "better-auth": "^1.6.24",
         "dotenv": "^17",
         "pg": "^8",
         "prisma": "7.8.0",
