@@ -1,9 +1,16 @@
 <p align="center">
-  <img src="./.github/assets/nexploy-banner.svg" alt="Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker" width="100%" />
+  <a href="https://nexploy.app">
+    <img src="./.github/assets/nexploy-banner.svg" alt="Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker" width="100%" />
+  </a>
 </p>
 
 <p align="center">
   Deploy applications from Git repositories to Docker containers with automatic HTTPS, real-time monitoring, and a modern interface.
+</p>
+
+<p align="center">
+  <a href="https://nexploy.app">Nexploy app</a> ·
+  <a href="https://docs.nexploy.app">Documentation</a>
 </p>
 
 ---
