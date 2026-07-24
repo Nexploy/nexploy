@@ -1,9 +1,5 @@
 {
     "title": "Organisations",
-    "myOrganizations": "Mes organisations",
-    "description": "Les organisations regroupent tes dépôts et te permettent d'inviter des coéquipiers à collaborer dessus",
-    "manage": "Gérer les organisations",
-    "noOrganizations": "Tu n'es membre d'aucune organisation pour l'instant",
     "createOrganization": "Créer une organisation",
     "createOrganizationDescription": "Les dépôts créés dans cette organisation seront visibles par ses membres",
     "name": "Nom",
@@ -34,12 +30,9 @@
         "reject": "Refuser"
     },
     "settings": {
-        "title": "Paramètres",
-        "general": "Général",
-        "generalDescription": "Modifier le nom de ton organisation",
+        "rename": "Renommer l'organisation",
+        "renameDescription": "Modifier le nom affiché de « {name} »",
         "save": "Enregistrer",
-        "dangerZone": "Zone dangereuse",
-        "dangerZoneDescription": "La suppression d'une organisation est irréversible",
         "deleteOrganization": "Supprimer l'organisation",
         "confirmDelete": "Supprimer \"{name}\" ? Cette action est irréversible."
     },

@@ -29,7 +29,7 @@ export const updateOrganizationAction = authActionServer
             });
 
             await setToastServer({ type: 'success', message: t('success.renamed') });
-            revalidatePath(`/organizations/${parsedInput.organizationId}/settings`);
+            revalidatePath('/', 'layout');
 
             return organization;
         } catch (error: unknown) {

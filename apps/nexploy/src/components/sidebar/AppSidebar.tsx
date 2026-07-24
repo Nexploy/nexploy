@@ -1,4 +1,9 @@
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, } from '@workspace/ui/components/sidebar';
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+} from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
@@ -29,7 +34,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                 <Link href="/" className="flex flex-1 gap-2">
                     <Image
                         src="/assets/nexploy-logo.svg"
-                        className="size-7 shrink-0 dark:invert"
+                        className="size-7 shrink-0 select-none dark:invert"
                         alt="Nexploy Logo"
                         width={28}
                         height={28}
@@ -39,9 +44,9 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                         <AppVersion />
                     </div>
                 </Link>
-                <Organization />
                 <Environment />
             </SidebarHeader>
+            <Organization />
             <SidebarContent className="overflow-hidden">
                 <ScrollAreaWithShadow
                     bottomShadow

@@ -1,9 +1,5 @@
 {
     "title": "Organizations",
-    "myOrganizations": "My Organizations",
-    "description": "Organizations group your repositories and let you invite teammates to collaborate on them",
-    "manage": "Manage organizations",
-    "noOrganizations": "You are not a member of any organization yet",
     "createOrganization": "Create Organization",
     "createOrganizationDescription": "Repositories created in this organization will be visible to its members",
     "name": "Name",
@@ -34,12 +30,9 @@
         "reject": "Reject"
     },
     "settings": {
-        "title": "Settings",
-        "general": "General",
-        "generalDescription": "Update your organization's name",
+        "rename": "Rename organization",
+        "renameDescription": "Change the display name of \"{name}\"",
         "save": "Save",
-        "dangerZone": "Danger zone",
-        "dangerZoneDescription": "Deleting an organization cannot be undone",
         "deleteOrganization": "Delete organization",
         "confirmDelete": "Delete \"{name}\"? This cannot be undone."
     },

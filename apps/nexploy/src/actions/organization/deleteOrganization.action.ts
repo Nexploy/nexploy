@@ -40,5 +40,5 @@ export const deleteOrganizationAction = authActionServer
             throw error;
         }
 
-        redirect('/organizations');
+        redirect('/');
     });

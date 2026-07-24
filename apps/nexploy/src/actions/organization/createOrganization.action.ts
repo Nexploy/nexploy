@@ -24,7 +24,7 @@ export const createOrganizationAction = authActionServer
             });
 
             await setToastServer({ type: 'success', message: t('success.created') });
-            revalidatePath('/organizations');
+            revalidatePath('/', 'layout');
 
             return organization;
         } catch (error: unknown) {

@@ -23,7 +23,7 @@ export function InviteMemberButton({ organizationId }: InviteMemberButtonProps) 
     };
 
     return (
-        <Button onClick={handleInvite}>
+        <Button onClick={handleInvite} className="mt-5">
             <UserPlus />
             {t('members.invite')}
         </Button>

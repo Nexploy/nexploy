@@ -15,7 +15,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { updateOrganizationSchema } from '@workspace/schemas-zod/organization/updateOrganization.schema';
 import { updateOrganizationAction } from '@/actions/organization/updateOrganization.action';
-import { useRouter } from 'next/navigation';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 interface RenameOrganizationFormProps {
     organizationId: string;
@@ -24,7 +24,7 @@ interface RenameOrganizationFormProps {
 
 export function RenameOrganizationForm({ organizationId, name }: RenameOrganizationFormProps) {
     const t = useTranslations('organization');
-    const router = useRouter();
+    const { onSuccess } = useConfirmationDialogStore();
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         updateOrganizationAction,
@@ -32,30 +32,45 @@ export function RenameOrganizationForm({ organizationId, name }: RenameOrganizat
         {
             formProps: { defaultValues: { organizationId, name } },
             actionProps: {
-                onSuccess: () => router.refresh(),
+                onSuccess: () => {
+                    if (onSuccess) onSuccess();
+                },
             },
         },
     );
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmitWithAction} className="flex items-end gap-3">
+            <form onSubmit={handleSubmitWithAction} className="space-y-4">
                 <FormField
                     control={form.control}
                     name="name"
                     render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem>
                             <FormLabel>{t('name')}</FormLabel>
                             <FormControl>
-                                <Input {...field} />
+                                <Input
+                                    {...field}
+                                    placeholder={t('namePlaceholder')}
+                                    disabled={action.isPending}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button isLoading={action.isPending} disabled={action.isPending} type="submit">
-                    {t('settings.save')}
-                </Button>
+
+                {form.formState.errors.root?.message && (
+                    <span className={'text-destructive mb-4 flex text-sm'}>
+                        {form.formState.errors.root?.message}
+                    </span>
+                )}
+
+                <div className="flex justify-end gap-2 pt-4">
+                    <Button isLoading={action.isPending} disabled={action.isPending} type="submit">
+                        {t('settings.save')}
+                    </Button>
+                </div>
             </form>
         </Form>
     );

@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-// Relative path to a `.yml` file, optionally nested in folders.
-// Disallows leading slash and `..` traversal segments.
 const traefikYmlPath = z
     .string()
     .regex(/^(?!\/)(?!.*(^|\/)\.\.(\/|$))[\w.\-/]+\.yml$/, 'Invalid filename');
@@ -15,15 +13,10 @@ export const saveTraefikFileSchema = z.object({
     content: z.string(),
 });
 
-// Relative path to a file or folder (no extension requirement).
-const traefikRelPath = z
-    .string()
-    .regex(/^(?!\/)(?!.*(^|\/)\.\.(\/|$))[\w.\-/]+$/, 'Invalid path');
+const traefikRelPath = z.string().regex(/^(?!\/)(?!.*(^|\/)\.\.(\/|$))[\w.\-/]+$/, 'Invalid path');
 
 export const moveTraefikEntrySchema = z.object({
-    // File (`.yml`) or folder being moved.
     source: traefikRelPath,
-    // Destination folder, empty string means the service root.
     destinationDir: z.union([z.literal(''), traefikRelPath]),
 });
 
@@ -34,7 +27,7 @@ export const instanceDomainSchema = z
         acmeEmail: z.string().email().optional(),
     })
     .refine((data) => !data.useTls || !!data.acmeEmail, {
-        message: 'An email is required to enable HTTPS via Let\'s Encrypt',
+        message: "An email is required to enable HTTPS via Let's Encrypt",
         path: ['acmeEmail'],
     });
 

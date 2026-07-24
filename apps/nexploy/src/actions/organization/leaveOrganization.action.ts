@@ -32,7 +32,6 @@ export const leaveOrganizationAction = authActionServer
             });
 
             await setToastServer({ type: 'success', message: t('success.left') });
-            revalidatePath('/organizations');
             revalidatePath('/', 'layout');
 
             return result;
