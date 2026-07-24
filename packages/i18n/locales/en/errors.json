@@ -133,6 +133,7 @@
     },
     "build": {
         "repositoryNotFound": "Repository not found",
+        "noGitAccount": "No Git account linked to this repository. Link a Git account before starting a build.",
         "noDeploymentStage": "No deployment stage found. Create a stage before starting a build.",
         "noPipelineConfig": "No pipeline configuration found for this stage. Configure a pipeline before starting a build.",
         "removeFailed": "Failed to remove build",

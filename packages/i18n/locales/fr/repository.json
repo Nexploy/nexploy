@@ -113,7 +113,9 @@
             "description": "Changer le compte Git associé à ce dépôt",
             "save": "Enregistrer",
             "saving": "Enregistrement...",
-            "onlyOwnerOrAdmin": "Seul le créateur du dépôt ou un administrateur peut changer le compte Git associé."
+            "onlyOwnerOrAdmin": "Seul le créateur du dépôt ou un administrateur peut changer le compte Git associé.",
+            "missingTitle": "Aucun compte Git lié",
+            "missingDescription": "Ce dépôt n'a aucun compte Git lié : les builds et webhooks sont désactivés. Reliez l'un de vos comptes Git pour rétablir les déploiements."
         },
         "organization": {
             "title": "Organisation",

@@ -42,9 +42,6 @@ export function GiteaAppSetupForm() {
                     toast.success(t('saveSuccess'));
                     closeDialog();
                 },
-                onError: () => {
-                    toast.error(t('saveFailed'));
-                },
             },
         },
     );

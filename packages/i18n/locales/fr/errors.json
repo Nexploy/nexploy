@@ -133,6 +133,7 @@
     },
     "build": {
         "repositoryNotFound": "Dépôt introuvable",
+        "noGitAccount": "Aucun compte Git n'est lié à ce dépôt. Reliez un compte Git avant de lancer un build.",
         "noDeploymentStage": "Aucun environnement de déploiement trouvé. Créez un environnement avant de lancer un build.",
         "noPipelineConfig": "Aucune configuration de pipeline trouvée pour cet environnement. Configurez un pipeline avant de lancer un build.",
         "removeFailed": "Échec de la suppression du build",

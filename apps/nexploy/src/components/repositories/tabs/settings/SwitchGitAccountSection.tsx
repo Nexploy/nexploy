@@ -1,7 +1,8 @@
 'use client';
 
-import { GitBranch } from 'lucide-react';
+import { GitBranch, TriangleAlert } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@workspace/ui/components/form';
@@ -46,6 +47,13 @@ export function SwitchGitAccountSection({
                 description={t('description')}
             />
             <CardContent>
+                {!currentGitAccountId && (
+                    <Alert variant="destructive" className="mb-4">
+                        <TriangleAlert />
+                        <AlertTitle>{t('missingTitle')}</AlertTitle>
+                        <AlertDescription>{t('missingDescription')}</AlertDescription>
+                    </Alert>
+                )}
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4">
                         <GitAccountFormField

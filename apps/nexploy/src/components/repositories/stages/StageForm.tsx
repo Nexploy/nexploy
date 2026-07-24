@@ -77,9 +77,6 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                     toast.success(isEdit ? t('updateSuccess') : t('createSuccess'));
                     onSuccess?.();
                 },
-                onError: () => {
-                    toast.error(t('error'));
-                },
             },
         },
     );

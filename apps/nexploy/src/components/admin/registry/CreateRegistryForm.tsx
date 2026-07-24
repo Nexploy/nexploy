@@ -7,7 +7,14 @@ import { createRegistryAction } from '@/actions/registry/createRegistry.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -31,9 +38,6 @@ export function CreateRegistryForm() {
                 onSuccess: () => {
                     toast.success(t('createSuccess'));
                     closeDialog();
-                },
-                onError: ({ error }) => {
-                    toast.error(error.thrownError?.message);
                 },
             },
         },
@@ -98,7 +102,11 @@ export function CreateRegistryForm() {
                                     disabled={isSubmitting}
                                     {...field}
                                     value={field.value ?? ''}
-                                    onChange={e => field.onChange(e.target.value === '' ? undefined : e.target.value)}
+                                    onChange={(e) =>
+                                        field.onChange(
+                                            e.target.value === '' ? undefined : e.target.value,
+                                        )
+                                    }
                                 />
                             </FormControl>
                             <FormMessage />
@@ -124,7 +132,11 @@ export function CreateRegistryForm() {
                                     placeholder={t('passwordPlaceholder')}
                                     disabled={isSubmitting}
                                     value={field.value ?? ''}
-                                    onChange={e => field.onChange(e.target.value === '' ? undefined : e.target.value)}
+                                    onChange={(e) =>
+                                        field.onChange(
+                                            e.target.value === '' ? undefined : e.target.value,
+                                        )
+                                    }
                                 />
                             </FormControl>
                             <p className="text-muted-foreground text-xs">

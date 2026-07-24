@@ -28,7 +28,6 @@ export function MCPSection({ mcpUrl, keys }: MCPSectionProps) {
             toast.success(t('keyRevokedSuccess'));
             router.refresh();
         },
-        onError: () => toast.error(t('keyRevokedFailed')),
     });
 
     function handleRevoke(keyId: string) {

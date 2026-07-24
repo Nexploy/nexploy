@@ -11,6 +11,7 @@ import {
     DialogTitle,
 } from '@workspace/ui/components/dialog';
 import { ReassociateGitAccountForm } from '@/components/repositories/reassociateGitAccount/ReassociateGitAccountForm';
+import { BackButton } from '@/components/shared/BackButton';
 
 interface ReassociateGitAccountDialogProps {
     repositoryId: string;
@@ -37,7 +38,10 @@ export function ReassociateGitAccountDialog({
                 onInteractOutside={(e) => e.preventDefault()}
                 onEscapeKeyDown={(e) => e.preventDefault()}
             >
-                <DialogHeader>
+                <div className="px-6 pt-6">
+                    <BackButton size="sm" className="w-fit" />
+                </div>
+                <DialogHeader className="pt-0">
                     <DialogTitle className="flex items-center gap-2">
                         <TriangleAlert className="text-destructive size-4 shrink-0" />
                         {t('title')}

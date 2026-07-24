@@ -43,9 +43,6 @@ export function LetsEncryptCertForm({ onClose }: LetsEncryptCertFormProps) {
                     router.refresh();
                     onClose();
                 },
-                onError: () => {
-                    toast.error(t('addedError'));
-                },
             },
         },
     );

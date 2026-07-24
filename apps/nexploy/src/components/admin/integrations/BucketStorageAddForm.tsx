@@ -115,9 +115,6 @@ export function BucketStorageAddForm() {
                     toast.success(t('addedSuccess'));
                     closeDialog();
                 },
-                onError: ({ error }) => {
-                    toast.error(error.serverError ?? t('addFailed'));
-                },
             },
         },
     );

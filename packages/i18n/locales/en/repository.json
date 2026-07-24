@@ -113,7 +113,9 @@
             "description": "Change the Git account linked to this repository",
             "save": "Save",
             "saving": "Saving...",
-            "onlyOwnerOrAdmin": "Only the repository creator or an administrator can change the linked Git account."
+            "onlyOwnerOrAdmin": "Only the repository creator or an administrator can change the linked Git account.",
+            "missingTitle": "No Git account linked",
+            "missingDescription": "This repository has no linked Git account, so builds and webhooks are disabled. Link one of your Git accounts to restore deployments."
         },
         "organization": {
             "title": "Organization",

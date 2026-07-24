@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 import { Power } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@workspace/ui/components/form';
@@ -32,9 +31,6 @@ export function GeneralSettingsCard({ aiEnabled, mcpEnabled }: GeneralSettingsCa
         zodResolver(updateAIGeneralSettingsSchema),
         {
             formProps: { defaultValues: { aiEnabled, mcpEnabled } },
-            actionProps: {
-                onError: () => toast.error(t('saveFailed')),
-            },
         },
     );
 

@@ -44,9 +44,6 @@ export function GitlabAppSetupForm() {
                     toast.success(t('saveSuccess'));
                     closeDialog();
                 },
-                onError: () => {
-                    toast.error(t('saveFailed'));
-                },
             },
         },
     );

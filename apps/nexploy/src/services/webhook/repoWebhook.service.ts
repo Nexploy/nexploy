@@ -7,6 +7,21 @@ import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export type WebhookSetupResult = { configured: true } | { configured: false; error: string };
 
+const repoWebhookSelect = {
+    id: true,
+    name: true,
+    gitProvider: true,
+    gitId: true,
+    gitAccountId: true,
+    webhookId: true,
+    gitAccount: {
+        select: {
+            userId: true,
+            gitProvider: { select: { baseUrl: true } },
+        },
+    },
+} as const;
+
 export async function setupRepositoryWebhook(
     repositoryId: string,
     baseUrl: string,
@@ -14,20 +29,7 @@ export async function setupRepositoryWebhook(
     const t = await getErrorTranslator();
     const repo = await prisma.repository.findUnique({
         where: { id: repositoryId },
-        select: {
-            id: true,
-            name: true,
-            gitProvider: true,
-            gitId: true,
-            gitAccountId: true,
-            webhookId: true,
-            userId: true,
-            gitAccount: {
-                select: {
-                    gitProvider: { select: { baseUrl: true } },
-                },
-            },
-        },
+        select: repoWebhookSelect,
     });
 
     if (!repo) throw new Error(t('webhook.repositoryNotFound'));
@@ -36,20 +38,25 @@ export async function setupRepositoryWebhook(
         return { configured: true };
     }
 
+    const tokenOwnerId = repo.gitAccount?.userId;
+    if (!repo.gitAccountId || !tokenOwnerId) {
+        throw new Error(t('git.noAccessToken', { provider: repo.gitProvider }));
+    }
+
     const adapter = getGitAdapter(repo.gitProvider);
     const webhookUrl = `${baseUrl}${adapter.webhookPath}`;
     const secret = crypto.randomUUID();
 
     try {
         const oldToken = await getGitProviderToken(repo.gitProvider, {
-            gitAccountId: repo.gitAccountId ?? undefined,
-            requestedUserId: repo.userId,
+            gitAccountId: repo.gitAccountId,
+            requestedUserId: tokenOwnerId,
         });
         const token = await getValidToken(
             oldToken,
             repo.gitProvider,
-            repo.userId,
-            repo.gitAccountId ?? undefined,
+            tokenOwnerId,
+            repo.gitAccountId,
         );
 
         const webhookId = await adapter.createWebhook({
@@ -74,43 +81,29 @@ export async function setupRepositoryWebhook(
     }
 }
 
-export async function teardownRepositoryWebhook(
-    repositoryId: string,
-    userId: string,
-): Promise<void> {
+export async function teardownRepositoryWebhook(repositoryId: string): Promise<void> {
     const t = await getErrorTranslator();
     try {
         const repo = await prisma.repository.findUnique({
-            where: { id: repositoryId, userId },
-            select: {
-                id: true,
-                name: true,
-                gitProvider: true,
-                gitId: true,
-                gitAccountId: true,
-                webhookId: true,
-                userId: true,
-                gitAccount: {
-                    select: {
-                        gitProvider: { select: { baseUrl: true } },
-                    },
-                },
-            },
+            where: { id: repositoryId },
+            select: repoWebhookSelect,
         });
 
         if (!repo) return;
 
-        if (repo.webhookId) {
+        const tokenOwnerId = repo.gitAccount?.userId;
+
+        if (repo.webhookId && repo.gitAccountId && tokenOwnerId) {
             try {
                 const oldToken = await getGitProviderToken(repo.gitProvider, {
-                    gitAccountId: repo.gitAccountId ?? undefined,
-                    requestedUserId: repo.userId,
+                    gitAccountId: repo.gitAccountId,
+                    requestedUserId: tokenOwnerId,
                 });
                 const token = await getValidToken(
                     oldToken,
                     repo.gitProvider,
-                    repo.userId,
-                    repo.gitAccountId ?? undefined,
+                    tokenOwnerId,
+                    repo.gitAccountId,
                 );
 
                 await getGitAdapter(repo.gitProvider).deleteWebhook({

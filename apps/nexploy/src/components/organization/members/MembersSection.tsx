@@ -21,7 +21,6 @@ import {
 import { Button } from '@workspace/ui/components/button';
 import { Mail, Trash2, X } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { removeMemberAction } from '@/actions/organization/removeMember.action';
@@ -70,30 +69,18 @@ export function MembersSection({
     const { openAlertDialog } = useAlertConfirmationDialogStore();
 
     const { execute: executeRemove, isPending: isRemoving } = useAction(removeMemberAction, {
-        onSuccess: () => {
-            toast.success(t('success.removed'));
-            router.refresh();
-        },
-        onError: ({ error }) => toast.error(error.serverError || t('errors.removeMemberFailed')),
+        onSuccess: () => router.refresh(),
     });
 
     const { execute: executeUpdateRole, isPending: isUpdatingRole } = useAction(
         updateMemberRoleAction,
         {
-            onSuccess: () => {
-                toast.success(t('success.roleUpdated'));
-                router.refresh();
-            },
-            onError: ({ error }) => toast.error(error.serverError || t('errors.updateRoleFailed')),
+            onSuccess: () => router.refresh(),
         },
     );
 
     const { execute: executeCancel, isPending: isCancelling } = useAction(cancelInvitationAction, {
-        onSuccess: () => {
-            toast.success(t('success.cancelled'));
-            router.refresh();
-        },
-        onError: ({ error }) => toast.error(error.serverError || t('errors.cancelFailed')),
+        onSuccess: () => router.refresh(),
     });
 
     const ownerCount = members.filter((m) => m.role === 'owner').length;
@@ -104,8 +91,7 @@ export function MembersSection({
             description: t('members.confirmRemove', { name: member.user.name }),
             cancelLabel: tCommon('cancel'),
             actionLabel: t('members.remove'),
-            onAction: async () =>
-                executeRemove({ organizationId, memberIdOrEmail: member.id }),
+            onAction: async () => executeRemove({ organizationId, memberIdOrEmail: member.id }),
         });
     };
 
@@ -176,7 +162,9 @@ export function MembersSection({
                                                 </SelectContent>
                                             </Select>
                                         ) : (
-                                            <Badge variant="outline">{t(`roles.${member.role}`)}</Badge>
+                                            <Badge variant="outline">
+                                                {t(`roles.${member.role}`)}
+                                            </Badge>
                                         )}
                                     </TableCell>
                                     {canManageMembers && (

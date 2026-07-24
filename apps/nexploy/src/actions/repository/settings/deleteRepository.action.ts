@@ -11,9 +11,9 @@ import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 export const deleteRepositoryAction = authActionServer
     .use(requirePermission('repository', 'delete', byRepositoryId))
     .inputSchema(deleteRepositorySchema)
-    .action(async ({ parsedInput, ctx }) => {
+    .action(async ({ parsedInput }) => {
         try {
-            await deleteRepository(parsedInput, ctx.session.user.id);
+            await deleteRepository(parsedInput);
             redirect('/repositories', RedirectType.push);
         } catch (error: unknown) {
             if (isRedirectError(error)) throw error;

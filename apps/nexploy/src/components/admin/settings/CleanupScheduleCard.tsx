@@ -68,7 +68,6 @@ export function CleanupScheduleCard({ settings }: { settings: CleanupSettings })
                     form.reset(input);
                     toast.success(t('scheduleSaved'));
                 },
-                onError: () => toast.error(t('saveFailed')),
             },
         },
     );

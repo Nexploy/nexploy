@@ -9,7 +9,14 @@ import { createMcpApiKeySchema } from '@workspace/schemas-zod/ai/mcpApiKey.schem
 import { createMcpApiKeyAction } from '@/actions/admin/ai/createMcpApiKey.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { DialogFooter } from '@workspace/ui/components/dialog';
@@ -40,7 +47,7 @@ export function CreateMcpKeyForm() {
                             <div className="flex flex-col gap-3 pt-1">
                                 <div className="flex items-center gap-2 rounded-lg border p-3">
                                     <Key className="text-muted-foreground size-4 shrink-0" />
-                                    <code className="text-xs break-all">{data.key}</code>
+                                    <code className="break-all text-xs">{data.key}</code>
                                     <CopyButton
                                         text={data.key}
                                         className="size-8 shrink-0"
@@ -57,7 +64,6 @@ export function CreateMcpKeyForm() {
                         disableActionButton: true,
                     });
                 },
-                onError: () => toast.error(t('keyCreatedFailed')),
             },
         },
     );

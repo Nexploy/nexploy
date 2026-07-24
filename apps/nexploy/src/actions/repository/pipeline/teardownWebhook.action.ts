@@ -9,5 +9,5 @@ export const teardownWebhookAction = authActionServer
     .use(requirePermission('pipeline', 'webhook', byRepositoryId))
     .inputSchema(teardownWebhookSchema)
     .action(async ({ parsedInput, ctx }) => {
-        await teardownRepositoryWebhook(parsedInput.repositoryId, ctx.session.user.id);
+        await teardownRepositoryWebhook(parsedInput.repositoryId);
     });

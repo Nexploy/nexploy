@@ -54,9 +54,6 @@ export function UploadNowTab({ volumeName, bucketStorageAccounts }: UploadNowTab
                     toast.success(t('backupUploadedSuccess'));
                     closeDialog();
                 },
-                onError: () => {
-                    toast.error(t('backupFailed'));
-                },
             },
         },
     );
@@ -75,7 +72,9 @@ export function UploadNowTab({ volumeName, bucketStorageAccounts }: UploadNowTab
                             <Select value={field.value} onValueChange={field.onChange}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder={t('selectBucketStorageAccount')} />
+                                        <SelectValue
+                                            placeholder={t('selectBucketStorageAccount')}
+                                        />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>

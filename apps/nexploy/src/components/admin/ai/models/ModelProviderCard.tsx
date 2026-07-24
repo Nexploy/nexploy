@@ -59,14 +59,11 @@ export function ModelProviderCard({
                     toast.success(t('saveSuccess'));
                     mutate({ url: '/api/ai/providers' });
                 },
-                onError: () => toast.error(t('saveFailed')),
             },
         },
     );
 
-    const { executeAsync: deleteKey, isPending: isDeleting } = useAction(deleteAiConfigAction, {
-        onError: () => toast.error(t('deleteFailed')),
-    });
+    const { executeAsync: deleteKey, isPending: isDeleting } = useAction(deleteAiConfigAction, {});
 
     const openAlertDialog = useAlertConfirmationDialogStore((s) => s.openAlertDialog);
 
@@ -114,7 +111,7 @@ export function ModelProviderCard({
                             {icon}
                         </div>
                         <div className="flex gap-2">
-                            <span className="leading-tight font-semibold">{label}</span>
+                            <span className="font-semibold leading-tight">{label}</span>
                             {hasKey && (
                                 <Status status={'online'}>
                                     <StatusIndicator />

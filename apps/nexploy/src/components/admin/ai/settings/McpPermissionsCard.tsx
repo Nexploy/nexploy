@@ -3,7 +3,6 @@
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 import {
     Box,
     Container,
@@ -68,9 +67,6 @@ export function McpPermissionsCard(props: McpPermissionsCardProps) {
         zodResolver(updateAIMcpPermissionsSchema),
         {
             formProps: { defaultValues: props },
-            actionProps: {
-                onError: () => toast.error(t('saveFailed')),
-            },
         },
     );
 

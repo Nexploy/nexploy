@@ -233,7 +233,7 @@ export const repositoriesGroup: ToolGroup = {
                 const g = guardDestructive(ctx, 'repository', 'delete', params.confirmName);
                 if (g) return g;
                 try {
-                    await deleteRepository(params, ctx.userId);
+                    await deleteRepository(params);
                     return ok(`Repository deleted`);
                 } catch (e: any) {
                     return fail(e.message);

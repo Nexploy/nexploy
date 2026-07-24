@@ -5,7 +5,6 @@ import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
 import { Check, X } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { acceptInvitationAction } from '@/actions/organization/acceptInvitation.action';
 import { rejectInvitationAction } from '@/actions/organization/rejectInvitation.action';
@@ -25,19 +24,11 @@ export function PendingInvitationRow({
     const router = useRouter();
 
     const { execute: executeAccept, isPending: isAccepting } = useAction(acceptInvitationAction, {
-        onSuccess: () => {
-            toast.success(t('success.accepted'));
-            router.refresh();
-        },
-        onError: ({ error }) => toast.error(error.serverError || t('errors.acceptFailed')),
+        onSuccess: () => router.refresh(),
     });
 
     const { execute: executeReject, isPending: isRejecting } = useAction(rejectInvitationAction, {
-        onSuccess: () => {
-            toast.success(t('success.rejected'));
-            router.refresh();
-        },
-        onError: ({ error }) => toast.error(error.serverError || t('errors.rejectFailed')),
+        onSuccess: () => router.refresh(),
     });
 
     return (

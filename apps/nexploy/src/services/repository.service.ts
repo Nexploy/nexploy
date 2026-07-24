@@ -184,10 +184,7 @@ export async function getBuilds(repositoryId: string) {
     }
 }
 
-export async function deleteRepository(
-    { repositoryId, confirmName }: DeleteRepositoryInput,
-    userId: string,
-) {
+export async function deleteRepository({ repositoryId, confirmName }: DeleteRepositoryInput) {
     const t = await getErrorTranslator();
     const repository = await prisma.repository.findUnique({
         where: { id: repositoryId },
@@ -197,18 +194,14 @@ export async function deleteRepository(
         throw new Error(t('repository.notFound'));
     }
 
-    if (repository.userId !== userId) {
-        throw new Error(t('repository.notAuthorizedDelete'));
-    }
-
     if (confirmName !== repository.name) {
         throw new Error(t('repository.confirmationFailed', { name: repository.name }));
     }
 
-    await teardownRepositoryWebhook(repositoryId, userId);
+    await teardownRepositoryWebhook(repositoryId);
     try {
         await prisma.repository.delete({
-            where: { id: repositoryId, userId },
+            where: { id: repositoryId },
         });
     } catch (error: unknown) {
         throw new Error(t('repository.deleteFailed'));
@@ -294,29 +287,20 @@ export async function getRepositoryWebhookStatus(repositoryId: string) {
     }
 }
 
-export async function relinkGitAccount(
-    repositoryId: string,
-    gitAccountId: string,
-    userId: string,
-    isAdmin: boolean,
-) {
+export async function relinkGitAccount(repositoryId: string, gitAccountId: string) {
     const t = await getErrorTranslator();
 
     let repo;
     try {
         repo = await prisma.repository.findUnique({
             where: { id: repositoryId },
-            select: { gitId: true, repositoryUrl: true, gitProvider: true, userId: true },
+            select: { gitId: true, repositoryUrl: true, gitProvider: true },
         });
     } catch (error: unknown) {
         throw new Error(t('repository.getFailed'));
     }
 
     if (!repo) throw new Error(t('repository.notFound'));
-
-    if (repo.userId !== userId && !isAdmin) {
-        throw new Error(t('repository.notAuthorizedRelink'));
-    }
 
     let gitAccount;
     try {
@@ -338,7 +322,7 @@ export async function relinkGitAccount(
         gitAccount.userId,
     );
 
-    await teardownRepositoryWebhook(repositoryId, repo.userId);
+    await teardownRepositoryWebhook(repositoryId);
 
     try {
         await prisma.repository.update({

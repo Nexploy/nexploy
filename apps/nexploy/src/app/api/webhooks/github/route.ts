@@ -42,6 +42,13 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        if (!repo.userId) {
+            return NextResponse.json(
+                { message: 'No Git account linked to this repository' },
+                { status: 409 },
+            );
+        }
+
         await startBuildRepository(
             {
                 repositoryId: repo.id,

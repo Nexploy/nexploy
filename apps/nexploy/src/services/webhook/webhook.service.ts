@@ -3,7 +3,7 @@ import { decrypt } from '@/lib/encryption';
 
 export async function findRepositoryByWebhook(repositoryUrl: string): Promise<{
     id: string;
-    userId: string;
+    userId: string | null;
     webhookSecret: string | null;
 } | null> {
     const repository = await prisma.repository.findUnique({
@@ -12,15 +12,15 @@ export async function findRepositoryByWebhook(repositoryUrl: string): Promise<{
         },
         select: {
             id: true,
-            userId: true,
             webhookSecret: true,
+            gitAccount: { select: { userId: true } },
         },
     });
     if (!repository) return null;
 
     return {
         id: repository.id,
-        userId: repository.userId,
+        userId: repository.gitAccount?.userId ?? null,
         webhookSecret: repository.webhookSecret ? decrypt(repository.webhookSecret) : null,
     };
 }

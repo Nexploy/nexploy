@@ -3,7 +3,6 @@
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 import { MessageSquare } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import {
@@ -36,9 +35,6 @@ export function ChatBehaviorCard({
         zodResolver(updateAIChatBehaviorSchema),
         {
             formProps: { defaultValues: { requireDestructiveConfirmation, maxSteps } },
-            actionProps: {
-                onError: () => toast.error(t('saveFailed')),
-            },
         },
     );
 

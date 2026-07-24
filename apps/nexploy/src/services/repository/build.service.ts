@@ -3,7 +3,6 @@ import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/repo
 import { addBuildJob } from '@/inngest/jobs/queue';
 import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
-import { setToastServer } from '@/lib/toastServer';
 import { decrypt } from '@/lib/encryption';
 import { StartBuildSchemaType } from '@workspace/schemas-zod/inngest/build.schema';
 import { BuildStatus } from 'generated/client';
@@ -23,8 +22,18 @@ export async function startBuildRepository(
     const repository = await getRepositorieWithEnv(repositoryId);
 
     if (!repository) {
-        await setToastServer({ type: 'error', message: t('build.repositoryNotFound') });
         throw new Error(t('build.repositoryNotFound'));
+    }
+
+    const tokenOwner = repository.gitAccountId
+        ? await prisma.gitAccount.findUnique({
+              where: { id: repository.gitAccountId },
+              select: { userId: true },
+          })
+        : null;
+
+    if (!tokenOwner) {
+        throw new Error(t('build.noGitAccount'));
     }
 
     const stage = await getFirstStage(repository.id, stageId);
@@ -49,7 +58,7 @@ export async function startBuildRepository(
     });
 
     const config: BuildConfig = {
-        userId,
+        userId: tokenOwner.userId,
         repositoryName: repository.name,
         gitBranch: branch,
         gitAccountId: repository.gitAccountId ?? undefined,
