@@ -42,7 +42,7 @@ export const repositoriesGroup: ToolGroup = {
                 const g = guard(ctx, 'repository', 'read');
                 if (g) return g;
                 try {
-                    const repos = await getRepositories();
+                    const repos = await getRepositories(ctx.userId, ctx.role === 'admin');
                     const data = repos.map((repo) => ({
                         id: repo.id,
                         name: repo.name,

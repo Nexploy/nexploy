@@ -1,6 +1,7 @@
 import { getRepositorieById } from '@/services/repository.service';
 import { getUserSession } from '@/services/auth/auth.service';
 import { SwitchGitAccountSection } from '@/components/repositories/tabs/settings/SwitchGitAccountSection';
+import { MoveToOrganizationSection } from '@/components/repositories/tabs/settings/MoveToOrganizationSection';
 import { ClearCacheButton } from '@/components/repositories/tabs/settings/ClearCacheButton';
 import { DeleteRepositoryButton } from '@/components/repositories/tabs/settings/DeleteRepositoryButton';
 import { notFound } from 'next/navigation';
@@ -32,6 +33,10 @@ export async function RepositorySettingsTab({ repositoryId }: RepositorySettings
                 repositoryId={repository.id}
                 currentGitAccountId={repository.gitAccountId}
                 isOwner={isOwner}
+            />
+            <MoveToOrganizationSection
+                repositoryId={repository.id}
+                currentOrganizationId={repository.organizationId}
             />
             <Card className="border-destructive">
                 <CardHeaderWithIcon

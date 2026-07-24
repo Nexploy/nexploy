@@ -33,6 +33,42 @@ export const auth = betterAuth({
         expiresIn: 60 * 60 * 24 * 7,
         updateAge: 60 * 60 * 24,
     },
+    databaseHooks: {
+        user: {
+            create: {
+                after: async (user) => {
+                    try {
+                        await auth.api.createOrganization({
+                            body: {
+                                name: `${user.name?.trim() || user.email}'s Organization`,
+                                slug: `personal-${user.id}`,
+                                userId: user.id,
+                            },
+                        });
+                    } catch (error) {
+                        console.error(
+                            `[AUTH] Failed to create personal organization for user ${user.id}`,
+                            error,
+                        );
+                    }
+                },
+            },
+            delete: {
+                after: async (user) => {
+                    try {
+                        await prisma.organization.deleteMany({
+                            where: { slug: `personal-${user.id}` },
+                        });
+                    } catch (error) {
+                        console.error(
+                            `[AUTH] Failed to delete personal organization for user ${user.id}`,
+                            error,
+                        );
+                    }
+                },
+            },
+        },
+    },
     appName: 'Nexploy',
     plugins: [
         admin(permission),

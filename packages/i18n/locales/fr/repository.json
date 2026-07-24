@@ -115,6 +115,15 @@
             "saving": "Enregistrement...",
             "onlyOwnerOrAdmin": "Seul le créateur du dépôt ou un administrateur peut changer le compte Git associé."
         },
+        "organization": {
+            "title": "Organisation",
+            "description": "Déplacer ce dépôt vers une autre organisation que vous gérez",
+            "selectPlaceholder": "Sélectionner une organisation...",
+            "move": "Déplacer",
+            "moveSuccess": "Dépôt déplacé avec succès",
+            "noPermission": "Vous devez être propriétaire ou administrateur de l'organisation de ce dépôt pour le déplacer.",
+            "noTargetOrganizations": "Vous ne gérez aucune autre organisation vers laquelle déplacer ce dépôt."
+        },
         "dangerZone": {
             "title": "Zone de danger",
             "description": "Actions irréversibles sur ce dépôt",

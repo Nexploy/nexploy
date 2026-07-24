@@ -14,6 +14,8 @@
         "fetchWebhookStatusFailed": "Échec de la récupération du statut du webhook du dépôt",
         "notAuthorizedRelink": "Utilisateur non autorisé à relier ce dépôt",
         "relinkFailed": "Échec de la réassociation du compte Git",
+        "alreadyInOrganization": "Le dépôt appartient déjà à cette organisation",
+        "moveFailed": "Échec du déplacement du dépôt vers l'organisation",
         "workDirNotConfigured": "DEPLOYER_WORK_DIR n'est pas configuré"
     },
     "pipeline": {

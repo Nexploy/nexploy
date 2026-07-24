@@ -2,6 +2,21 @@ import { prisma } from '../../../prisma/prisma';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { getDomains } from '@/services/traefik.service';
+import type { Session } from '@/lib/auth/auth';
+
+export async function resolveActiveOrganizationId(session: Session): Promise<string | null> {
+    const activeOrganizationId = (session.session as { activeOrganizationId?: string | null })
+        .activeOrganizationId;
+    if (activeOrganizationId) return activeOrganizationId;
+
+    const member = await prisma.member.findFirst({
+        where: { userId: session.user.id },
+        select: { organizationId: true },
+        orderBy: { createdAt: 'asc' },
+    });
+
+    return member?.organizationId ?? null;
+}
 
 export async function resolveOrganizationIdForRepository(repositoryId: string): Promise<string | null> {
     const repo = await prisma.repository.findUnique({

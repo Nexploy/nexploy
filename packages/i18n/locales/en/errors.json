@@ -14,6 +14,8 @@
         "fetchWebhookStatusFailed": "Failed to fetch repository webhook status",
         "notAuthorizedRelink": "User not authorized to relink this repository",
         "relinkFailed": "Failed to relink git account",
+        "alreadyInOrganization": "Repository is already in this organization",
+        "moveFailed": "Failed to move repository to organization",
         "workDirNotConfigured": "DEPLOYER_WORK_DIR is not configured"
     },
     "pipeline": {

@@ -1,6 +1,7 @@
 import { RepositoryCreateForm } from '@workspace/schemas-zod/repository/repositoryCreate.schema';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { Session } from '@/lib/auth/auth';
+import { resolveActiveOrganizationId } from '@/lib/auth/resolveOrgContext';
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
 import { Prisma } from 'generated/client';
@@ -46,21 +47,11 @@ export async function createRepository(
 }
 
 async function resolveCallerOrganizationId(session: Session): Promise<string> {
-    const activeOrganizationId = (session.session as { activeOrganizationId?: string })
-        .activeOrganizationId;
-    if (activeOrganizationId) return activeOrganizationId;
-
-    const member = await prisma.member.findFirst({
-        where: { userId: session.user.id },
-        select: { organizationId: true },
-        orderBy: { createdAt: 'asc' },
-    });
-
-    if (!member) {
+    const organizationId = await resolveActiveOrganizationId(session);
+    if (!organizationId) {
         throw new Error('No organization found for user');
     }
-
-    return member.organizationId;
+    return organizationId;
 }
 
 export async function getRepositorieById<
@@ -79,14 +70,19 @@ export async function getRepositorieById<
     }
 }
 
-export async function getRepositories(userId?: string, isGlobalAdmin = false) {
+export async function getRepositories(
+    userId?: string,
+    isGlobalAdmin = false,
+    organizationId?: string | null,
+) {
     const t = await getErrorTranslator();
     try {
+        const where: Prisma.RepositoryWhereInput = {};
+        if (organizationId) where.organizationId = organizationId;
+        if (userId && !isGlobalAdmin) where.organization = { members: { some: { userId } } };
+
         return prisma.repository.findMany({
-            where:
-                userId && !isGlobalAdmin
-                    ? { organization: { members: { some: { userId } } } }
-                    : undefined,
+            where,
             include: {
                 build: {
                     orderBy: {
@@ -356,5 +352,31 @@ export async function relinkGitAccount(
         });
     } catch (error: unknown) {
         throw new Error(t('repository.relinkFailed'));
+    }
+}
+
+export async function moveRepositoryToOrganization(
+    repositoryId: string,
+    targetOrganizationId: string,
+) {
+    const t = await getErrorTranslator();
+
+    const repo = await prisma.repository.findUnique({
+        where: { id: repositoryId },
+        select: { organizationId: true },
+    });
+
+    if (!repo) throw new Error(t('repository.notFound'));
+    if (repo.organizationId === targetOrganizationId) {
+        throw new Error(t('repository.alreadyInOrganization'));
+    }
+
+    try {
+        await prisma.repository.update({
+            where: { id: repositoryId },
+            data: { organizationId: targetOrganizationId },
+        });
+    } catch (error: unknown) {
+        throw new Error(t('repository.moveFailed'));
     }
 }

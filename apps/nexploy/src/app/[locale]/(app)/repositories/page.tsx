@@ -7,6 +7,7 @@ import { getTranslations } from 'next-intl/server';
 import { RepositoriesGrid } from '@/components/repositories/RepositoriesGrid';
 import { getUserSession } from '@/services/auth/auth.service';
 import { hasPermission } from '@/lib/auth/permissions';
+import { resolveActiveOrganizationId } from '@/lib/auth/resolveOrgContext';
 
 export const metadata: Metadata = {
     title: 'Repositories',
@@ -14,11 +15,16 @@ export const metadata: Metadata = {
 };
 
 export default async function RepositoriesPage() {
-    const [repositories, t, session] = await Promise.all([
-        getRepositories(),
+    const [t, session] = await Promise.all([
         getTranslations('repository'),
         getUserSession(),
     ]);
+
+    const organizationId = session ? await resolveActiveOrganizationId(session) : null;
+    const repositories = session
+        ? await getRepositories(session.user.id, session.user.role === 'admin', organizationId)
+        : [];
+
     const canCreateRepository = hasPermission(session?.user.role ?? '', 'repository', 'create');
 
     return (

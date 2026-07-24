@@ -115,6 +115,15 @@
             "saving": "Saving...",
             "onlyOwnerOrAdmin": "Only the repository creator or an administrator can change the linked Git account."
         },
+        "organization": {
+            "title": "Organization",
+            "description": "Move this repository to another organization you manage",
+            "selectPlaceholder": "Select an organization...",
+            "move": "Move",
+            "moveSuccess": "Repository moved successfully",
+            "noPermission": "You need to be an owner or admin of this repository's organization to move it.",
+            "noTargetOrganizations": "You don't manage any other organization to move this repository to."
+        },
         "dangerZone": {
             "title": "Danger Zone",
             "description": "Irreversible actions on this repository",
