@@ -169,7 +169,7 @@ export function DropdownOrganization({
                             <DicebearAvatar
                                 seed={current?.name}
                                 size={24}
-                                style={'initials'}
+                                style={'glass'}
                                 alt="Organization Icon"
                             />
                             <span className="flex-1 truncate">{current?.name}</span>
@@ -203,7 +203,7 @@ export function DropdownOrganization({
                                         <DicebearAvatar
                                             seed={organization.name}
                                             size={24}
-                                            style={'initials'}
+                                            style={'glass'}
                                             alt="Organization Icon"
                                         />
                                         <span className="flex-1">{organization.name}</span>

@@ -1,6 +1,9 @@
 'use client';
 
-import { initializeEnvironmentStore, useEnvironmentStore, } from '@/stores/docker/useEnvironmentStore';
+import {
+    initializeEnvironmentStore,
+    useEnvironmentStore,
+} from '@/stores/docker/useEnvironmentStore';
 import { useEffect } from 'react';
 import {
     DropdownMenu,
@@ -12,7 +15,12 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
+import {
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar,
+} from '@workspace/ui/components/sidebar';
 import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash2 } from 'lucide-react';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
@@ -150,7 +158,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                             <DicebearAvatar
                                 seed={currentEnvironment?.name}
                                 size={32}
-                                style={'initials'}
+                                style={'glass'}
                                 alt="Environment Icon"
                             />
                             <ChevronsUpDown className="group-data-[state=collapsed]:hidden" />
@@ -174,7 +182,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                     <DicebearAvatar
                                         seed={environment.name}
                                         size={24}
-                                        style={'initials'}
+                                        style={'glass'}
                                         alt="Environment Icon"
                                     />
                                     <div className={'flex flex-1 items-center gap-2'}>

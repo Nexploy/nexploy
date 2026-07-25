@@ -48,5 +48,6 @@
     "update": "Update",
     "traefik": "Traefik",
     "website": "Website",
-    "documentation": "Documentation"
+    "documentation": "Documentation",
+    "github": "GitHub"
 }
