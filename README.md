@@ -17,15 +17,27 @@
 
 ## Features
 
-- **Git Integration** — Deploy from GitHub and GitLab with OAuth authentication
-- **Automated Build Pipeline** — Resumable, step-by-step builds with real-time log streaming
-- **Docker Management** — Containers, images, volumes, and networks from a single dashboard
-- **Traefik Reverse Proxy** — Automatic routing and Let's Encrypt SSL certificates
-- **Real-time Monitoring** — Live container stats, build logs, and Docker events via SSE
-- **Encrypted Environment Variables** — AES-256-CBC encryption at rest
-- **In-browser Terminal** — WebSocket-powered Docker container terminal
-- **Two-Factor Authentication** — TOTP-based 2FA with backup codes
-- **Multi-language** — English and French via `next-intl`
+| Feature | Description |
+|---|---|
+| **Git integration** | Deploy from GitHub (GitHub App), GitLab and Gitea, with automatically configured webhooks |
+| **Build pipeline** | Durable node graph run by Inngest, with real-time per-node log streaming |
+| **Visual pipeline editor** | Node-based editor (56 node types) to build custom deployment workflows |
+| **Deployment stages** | Staging, production… each with its own pipeline, env variables, Docker host and versions |
+| **Docker management** | Containers, images, volumes, networks and Docker Swarm from a single dashboard |
+| **Multi-host environments** | Deploy to several Docker hosts — local socket, TCP, or TCP with TLS |
+| **Organizations** | Group repositories per team, with organization roles on top of instance roles |
+| **Traefik reverse proxy** | Automatic routing, Let's Encrypt SSL and custom certificates |
+| **Real-time monitoring** | Live container stats, build logs, Docker events and Traefik requests via SSE |
+| **Encrypted environment variables** | AES-256-CBC encryption at rest |
+| **In-browser terminal** | WebSocket-powered Docker container terminal |
+| **Backups** | Scheduled Docker volume backups to S3-compatible storage |
+| **Automatic cleanup** | Scheduled prune of images, volumes, containers and build cache |
+| **Private registries** | Push and pull images from your own Docker registries |
+| **Cloudflare DNS** | Manage the DNS records of your domains from the interface |
+| **AI assistant** | Multi-provider chat wired to your resources through MCP tools |
+| **Authentication** | Email/password, OAuth, TOTP 2FA with backup codes, and API keys |
+| **Recovery CLI** | `@nexploy/cli` resets an admin password straight from the database when the app is down |
+| **Multi-language** | English and French via `next-intl` |
 
 ## Tech Stack
 
@@ -35,6 +47,7 @@
 | **Backend** | Next.js Server Actions, Hono.js, Prisma 7, PostgreSQL 18 |
 | **Auth** | Better Auth (email/password, OAuth, 2FA, API keys) |
 | **Jobs** | Inngest (self-hosted, resumable build pipeline) |
+| **AI** | Multi-provider AI SDK + MCP |
 | **Infra** | Docker, Traefik v3, SSE, WebSocket |
 | **Tooling** | pnpm 11 workspaces + Turborepo |
 
@@ -76,6 +89,9 @@ Two secrets have no default — generate them and paste them into `apps/nexploy/
 openssl rand -hex 32   # -> BETTER_AUTH_SECRET
 openssl rand -hex 32   # -> ENCRYPTION_KEY
 ```
+
+`ENCRYPTION_KEY` also goes into `apps/docker-api/.env`, with the **same value** — docker-api uses it as the
+internal secret when it calls back into nexploy to verify API keys.
 
 Every other value already points at the dev stack (Postgres on `5433`, Inngest on `8288`).
 Leave `NEXPLOY_API_KEY` empty in both `.env` files for now — step 5 produces it.
@@ -230,14 +246,34 @@ Git push → Webhook → Inngest build pipeline → docker-api → Container + T
 
 ### Build pipeline
 
-Inngest runs the build as resumable steps — a failed build restarts from `Build.lastCompletedStep`, not from zero:
+A build has no fixed step list: Inngest executes the **node graph** configured for the stage being deployed,
+one Inngest step per node. The graph is snapshotted onto the build when it starts, so editing the pipeline
+never rewrites past builds. Statuses are `QUEUED → BUILDING → COMPLETED / FAILED / CANCELLED`, plus a
+per-node status and duration streamed live onto the graph.
 
-1. Clone the repository with the OAuth token
-2. Prepare the Dockerfile
-3. Write the decrypted environment variables to `.env`
-4. Build the Docker image (logs streamed over SSE)
-5. Deploy the container and register its Traefik route
-6. Clean up and finalize the logs
+56 node types cover cloning, building, deploying, tagging, pushing to a registry, managing domains, fetching
+secrets, backing up volumes, scanning images, notifying and more, wired together with conditions and field
+references. Two starting templates ship with the editor: Dockerfile
+(`clone-repository → build-docker-image → create-container`) and Docker Compose
+(`clone-repository → validate-compose → deploy-compose → clean-workdir`).
+
+### Permission model
+
+Two role systems apply to every action, and both must allow it:
+
+| Level | Roles | Scope |
+|---|---|---|
+| **Instance** | `guest`, `developer`, `admin` | Users, Traefik, registries, SSL certificates, backups, settings |
+| **Organization** | `owner`, `admin`, `member` | Repositories, builds, pipelines, env variables, domains, containers of one organization |
+
+The instance role authorizes a *type* of action, the organization role grants access to the *specific*
+resource. An instance `admin` reaches every organization so support operations stay possible.
+
+### Traefik configuration
+
+Traefik's static and dynamic configuration is not shipped statically — the app generates it on boot when it
+doesn't already exist, and never overwrites an existing one, so manual customizations survive. The same
+mechanism serves `install.sh` and `docker-compose` deployments.
 
 ### Real-time updates
 
@@ -264,8 +300,9 @@ Nothing is cloned and nothing is compiled — the installer pulls the published 
 (`nexploy/nexploy` and `nexploy/docker-api`), so a fresh install takes about a minute.
 
 It installs Docker if needed, asks for your domain and a Let's Encrypt email (or lets you skip both and run on
-the server's bare IP over plain HTTP), generates every secret into `/etc/nexploy/nexploy.env`, writes the
-Traefik configuration, then starts five containers:
+the server's bare IP over plain HTTP — see below), generates every secret and passes it straight to the
+containers (nothing is written in clear text on the host disk), writes the Traefik configuration, then starts
+five containers:
 
 | Container | Role |
 |---|---|
@@ -275,17 +312,24 @@ Traefik configuration, then starts five containers:
 | `nexploy_postgres` | Database |
 | `nexploy_inngest` | Build pipeline jobs |
 
-Requirements: ports **80** and **443** free and reachable. If you use a domain, DNS must point at the machine
-before the install finishes — Let's Encrypt uses an HTTP challenge.
+Requirements: run the script as **root** (it manages Docker and writes to `/etc/nexploy`), and ports **80** and
+**443** free and reachable. If you use a domain, DNS must point at the machine before the install finishes —
+Let's Encrypt uses an HTTP challenge to issue the certificate.
 
 ### Installing without a domain (IP only)
+
+No domain yet? Leave the domain prompt empty (or set `NEXPLOY_NO_DOMAIN=true` for a non-interactive install)
+and the installer detects the server's public IP and serves Nexploy over plain HTTP instead — no Let's Encrypt,
+no email needed:
 
 ```bash
 NEXPLOY_NO_DOMAIN=true sh -c "$(curl -fsSL https://nexploy.app/install.sh)"
 ```
 
-The installer detects the server's public IP and serves Nexploy over plain HTTP — no Let's Encrypt, no email
-needed. Switch to a real domain with HTTPS later from **Admin → Settings** in the app, no reinstall required.
+Plain HTTP means no certificate — handy to get started, not recommended long term. You can switch to a real
+domain with HTTPS at any time, either from **Admin → Settings** in the app (which recreates the app container
+and restarts Traefik with the new settings, no reinstall) or manually. Remember to update the OAuth redirect
+URL at your Git provider too.
 
 ### Non-interactive install
 
@@ -301,6 +345,7 @@ NEXPLOY_DOMAIN=nexploy.example.com NEXPLOY_EMAIL=you@example.com \
 | `NEXPLOY_NO_DOMAIN` | `false` | Set to `true` to skip the domain and serve over the server's IP (plain HTTP) |
 | `NEXPLOY_VERSION` | *(latest release)* | Image tag to deploy, e.g. `v1.0.0` |
 | `NEXPLOY_DIR` | `/etc/nexploy` | Where secrets and Traefik config live |
+| `NEXPLOY_REPO` | `Nexploy/nexploy` | GitHub repo used to resolve the latest release |
 
 ### Upgrading
 
@@ -311,6 +356,22 @@ curl -fsSL https://nexploy.app/install.sh | sh -s upgrade
 The upgrade pulls the requested version and recreates the containers. Your secrets, database and domain are
 untouched — re-running the installer never regenerates them.
 
+If you are already on the latest version, the command does nothing. To force the containers to be recreated
+even without a version change (useful after a container misbehaves), add `--force`:
+
+```bash
+curl -fsSL https://nexploy.app/install.sh | sh -s upgrade --force
+```
+
+### Uninstalling
+
+```bash
+curl -fsSL https://nexploy.app/install.sh | sh -s uninstall
+```
+
+> **Destructive.** This deletes your database, your deployment metadata and every generated secret, with no way
+> back. You are asked to confirm by typing `remove`.
+
 ### Managing the instance
 
 ```bash
@@ -318,6 +379,12 @@ docker logs -f nexploy_app          # application logs
 docker restart nexploy_app          # restart the app
 docker ps --filter name=nexploy_    # every Nexploy container
 ```
+
+> **Don't remove the containers carelessly.** Your secrets — including `ENCRYPTION_KEY`, which decrypts your
+> environment variables — are not stored anywhere on the host disk; they only live in the containers'
+> environment (`docker inspect nexploy_app`). Removing the containers without having backed those values up
+> makes them unrecoverable. Only `/etc/nexploy/cli.env` persists on disk, and it holds nothing but the hash of
+> the `nexploy-cli` recovery key.
 
 ## Environment variables
 
@@ -364,6 +431,20 @@ maintenance page shown on the wrong entrypoint).
 - Webhook secrets validate Git provider callbacks
 - Service-to-service calls authenticated with a Better Auth API key
 - CSRF protection and session-based authentication
+- Every resource access checked against both the instance role and organization membership
+
+### Recovery CLI
+
+`@nexploy/cli` talks **directly to the instance's Postgres database**, not to the app's API, so it still works
+when `nexploy_app` is down, misconfigured, or its admin password is lost:
+
+```bash
+npm install -g @nexploy/cli
+```
+
+It must run on the server as root — it reads the Postgres password and address from
+`docker inspect nexploy_postgres` (nothing is duplicated on disk) and `/etc/nexploy/cli.env`, which holds only
+the hash of its recovery key.
 
 ## Contributing
 

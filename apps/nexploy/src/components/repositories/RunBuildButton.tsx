@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { onStartBuild } from '@/actions/repository/builds/startBuild.action';
 import { useTranslations } from 'next-intl';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
-import { usePermissions } from '@/contexts/PermissionContext';
+import { Can } from '@/components/permission/Can';
 import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 
 interface DeployButtonProps extends ComponentProps<typeof Button> {
@@ -17,7 +17,6 @@ interface DeployButtonProps extends ComponentProps<typeof Button> {
 }
 
 export function RunBuildButton({ repositoryId, showText = true, ...props }: DeployButtonProps) {
-    const { can } = usePermissions();
 
     const t = useTranslations('repository.builds');
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
@@ -43,12 +42,13 @@ export function RunBuildButton({ repositoryId, showText = true, ...props }: Depl
         execute({ repositoryId, stageId });
     };
 
-    if (!can('build', 'run')) return null;
 
     return (
-        <Button {...props} onClick={(e) => handleDeploy(e)} disabled={isPending}>
-            {isPending ? <Loader2 className="animate-spin" /> : <Rocket />}
-            {showText && (isPending ? t('building') : t('runBuild'))}
-        </Button>
+        <Can resource="build" action="run">
+            <Button {...props} onClick={(e) => handleDeploy(e)} disabled={isPending}>
+                {isPending ? <Loader2 className="animate-spin" /> : <Rocket />}
+                {showText && (isPending ? t('building') : t('runBuild'))}
+            </Button>
+        </Can>
     );
 }

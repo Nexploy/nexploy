@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { inviteMemberSchema } from '@workspace/schemas-zod/organization/inviteMember.schema';
 import { getTranslations } from 'next-intl/server';
 import { getCallerOrgRole } from '@/lib/auth/resolveOrgContext';
+import { isPersonalOrganization } from '@/services/organization.service';
 import { prisma } from '../../../prisma/prisma';
 import { revalidatePath } from 'next/cache';
 
@@ -18,6 +19,10 @@ export const inviteMemberAction = authActionServer
         const callerRole = await getCallerOrgRole(ctx.session.user.id, parsedInput.organizationId);
         if (callerRole !== 'owner' && callerRole !== 'admin' && ctx.session.user.role !== 'admin') {
             throw new Error(t('errors.notFound'));
+        }
+
+        if (await isPersonalOrganization(parsedInput.organizationId)) {
+            throw new Error(t('errors.cannotInvitePersonal'));
         }
 
         const invitedUser = await prisma.user.findUnique({

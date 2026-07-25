@@ -16,6 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { updateOrganizationSchema } from '@workspace/schemas-zod/organization/updateOrganization.schema';
 import { updateOrganizationAction } from '@/actions/organization/updateOrganization.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { useOrganizationStore } from '@/stores/organization/useOrganizationStore';
 
 interface RenameOrganizationFormProps {
     organizationId: string;
@@ -24,7 +25,8 @@ interface RenameOrganizationFormProps {
 
 export function RenameOrganizationForm({ organizationId, name }: RenameOrganizationFormProps) {
     const t = useTranslations('organization');
-    const { onSuccess } = useConfirmationDialogStore();
+    const { closeDialog } = useConfirmationDialogStore();
+    const updateOrganization = useOrganizationStore((s) => s.updateOrganization);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         updateOrganizationAction,
@@ -32,8 +34,9 @@ export function RenameOrganizationForm({ organizationId, name }: RenameOrganizat
         {
             formProps: { defaultValues: { organizationId, name } },
             actionProps: {
-                onSuccess: () => {
-                    if (onSuccess) onSuccess();
+                onSuccess: ({ input }) => {
+                    updateOrganization(organizationId, { name: input.name });
+                    closeDialog();
                 },
             },
         },

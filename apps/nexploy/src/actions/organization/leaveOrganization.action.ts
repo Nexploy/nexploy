@@ -6,30 +6,36 @@ import { headers } from 'next/headers';
 import { setToastServer } from '@/lib/toastServer';
 import { organizationIdSchema } from '@workspace/schemas-zod/organization/organizationId.schema';
 import { getTranslations } from 'next-intl/server';
-import { prisma } from '../../../prisma/prisma';
 import { getCallerOrgRole } from '@/lib/auth/resolveOrgContext';
+import { getOldestOrganizationId, isSoleOwner } from '@/services/organization.service';
 import { revalidatePath } from 'next/cache';
 
 export const leaveOrganizationAction = authActionServer
     .inputSchema(organizationIdSchema)
-    .action(async ({ parsedInput, ctx }) => {
+    .action(async ({ parsedInput: { organizationId }, ctx: { session } }) => {
         const t = await getTranslations('organization');
 
-        const callerRole = await getCallerOrgRole(ctx.session.user.id, parsedInput.organizationId);
-        if (callerRole === 'owner') {
-            const ownerCount = await prisma.member.count({
-                where: { organizationId: parsedInput.organizationId, role: 'owner' },
-            });
-            if (ownerCount <= 1) {
-                throw new Error(t('errors.cannotLeaveAsSoleOwner'));
-            }
+        const callerRole = await getCallerOrgRole(session.user.id, organizationId);
+        if (callerRole === 'owner' && (await isSoleOwner(organizationId))) {
+            throw new Error(t('errors.cannotLeaveAsSoleOwner'));
         }
+
+        const wasActiveOrganization =
+            (session.session as { activeOrganizationId?: string | null }).activeOrganizationId ===
+            organizationId;
 
         try {
             const result = await auth.api.leaveOrganization({
-                body: { organizationId: parsedInput.organizationId },
+                body: { organizationId },
                 headers: await headers(),
             });
+
+            if (wasActiveOrganization) {
+                await auth.api.setActiveOrganization({
+                    body: { organizationId: await getOldestOrganizationId(session.user.id) },
+                    headers: await headers(),
+                });
+            }
 
             await setToastServer({ type: 'success', message: t('success.left') });
             revalidatePath('/', 'layout');

@@ -39,10 +39,33 @@ export function kyGitea(baseUrl: string, explicitToken?: string) {
     });
 }
 
+const PAGE_LIMIT = 50;
+const MAX_PAGES = 20;
+
+async function fetchAllPages<T>(
+    baseUrl: string,
+    endpoint: string,
+    searchParams: Record<string, string> = {},
+): Promise<T[]> {
+    const results: T[] = [];
+
+    for (let page = 1; page <= MAX_PAGES; page++) {
+        const pageResults = await kyGitea(baseUrl)
+            .get(endpoint, {
+                searchParams: { ...searchParams, page: `${page}`, limit: `${PAGE_LIMIT}` },
+            })
+            .json<T[]>();
+
+        results.push(...pageResults);
+
+        if (pageResults.length < PAGE_LIMIT) break;
+    }
+
+    return results;
+}
+
 export async function giteaGetUserRepositories(baseUrl: string): Promise<GiteaRepo[]> {
-    return kyGitea(baseUrl)
-        .get('user/repos', { searchParams: { limit: '50' } })
-        .json<GiteaRepo[]>();
+    return fetchAllPages<GiteaRepo>(baseUrl, 'user/repos');
 }
 
 export async function giteaGetRepository(
@@ -58,7 +81,7 @@ export async function giteaGetRepositoryBranches(
     owner: string,
     repo: string,
 ): Promise<GiteaBranch[]> {
-    return kyGitea(baseUrl).get(`repos/${owner}/${repo}/branches`).json<GiteaBranch[]>();
+    return fetchAllPages<GiteaBranch>(baseUrl, `repos/${owner}/${repo}/branches`);
 }
 
 export async function giteaGetCommits(

@@ -25,7 +25,7 @@ export default async function OrganizationMembersPage({
         session.user.role === 'admin',
     );
 
-    if (!detail) notFound();
+    if (!detail || detail.isPersonal) notFound();
 
     const canManageMembers = detail.callerRole === 'owner' || detail.callerRole === 'admin';
 

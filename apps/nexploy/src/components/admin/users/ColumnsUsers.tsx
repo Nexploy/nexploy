@@ -2,19 +2,9 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import {
-    ArrowUpDown,
-    Ban,
-    CheckCircle,
-    Lock,
-    MoreHorizontal,
-    Shield,
-    ShieldOff,
-    Trash2,
-} from 'lucide-react';
+import { ArrowUpDown, Ban, CheckCircle, Lock, MoreHorizontal, Shield, ShieldOff, Trash2, } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -23,15 +13,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@workspace/ui/components/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
+import { DicebearAvatar } from '@/components/shared/DicebearAvatar.tsx';
 
 export interface UserRow {
     id: string;
@@ -102,12 +87,7 @@ export const getColumnsUsers = (
 
                 return (
                     <div className="flex items-center gap-3">
-                        <Avatar className="size-8">
-                            <AvatarImage src={user.image || undefined} />
-                            <AvatarFallback className="text-xs">
-                                {getInitials(user.name)}
-                            </AvatarFallback>
-                        </Avatar>
+                        <DicebearAvatar seed={user.email} size={28} alt="Email Account Image" />
                         <div className="flex flex-col">
                             <div className="flex items-center gap-2">
                                 <span className="font-medium">{user.name}</span>

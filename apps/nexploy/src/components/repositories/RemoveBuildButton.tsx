@@ -9,7 +9,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 import { useTranslations } from 'next-intl';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
-import { usePermissions } from '@/contexts/PermissionContext';
+import { Can } from '@/components/permission/Can';
 
 interface RemoveBuildButtonProps extends ComponentProps<typeof Button> {
     buildId: string;
@@ -23,9 +23,7 @@ export function RemoveBuildButton({
     onSuccess,
     ...props
 }: RemoveBuildButtonProps) {
-    const { can } = usePermissions();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
-    if (!can('build', 'delete')) return null;
     const t = useTranslations('repository.builds');
     const tCommon = useTranslations('common');
 
@@ -65,8 +63,10 @@ export function RemoveBuildButton({
     }
 
     return (
-        <Button {...props} size={'icon'} onClick={handleRemove} variant={'destructive'}>
-            <Trash2 />
-        </Button>
+        <Can resource="build" action="delete">
+            <Button {...props} size={'icon'} onClick={handleRemove} variant={'destructive'}>
+                <Trash2 />
+            </Button>
+        </Can>
     );
 }

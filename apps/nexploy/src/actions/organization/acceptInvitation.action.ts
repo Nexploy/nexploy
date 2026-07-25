@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { invitationIdSchema } from '@workspace/schemas-zod/organization/invitationId.schema';
 import { getTranslations } from 'next-intl/server';
 import { prisma } from '../../../prisma/prisma';
+import { getUserOrganizations } from '@/services/organization.service';
 import { revalidatePath } from 'next/cache';
 
 export const acceptInvitationAction = authActionServer
@@ -23,7 +24,7 @@ export const acceptInvitationAction = authActionServer
         }
 
         try {
-            const result = await auth.api.acceptInvitation({
+            await auth.api.acceptInvitation({
                 body: { invitationId: parsedInput.invitationId },
                 headers: await headers(),
             });
@@ -32,7 +33,7 @@ export const acceptInvitationAction = authActionServer
             revalidatePath('/account');
             revalidatePath('/', 'layout');
 
-            return result;
+            return { organizations: await getUserOrganizations(ctx.session.user.id) };
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : t('errors.acceptFailed');
             await setToastServer({ type: 'error', message });

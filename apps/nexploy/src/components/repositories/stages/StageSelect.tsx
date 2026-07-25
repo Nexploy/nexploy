@@ -16,7 +16,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
-import { usePermissions } from '@/contexts/PermissionContext';
+import { Can } from '@/components/permission/Can';
 import { ButtonGroup } from '@workspace/ui/components/button-group.tsx';
 import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
 
@@ -27,7 +27,6 @@ interface StageSelectProps {
 export function StageSelect({ repositoryId }: StageSelectProps) {
     const t = useTranslations('repository.stages');
     const { stageId, setStageId, stages } = usePipelineStage(repositoryId);
-    const { can } = usePermissions();
 
     const environments = useEnvironmentStore((state) => state.environments);
 
@@ -64,7 +63,7 @@ export function StageSelect({ repositoryId }: StageSelectProps) {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                {can('repository', 'update') && (
+                <Can resource="repository" action="update">
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button asChild variant="outline" size="icon">
@@ -75,7 +74,7 @@ export function StageSelect({ repositoryId }: StageSelectProps) {
                         </TooltipTrigger>
                         <TooltipContent>{t('manageTitle')}</TooltipContent>
                     </Tooltip>
-                )}
+                </Can>
             </ButtonGroup>
         </div>
     );

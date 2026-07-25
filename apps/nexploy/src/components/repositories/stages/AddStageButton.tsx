@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { usePermissions } from '@/contexts/PermissionContext';
+import { Can } from '@/components/permission/Can';
 import { StageForm } from '@/components/repositories/stages/StageForm';
 
 interface AddStageButtonProps {
@@ -14,12 +14,10 @@ interface AddStageButtonProps {
 }
 
 export function AddStageButton({ repositoryId }: AddStageButtonProps) {
-    const { can } = usePermissions();
     const { openDialog, closeDialog } = useConfirmationDialogStore();
     const router = useRouter();
     const t = useTranslations('repository.stages');
 
-    if (!can('repository', 'update')) return null;
 
     const handleAdd = () => {
         openDialog({
@@ -34,8 +32,10 @@ export function AddStageButton({ repositoryId }: AddStageButtonProps) {
     };
 
     return (
-        <Button icon={Plus} onClick={handleAdd}>
-            {t('addStage')}
-        </Button>
+        <Can resource="repository" action="update">
+            <Button icon={Plus} onClick={handleAdd}>
+                {t('addStage')}
+            </Button>
+        </Can>
     );
 }

@@ -10,6 +10,7 @@ import { savePipelineConfig } from '@/services/pipeline.service';
 import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { kyGithubApi } from '@/services/git/providers/github/github.client';
 import { kyGitlab } from '@/services/git/providers/gitlab/gitlab.client';
+import { kyGitea } from '@/services/git/providers/gitea/gitea.client';
 import { getGitAdapter } from '@/services/git/core/registry';
 import type { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { getCompactCatalog, PIPELINE_NODE_CATALOG } from '@/lib/ai/pipelineNodeCatalog';
@@ -43,6 +44,13 @@ type GitHubContentFile = {
 };
 
 type GitLabTreeEntry = { name: string; type: string };
+
+type GiteaContentFile = {
+    type: string;
+    name: string;
+    content?: string;
+    encoding?: string;
+};
 
 type GitLabFileContent = { content: string; encoding: string };
 
@@ -105,6 +113,41 @@ async function fetchGitlabFiles(
                 .json<GitLabFileContent>();
 
             if (fileData.encoding === 'base64') {
+                files[fileName] = Buffer.from(fileData.content.replace(/\n/g, ''), 'base64')
+                    .toString('utf-8')
+                    .substring(0, 3000);
+            }
+        } catch {}
+    }
+
+    return { rootFiles, files };
+}
+
+async function fetchGiteaFiles(
+    baseUrl: string,
+    owner: string,
+    repoName: string,
+    ref: string,
+): Promise<{ rootFiles: { name: string; type: string }[]; files: Record<string, string> }> {
+    const rootFiles: { name: string; type: string }[] = [];
+    const files: Record<string, string> = {};
+
+    try {
+        const rootContent = await kyGitea(baseUrl)
+            .get(`repos/${owner}/${repoName}/contents`, { searchParams: { ref } })
+            .json<GiteaContentFile[]>();
+        rootFiles.push(...rootContent.map((f) => ({ name: f.name, type: f.type })));
+    } catch {}
+
+    for (const fileName of KEY_FILES) {
+        try {
+            const fileData = await kyGitea(baseUrl)
+                .get(`repos/${owner}/${repoName}/contents/${encodeURIComponent(fileName)}`, {
+                    searchParams: { ref },
+                })
+                .json<GiteaContentFile>();
+
+            if (fileData.type === 'file' && fileData.encoding === 'base64' && fileData.content) {
                 files[fileName] = Buffer.from(fileData.content.replace(/\n/g, ''), 'base64')
                     .toString('utf-8')
                     .substring(0, 3000);
@@ -215,6 +258,13 @@ export const pipelineGroup: ToolGroup = {
 
                         ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
                             fetchGitlabFiles(baseUrl, encodedPath, ref),
+                        ));
+                    } else if (repo.gitProvider === 'GITEA') {
+                        const { baseUrl, owner, repo: repoName } = getGitAdapter(
+                            'GITEA',
+                        ).parseRepoUrl(repo.repositoryUrl);
+                        ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
+                            fetchGiteaFiles(baseUrl, owner, repoName, ref),
                         ));
                     } else {
                         return fail(`Unsupported git provider: ${repo.gitProvider}`);

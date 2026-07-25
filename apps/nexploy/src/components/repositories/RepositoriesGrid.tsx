@@ -24,6 +24,7 @@ import { capitalizeFirstLetter } from '@/utils/capitalize';
 import { getHostname } from '@/utils/url';
 import Github from '@thesvg/react/github';
 import Gitlab from '@thesvg/react/gitlab';
+import Gitea from '@thesvg/react/gitea';
 import { STATUS_PIPELINE } from '@/components/shared/buildStatusMapping';
 import { BuildStatus, GitProviderType } from 'generated/client';
 
@@ -96,6 +97,12 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                                     <span className="flex items-center gap-2">
                                         <Gitlab className="size-3.5 [&_path]:fill-current" />
                                         {t('providers.gitlab')}
+                                    </span>
+                                </SelectItem>
+                                <SelectItem value="GITEA">
+                                    <span className="flex items-center gap-2">
+                                        <Gitea className="size-3.5 [&_path]:fill-current" />
+                                        {t('providers.gitea')}
                                     </span>
                                 </SelectItem>
                             </SelectGroup>

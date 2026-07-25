@@ -9,7 +9,8 @@
     "filterByStatus": "Statut",
     "providers": {
         "github": "GitHub",
-        "gitlab": "GitLab"
+        "gitlab": "GitLab",
+        "gitea": "Gitea"
     },
     "create": {
         "title": "Nouveau dépôt",

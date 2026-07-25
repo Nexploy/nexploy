@@ -90,7 +90,7 @@ const developer = ac.newRole({
     deployment: ['deploy', 'rollback'],
     pipeline: ['read', 'update', 'webhook'],
     envVar: ['read', 'write'],
-    environment: ['read', 'update'],
+    environment: ['read'],
     stage: ['read', 'manage'],
     domain: ['read', 'manage'],
     ssl: ['read', 'manage'],

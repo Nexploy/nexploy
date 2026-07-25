@@ -27,14 +27,17 @@
         "pendingDescription": "Organisations qui t'ont invité à les rejoindre",
         "noPendingInvitations": "Aucune invitation en attente",
         "accept": "Accepter",
-        "reject": "Refuser"
+        "reject": "Refuser",
+        "invitedBy": "Invité par"
     },
     "settings": {
         "rename": "Renommer l'organisation",
         "renameDescription": "Modifier le nom affiché de « {name} »",
         "save": "Enregistrer",
         "deleteOrganization": "Supprimer l'organisation",
-        "confirmDelete": "Supprimer \"{name}\" ? Cette action est irréversible."
+        "confirmDelete": "Supprimer \"{name}\" ? Cette action est irréversible.",
+        "leaveOrganization": "Quitter l'organisation",
+        "confirmLeave": "Quitter « {name} » ? Tu perdras l’accès à ses dépôts."
     },
     "errors": {
         "guestCannotCreate": "Ton rôle ne permet pas de créer une organisation",
@@ -43,7 +46,7 @@
         "notFound": "Organisation introuvable",
         "cannotRemoveLastOwner": "Impossible de retirer le dernier propriétaire de l'organisation",
         "cannotDemoteLastOwner": "Impossible de changer le rôle du dernier propriétaire",
-        "cannotLeaveAsSoleOwner": "Transfère la propriété ou supprime l'organisation avant de la quitter",
+        "cannotLeaveAsSoleOwner": "Tu es l'unique propriétaire : supprime l'organisation avant de la quitter",
         "hasRepositories": "Cette organisation possède encore des dépôts. Réassigne-les ou supprime-les d'abord",
         "createFailed": "Échec de la création de l'organisation",
         "updateFailed": "Échec de la mise à jour de l'organisation",
@@ -55,7 +58,10 @@
         "updateRoleFailed": "Échec de la mise à jour du rôle du membre",
         "leaveFailed": "Échec de la sortie de l'organisation",
         "deleteFailed": "Échec de la suppression de l'organisation",
-        "setActiveFailed": "Échec du changement d'organisation"
+        "setActiveFailed": "Échec du changement d'organisation",
+        "cannotDeletePersonal": "Ton organisation personnelle ne peut pas être supprimée",
+        "cannotRenamePersonal": "Ton organisation personnelle ne peut pas être renommée",
+        "cannotInvitePersonal": "Ton organisation personnelle ne peut pas accueillir d'autres membres"
     },
     "success": {
         "created": "Organisation créée",

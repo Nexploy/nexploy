@@ -27,14 +27,17 @@
         "pendingDescription": "Organizations you've been invited to join",
         "noPendingInvitations": "No pending invitations",
         "accept": "Accept",
-        "reject": "Reject"
+        "reject": "Reject",
+        "invitedBy": "Invited by"
     },
     "settings": {
         "rename": "Rename organization",
         "renameDescription": "Change the display name of \"{name}\"",
         "save": "Save",
         "deleteOrganization": "Delete organization",
-        "confirmDelete": "Delete \"{name}\"? This cannot be undone."
+        "confirmDelete": "Delete \"{name}\"? This cannot be undone.",
+        "leaveOrganization": "Leave organization",
+        "confirmLeave": "Leave \"{name}\"? You will lose access to its repositories."
     },
     "errors": {
         "guestCannotCreate": "Your role does not allow creating organizations",
@@ -43,7 +46,7 @@
         "notFound": "Organization not found",
         "cannotRemoveLastOwner": "Cannot remove the last owner of the organization",
         "cannotDemoteLastOwner": "Cannot change the role of the last owner",
-        "cannotLeaveAsSoleOwner": "Transfer ownership or delete the organization before leaving",
+        "cannotLeaveAsSoleOwner": "You are the sole owner: delete the organization before leaving",
         "hasRepositories": "This organization still owns repositories. Reassign or delete them first",
         "createFailed": "Failed to create organization",
         "updateFailed": "Failed to update organization",
@@ -55,7 +58,10 @@
         "updateRoleFailed": "Failed to update member role",
         "leaveFailed": "Failed to leave organization",
         "deleteFailed": "Failed to delete organization",
-        "setActiveFailed": "Failed to switch organization"
+        "setActiveFailed": "Failed to switch organization",
+        "cannotDeletePersonal": "Your personal organization cannot be deleted",
+        "cannotRenamePersonal": "Your personal organization cannot be renamed",
+        "cannotInvitePersonal": "Your personal organization cannot have other members"
     },
     "success": {
         "created": "Organization created",

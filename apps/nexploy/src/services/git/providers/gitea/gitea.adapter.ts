@@ -21,6 +21,29 @@ import {
     giteaUpdateCommitStatus,
 } from './gitea.client';
 
+const GITEA_OAUTH_SCOPES = 'read:user write:repository write:organization';
+
+function normalizeRepoUrl(url: string): string {
+    if (/^(ssh|git):\/\//i.test(url)) {
+        const parsed = new URL(url);
+        return `https://${parsed.hostname}${parsed.pathname}`;
+    }
+
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(url)) {
+        return url;
+    }
+
+    const withoutCredentials = url.replace(/^[^@\/]+@/, '');
+    const separatorIndex = withoutCredentials.indexOf(':');
+    if (separatorIndex === -1) {
+        throw new Error(`Invalid Gitea repository URL: ${url}`);
+    }
+
+    const host = withoutCredentials.slice(0, separatorIndex);
+    const path = withoutCredentials.slice(separatorIndex + 1).replace(/^\//, '');
+    return `https://${host}/${path}`;
+}
+
 function mapRepo(repo: GiteaRepo): GitRepository {
     return {
         id: `${repo.id}`,
@@ -38,7 +61,7 @@ export const giteaAdapter: GitProviderAdapter = {
     webhookPath: '/api/webhooks/gitea',
 
     parseRepoUrl(url: string): ParsedRepoUrl {
-        const parsed = new URL(url);
+        const parsed = new URL(normalizeRepoUrl(url));
         const parts = parsed.pathname
             .replace(/\.git$/, '')
             .split('/')
@@ -140,6 +163,7 @@ export const giteaAdapter: GitProviderAdapter = {
             redirect_uri: redirectUri,
             response_type: 'code',
             state,
+            scope: GITEA_OAUTH_SCOPES,
         });
         return `${credentials.baseUrl}/login/oauth/authorize?${params.toString()}`;
     },

@@ -1,0 +1,42 @@
+'use client';
+
+import Image from 'next/image';
+import { Avatar, Style } from '@dicebear/core';
+import glyphs from '@dicebear/styles/glyphs.json' with { type: 'json' };
+import initials from '@dicebear/styles/initials.json' with { type: 'json' };
+
+import { cn } from '@workspace/ui/lib/utils';
+
+interface DicebearAvatarProps {
+    seed?: string;
+    size?: number;
+    className?: string;
+    alt?: string;
+    style?: 'glyphs' | 'initials';
+}
+
+const styleGlyphs = new Style(glyphs);
+const styleInitials = new Style(initials);
+
+export function DicebearAvatar({
+    seed,
+    size = 28,
+    className,
+    style = 'glyphs',
+    alt = 'Avatar',
+}: DicebearAvatarProps) {
+    const dataUri = new Avatar(style === 'glyphs' ? styleGlyphs : styleInitials, {
+        seed,
+        size,
+    }).toDataUri();
+
+    return (
+        <Image
+            className={cn('size-fit rounded-md', className)}
+            src={dataUri}
+            width={size}
+            height={size}
+            alt={alt}
+        />
+    );
+}

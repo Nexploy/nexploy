@@ -1,9 +1,6 @@
 'use client';
 
-import {
-    initializeEnvironmentStore,
-    useEnvironmentStore,
-} from '@/stores/docker/useEnvironmentStore';
+import { initializeEnvironmentStore, useEnvironmentStore, } from '@/stores/docker/useEnvironmentStore';
 import { useEffect } from 'react';
 import {
     DropdownMenu,
@@ -15,12 +12,7 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
-import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
-} from '@workspace/ui/components/sidebar';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
 import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash2 } from 'lucide-react';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
@@ -32,7 +24,8 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
-import { usePermissions } from '@/contexts/PermissionContext';
+import { Can } from '@/components/permission/Can.tsx';
+import { DicebearAvatar } from '@/components/shared/DicebearAvatar.tsx';
 
 interface DropdownEnvironmentProps {
     environments: Environment[];
@@ -58,8 +51,6 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
     const { openAlertDialog } = useAlertConfirmationDialogStore();
     const t = useTranslations('navigation');
     const tCommon = useTranslations('common');
-
-    const { can } = usePermissions();
 
     const { execute } = useAction(setDefaultEnvironmentAction, {
         onSuccess: ({ input }) => {
@@ -155,10 +146,13 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton className="flex h-10 w-18 cursor-pointer justify-between gap-1 group-data-[state=collapsed]:justify-start group-data-[state=collapsed]:bg-transparent! group-data-[state=collapsed]:p-0!">
-                            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg font-semibold">
-                                {currentEnvironment?.name?.charAt(0).toUpperCase() ?? '?'}
-                            </div>
+                        <SidebarMenuButton className="w-18 group-data-[state=collapsed]:bg-transparent! group-data-[state=collapsed]:p-0! flex h-10 cursor-pointer justify-between gap-1 group-data-[state=collapsed]:justify-start">
+                            <DicebearAvatar
+                                seed={currentEnvironment?.name}
+                                size={32}
+                                style={'initials'}
+                                alt="Environment Icon"
+                            />
                             <ChevronsUpDown className="group-data-[state=collapsed]:hidden" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
@@ -177,11 +171,12 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                     onClick={() => handleEnvironmentsChange(environment.id)}
                                     className="flex-1 gap-2"
                                 >
-                                    <div className="bg-background flex size-6 items-center justify-center rounded-sm border">
-                                        <span className="text-xs font-medium">
-                                            {environment.name.charAt(0).toUpperCase()}
-                                        </span>
-                                    </div>
+                                    <DicebearAvatar
+                                        seed={environment.name}
+                                        size={24}
+                                        style={'initials'}
+                                        alt="Environment Icon"
+                                    />
                                     <div className={'flex flex-1 items-center gap-2'}>
                                         {environment.name}
                                         {environment.isDefault && (
@@ -192,7 +187,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                         <Check className="size-4" />
                                     )}
                                 </DropdownMenuItem>
-                                {can('environment', 'update') && (
+                                <Can resource="environment" action="update">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button
@@ -219,33 +214,32 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                                     {t('setAsDefault')}
                                                 </DropdownMenuItem>
                                             )}
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem
-                                                variant="destructive"
-                                                onClick={() => handleEnvironmentDelete(environment)}
-                                            >
-                                                <Trash2 />
-                                                {t('delete')}
-                                            </DropdownMenuItem>
+                                            <Can resource="environment" action="delete">
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem
+                                                    variant="destructive"
+                                                    onClick={() =>
+                                                        handleEnvironmentDelete(environment)
+                                                    }
+                                                >
+                                                    <Trash2 />
+                                                    {t('delete')}
+                                                </DropdownMenuItem>
+                                            </Can>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
-                                )}
+                                </Can>
                             </div>
                         ))}
-                        {can('environment', 'create') && (
-                            <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                    className="gap-2 p-2"
-                                    onClick={handleEnvironmentAdd}
-                                >
-                                    <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
-                                        <Plus size={14} />
-                                    </div>
-                                    <span>{t('addEnvironment')}</span>
-                                </DropdownMenuItem>
-                            </>
-                        )}
+                        <Can resource="environment" action="create">
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="gap-2 p-2" onClick={handleEnvironmentAdd}>
+                                <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
+                                    <Plus size={14} />
+                                </div>
+                                <span>{t('addEnvironment')}</span>
+                            </DropdownMenuItem>
+                        </Can>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

@@ -5,6 +5,7 @@ import { nextCookies } from 'better-auth/next-js';
 import { admin, mcp, organization, twoFactor } from 'better-auth/plugins';
 import { apiKey } from '@better-auth/api-key';
 import { orgAc, orgAdmin, orgMember, orgOwner } from './orgPermissions';
+import { personalOrganizationSlug } from '@/services/organization.service';
 import { permission } from './permissions';
 
 const extraTrustedOrigins = process.env.TRUSTED_ORIGINS
@@ -41,7 +42,7 @@ export const auth = betterAuth({
                         await auth.api.createOrganization({
                             body: {
                                 name: `${user.name?.trim() || user.email}'s Organization`,
-                                slug: `personal-${user.id}`,
+                                slug: personalOrganizationSlug(user.id),
                                 userId: user.id,
                             },
                         });
@@ -57,7 +58,7 @@ export const auth = betterAuth({
                 after: async (user) => {
                     try {
                         await prisma.organization.deleteMany({
-                            where: { slug: `personal-${user.id}` },
+                            where: { slug: personalOrganizationSlug(user.id) },
                         });
                     } catch (error) {
                         console.error(

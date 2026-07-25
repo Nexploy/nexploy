@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { updateOrganizationSchema } from '@workspace/schemas-zod/organization/updateOrganization.schema';
 import { getTranslations } from 'next-intl/server';
 import { getCallerOrgRole } from '@/lib/auth/resolveOrgContext';
+import { isPersonalOrganization } from '@/services/organization.service';
 import { revalidatePath } from 'next/cache';
 
 export const updateOrganizationAction = authActionServer
@@ -17,6 +18,10 @@ export const updateOrganizationAction = authActionServer
         const callerRole = await getCallerOrgRole(ctx.session.user.id, parsedInput.organizationId);
         if (callerRole !== 'owner' && callerRole !== 'admin' && ctx.session.user.role !== 'admin') {
             throw new Error(t('errors.notFound'));
+        }
+
+        if (await isPersonalOrganization(parsedInput.organizationId)) {
+            throw new Error(t('errors.cannotRenamePersonal'));
         }
 
         try {

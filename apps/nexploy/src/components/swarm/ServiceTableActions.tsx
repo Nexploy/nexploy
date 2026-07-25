@@ -8,7 +8,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { onRemoveServicesAction } from '@/actions/docker/swarm/removeServices.action';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { Badge } from '@workspace/ui/components/badge';
-import { usePermissions } from '@/contexts/PermissionContext';
+import { Can } from '@/components/permission/Can';
 
 interface ServiceTableActionsProps {
     selectedServices: SwarmService[];
@@ -19,9 +19,7 @@ export function ServiceTableActions({
     selectedServices,
     onResetSelection,
 }: ServiceTableActionsProps) {
-    const { can } = usePermissions();
     const t = useTranslations('swarm');
-    if (!can('swarm', 'manage')) return null;
     const tCommon = useTranslations('common');
     const openAlertDialog = useAlertConfirmationDialogStore((s) => s.openAlertDialog);
 
@@ -44,21 +42,23 @@ export function ServiceTableActions({
     };
 
     return (
-        <div className="flex items-center gap-2">
-            <Button
-                variant="destructive"
-                icon={Trash2}
-                onClick={handleRemove}
-                disabled={numberOfSelected === 0 || isRemoving}
-                isLoading={isRemoving}
-            >
-                {tCommon('remove')}
-                {numberOfSelected > 1 && (
-                    <Badge variant="secondary" className="rounded-full">
-                        {numberOfSelected}
-                    </Badge>
-                )}
-            </Button>
-        </div>
+        <Can resource="swarm" action="manage">
+            <div className="flex items-center gap-2">
+                <Button
+                    variant="destructive"
+                    icon={Trash2}
+                    onClick={handleRemove}
+                    disabled={numberOfSelected === 0 || isRemoving}
+                    isLoading={isRemoving}
+                >
+                    {tCommon('remove')}
+                    {numberOfSelected > 1 && (
+                        <Badge variant="secondary" className="rounded-full">
+                            {numberOfSelected}
+                        </Badge>
+                    )}
+                </Button>
+            </div>
+        </Can>
     );
 }

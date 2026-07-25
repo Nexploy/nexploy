@@ -23,7 +23,7 @@ import { inviteMemberAction } from '@/actions/organization/inviteMember.action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { inviteMemberSchema } from '@workspace/schemas-zod/organization/inviteMember.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { useRouter } from 'next/navigation';
+import { useOrganizationMembersStore } from '@/stores/organization/useOrganizationMembersStore';
 import { toast } from 'sonner';
 
 interface InviteMemberFormProps {
@@ -33,7 +33,7 @@ interface InviteMemberFormProps {
 export function InviteMemberForm({ organizationId }: InviteMemberFormProps) {
     const t = useTranslations('organization');
     const { closeDialog } = useConfirmationDialogStore();
-    const router = useRouter();
+    const addInvitation = useOrganizationMembersStore((s) => s.addInvitation);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         inviteMemberAction,
@@ -47,10 +47,17 @@ export function InviteMemberForm({ organizationId }: InviteMemberFormProps) {
                 },
             },
             actionProps: {
-                onSuccess: () => {
+                onSuccess: ({ data, input }) => {
+                    if (data) {
+                        addInvitation({
+                            id: data.id,
+                            email: input.email,
+                            role: input.role,
+                            createdAt: new Date(),
+                        });
+                    }
                     toast.success(t('success.invited'));
                     closeDialog();
-                    router.refresh();
                 },
             },
         },

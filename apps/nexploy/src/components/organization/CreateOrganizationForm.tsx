@@ -16,7 +16,7 @@ import { createOrganizationAction } from '@/actions/organization/createOrganizat
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createOrganizationSchema } from '@workspace/schemas-zod/organization/createOrganization.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { useRouter } from 'next/navigation';
+import { useOrganizationStore } from '@/stores/organization/useOrganizationStore';
 
 function slugify(value: string) {
     return value
@@ -29,7 +29,7 @@ function slugify(value: string) {
 export function CreateOrganizationForm() {
     const t = useTranslations('organization');
     const { closeDialog } = useConfirmationDialogStore();
-    const router = useRouter();
+    const addOrganization = useOrganizationStore((s) => s.addOrganization);
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         createOrganizationAction,
@@ -42,9 +42,19 @@ export function CreateOrganizationForm() {
                 },
             },
             actionProps: {
-                onSuccess: () => {
+                onSuccess: ({ data }) => {
+                    if (data) {
+                        addOrganization({
+                            id: data.id,
+                            name: data.name,
+                            slug: data.slug,
+                            logo: data.logo ?? null,
+                            role: 'owner',
+                            canLeave: false,
+                            isPersonal: false,
+                        });
+                    }
                     closeDialog();
-                    router.refresh();
                 },
             },
         },

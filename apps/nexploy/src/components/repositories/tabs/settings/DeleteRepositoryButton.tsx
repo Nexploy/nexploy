@@ -3,7 +3,7 @@
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import { usePermissions } from '@/contexts/PermissionContext';
+import { Can } from '@/components/permission/Can';
 import { DeleteRepositoryForm } from '@/components/repositories/DeleteRepositoryForm';
 
 interface DeleteRepositoryButtonProps {
@@ -14,9 +14,7 @@ interface DeleteRepositoryButtonProps {
 export function DeleteRepositoryButton({ repositoryId, repositoryName }: DeleteRepositoryButtonProps) {
     const t = useTranslations('repository.settings.dangerZone');
     const { openDialog } = useConfirmationDialogStore();
-    const { can } = usePermissions();
 
-    if (!can('repository', 'delete')) return null;
 
     const handleOpenDelete = () => {
         openDialog({
@@ -34,14 +32,16 @@ export function DeleteRepositoryButton({ repositoryId, repositoryName }: DeleteR
     };
 
     return (
-        <div className="flex items-center justify-between">
-            <div>
-                <p className="text-sm font-medium">{t('deleteButton')}</p>
-                <p className="text-muted-foreground text-xs">{t('deleteButtonDescription')}</p>
+        <Can resource="repository" action="delete">
+            <div className="flex items-center justify-between">
+                <div>
+                    <p className="text-sm font-medium">{t('deleteButton')}</p>
+                    <p className="text-muted-foreground text-xs">{t('deleteButtonDescription')}</p>
+                </div>
+                <Button variant="destructive" size="sm" onClick={handleOpenDelete}>
+                    {t('deleteButton')}
+                </Button>
             </div>
-            <Button variant="destructive" size="sm" onClick={handleOpenDelete}>
-                {t('deleteButton')}
-            </Button>
-        </div>
+        </Can>
     );
 }

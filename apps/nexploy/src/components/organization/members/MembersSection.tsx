@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import {
     Table,
@@ -21,29 +22,23 @@ import {
 import { Button } from '@workspace/ui/components/button';
 import { Mail, Trash2, X } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
-import { useRouter } from 'next/navigation';
+import type {
+    OrganizationInvitation,
+    OrganizationMember,
+} from '@workspace/typescript-interface/organization/organization';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import {
+    initializeOrganizationMembersStore,
+    useOrganizationMembersStore,
+} from '@/stores/organization/useOrganizationMembersStore';
 import { removeMemberAction } from '@/actions/organization/removeMember.action';
 import { updateMemberRoleAction } from '@/actions/organization/updateMemberRole.action';
 import { cancelInvitationAction } from '@/actions/organization/cancelInvitation.action';
 
-interface MemberRow {
-    id: string;
-    role: string;
-    user: { id: string; name: string; email: string; image: string | null };
-}
-
-interface InvitationRow {
-    id: string;
-    email: string;
-    role: string | null;
-    createdAt: Date;
-}
-
 interface MembersSectionProps {
     organizationId: string;
-    members: MemberRow[];
-    invitations: InvitationRow[];
+    members: OrganizationMember[];
+    invitations: OrganizationInvitation[];
     currentUserId: string;
     canManageMembers: boolean;
 }
@@ -65,27 +60,42 @@ export function MembersSection({
 }: MembersSectionProps) {
     const t = useTranslations('organization');
     const tCommon = useTranslations('common');
-    const router = useRouter();
     const { openAlertDialog } = useAlertConfirmationDialogStore();
 
+    useEffect(
+        () => initializeOrganizationMembersStore(organizationId, members, invitations),
+        [organizationId],
+    );
+
+    const storeOrganizationId = useOrganizationMembersStore((s) => s.organizationId);
+    const storeMembers = useOrganizationMembersStore((s) => s.members);
+    const storeInvitations = useOrganizationMembersStore((s) => s.invitations);
+    const removeMemberFromStore = useOrganizationMembersStore((s) => s.removeMember);
+    const updateMemberRoleInStore = useOrganizationMembersStore((s) => s.updateMemberRole);
+    const removeInvitationFromStore = useOrganizationMembersStore((s) => s.removeInvitation);
+
+    const isStoreReady = storeOrganizationId === organizationId;
+    const visibleMembers = isStoreReady ? storeMembers : members;
+    const visibleInvitations = isStoreReady ? storeInvitations : invitations;
+
+    const ownerCount = visibleMembers.filter((member) => member.role === 'owner').length;
+
     const { execute: executeRemove, isPending: isRemoving } = useAction(removeMemberAction, {
-        onSuccess: () => router.refresh(),
+        onSuccess: ({ input }) => removeMemberFromStore(input.memberIdOrEmail),
     });
 
     const { execute: executeUpdateRole, isPending: isUpdatingRole } = useAction(
         updateMemberRoleAction,
         {
-            onSuccess: () => router.refresh(),
+            onSuccess: ({ input }) => updateMemberRoleInStore(input.memberId, input.role),
         },
     );
 
     const { execute: executeCancel, isPending: isCancelling } = useAction(cancelInvitationAction, {
-        onSuccess: () => router.refresh(),
+        onSuccess: ({ input }) => removeInvitationFromStore(input.invitationId),
     });
 
-    const ownerCount = members.filter((m) => m.role === 'owner').length;
-
-    const handleRemove = (member: MemberRow) => {
+    const handleRemove = (member: OrganizationMember) => {
         openAlertDialog({
             title: t('members.remove'),
             description: t('members.confirmRemove', { name: member.user.name }),
@@ -107,7 +117,7 @@ export function MembersSection({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {members.map((member) => {
+                        {visibleMembers.map((member) => {
                             const isCurrentUser = member.user.id === currentUserId;
                             const isSoleOwner = member.role === 'owner' && ownerCount <= 1;
 
@@ -188,7 +198,7 @@ export function MembersSection({
                 </Table>
             </div>
 
-            {canManageMembers && invitations.length > 0 && (
+            {canManageMembers && visibleInvitations.length > 0 && (
                 <div className="flex flex-col gap-3">
                     <h2 className="flex items-center gap-2 text-sm font-medium">
                         <Mail className="size-4" />
@@ -204,7 +214,7 @@ export function MembersSection({
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {invitations.map((invitation) => (
+                                {visibleInvitations.map((invitation) => (
                                     <TableRow key={invitation.id} className="h-12">
                                         <TableCell>{invitation.email}</TableCell>
                                         <TableCell>

@@ -8,7 +8,8 @@ import { organizationIdSchema } from '@workspace/schemas-zod/organization/organi
 import { getTranslations } from 'next-intl/server';
 import { prisma } from '../../../prisma/prisma';
 import { getCallerOrgRole } from '@/lib/auth/resolveOrgContext';
-import { redirect } from 'next/navigation';
+import { isPersonalOrganization } from '@/services/organization.service';
+import { revalidatePath } from 'next/cache';
 
 export const deleteOrganizationAction = authActionServer
     .inputSchema(organizationIdSchema)
@@ -18,6 +19,10 @@ export const deleteOrganizationAction = authActionServer
         const callerRole = await getCallerOrgRole(ctx.session.user.id, parsedInput.organizationId);
         if (callerRole !== 'owner' && ctx.session.user.role !== 'admin') {
             throw new Error(t('errors.notFound'));
+        }
+
+        if (await isPersonalOrganization(parsedInput.organizationId)) {
+            throw new Error(t('errors.cannotDeletePersonal'));
         }
 
         const repositoryCount = await prisma.repository.count({
@@ -34,11 +39,10 @@ export const deleteOrganizationAction = authActionServer
             });
 
             await setToastServer({ type: 'success', message: t('success.deleted') });
+            revalidatePath('/', 'layout');
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : t('errors.deleteFailed');
             await setToastServer({ type: 'error', message });
             throw error;
         }
-
-        redirect('/');
     });
