@@ -30,7 +30,6 @@ export function ChatInput({ input, onChange, onSubmit, onStop, isLoading }: Chat
         <div className="shrink-0 px-3 pb-2">
             <div className="bg-card flex items-end rounded-xl rounded-tl-none border">
                 <ScrollAreaWithShadow
-                    colorShadow={'from-card via-card/50'}
                     viewportClassName="max-h-24"
                 >
                     <Textarea

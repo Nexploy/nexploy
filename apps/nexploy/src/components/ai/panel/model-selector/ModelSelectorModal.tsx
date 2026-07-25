@@ -80,7 +80,6 @@ export function ModelSelectorModal() {
                 <ScrollAreaWithShadow
                     viewportClassName="max-h-[60vh] [&>div]:!block"
                     bottomShadow
-                    colorShadow="from-card via-card/50"
                 >
                     {isLoading ? (
                         Array.from({ length: 2 }).map((_, i) => (

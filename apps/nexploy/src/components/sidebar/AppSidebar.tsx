@@ -51,7 +51,6 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                 <ScrollAreaWithShadow
                     bottomShadow
                     className="h-full px-2"
-                    colorShadow={'from-sidebar via-sidebar/50'}
                 >
                     <SidebarNav />
                 </ScrollAreaWithShadow>

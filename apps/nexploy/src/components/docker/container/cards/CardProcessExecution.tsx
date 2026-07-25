@@ -45,7 +45,6 @@ export function CardProcessExecution() {
                     </div>
                 ) : (
                     <ScrollAreaWithShadow
-                        colorShadow={'from-card via-card/50'}
                         bottomShadow
                         className="h-50 overflow-hidden px-6"
                     >

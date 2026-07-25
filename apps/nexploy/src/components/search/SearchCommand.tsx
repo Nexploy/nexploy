@@ -70,7 +70,6 @@ export function SearchCommand() {
                     <ScrollAreaWithShadow
                         viewportClassName="max-h-[60vh] [&>div]:!block"
                         bottomShadow
-                        colorShadow={'from-card via-card/50'}
                     >
                         <AskAiGroup />
                         <RepositorySearchGroup />

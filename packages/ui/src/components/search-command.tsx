@@ -128,7 +128,6 @@ export const InputAutoComplete = ({
                             ) : (
                                 <CommandGroup heading={heading}>
                                     <ScrollAreaWithShadow
-                                        colorShadow={'from-popover via-popover/50'}
                                         className="flex max-h-60 flex-col overflow-y-auto"
                                     >
                                         {filteredOptions.map((option) => (

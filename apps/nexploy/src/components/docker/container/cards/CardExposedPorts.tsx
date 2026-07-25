@@ -115,7 +115,6 @@ export function CardExposedPorts() {
             </CardHeaderWithIcon>
             <CardContent className={'flex flex-col overflow-hidden px-0'}>
                 <ScrollAreaWithShadow
-                    colorShadow={'from-card via-card/50'}
                     bottomShadow
                     className="h-60 overflow-hidden"
                 >

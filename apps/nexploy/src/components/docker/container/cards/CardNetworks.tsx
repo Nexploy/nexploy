@@ -61,7 +61,6 @@ export function CardNetworks() {
                     </div>
                 ) : (
                     <ScrollAreaWithShadow
-                        colorShadow="from-card via-card/50"
                         bottomShadow
                         className="h-90 overflow-hidden px-6"
                     >

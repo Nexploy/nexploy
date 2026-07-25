@@ -4,8 +4,6 @@
     "createOrganizationDescription": "Les dépôts créés dans cette organisation seront visibles par ses membres",
     "name": "Nom",
     "namePlaceholder": "Acme Inc.",
-    "slug": "Identifiant",
-    "slugPlaceholder": "acme-inc",
     "roles": {
         "owner": "Propriétaire",
         "admin": "Admin",

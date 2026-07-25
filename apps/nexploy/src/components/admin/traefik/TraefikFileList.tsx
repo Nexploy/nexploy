@@ -84,7 +84,6 @@ export function TraefikFileList() {
             >
                 <ScrollAreaWithShadow
                     orientation="both"
-                    colorShadow={'from-card via-card/50'}
                     className={'h-full'}
                 >
                     <div

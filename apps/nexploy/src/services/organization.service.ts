@@ -1,10 +1,27 @@
+import { randomBytes } from 'node:crypto';
 import { prisma } from '../../prisma/prisma';
 import type { UserOrganization } from '@workspace/typescript-interface/organization/organization';
 
 const PERSONAL_ORGANIZATION_SLUG_PREFIX = 'personal-';
+const ORGANIZATION_SLUG_MAX_LENGTH = 100;
+const ORGANIZATION_SLUG_SUFFIX_BYTES = 5;
 
 export function personalOrganizationSlug(userId: string) {
     return `${PERSONAL_ORGANIZATION_SLUG_PREFIX}${userId}`;
+}
+
+export function generateOrganizationSlug(name: string) {
+    const suffix = randomBytes(ORGANIZATION_SLUG_SUFFIX_BYTES).toString('hex');
+
+    const base = name
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+        .slice(0, ORGANIZATION_SLUG_MAX_LENGTH - suffix.length - 1);
+
+    return base ? `${base}-${suffix}` : `org-${suffix}`;
 }
 
 export async function isPersonalOrganizationSlug(slug: string) {

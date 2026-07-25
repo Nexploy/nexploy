@@ -63,7 +63,6 @@ export function CardVolumes() {
                     </div>
                 ) : (
                     <ScrollAreaWithShadow
-                        colorShadow="from-card via-card/50"
                         bottomShadow
                         className="h-70 overflow-hidden px-6"
                     >

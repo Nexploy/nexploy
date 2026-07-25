@@ -4,8 +4,6 @@
     "createOrganizationDescription": "Repositories created in this organization will be visible to its members",
     "name": "Name",
     "namePlaceholder": "Acme Inc.",
-    "slug": "Slug",
-    "slugPlaceholder": "acme-inc",
     "roles": {
         "owner": "Owner",
         "admin": "Admin",

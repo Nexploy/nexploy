@@ -162,7 +162,6 @@ export function NodeAddPanel() {
                 <ScrollAreaWithShadow
                     bottomShadow
                     className={'h-full overflow-hidden'}
-                    colorShadow="from-sidebar via-sidebar/50"
                 >
                     <div className="p-2 pt-1">
                         {isSearching && (
