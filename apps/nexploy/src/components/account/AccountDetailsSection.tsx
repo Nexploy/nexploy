@@ -8,7 +8,8 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { getTranslations } from 'next-intl/server';
 import { AcountIntegrations } from '@/components/account/AccountIntegrations';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
-import { PendingInvitations } from '@/components/account/PendingInvitations';
+import { PendingInvitationsList } from '@/components/account/PendingInvitationsList';
+import { NotificationBadge } from '@/components/notifications/NotificationBadge';
 
 export async function AccountDetailsSection() {
     const session = await getUserSession();
@@ -24,9 +25,11 @@ export async function AccountDetailsSection() {
                     icon={Building2}
                     title={tOrganization('invitations.pending')}
                     description={tOrganization('invitations.pendingDescription')}
-                />
+                >
+                    <NotificationBadge node={'invitations'} />
+                </CardHeaderWithIcon>
                 <CardContent>
-                    <PendingInvitations />
+                    <PendingInvitationsList />
                 </CardContent>
             </Card>
 

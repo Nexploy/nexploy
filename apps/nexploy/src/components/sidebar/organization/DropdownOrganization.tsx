@@ -158,7 +158,7 @@ export function DropdownOrganization({
     if (visibleOrganizations.length === 0) return null;
 
     return (
-        <SidebarMenu className="px-4">
+        <SidebarMenu className="px-4 pb-2">
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

@@ -9,6 +9,7 @@ export const useOrganizationStore = create<OrganizationState>((set, get) => ({
     organizations: [],
     activeOrganizationId: null,
     pendingInvitations: [],
+    pendingInvitationsInitialized: false,
 
     setOrganizations: (organizations) => {
         set((state) => ({
@@ -54,7 +55,8 @@ export const useOrganizationStore = create<OrganizationState>((set, get) => ({
         });
     },
 
-    setPendingInvitations: (pendingInvitations) => set({ pendingInvitations }),
+    setPendingInvitations: (pendingInvitations) =>
+        set({ pendingInvitations, pendingInvitationsInitialized: true }),
 
     removePendingInvitation: (invitationId) => {
         set((state) => ({
@@ -90,5 +92,5 @@ export const initializeOrganizationStore = (
 };
 
 export const initializePendingInvitations = (pendingInvitations: PendingInvitation[]) => {
-    useOrganizationStore.setState({ pendingInvitations });
+    useOrganizationStore.setState({ pendingInvitations, pendingInvitationsInitialized: true });
 };

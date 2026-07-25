@@ -16,8 +16,16 @@ import { ChatMessages } from '@/components/ai/panel/ChatMessages';
 import { ChatInput } from '@/components/ai/panel/ChatInput';
 import { ModelSelectorModal } from '@/components/ai/panel/model-selector/ModelSelectorModal';
 import { cn } from '@workspace/ui/lib/utils';
-import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
+import {
+    MessageScroller,
+    MessageScrollerButton,
+    MessageScrollerContent,
+    MessageScrollerItem,
+    MessageScrollerProvider,
+    MessageScrollerViewport,
+} from '@workspace/ui/components/message-scroller';
 import { SelectModel } from '@/components/ai/panel/SelectModel.tsx';
+import { StreamAutoScroll } from '@/components/ai/panel/StreamAutoScroll';
 import { useTranslations } from 'next-intl';
 import { BotOff, Settings2 } from 'lucide-react';
 import { useLocalStorage } from 'usehooks-ts';
@@ -35,10 +43,6 @@ export function ChatAIPanel() {
     const openModelSelector = useAIPanelStore((s) => s.openModelSelector);
 
     const [input, setInput] = useState('');
-    const [autoScroll, setAutoScroll] = useState(true);
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-    const lastScrollTop = useRef<number>(0);
     const selectedModelRef = useRef(selectedModel);
     selectedModelRef.current = selectedModel;
 
@@ -63,6 +67,14 @@ export function ChatAIPanel() {
     });
 
     const isLoading = status === 'submitted' || status === 'streaming';
+
+    const lastMessage = messages[messages.length - 1];
+    const streamingTurnId =
+        lastMessage?.role === 'assistant' &&
+        lastMessage.parts.some((part) => part.type === 'text' && part.text.trim().length > 0)
+            ? lastMessage.id
+            : undefined;
+
     const { categories } = useAIContext();
 
     const { data: providersData, isLoading: providersLoading } = useSWR<{ providers: Provider[] }>(
@@ -89,44 +101,12 @@ export function ChatAIPanel() {
         { preventDefault: true },
     );
 
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        const handleScroll = () => {
-            const { scrollTop, scrollHeight, clientHeight } = container;
-            const distanceFromBottom = scrollHeight - (scrollTop + clientHeight);
-
-            if (distanceFromBottom <= 5) {
-                setAutoScroll(true);
-            } else if (scrollTop < lastScrollTop.current) {
-                setAutoScroll(false);
-            }
-
-            lastScrollTop.current = scrollTop;
-        };
-
-        container.addEventListener('scroll', handleScroll, { passive: true });
-        return () => container.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    useEffect(() => {
-        if (!autoScroll || !messagesEndRef.current) return;
-
-        const rafId = requestAnimationFrame(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'instant', block: 'end' });
-        });
-
-        return () => cancelAnimationFrame(rafId);
-    }, [messages, autoScroll, isLoading]);
-
     const trySendMessage = useCallback(
         (text: string) => {
             if (!selectedModel) {
                 openModelSelector();
                 return;
             }
-            setAutoScroll(true);
             sendMessage({ text });
             setInput('');
         },
@@ -187,26 +167,35 @@ export function ChatAIPanel() {
                         </div>
                     ) : (
                         <>
-                            <ScrollAreaWithShadow
-                                className="h-full overflow-hidden"
-                                bottomShadow
-                                ref={scrollContainerRef}
+                            <MessageScrollerProvider
+                                autoScroll
+                                defaultScrollPosition={messages.length === 0 ? 'start' : 'end'}
                             >
-                                <div className="flex w-full flex-col gap-3 px-3">
-                                    {messages.length === 0 && (
-                                        <Suggestions
-                                            categories={categories}
-                                            onSelect={trySendMessage}
-                                        />
-                                    )}
-                                    <ChatMessages
-                                        messages={messages}
-                                        isLoading={isLoading}
-                                        error={error}
+                                <MessageScroller className="min-h-0 flex-1">
+                                    <MessageScrollerViewport className="px-3">
+                                        <MessageScrollerContent className="gap-4 pb-2">
+                                            {messages.length === 0 && (
+                                                <MessageScrollerItem>
+                                                    <Suggestions
+                                                        categories={categories}
+                                                        onSelect={trySendMessage}
+                                                    />
+                                                </MessageScrollerItem>
+                                            )}
+                                            <ChatMessages
+                                                messages={messages}
+                                                isLoading={isLoading}
+                                                error={error}
+                                            />
+                                        </MessageScrollerContent>
+                                    </MessageScrollerViewport>
+                                    <StreamAutoScroll
+                                        turnId={streamingTurnId}
+                                        isStreaming={isLoading}
                                     />
-                                    <div ref={messagesEndRef} />
-                                </div>
-                            </ScrollAreaWithShadow>
+                                    <MessageScrollerButton className="rounded-full shadow-sm" />
+                                </MessageScroller>
+                            </MessageScrollerProvider>
                             <SelectModel />
                             <ChatInput
                                 input={input}

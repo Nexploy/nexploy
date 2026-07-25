@@ -1,11 +1,6 @@
 'use client';
 
-import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
-} from '@workspace/ui/components/sidebar';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,7 +16,7 @@ import { SignOutButton } from '@/components/account/SignOutButton';
 import { useTranslations } from 'next-intl';
 import type { Session } from '@/lib/auth/auth';
 import { DicebearAvatar } from '@/components/shared/DicebearAvatar';
-import { useOrganizationMembersStore } from '@/stores/organization/useOrganizationMembersStore.ts';
+import { NotificationBadge } from '@/components/notifications/NotificationBadge';
 
 interface AccountMenuClientProps {
     session: Session | null;
@@ -30,27 +25,38 @@ interface AccountMenuClientProps {
 export function AccountMenuClient({ session }: AccountMenuClientProps) {
     const { isMobile, state } = useSidebar();
     const tAccount = useTranslations('account');
-    const invitations = useOrganizationMembersStore((s) => s.invitations);
-
-    console.log(invitations);
 
     const isSidebarExpanded = state === 'expanded' || isMobile;
 
     return (
-        <SidebarMenu>
-            <SidebarMenuItem>
+        <SidebarMenu className={'group-data-[collapsible=icon]:items-center'}>
+            <SidebarMenuItem className={'group-data-[collapsible=icon]:w-8'}>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton className={'cursor-pointer'} size="lg">
+                        <SidebarMenuButton
+                            className={
+                                'cursor-pointer group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0!'
+                            }
+                            size="lg"
+                        >
                             <DicebearAvatar
                                 seed={session?.user.email}
                                 size={32}
                                 alt="Account Image"
                             />
-                            <span className={'flex-1 truncate'}>{session?.user.name}</span>
-                            <ChevronUp />
+                            {isSidebarExpanded && (
+                                <>
+                                    <span className={'flex-1 truncate'}>{session?.user.name}</span>
+                                    <ChevronUp />
+                                </>
+                            )}
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
+                    <NotificationBadge
+                        node={'accountMenu'}
+                        variant={isSidebarExpanded ? 'count' : 'dot'}
+                        className={'pointer-events-none absolute -right-1 -top-1 z-10'}
+                    />
                     <DropdownMenuContent
                         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
                         align="end"
@@ -63,7 +69,8 @@ export function AccountMenuClient({ session }: AccountMenuClientProps) {
                                 href={'/account'}
                             >
                                 <User />
-                                <span>{tAccount('title')}</span>
+                                <span className={'flex-1'}>{tAccount('title')}</span>
+                                <NotificationBadge node={'account'} />
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />

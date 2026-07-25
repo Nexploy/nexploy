@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import "shadcn/tailwind.css";
 
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";
@@ -375,6 +376,41 @@
 
 .monaco-editor {
     position: absolute !important;
+}
+
+@utility scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+@utility scrollbar-none {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@utility scrollbar-gutter-stable {
+    scrollbar-gutter: stable;
+}
+
+@utility scroll-fade-b {
+    mask-image: linear-gradient(to bottom, black calc(100% - 2rem), transparent 100%);
+}
+
+@utility scroll-fade-t {
+    mask-image: linear-gradient(to bottom, transparent 0, black 2rem);
+}
+
+@utility scroll-fade-tb {
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        black 2rem,
+        black calc(100% - 2rem),
+        transparent 100%
+    );
 }
 
 @layer base {

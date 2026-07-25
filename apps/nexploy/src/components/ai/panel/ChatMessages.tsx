@@ -1,6 +1,8 @@
 import { useTranslations } from 'next-intl';
-import { cn } from '@workspace/ui/lib/utils';
-import { Shimmer } from '@workspace/ui/components/ai-elements/shimmer';
+import { Bubble, BubbleContent } from '@workspace/ui/components/bubble';
+import { Marker, MarkerContent, MarkerIcon } from '@workspace/ui/components/marker';
+import { Message, MessageContent } from '@workspace/ui/components/message';
+import { MessageScrollerItem } from '@workspace/ui/components/message-scroller';
 import { ToolCallsSection } from '@/components/ai/panel/ToolCallsSection';
 import type { TextUIPart, UIMessage } from 'ai';
 import { RenderMessageText } from '@/components/ai/panel/message-renderer.tsx';
@@ -27,47 +29,33 @@ function isEmptyAssistantMessage(m: UIMessage): boolean {
     );
 }
 
-function GenerationStoppedBanner({ label }: { label: string }) {
-    return (
-        <div className="flex w-full items-center gap-2 px-1">
-            <div className="bg-border h-px flex-1" />
-            <span className="text-muted-foreground shrink-0 text-[10px]">{label}</span>
-            <div className="bg-border h-px flex-1" />
-        </div>
-    );
-}
-
-function MessageBubble({ message, showLoader }: { message: UIMessage; showLoader: boolean }) {
+function ChatMessage({ message, showLoader }: { message: UIMessage; showLoader: boolean }) {
+    const isUser = message.role === 'user';
     const toolParts = message.parts.filter((p) => p.type === 'dynamic-tool') as DynamicToolPart[];
     const textParts = message.parts.filter((p) => p.type === 'text') as TextUIPart[];
 
     return (
-        <div className="flex w-full min-w-0 flex-col">
-            <div
-                className={cn(
-                    'group relative min-w-0 rounded-xl px-2.5 py-2 text-xs',
-                    message.role === 'user'
-                        ? 'bg-primary text-primary-foreground ml-auto max-w-[80%]'
-                        : 'bg-muted w-full',
-                )}
-            >
-                {message.role === 'assistant' && toolParts.length > 0 && (
-                    <ToolCallsSection tools={toolParts} />
-                )}
-                {textParts.map((part, i) => (
-                    <RenderMessageText
-                        key={`${message.id}-text-${i}`}
-                        text={part.text}
-                        isStreaming={showLoader}
-                    />
-                ))}
-            </div>
-            {showLoader && (
-                <div className="bg-muted mx-3 w-fit rounded-xl rounded-t-none px-3 pb-1.5">
-                    <NexployLoader />
-                </div>
-            )}
-        </div>
+        <Message align={isUser ? 'end' : 'start'} className="text-xs">
+            <MessageContent>
+                {!isUser && toolParts.length > 0 && <ToolCallsSection tools={toolParts} />}
+                <Bubble
+                    variant={isUser ? 'default' : 'muted'}
+                    align={isUser ? 'end' : 'start'}
+                    className={isUser ? undefined : 'max-w-full'}
+                >
+                    <BubbleContent className="text-xs">
+                        {textParts.map((part, i) => (
+                            <RenderMessageText
+                                key={`${message.id}-text-${i}`}
+                                text={part.text}
+                                isStreaming={showLoader}
+                            />
+                        ))}
+                        {showLoader && <NexployLoader size={14} className="mt-1" />}
+                    </BubbleContent>
+                </Bubble>
+            </MessageContent>
+        </Message>
     );
 }
 
@@ -86,35 +74,59 @@ export function ChatMessages({ messages, isLoading, error }: ChatMessagesProps) 
                 if (isLoading && isEmptyAssistantMessage(message) && message === lastMsg)
                     return null;
 
-                if (isEmptyAssistantMessage(message))
-                    return (
-                        <GenerationStoppedBanner key={message.id} label={t('generationStopped')} />
-                    );
-
                 return (
-                    <MessageBubble
+                    <MessageScrollerItem
                         key={message.id}
-                        message={message}
-                        showLoader={showStreamingLoader && message === lastMsg}
-                    />
+                        messageId={message.id}
+                        scrollAnchor={message.role === 'user'}
+                    >
+                        {isEmptyAssistantMessage(message) ? (
+                            <Marker variant="separator" className="text-[10px]">
+                                <MarkerContent>{t('generationStopped')}</MarkerContent>
+                            </Marker>
+                        ) : (
+                            <ChatMessage
+                                message={message}
+                                showLoader={showStreamingLoader && message === lastMsg}
+                            />
+                        )}
+                    </MessageScrollerItem>
                 );
             })}
 
             {showShimmer && (
-                <div className="bg-muted flex w-fit items-center gap-2 rounded-xl px-3 py-2">
-                    <NexployLoader />
-                    <Shimmer className="text-xs" duration={1.8}>
-                        {t('thinking')}
-                    </Shimmer>
-                </div>
+                <MessageScrollerItem>
+                    <Message className="text-xs">
+                        <MessageContent>
+                            <Bubble variant="muted">
+                                <BubbleContent className="text-xs">
+                                    <Marker>
+                                        <MarkerIcon>
+                                            <NexployLoader size={14} />
+                                        </MarkerIcon>
+                                        <MarkerContent className={'shimmer'}>
+                                            {t('thinking')}
+                                        </MarkerContent>
+                                    </Marker>
+                                </BubbleContent>
+                            </Bubble>
+                        </MessageContent>
+                    </Message>
+                </MessageScrollerItem>
             )}
 
             {error && (
-                <div className="flex gap-2">
-                    <div className="bg-destructive/10 text-destructive rounded-xl px-2.5 py-2 text-xs break-all">
-                        {error.message}
-                    </div>
-                </div>
+                <MessageScrollerItem>
+                    <Message className="text-xs">
+                        <MessageContent>
+                            <Bubble variant="destructive" className="max-w-full">
+                                <BubbleContent className="break-all text-xs">
+                                    {error.message}
+                                </BubbleContent>
+                            </Bubble>
+                        </MessageContent>
+                    </Message>
+                </MessageScrollerItem>
             )}
         </>
     );

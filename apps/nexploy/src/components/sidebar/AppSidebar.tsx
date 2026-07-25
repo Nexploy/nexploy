@@ -56,7 +56,11 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                     <SidebarNav />
                 </ScrollAreaWithShadow>
             </SidebarContent>
-            <SidebarFooter className={'mx-2'}>
+            <SidebarFooter
+                className={
+                    'mx-2 group-data-[collapsible=icon]:mx-0 group-data-[collapsible=icon]:items-center'
+                }
+            >
                 <UpdateBanner />
                 <ExternalLinks />
                 <AccountMenu />

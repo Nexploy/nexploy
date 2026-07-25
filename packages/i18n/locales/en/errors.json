@@ -214,7 +214,6 @@
         "organizationsFetchFailed": "Failed to fetch organizations",
         "organizationNotFound": "Organization not found",
         "organizationMembersFetchFailed": "Failed to fetch organization members",
-        "pendingInvitationsFetchFailed": "Failed to fetch pending invitations",
         "environmentFetchFailed": "Failed to fetch environment",
         "environmentNotFound": "Environment not found",
         "diskUsageFetchFailed": "Failed to fetch disk usage",

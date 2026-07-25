@@ -9,6 +9,7 @@ export interface OrganizationState {
     organizations: UserOrganization[];
     activeOrganizationId: string | null;
     pendingInvitations: PendingInvitation[];
+    pendingInvitationsInitialized: boolean;
 
     setOrganizations: (organizations: UserOrganization[]) => void;
     selectOrganization: (organizationId: string) => void;

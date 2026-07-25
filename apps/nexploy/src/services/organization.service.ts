@@ -65,14 +65,18 @@ export async function getOldestOrganizationId(userId: string) {
 }
 
 export async function getPendingInvitations(email: string) {
-    return prisma.invitation.findMany({
-        where: { email, status: 'pending' },
-        include: {
-            organization: { select: { id: true, name: true, slug: true, logo: true } },
-            user: { select: { email: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-    });
+    try {
+        return prisma.invitation.findMany({
+            where: { email, status: 'pending' },
+            include: {
+                organization: { select: { id: true, name: true, slug: true, logo: true } },
+                user: { select: { email: true } },
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+    } catch (error) {
+        throw new Error('Failed to fetch pending invitations');
+    }
 }
 
 export async function getOrganizationDetail(

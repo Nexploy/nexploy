@@ -1,16 +1,15 @@
-import { getUserSession } from '@/services/auth/auth.service';
 import { getPendingInvitations } from '@/services/organization.service';
-import { PendingInvitationsList } from '@/components/account/PendingInvitationsList';
+import { PendingInvitationsStoreInitializer } from '@/components/organization/PendingInvitationsStoreInitializer';
+import { getUserSession } from '@/services/auth/auth.service.ts';
 
 export async function PendingInvitations() {
     const session = await getUserSession();
-
-    if (!session) return null;
+    if (!session?.user?.email) return null;
 
     const invitations = await getPendingInvitations(session.user.email);
 
     return (
-        <PendingInvitationsList
+        <PendingInvitationsStoreInitializer
             invitations={invitations.map((invitation) => ({
                 id: invitation.id,
                 role: invitation.role ?? 'member',

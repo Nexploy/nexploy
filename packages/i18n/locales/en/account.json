@@ -31,7 +31,13 @@
     },
     "notifications": {
         "title": "Notification Preferences",
-        "description": "Control when you receive notifications"
+        "description": "Control when you receive notifications",
+        "badges": {
+            "title": "UI badges",
+            "description": "Show a counter on the interface where an item needs your attention",
+            "invitations": "Organization invitations",
+            "invitationsDescription": "Display a badge on the account menu when you have pending invitations"
+        }
     },
     "regional": {
         "title": "Regional Settings",

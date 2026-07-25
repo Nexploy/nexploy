@@ -214,7 +214,6 @@
         "organizationsFetchFailed": "Échec de la récupération des organisations",
         "organizationNotFound": "Organisation introuvable",
         "organizationMembersFetchFailed": "Échec de la récupération des membres de l'organisation",
-        "pendingInvitationsFetchFailed": "Échec de la récupération des invitations en attente",
         "environmentFetchFailed": "Échec de la récupération de l'environnement",
         "environmentNotFound": "Environnement introuvable",
         "diskUsageFetchFailed": "Échec de la récupération de l'utilisation du disque",

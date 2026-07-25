@@ -1,25 +1,38 @@
 'use client';
 
-import { useLayoutEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import type { PendingInvitation } from '@workspace/typescript-interface/organization/organization';
-import {
-    initializePendingInvitations,
-    useOrganizationStore,
-} from '@/stores/organization/useOrganizationStore';
+import { useOrganizationStore } from '@/stores/organization/useOrganizationStore';
 import { PendingInvitationRow } from '@/components/account/PendingInvitationRow';
+import { Skeleton } from '@workspace/ui/components/skeleton.tsx';
 
-interface PendingInvitationsListProps {
-    invitations: PendingInvitation[];
-}
-
-export function PendingInvitationsList({ invitations }: PendingInvitationsListProps) {
+export function PendingInvitationsList() {
     const t = useTranslations('organization');
 
-    useLayoutEffect(() => initializePendingInvitations(invitations), []);
+    const pendingInvitations = useOrganizationStore((s) => s.pendingInvitations);
+    const isInitialized = useOrganizationStore((s) => s.pendingInvitationsInitialized);
 
-    const storeInvitations = useOrganizationStore((s) => s.pendingInvitations);
-    const pendingInvitations = storeInvitations ?? invitations;
+    if (!isInitialized) {
+        return (
+            <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-3 rounded-md border p-3">
+                    <div className="flex min-w-0 flex-col gap-2">
+                        <div className="flex items-center gap-3">
+                            <Skeleton className="h-5 w-32" />
+                            <Skeleton className="h-5 w-16 rounded-full" />
+                        </div>
+                        <div className="flex min-w-0 items-center gap-2">
+                            <Skeleton className="h-4 w-20" />
+                            <Skeleton className="h-5 w-40 rounded-full" />
+                        </div>
+                    </div>
+                    <div className="flex shrink-0 gap-2">
+                        <Skeleton className="h-8 w-24" />
+                        <Skeleton className="h-8 w-24" />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (pendingInvitations.length === 0) {
         return (

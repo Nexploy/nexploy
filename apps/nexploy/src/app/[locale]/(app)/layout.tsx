@@ -11,8 +11,9 @@ import { cn } from '@workspace/ui/lib/utils';
 import { ChatAIPanel } from '@/components/ai/ChatAIPanel.tsx';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { getAllGitProviders } from '@/services/git/gitProviders.service';
+import { PendingInvitations } from '@/components/organization/PendingInvitations.tsx';
 
-export default async function DockerLayout({
+export default async function AppLayout({
     children,
 }: Readonly<{
     children: ReactNode;
@@ -33,7 +34,7 @@ export default async function DockerLayout({
                 <AppSidebar variant={'inset'} />
                 <div className={'flex h-screen w-full flex-col'}>
                     <Header />
-                    <main className="flex min-h-0 w-full flex-1 pl-1 md:pr-2 md:pb-2">
+                    <main className="flex min-h-0 w-full flex-1 pl-1 md:pb-2 md:pr-2">
                         <InsetPanel className={cn('flex-1')}>
                             <SSEProvider>{children}</SSEProvider>
                         </InsetPanel>
@@ -41,6 +42,7 @@ export default async function DockerLayout({
                     </main>
                 </div>
                 {showOnboardingTour && <OnboardingTour />}
+                <PendingInvitations />
             </SidebarProvider>
         </PermissionProvider>
     );
