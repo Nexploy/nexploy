@@ -27,6 +27,7 @@ export interface AdapterCredentials {
     privateKey?: string;
     appId?: string;
     appName?: string;
+    tenantId?: string;
     baseUrl?: string;
 }
 
@@ -85,6 +86,7 @@ export interface GitProviderAdapter {
         repoId: string;
         owner?: string;
         repoName?: string;
+        repositoryUrl?: string;
     }): Promise<GitBranch[]>;
 
     getCommit(args: {

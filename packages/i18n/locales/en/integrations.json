@@ -78,9 +78,22 @@
                 "keyLabel": "Key (Client ID)",
                 "secretLabel": "Secret (Client Secret)",
                 "createApp": "Create Bitbucket App"
+            },
+            "azureRepos": {
+                "step1": "In the Azure portal, go to Microsoft Entra ID → App registrations → New registration",
+                "step2": "Set the Redirect URI (type Web) to: {url}/api/git/oauth/callback",
+                "step3": "Under API permissions, add Azure DevOps → user_impersonation, then grant admin consent",
+                "step4": "Under Certificates & secrets, create a client secret and copy its value",
+                "clientIdLabel": "Application (client) ID",
+                "secretLabel": "Client secret value",
+                "tenantIdLabel": "Directory (tenant) ID",
+                "tenantIdPlaceholder": "e.g. 72f988bf-86f1-41af-91ab-2d7cd011db47",
+                "tenantIdDescription": "Required for single-tenant app registrations. Leave empty for multi-tenant apps.",
+                "createApp": "Create Azure Repos App"
             }
         },
-        "addBitbucket": "Add Bitbucket"
+        "addBitbucket": "Add Bitbucket",
+        "addAzureRepos": "Add Azure Repos"
     },
     "bucketStorage": {
         "title": "Bucket Storage",
@@ -153,5 +166,9 @@
     "bitbucket": {
         "title": "Bitbucket",
         "description": "Connect your Bitbucket Cloud workspace to deploy repositories"
+    },
+    "azureRepos": {
+        "title": "Azure Repos",
+        "description": "Connect your Azure DevOps organizations to deploy Azure Repos repositories"
     }
 }

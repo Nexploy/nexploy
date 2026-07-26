@@ -49,7 +49,7 @@ export async function setupRepositoryWebhook(
     }
 
     const adapter = getGitAdapter(repo.gitProvider);
-    const webhookUrl = `${baseUrl}${adapter.webhookPath}`;
+    const webhookUrl = `${baseUrl}${adapter.webhookPath}?repositoryId=${repositoryId}`;
     const secret = crypto.randomUUID();
 
     try {

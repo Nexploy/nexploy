@@ -15,6 +15,7 @@
         "notAuthorizedRelink": "User not authorized to relink this repository",
         "relinkFailed": "Failed to relink git account",
         "alreadyInOrganization": "Repository is already in this organization",
+        "alreadyExistsInTargetOrganization": "This repository has already been added to the target organization",
         "moveFailed": "Failed to move repository to organization",
         "workDirNotConfigured": "DEPLOYER_WORK_DIR is not configured"
     },
@@ -94,7 +95,8 @@
         "saveGitlabFailed": "Failed to save GitLab provider",
         "saveGiteaFailed": "Failed to save Gitea provider",
         "deleteProviderFailed": "Failed to delete git provider",
-        "saveBitbucketFailed": "Failed to save Bitbucket provider"
+        "saveBitbucketFailed": "Failed to save Bitbucket provider",
+        "saveAzureReposFailed": "Failed to save Azure Repos provider"
     },
     "registry": {
         "getFailed": "Failed to get registries",

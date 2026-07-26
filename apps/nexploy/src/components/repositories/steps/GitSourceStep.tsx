@@ -31,7 +31,7 @@ import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import Link from 'next/link';
-import { GitAccountSummary, GitRepository } from '@workspace/typescript-interface/git/git';
+import { GitAccountSummary, GitRepositoryList } from '@workspace/typescript-interface/git/git';
 import { GitAccountFormField } from '@/components/git/GitAccountFormField';
 
 export function GitSourceStep() {
@@ -41,7 +41,7 @@ export function GitSourceStep() {
 
     const [selectedAccount, setSelectedAccount] = useState<GitAccountSummary | undefined>();
 
-    const { data: repos, isLoading: isLoadingRepos } = useSWR<GitRepository[]>(
+    const { data, isLoading: isLoadingRepos } = useSWR<GitRepositoryList>(
         selectedAccount
             ? {
                   url: `/api/git/repositories?provider=${selectedAccount.provider}&gitAccountId=${selectedAccount.id}`,
@@ -49,6 +49,15 @@ export function GitSourceStep() {
             : null,
         fetcherApi,
     );
+
+    const repos = data?.repositories;
+    const hasNoRepository = !!data && data.totalCount === 0;
+    const allRepositoriesAlreadyAdded = !!data && data.totalCount > 0 && repos?.length === 0;
+    const emptyMessage = hasNoRepository
+        ? tSource('noRepositoryOnAccount')
+        : allRepositoriesAlreadyAdded
+          ? tSource('allRepositoriesAlreadyAdded')
+          : null;
 
     return (
         <Card>
@@ -104,23 +113,30 @@ export function GitSourceStep() {
                                                 placeholder={
                                                     isLoadingRepos
                                                         ? tSource('loading')
-                                                        : tSource('selectRepository')
+                                                        : (emptyMessage ??
+                                                          tSource('selectRepository'))
                                                 }
                                             />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>{tSource('repository')}</SelectLabel>
-                                            {repos?.map((repo) => (
-                                                <SelectItem key={repo.id} value={repo.id}>
-                                                    <span className="flex items-center gap-2">
-                                                        <BookMarked />
-                                                        {repo.fullName || repo.name}
-                                                    </span>
-                                                </SelectItem>
-                                            ))}
-                                        </SelectGroup>
+                                        {emptyMessage ? (
+                                            <div className="text-muted-foreground px-2 py-6 text-center text-sm">
+                                                {emptyMessage}
+                                            </div>
+                                        ) : (
+                                            <SelectGroup>
+                                                <SelectLabel>{tSource('repository')}</SelectLabel>
+                                                {repos?.map((repo) => (
+                                                    <SelectItem key={repo.id} value={repo.id}>
+                                                        <span className="flex items-center gap-2">
+                                                            <BookMarked />
+                                                            {repo.fullName || repo.name}
+                                                        </span>
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        )}
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />

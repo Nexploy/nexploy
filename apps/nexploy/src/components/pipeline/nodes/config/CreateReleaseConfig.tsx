@@ -35,6 +35,7 @@ interface RepositoryGitMeta {
     gitId: string;
     name: string;
     branch: string;
+    repositoryUrl: string;
 }
 
 export function CreateReleaseConfig() {
@@ -49,7 +50,7 @@ export function CreateReleaseConfig() {
     const { data: branches, isLoading: isLoadingBranches } = useSWR<GitBranch[]>(
         repo?.gitAccountId
             ? {
-                  url: `/api/git/branches?provider=${repo.gitProvider}&gitAccountId=${repo.gitAccountId}&repoId=${repo.gitId}&owner=${repo.name.split('/')[0]}&repoName=${repo.name.split('/')[1]}`,
+                  url: `/api/git/branches?provider=${repo.gitProvider}&gitAccountId=${repo.gitAccountId}&repoId=${repo.gitId}&owner=${repo.name.split('/')[0]}&repoName=${repo.name.split('/')[1]}&repositoryUrl=${encodeURIComponent(repo.repositoryUrl)}`,
               }
             : null,
         fetcherApi,

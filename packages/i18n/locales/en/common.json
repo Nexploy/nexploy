@@ -50,7 +50,7 @@
         },
         "integrations": {
             "title": "Integrations",
-            "content": "Start here by adding a Git provider (GitHub, GitLab, Gitea or Bitbucket). This is the connection Nexploy uses to access your repositories."
+            "content": "Start here by adding a Git provider (GitHub, GitLab, Gitea, Bitbucket or Azure Repos). This is the connection Nexploy uses to reach your repositories."
         },
         "account": {
             "title": "Link your account",

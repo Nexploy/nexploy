@@ -11,6 +11,7 @@ import { SidebarMenu, SidebarMenuItem } from '@workspace/ui/components/sidebar';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { triggerUpgradeAction } from '@/actions/admin/triggerUpgrade.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { usePermissions } from '@/contexts/PermissionContext';
 
 interface VersionInfo {
     current: string;
@@ -28,13 +29,14 @@ export function UpdateBanner() {
     const t = useTranslations('navigation');
     const tSettings = useTranslations('admin.settings');
     const tCommon = useTranslations('common');
+    const { isAdmin } = usePermissions();
     const [dismissedVersion, setDismissedVersion] = useLocalStorage<string | null>(
         'nexploy-update-dismissed-version',
         null,
     );
 
     const { data } = useSWR<VersionInfo | null>(
-        { url: '/api/admin/version', disableToast: true },
+        isAdmin ? { url: '/api/admin/version', disableToast: true } : null,
         fetcherApi,
         { refreshInterval: 60 * 60 * 1000, shouldRetryOnError: false },
     );
@@ -43,7 +45,7 @@ export function UpdateBanner() {
 
     const { execute: upgrade, isPending: upgrading } = useAction(triggerUpgradeAction);
 
-    if (!data?.updateAvailable || data.latest === dismissedVersion) {
+    if (!isAdmin || !data?.updateAvailable || data.latest === dismissedVersion) {
         return null;
     }
 

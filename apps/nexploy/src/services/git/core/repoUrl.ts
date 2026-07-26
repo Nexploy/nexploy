@@ -27,13 +27,16 @@ export function getRepositoryWebUrl(cloneUrl: string): string {
 
 export function parseRepositoryUrl(
     url: string,
-    options: { providerLabel: string; nestedNamespace?: boolean },
+    options: { providerLabel: string; nestedNamespace?: boolean; ignoredSegments?: string[] },
 ): ParsedRepoUrl {
     const parsed = new URL(normalizeRepoUrl(url, options.providerLabel));
+    const ignoredSegments = new Set(options.ignoredSegments ?? []);
     const parts = parsed.pathname
         .replace(/\.git$/, '')
         .split('/')
-        .filter(Boolean);
+        .filter(Boolean)
+        .filter((segment) => !ignoredSegments.has(segment))
+        .map(decodeURIComponent);
 
     if (parts.length < 2) {
         throw new Error(`Invalid ${options.providerLabel} repository URL: ${url}`);

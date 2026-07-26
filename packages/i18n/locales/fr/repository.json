@@ -11,7 +11,8 @@
         "github": "GitHub",
         "gitlab": "GitLab",
         "gitea": "Gitea",
-        "bitbucket": "Bitbucket"
+        "bitbucket": "Bitbucket",
+        "azureRepos": "Azure Repos"
     },
     "create": {
         "title": "Nouveau dépôt",
@@ -257,7 +258,9 @@
             "repository": "Dépôt",
             "loading": "Chargement...",
             "selectRepository": "Sélectionner un dépôt",
-            "branch": "Branche"
+            "branch": "Branche",
+            "noRepositoryOnAccount": "Aucun dépôt trouvé sur ce compte",
+            "allRepositoriesAlreadyAdded": "Tous les dépôts de ce compte ont déjà été ajoutés à cette organisation"
         },
         "cloudflare": {
             "loading": "Chargement des zones Cloudflare...",

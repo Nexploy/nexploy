@@ -7,10 +7,11 @@ import { GitHubAppSetupForm } from '@/components/admin/integrations/GitHubAppSet
 import { GitlabAppSetupForm } from '@/components/admin/integrations/GitlabAppSetupForm';
 import { GiteaAppSetupForm } from '@/components/admin/integrations/GiteaAppSetupForm';
 import { BitbucketAppSetupForm } from '@/components/admin/integrations/BitbucketAppSetupForm';
+import { AzureReposAppSetupForm } from '@/components/admin/integrations/AzureReposAppSetupForm';
 import { useTranslations } from 'next-intl';
 
 interface IntegrationsAddButtonsProps {
-    provider: 'github' | 'gitlab' | 'gitea' | 'bitbucket';
+    provider: 'github' | 'gitlab' | 'gitea' | 'bitbucket' | 'azureRepos';
 }
 
 export function IntegrationsAddButtons({ provider }: IntegrationsAddButtonsProps) {
@@ -48,6 +49,15 @@ export function IntegrationsAddButtons({ provider }: IntegrationsAddButtonsProps
                     content: <BitbucketAppSetupForm />,
                 });
                 break;
+            case 'azureRepos':
+                openDialog({
+                    title: tOAuth('configureTitle', { provider: t('azureRepos.title') }),
+                    description: tOAuth('configureDescription', {
+                        provider: t('azureRepos.title'),
+                    }),
+                    content: <AzureReposAppSetupForm />,
+                });
+                break;
         }
     };
 
@@ -56,6 +66,7 @@ export function IntegrationsAddButtons({ provider }: IntegrationsAddButtonsProps
         gitlab: 'addGitlab',
         gitea: 'addGitea',
         bitbucket: 'addBitbucket',
+        azureRepos: 'addAzureRepos',
     } as const;
     const label = tOAuth(ADD_LABELS[provider]);
 

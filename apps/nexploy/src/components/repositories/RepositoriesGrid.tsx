@@ -22,6 +22,7 @@ import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { PROVIDER_ICONS } from '@/components/git/providerIcons.tsx';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
 import { getHostname } from '@/utils/url';
+import { AzureReposIcon } from '@/components/git/AzureReposIcon';
 import Github from '@thesvg/react/github';
 import Gitlab from '@thesvg/react/gitlab';
 import Gitea from '@thesvg/react/gitea';
@@ -110,6 +111,12 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                                     <span className="flex items-center gap-2">
                                         <Bitbucket className="size-3.5 [&_path]:fill-current" />
                                         {t('providers.bitbucket')}
+                                    </span>
+                                </SelectItem>
+                                <SelectItem value="AZURE_REPOS">
+                                    <span className="flex items-center gap-2">
+                                        <AzureReposIcon className="size-3.5 [&_path]:fill-current" />
+                                        {t('providers.azureRepos')}
                                     </span>
                                 </SelectItem>
                             </SelectGroup>

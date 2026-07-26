@@ -2,10 +2,10 @@ model Repository {
   id   String @id @default(cuid())
   name String
 
-  repositoryUrl String @unique
+  repositoryUrl String
 
   gitProvider  GitProviderType
-  gitId        String          @unique
+  gitId        String
   gitAccountId String?
   gitAccount   GitAccount?     @relation(fields: [gitAccountId], references: [id], onDelete: SetNull)
 
@@ -27,6 +27,10 @@ model Repository {
   stages          DeploymentStage[]
   pipelineConfigs PipelineConfig[]
 
+  @@unique([organizationId, gitId])
+  @@unique([organizationId, repositoryUrl])
   @@index([organizationId])
+  @@index([gitId])
+  @@index([repositoryUrl])
   @@map("repository")
 }

@@ -20,7 +20,7 @@ export const GET = route
                 query: z.infer<typeof getBranchesSchema>;
             },
         ) => {
-            const { provider, repoId, owner, repoName, gitAccountId } = query;
+            const { provider, repoId, owner, repoName, repositoryUrl, gitAccountId } = query;
 
             try {
                 const branches = await getBranches(
@@ -30,6 +30,7 @@ export const GET = route
                     gitAccountId,
                     owner,
                     repoName,
+                    repositoryUrl,
                 );
                 return NextResponse.json(branches);
             } catch (error: any) {
