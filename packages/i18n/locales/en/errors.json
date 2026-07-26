@@ -93,7 +93,8 @@
         "saveGithubAppFailed": "Failed to save GitHub App",
         "saveGitlabFailed": "Failed to save GitLab provider",
         "saveGiteaFailed": "Failed to save Gitea provider",
-        "deleteProviderFailed": "Failed to delete git provider"
+        "deleteProviderFailed": "Failed to delete git provider",
+        "saveBitbucketFailed": "Failed to save Bitbucket provider"
     },
     "registry": {
         "getFailed": "Failed to get registries",

@@ -25,6 +25,7 @@ import { getHostname } from '@/utils/url';
 import Github from '@thesvg/react/github';
 import Gitlab from '@thesvg/react/gitlab';
 import Gitea from '@thesvg/react/gitea';
+import Bitbucket from '@thesvg/react/bitbucket';
 import { STATUS_PIPELINE } from '@/components/shared/buildStatusMapping';
 import { BuildStatus, GitProviderType } from 'generated/client';
 
@@ -103,6 +104,12 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                                     <span className="flex items-center gap-2">
                                         <Gitea className="size-3.5 [&_path]:fill-current" />
                                         {t('providers.gitea')}
+                                    </span>
+                                </SelectItem>
+                                <SelectItem value="BITBUCKET">
+                                    <span className="flex items-center gap-2">
+                                        <Bitbucket className="size-3.5 [&_path]:fill-current" />
+                                        {t('providers.bitbucket')}
                                     </span>
                                 </SelectItem>
                             </SelectGroup>

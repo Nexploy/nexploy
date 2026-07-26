@@ -5,6 +5,7 @@ import { GitBranch, GitProviderToken, GitRepository } from '@workspace/typescrip
 import { WebhookPayload } from '@workspace/typescript-interface/webhook';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { timingSafeEqual } from '@/lib/api/crypto-utils';
+import { parseRepositoryUrl } from '@/services/git/core/repoUrl';
 import { GIT_OAUTH_EXCHANGE_FAILED } from '@/services/git/providers/github/github.adapter';
 import {
     GiteaRepo,
@@ -23,27 +24,6 @@ import {
 
 const GITEA_OAUTH_SCOPES = 'read:user write:repository write:organization';
 
-function normalizeRepoUrl(url: string): string {
-    if (/^(ssh|git):\/\//i.test(url)) {
-        const parsed = new URL(url);
-        return `https://${parsed.hostname}${parsed.pathname}`;
-    }
-
-    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(url)) {
-        return url;
-    }
-
-    const withoutCredentials = url.replace(/^[^@\/]+@/, '');
-    const separatorIndex = withoutCredentials.indexOf(':');
-    if (separatorIndex === -1) {
-        throw new Error(`Invalid Gitea repository URL: ${url}`);
-    }
-
-    const host = withoutCredentials.slice(0, separatorIndex);
-    const path = withoutCredentials.slice(separatorIndex + 1).replace(/^\//, '');
-    return `https://${host}/${path}`;
-}
-
 function mapRepo(repo: GiteaRepo): GitRepository {
     return {
         id: `${repo.id}`,
@@ -61,20 +41,7 @@ export const giteaAdapter: GitProviderAdapter = {
     webhookPath: '/api/webhooks/gitea',
 
     parseRepoUrl(url: string): ParsedRepoUrl {
-        const parsed = new URL(normalizeRepoUrl(url));
-        const parts = parsed.pathname
-            .replace(/\.git$/, '')
-            .split('/')
-            .filter(Boolean);
-        if (parts.length < 2) throw new Error(`Invalid Gitea repository URL: ${url}`);
-        const repo = parts[parts.length - 1]!;
-        const owner = parts[parts.length - 2]!;
-        return {
-            baseUrl: `${parsed.protocol}//${parsed.host}`,
-            owner,
-            repo,
-            projectPath: `${owner}/${repo}`,
-        };
+        return parseRepositoryUrl(url, { providerLabel: 'Gitea' });
     },
 
     async listRepositories({ token, baseUrl }): Promise<GitRepository[]> {

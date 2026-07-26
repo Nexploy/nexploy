@@ -199,6 +199,27 @@ export async function saveGiteaProvider(
     }
 }
 
+export async function saveBitbucketProvider(
+    displayName: string,
+    clientId: string,
+    clientSecret: string,
+): Promise<void> {
+    const t = await getErrorTranslator();
+    try {
+        await prisma.gitProvider.create({
+            data: {
+                provider: 'BITBUCKET',
+                displayName,
+                clientId: encrypt(clientId),
+                clientSecret: encrypt(clientSecret),
+                baseUrl: 'https://bitbucket.org',
+            },
+        });
+    } catch (error: unknown) {
+        throw new Error(t('oauthProvider.saveBitbucketFailed'));
+    }
+}
+
 export async function deleteGitProvider(id: string) {
     const t = await getErrorTranslator();
     try {

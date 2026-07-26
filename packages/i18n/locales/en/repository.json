@@ -10,7 +10,8 @@
     "providers": {
         "github": "GitHub",
         "gitlab": "GitLab",
-        "gitea": "Gitea"
+        "gitea": "Gitea",
+        "bitbucket": "Bitbucket"
     },
     "create": {
         "title": "New Repository",

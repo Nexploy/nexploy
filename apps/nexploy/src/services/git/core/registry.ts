@@ -3,11 +3,13 @@ import { GitProviderAdapter } from '@/services/git/core/GitProviderAdapter';
 import { githubAdapter } from '@/services/git/providers/github/github.adapter';
 import { gitlabAdapter } from '@/services/git/providers/gitlab/gitlab.adapter';
 import { giteaAdapter } from '@/services/git/providers/gitea/gitea.adapter';
+import { bitbucketAdapter } from '@/services/git/providers/bitbucket/bitbucket.adapter';
 
 const gitAdapters: Record<GitProviderType, GitProviderAdapter> = {
     GITHUB: githubAdapter,
     GITLAB: gitlabAdapter,
     GITEA: giteaAdapter,
+    BITBUCKET: bitbucketAdapter,
 };
 
 export function getGitAdapter(provider: GitProviderType): GitProviderAdapter {

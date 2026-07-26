@@ -1,6 +1,7 @@
 import { GitProviderType } from 'generated/client';
 import { prisma } from '@/../prisma/prisma';
 import { GitBranch, GitRepository } from '@workspace/typescript-interface/git/git';
+import { decrypt } from '@/lib/encryption';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { getGitAdapter } from '@/services/git/core/registry';
 import { getGitProviderCredentials } from '@/services/git/gitProviders.service';
@@ -10,6 +11,7 @@ const DEFAULT_BASE_URL: Record<GitProviderType, string> = {
     GITHUB: 'https://github.com',
     GITLAB: 'https://gitlab.com',
     GITEA: '',
+    BITBUCKET: 'https://bitbucket.org',
 };
 
 async function resolveBaseUrl(provider: GitProviderType, gitAccountId?: string): Promise<string> {
@@ -150,8 +152,10 @@ export async function disconnectGitAccount(userId: string, gitProviderId: string
             try {
                 await adapter.revokeToken({
                     token: {
-                        accessToken: gitAccount.accessToken,
-                        refreshToken: gitAccount.refreshToken,
+                        accessToken: decrypt(gitAccount.accessToken),
+                        refreshToken: gitAccount.refreshToken
+                            ? decrypt(gitAccount.refreshToken)
+                            : null,
                         accessTokenExpiresAt: gitAccount.accessTokenExpiresAt,
                     },
                     credentials,

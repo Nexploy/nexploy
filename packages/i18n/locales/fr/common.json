@@ -50,7 +50,7 @@
         },
         "integrations": {
             "title": "Intégrations",
-            "content": "Commencez ici en ajoutant un fournisseur Git (GitHub, GitLab ou Gitea). C'est la connexion que Nexploy utilise pour accéder à vos dépôts."
+            "content": "Commencez ici en ajoutant un fournisseur Git (GitHub, GitLab, Gitea ou Bitbucket). C'est la connexion que Nexploy utilise pour accéder à vos dépôts."
         },
         "account": {
             "title": "Liez votre compte",

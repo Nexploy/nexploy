@@ -15,6 +15,48 @@ export function kyGitlab(baseUrl: string, explicitToken?: string) {
     });
 }
 
+const PAGE_LIMIT = 100;
+const MAX_PAGES = 20;
+
+export async function gitlabFetchAllPages<T>(
+    baseUrl: string,
+    endpoint: string,
+    searchParams: Record<string, string> = {},
+): Promise<T[]> {
+    const results: T[] = [];
+
+    for (let page = 1; page <= MAX_PAGES; page++) {
+        const pageResults = await kyGitlab(baseUrl)
+            .get(endpoint, {
+                searchParams: { ...searchParams, page: `${page}`, per_page: `${PAGE_LIMIT}` },
+            })
+            .json<T[]>();
+
+        results.push(...pageResults);
+
+        if (pageResults.length < PAGE_LIMIT) break;
+    }
+
+    return results;
+}
+
+export async function gitlabRevokeToken(
+    baseUrl: string,
+    token: string,
+    clientId: string,
+    clientSecret: string,
+): Promise<void> {
+    await ky.post(`${baseUrl}/oauth/revoke`, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            client_id: clientId,
+            client_secret: clientSecret,
+            token,
+        }),
+        throwHttpErrors: false,
+    });
+}
+
 export async function gitlabCreateWebhook(
     baseUrl: string,
     projectId: string,

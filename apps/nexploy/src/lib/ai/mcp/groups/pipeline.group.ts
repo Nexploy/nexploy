@@ -11,6 +11,7 @@ import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { kyGithubApi } from '@/services/git/providers/github/github.client';
 import { kyGitlab } from '@/services/git/providers/gitlab/gitlab.client';
 import { kyGitea } from '@/services/git/providers/gitea/gitea.client';
+import { kyBitbucket } from '@/services/git/providers/bitbucket/bitbucket.client';
 import { getGitAdapter } from '@/services/git/core/registry';
 import type { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { getCompactCatalog, PIPELINE_NODE_CATALOG } from '@/lib/ai/pipelineNodeCatalog';
@@ -53,6 +54,8 @@ type GiteaContentFile = {
 };
 
 type GitLabFileContent = { content: string; encoding: string };
+
+type BitbucketDirEntry = { path: string; type: string };
 
 async function fetchGithubFiles(
     owner: string,
@@ -152,6 +155,40 @@ async function fetchGiteaFiles(
                     .toString('utf-8')
                     .substring(0, 3000);
             }
+        } catch {}
+    }
+
+    return { rootFiles, files };
+}
+
+async function fetchBitbucketFiles(
+    workspace: string,
+    repoSlug: string,
+    ref: string,
+): Promise<{ rootFiles: { name: string; type: string }[]; files: Record<string, string> }> {
+    const rootFiles: { name: string; type: string }[] = [];
+    const files: Record<string, string> = {};
+
+    try {
+        const listing = await kyBitbucket()
+            .get(`repositories/${workspace}/${repoSlug}/src/${ref}/`, {
+                searchParams: { pagelen: '100' },
+            })
+            .json<{ values: BitbucketDirEntry[] }>();
+        rootFiles.push(
+            ...listing.values.map((entry) => ({
+                name: entry.path.split('/').pop() ?? entry.path,
+                type: entry.type === 'commit_directory' ? 'dir' : 'file',
+            })),
+        );
+    } catch {}
+
+    for (const fileName of KEY_FILES) {
+        try {
+            const content = await kyBitbucket()
+                .get(`repositories/${workspace}/${repoSlug}/src/${ref}/${fileName}`)
+                .text();
+            files[fileName] = content.substring(0, 3000);
         } catch {}
     }
 
@@ -265,6 +302,13 @@ export const pipelineGroup: ToolGroup = {
                         ).parseRepoUrl(repo.repositoryUrl);
                         ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
                             fetchGiteaFiles(baseUrl, owner, repoName, ref),
+                        ));
+                    } else if (repo.gitProvider === 'BITBUCKET') {
+                        const { owner, repo: repoName } = getGitAdapter('BITBUCKET').parseRepoUrl(
+                            repo.repositoryUrl,
+                        );
+                        ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
+                            fetchBitbucketFiles(owner, repoName, ref),
                         ));
                     } else {
                         return fail(`Unsupported git provider: ${repo.gitProvider}`);

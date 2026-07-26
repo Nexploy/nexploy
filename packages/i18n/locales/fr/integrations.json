@@ -69,8 +69,18 @@
                 "baseUrlLabel": "URL de l'instance Gitea",
                 "baseUrlPlaceholder": "https://gitea.monentreprise.com",
                 "createApp": "Créer l'application Gitea"
+            },
+            "bitbucket": {
+                "step1": "Dans Bitbucket, allez dans Paramètres de l'espace de travail → Consommateurs OAuth → Ajouter un consommateur",
+                "step2": "Définissez l'URL de rappel sur : {url}/api/git/oauth/callback",
+                "step3": "Cochez les permissions : Compte (Lecture), Dépôts (Lecture, Écriture, Administration), Webhooks (Lecture et écriture), Pull requests (Lecture)",
+                "step4": "Copiez la Clé et le Secret du consommateur créé",
+                "keyLabel": "Clé (Client ID)",
+                "secretLabel": "Secret (Client Secret)",
+                "createApp": "Créer l'application Bitbucket"
             }
-        }
+        },
+        "addBitbucket": "Ajouter Bitbucket"
     },
     "bucketStorage": {
         "title": "Stockage Bucket",
@@ -139,5 +149,9 @@
     "connect": "Connecter",
     "disconnect": "Déconnecter",
     "connected": "Connecté",
-    "connecting": "Connexion..."
+    "connecting": "Connexion...",
+    "bitbucket": {
+        "title": "Bitbucket",
+        "description": "Connectez votre espace de travail Bitbucket Cloud pour déployer des dépôts"
+    }
 }

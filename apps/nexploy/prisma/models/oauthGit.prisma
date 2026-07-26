@@ -43,4 +43,5 @@ enum GitProviderType {
   GITHUB
   GITLAB
   GITEA
+  BITBUCKET
 }

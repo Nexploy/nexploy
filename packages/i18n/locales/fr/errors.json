@@ -93,7 +93,8 @@
         "saveGithubAppFailed": "Échec de l'enregistrement de l'application GitHub",
         "saveGitlabFailed": "Échec de l'enregistrement du fournisseur GitLab",
         "saveGiteaFailed": "Échec de l'enregistrement du fournisseur Gitea",
-        "deleteProviderFailed": "Échec de la suppression du fournisseur Git"
+        "deleteProviderFailed": "Échec de la suppression du fournisseur Git",
+        "saveBitbucketFailed": "Échec de la sauvegarde du fournisseur Bitbucket"
     },
     "registry": {
         "getFailed": "Échec de la récupération des registres",

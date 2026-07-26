@@ -7,6 +7,7 @@ import { GithubRepo } from '@workspace/typescript-interface/git/repository/githu
 import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.branch';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { timingSafeEqual } from '@/lib/api/crypto-utils';
+import { parseRepositoryUrl } from '@/services/git/core/repoUrl';
 import {
     githubCreateRelease,
     githubCreateWebhook,
@@ -42,13 +43,7 @@ export const githubAdapter: GitProviderAdapter = {
     webhookPath: '/api/webhooks/github',
 
     parseRepoUrl(url: string): ParsedRepoUrl {
-        const match = url.match(/github\.com[\/:]([^\/]+)\/([^\/\.]+)/);
-        if (match && match[1] && match[2]) {
-            const owner = match[1];
-            const repo = match[2].replace('.git', '');
-            return { baseUrl: 'https://github.com', owner, repo, projectPath: `${owner}/${repo}` };
-        }
-        throw new Error(`Invalid GitHub repository URL: ${url}`);
+        return parseRepositoryUrl(url, { providerLabel: 'GitHub' });
     },
 
     async listRepositories({ token }): Promise<GitRepository[]> {

@@ -69,8 +69,18 @@
                 "baseUrlLabel": "Gitea Instance URL",
                 "baseUrlPlaceholder": "https://gitea.mycompany.com",
                 "createApp": "Create Gitea App"
+            },
+            "bitbucket": {
+                "step1": "In Bitbucket, go to Workspace settings → OAuth consumers → Add consumer",
+                "step2": "Set the Callback URL to: {url}/api/git/oauth/callback",
+                "step3": "Tick the permissions: Account (Read), Repositories (Read, Write, Admin), Webhooks (Read and write), Pull requests (Read)",
+                "step4": "Copy the Key and Secret of the created consumer",
+                "keyLabel": "Key (Client ID)",
+                "secretLabel": "Secret (Client Secret)",
+                "createApp": "Create Bitbucket App"
             }
-        }
+        },
+        "addBitbucket": "Add Bitbucket"
     },
     "bucketStorage": {
         "title": "Bucket Storage",
@@ -139,5 +149,9 @@
     "connect": "Connect",
     "disconnect": "Disconnect",
     "connected": "Connected",
-    "connecting": "Connecting..."
+    "connecting": "Connecting...",
+    "bitbucket": {
+        "title": "Bitbucket",
+        "description": "Connect your Bitbucket Cloud workspace to deploy repositories"
+    }
 }

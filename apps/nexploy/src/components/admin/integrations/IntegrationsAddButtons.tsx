@@ -6,10 +6,11 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { GitHubAppSetupForm } from '@/components/admin/integrations/GitHubAppSetupForm';
 import { GitlabAppSetupForm } from '@/components/admin/integrations/GitlabAppSetupForm';
 import { GiteaAppSetupForm } from '@/components/admin/integrations/GiteaAppSetupForm';
+import { BitbucketAppSetupForm } from '@/components/admin/integrations/BitbucketAppSetupForm';
 import { useTranslations } from 'next-intl';
 
 interface IntegrationsAddButtonsProps {
-    provider: 'github' | 'gitlab' | 'gitea';
+    provider: 'github' | 'gitlab' | 'gitea' | 'bitbucket';
 }
 
 export function IntegrationsAddButtons({ provider }: IntegrationsAddButtonsProps) {
@@ -40,6 +41,13 @@ export function IntegrationsAddButtons({ provider }: IntegrationsAddButtonsProps
                     content: <GiteaAppSetupForm />,
                 });
                 break;
+            case 'bitbucket':
+                openDialog({
+                    title: tOAuth('configureTitle', { provider: t('bitbucket.title') }),
+                    description: tOAuth('configureDescription', { provider: t('bitbucket.title') }),
+                    content: <BitbucketAppSetupForm />,
+                });
+                break;
         }
     };
 
@@ -47,6 +55,7 @@ export function IntegrationsAddButtons({ provider }: IntegrationsAddButtonsProps
         github: 'addGithub',
         gitlab: 'addGitlab',
         gitea: 'addGitea',
+        bitbucket: 'addBitbucket',
     } as const;
     const label = tOAuth(ADD_LABELS[provider]);
 

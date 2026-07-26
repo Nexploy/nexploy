@@ -42,6 +42,31 @@ export const kyGithubPublic = ky.create({
     },
 });
 
+const PAGE_LIMIT = 100;
+const MAX_PAGES = 20;
+
+async function fetchAllPages<T>(
+    endpoint: string,
+    searchParams: Record<string, string> = {},
+): Promise<T[]> {
+    const results: T[] = [];
+
+    for (let page = 1; page <= MAX_PAGES; page++) {
+        const pageResults = await kyGithubApi
+            .get(endpoint, {
+                headers: { Accept: 'application/vnd.github+json' },
+                searchParams: { ...searchParams, page: `${page}`, per_page: `${PAGE_LIMIT}` },
+            })
+            .json<T[]>();
+
+        results.push(...pageResults);
+
+        if (pageResults.length < PAGE_LIMIT) break;
+    }
+
+    return results;
+}
+
 export async function githubGetRepository(owner: string, repo: string): Promise<GithubRepo> {
     return kyGithubApi
         .get(`repos/${owner}/${repo}`, {
@@ -74,23 +99,29 @@ export async function githubGetUserInstallations(): Promise<{
 export async function githubGetInstallationRepositories(
     installationId: number,
 ): Promise<{ repositories: GithubRepo[] }> {
-    return kyGithubApi
-        .get(`user/installations/${installationId}/repositories`, {
-            headers: { Accept: 'application/vnd.github+json' },
-            searchParams: { per_page: '100' },
-        })
-        .json<{ repositories: GithubRepo[] }>();
+    const repositories: GithubRepo[] = [];
+
+    for (let page = 1; page <= MAX_PAGES; page++) {
+        const pageResult = await kyGithubApi
+            .get(`user/installations/${installationId}/repositories`, {
+                headers: { Accept: 'application/vnd.github+json' },
+                searchParams: { page: `${page}`, per_page: `${PAGE_LIMIT}` },
+            })
+            .json<{ repositories: GithubRepo[] }>();
+
+        repositories.push(...pageResult.repositories);
+
+        if (pageResult.repositories.length < PAGE_LIMIT) break;
+    }
+
+    return { repositories };
 }
 
 export async function githubGetRepositoryBranches(
     owner: string,
     repo: string,
 ): Promise<GithubBranch[]> {
-    return kyGithubApi
-        .get(`repos/${owner}/${repo}/branches`, {
-            headers: { Accept: 'application/vnd.github+json' },
-        })
-        .json<GithubBranch[]>();
+    return fetchAllPages<GithubBranch>(`repos/${owner}/${repo}/branches`);
 }
 
 export async function githubCreateWebhook(
