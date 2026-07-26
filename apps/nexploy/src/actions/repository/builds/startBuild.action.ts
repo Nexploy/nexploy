@@ -15,6 +15,7 @@ export const onStartBuild = authActionServer
         const t = await getTranslations('repository');
         try {
             const newBuild = await startBuildRepository(parsedInput, ctx.session.user.id);
+            if (!newBuild) throw new Error(t('builds.failedToStart'));
             revalidatePath('/repositories/[repositoryId]', 'page');
             return newBuild;
         } catch (err: unknown) {

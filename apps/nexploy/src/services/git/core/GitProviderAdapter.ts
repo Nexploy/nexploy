@@ -63,6 +63,7 @@ export interface GitProviderAdapter {
     readonly type: GitProviderType;
     readonly cloneCredentialUsername: string;
     readonly webhookPath: string;
+    readonly webhookEventHeader: string;
 
     parseRepoUrl(url: string): ParsedRepoUrl;
 
@@ -114,7 +115,7 @@ export interface GitProviderAdapter {
         webhookId: string;
     }): Promise<void>;
 
-    parseWebhookPayload(body: unknown): WebhookPayload | null;
+    parseWebhookPayload(body: unknown, event: string | null): WebhookPayload | null;
 
     verifyWebhookSignature(args: {
         headers: Headers;

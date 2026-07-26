@@ -52,6 +52,30 @@ export const webhookCloneManifest: NodeManifest = {
             descriptionKey: 'pipeline.inputs.desc_commitMessage',
             type: 'input',
         },
+        {
+            key: 'event',
+            labelKey: 'pipeline.inputs.webhookEvent',
+            descriptionKey: 'pipeline.inputs.desc_webhookEvent',
+            type: 'input',
+        },
+        {
+            key: 'tagName',
+            labelKey: 'pipeline.inputs.tagName',
+            descriptionKey: 'pipeline.inputs.desc_tagName',
+            type: 'input',
+        },
+        {
+            key: 'targetBranch',
+            labelKey: 'pipeline.inputs.targetBranch',
+            descriptionKey: 'pipeline.inputs.desc_targetBranch',
+            type: 'input',
+        },
+        {
+            key: 'mergeRequestAction',
+            labelKey: 'pipeline.inputs.mergeRequestAction',
+            descriptionKey: 'pipeline.inputs.desc_mergeRequestAction',
+            type: 'input',
+        },
     ],
     lifecycle: {
         onAdd: async (repositoryId) => {

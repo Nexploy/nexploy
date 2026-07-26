@@ -6,6 +6,7 @@ import { WebhookPayload } from '@workspace/typescript-interface/webhook';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { timingSafeEqual } from '@/lib/api/crypto-utils';
 import { parseRepositoryUrl } from '@/services/git/core/repoUrl';
+import { mapPullRequestAction } from '@/services/git/core/webhookEvent';
 import { GIT_OAUTH_EXCHANGE_FAILED } from '@/services/git/providers/github/github.adapter';
 import {
     GiteaRepo,
@@ -39,6 +40,7 @@ export const giteaAdapter: GitProviderAdapter = {
     type: 'GITEA',
     cloneCredentialUsername: 'oauth2',
     webhookPath: '/api/webhooks/gitea',
+    webhookEventHeader: 'x-gitea-event',
 
     parseRepoUrl(url: string): ParsedRepoUrl {
         return parseRepositoryUrl(url, { providerLabel: 'Gitea' });
@@ -105,12 +107,48 @@ export const giteaAdapter: GitProviderAdapter = {
         );
     },
 
-    parseWebhookPayload(body: any): WebhookPayload | null {
+    parseWebhookPayload(body: any, event: string | null): WebhookPayload | null {
+        const repositoryUrl = body.repository?.clone_url || body.repository?.html_url;
+        if (!repositoryUrl) return null;
+
+        if (event === 'pull_request' || event === 'pull_request_sync') {
+            const pullRequest = body.pull_request;
+            const action = mapPullRequestAction(
+                event === 'pull_request_sync' ? 'synchronized' : body.action,
+                pullRequest?.merged,
+            );
+            if (!pullRequest || !action) return null;
+            if (pullRequest.head?.repo?.full_name !== body.repository?.full_name) return null;
+
+            return {
+                event: 'merge_request',
+                repositoryUrl,
+                branch: pullRequest.head.ref,
+                targetBranch: pullRequest.base?.ref,
+                mergeRequestAction: action,
+                commitHash: pullRequest.head.sha?.substring(0, 8),
+                commitMessage: pullRequest.title,
+            };
+        }
+
+        if (event === 'create') {
+            if (body.ref_type !== 'tag' || !body.ref) return null;
+            return {
+                event: 'tag',
+                repositoryUrl,
+                branch: body.ref,
+                tagName: body.ref,
+                commitHash: body.sha?.substring(0, 8),
+            };
+        }
+
         if (!body.ref?.startsWith('refs/heads/')) {
             return null;
         }
+
         return {
-            repositoryUrl: body.repository?.clone_url || body.repository?.html_url,
+            event: 'push',
+            repositoryUrl,
             branch: body.ref.replace('refs/heads/', ''),
             commitHash: body.head_commit?.id?.substring(0, 8),
             commitMessage: body.head_commit?.message,

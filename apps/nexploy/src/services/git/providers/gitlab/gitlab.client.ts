@@ -69,6 +69,8 @@ export async function gitlabCreateWebhook(
                 url: webhookUrl,
                 token: secret,
                 push_events: true,
+                tag_push_events: true,
+                merge_requests_events: true,
                 enable_ssl_verification: true,
             },
         })

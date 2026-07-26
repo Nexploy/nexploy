@@ -57,6 +57,10 @@ export class TriggerStageBuildExecutor implements INodeExecutor {
             buildConfig.stageId,
         );
 
+        if (!triggered) {
+            throw new Error(`Build on stage "${targetStage.name}" was not started`);
+        }
+
         await logger.info(
             nodeId,
             `Started build #${triggered.numberBuild} on stage "${targetStage.name}"`,

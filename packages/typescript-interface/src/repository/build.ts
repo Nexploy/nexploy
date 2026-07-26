@@ -6,6 +6,8 @@ export interface BuildLogEntry {
     buildId: string;
 }
 
+import { WebhookTrigger } from '../webhook';
+
 export interface BuildConfig {
     userId: string;
     repositoryName: string;
@@ -16,6 +18,7 @@ export interface BuildConfig {
     gitBranch?: string;
     buildId: string;
     triggerSource: 'manual' | 'webhook';
+    webhookTrigger?: WebhookTrigger;
     stageId?: string;
     environmentId?: string;
 }

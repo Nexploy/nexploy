@@ -1,8 +1,12 @@
 import crypto from 'crypto';
 import dayjs from 'dayjs';
 import { GitProviderAdapter, ParsedRepoUrl } from '@/services/git/core/GitProviderAdapter';
-import { GitBranch, GitProviderToken, GitRepository } from '@workspace/typescript-interface/git/git';
-import { WebhookPayload } from '@workspace/typescript-interface/webhook';
+import {
+    GitBranch,
+    GitProviderToken,
+    GitRepository,
+} from '@workspace/typescript-interface/git/git';
+import { MergeRequestAction, WebhookPayload } from '@workspace/typescript-interface/webhook';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { timingSafeEqual } from '@/lib/api/crypto-utils';
 import { parseRepositoryUrl } from '@/services/git/core/repoUrl';
@@ -43,10 +47,18 @@ function splitFullName(fullName: string): { workspace: string; repoSlug: string 
     return { workspace, repoSlug };
 }
 
+const BITBUCKET_PULL_REQUEST_ACTIONS: Record<string, MergeRequestAction | undefined> = {
+    'pullrequest:created': 'opened',
+    'pullrequest:updated': 'updated',
+    'pullrequest:fulfilled': 'merged',
+    'pullrequest:rejected': 'closed',
+};
+
 export const bitbucketAdapter: GitProviderAdapter = {
     type: 'BITBUCKET',
     cloneCredentialUsername: 'x-token-auth',
     webhookPath: '/api/webhooks/bitbucket',
+    webhookEventHeader: 'x-event-key',
 
     parseRepoUrl(url: string): ParsedRepoUrl {
         return parseRepositoryUrl(url, { providerLabel: 'Bitbucket' });
@@ -120,20 +132,53 @@ export const bitbucketAdapter: GitProviderAdapter = {
         );
     },
 
-    parseWebhookPayload(body: any): WebhookPayload | null {
-        const change = body.push?.changes?.find(
-            (entry: any) => entry?.new?.type === 'branch' && entry.new.name,
-        );
-        if (!change) return null;
-
+    parseWebhookPayload(body: any, event: string | null): WebhookPayload | null {
         const fullName = body.repository?.full_name;
         if (!fullName) return null;
+        const repositoryUrl = bitbucketCloneUrl(fullName);
+
+        const mergeRequestAction = event ? BITBUCKET_PULL_REQUEST_ACTIONS[event] : undefined;
+        if (mergeRequestAction) {
+            const pullRequest = body.pullrequest;
+            if (!pullRequest?.source?.branch?.name) return null;
+            if (pullRequest.source.repository?.full_name !== fullName) return null;
+
+            return {
+                event: 'merge_request',
+                repositoryUrl,
+                branch: pullRequest.source.branch.name,
+                targetBranch: pullRequest.destination?.branch?.name,
+                mergeRequestAction,
+                commitHash: pullRequest.source.commit?.hash?.substring(0, 8),
+                commitMessage: pullRequest.title,
+            };
+        }
+
+        const changes: any[] = body.push?.changes ?? [];
+
+        const tagChange = changes.find((entry) => entry?.new?.type === 'tag' && entry.new.name);
+        if (tagChange) {
+            return {
+                event: 'tag',
+                repositoryUrl,
+                branch: tagChange.new.name,
+                tagName: tagChange.new.name,
+                commitHash: tagChange.new.target?.hash?.substring(0, 8),
+                commitMessage: tagChange.new.target?.message,
+            };
+        }
+
+        const branchChange = changes.find(
+            (entry) => entry?.new?.type === 'branch' && entry.new.name,
+        );
+        if (!branchChange) return null;
 
         return {
-            repositoryUrl: bitbucketCloneUrl(fullName),
-            branch: change.new.name,
-            commitHash: change.new.target?.hash?.substring(0, 8),
-            commitMessage: change.new.target?.message,
+            event: 'push',
+            repositoryUrl,
+            branch: branchChange.new.name,
+            commitHash: branchChange.new.target?.hash?.substring(0, 8),
+            commitMessage: branchChange.new.target?.message,
         };
     },
 
@@ -191,7 +236,9 @@ export const bitbucketAdapter: GitProviderAdapter = {
         }
         const data = await bitbucketRefreshAccessToken(refreshToken, clientId, clientSecret);
         if (data.error || !data.access_token) {
-            throw new Error(data.error_description || data.error || 'Bitbucket token refresh failed');
+            throw new Error(
+                data.error_description || data.error || 'Bitbucket token refresh failed',
+            );
         }
         return {
             accessToken: data.access_token,

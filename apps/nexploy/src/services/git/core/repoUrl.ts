@@ -21,6 +21,10 @@ function normalizeRepoUrl(url: string, providerLabel: string): string {
     return `https://${host}/${path}`;
 }
 
+export function getRepositoryWebUrl(cloneUrl: string): string {
+    return cloneUrl.replace(/\.git$/, '');
+}
+
 export function parseRepositoryUrl(
     url: string,
     options: { providerLabel: string; nestedNamespace?: boolean },

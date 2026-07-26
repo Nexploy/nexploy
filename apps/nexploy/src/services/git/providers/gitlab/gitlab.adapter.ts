@@ -7,7 +7,7 @@ import {
     GitProviderToken,
     GitRepository,
 } from '@workspace/typescript-interface/git/git';
-import { WebhookPayload } from '@workspace/typescript-interface/webhook';
+import { MergeRequestAction, WebhookPayload } from '@workspace/typescript-interface/webhook';
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
 import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
@@ -35,10 +35,19 @@ function mapRepo(repo: GitlabRepo): GitRepository {
     };
 }
 
+const GITLAB_MERGE_REQUEST_ACTIONS: Record<string, MergeRequestAction | undefined> = {
+    open: 'opened',
+    reopen: 'opened',
+    update: 'updated',
+    merge: 'merged',
+    close: 'closed',
+};
+
 export const gitlabAdapter: GitProviderAdapter = {
     type: 'GITLAB',
     cloneCredentialUsername: 'oauth2',
     webhookPath: '/api/webhooks/gitlab',
+    webhookEventHeader: 'x-gitlab-event',
 
     parseRepoUrl(url: string): ParsedRepoUrl {
         return parseRepositoryUrl(url, { providerLabel: 'GitLab', nestedNamespace: true });
@@ -118,12 +127,55 @@ export const gitlabAdapter: GitProviderAdapter = {
     },
 
     parseWebhookPayload(body: any): WebhookPayload | null {
+        const repositoryUrl = body.project?.git_http_url || body.project?.http_url;
+        if (!repositoryUrl) return null;
+
+        if (body.object_kind === 'merge_request') {
+            const attributes = body.object_attributes;
+            const action = GITLAB_MERGE_REQUEST_ACTIONS[attributes?.action as string];
+            if (!attributes || !action) return null;
+            if (
+                attributes.source_project_id &&
+                attributes.source_project_id !== attributes.target_project_id
+            ) {
+                return null;
+            }
+
+            return {
+                event: 'merge_request',
+                repositoryUrl,
+                branch: attributes.source_branch,
+                targetBranch: attributes.target_branch,
+                mergeRequestAction: action,
+                commitHash: attributes.last_commit?.id?.substring(0, 8),
+                commitMessage: attributes.last_commit?.message,
+            };
+        }
+
+        if (body.object_kind === 'tag_push') {
+            if (!body.ref?.startsWith('refs/tags/')) return null;
+            if (body.after && /^0+$/.test(body.after)) return null;
+
+            const tagName = body.ref.replace('refs/tags/', '');
+            const lastCommit = body.commits?.[body.commits.length - 1];
+            return {
+                event: 'tag',
+                repositoryUrl,
+                branch: tagName,
+                tagName,
+                commitHash: (lastCommit?.id ?? body.checkout_sha)?.substring(0, 8),
+                commitMessage: lastCommit?.message,
+            };
+        }
+
         if (body.object_kind !== 'push' || !body.ref?.startsWith('refs/heads/')) {
             return null;
         }
+
         const lastCommit = body.commits?.[body.commits.length - 1];
         return {
-            repositoryUrl: body.project?.git_http_url || body.project?.http_url,
+            event: 'push',
+            repositoryUrl,
             branch: body.ref.replace('refs/heads/', ''),
             commitHash: lastCommit?.id?.substring(0, 8),
             commitMessage: lastCommit?.message,

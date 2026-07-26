@@ -139,7 +139,7 @@ export async function githubCreateWebhook(
             json: {
                 name: 'web',
                 active: true,
-                events: ['push'],
+                events: ['push', 'pull_request'],
                 config: {
                     url: webhookUrl,
                     content_type: 'json',

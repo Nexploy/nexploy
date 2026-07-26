@@ -16,15 +16,37 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import { Button } from '@workspace/ui/components/button';
+import { Checkbox } from '@workspace/ui/components/checkbox';
+import { Label } from '@workspace/ui/components/label';
 import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useAction } from 'next-safe-action/hooks';
 import { setupWebhookAction } from '@/actions/repository/pipeline/setupWebhook.action';
 import { Can } from '@/components/permission/Can';
+import {
+    MERGE_REQUEST_ACTIONS,
+    WEBHOOK_TRIGGER_EVENTS,
+} from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 interface WebhookStatus {
     isConfigured: boolean;
 }
+
+type TriggerEvent = (typeof WEBHOOK_TRIGGER_EVENTS)[number];
+type MergeRequestActionOption = (typeof MERGE_REQUEST_ACTIONS)[number];
+
+const TRIGGER_EVENT_LABELS: Record<TriggerEvent, string> = {
+    push: 'webhookEventPush',
+    merge_request: 'webhookEventMergeRequest',
+    tag: 'webhookEventTag',
+};
+
+const MERGE_REQUEST_ACTION_LABELS: Record<MergeRequestActionOption, string> = {
+    opened: 'webhookMergeRequestActionOpened',
+    updated: 'webhookMergeRequestActionUpdated',
+    merged: 'webhookMergeRequestActionMerged',
+    closed: 'webhookMergeRequestActionClosed',
+};
 
 export function WebhookCloneConfig() {
     const t = useTranslations('repository.pipeline.config');
@@ -40,13 +62,34 @@ export function WebhookCloneConfig() {
         onSuccess: () => mutate(),
     });
 
+    const selectedEvents: TriggerEvent[] = form.watch('triggerEvents') ?? ['push'];
+
     return (
         <div className="space-y-4">
             {webhookStatus?.isConfigured ? (
                 <Alert className="border-green-500/30 bg-green-500/10 text-green-600 [&>svg]:text-green-600">
                     <CheckCircle />
-                    <AlertDescription className="text-green-600">
-                        {t('webhookStatusConfigured')}
+                    <AlertDescription className="flex items-center justify-between gap-3 text-green-600">
+                        <span>{t('webhookStatusConfigured')}</span>
+                        <Can resource="repository" action="update">
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                icon={RefreshCw}
+                                isLoading={isPending}
+                                disabled={isPending}
+                                onClick={() =>
+                                    execute({
+                                        repositoryId: params.repositoryId,
+                                        refresh: true,
+                                    })
+                                }
+                                className="shrink-0 border-green-500/40 text-green-600 hover:bg-green-500/10 hover:text-green-700"
+                            >
+                                {t('webhookResyncButton')}
+                            </Button>
+                        </Can>
                     </AlertDescription>
                 </Alert>
             ) : (
@@ -81,6 +124,44 @@ export function WebhookCloneConfig() {
 
             <FormField
                 control={form.control}
+                name="triggerEvents"
+                render={({ field }) => {
+                    const value: TriggerEvent[] = field.value ?? ['push'];
+                    const toggle = (event: TriggerEvent) => {
+                        field.onChange(
+                            value.includes(event)
+                                ? value.filter((selected) => selected !== event)
+                                : [...value, event],
+                        );
+                    };
+                    return (
+                        <FormItem>
+                            <FormLabel>{t('webhookTriggerEvents')}</FormLabel>
+                            <div className="flex flex-wrap gap-4">
+                                {WEBHOOK_TRIGGER_EVENTS.map((event) => (
+                                    <Label
+                                        key={event}
+                                        className="flex cursor-pointer items-center gap-1.5 text-xs"
+                                    >
+                                        <Checkbox
+                                            checked={value.includes(event)}
+                                            onCheckedChange={() => toggle(event)}
+                                        />
+                                        {t(TRIGGER_EVENT_LABELS[event])}
+                                    </Label>
+                                ))}
+                            </div>
+                            <FormDescription className={'text-xs'}>
+                                {t('webhookTriggerEventsDescription')}
+                            </FormDescription>
+                            <FormMessage className="text-xs" />
+                        </FormItem>
+                    );
+                }}
+            />
+
+            <FormField
+                control={form.control}
                 name="branchFilter"
                 render={({ field }) => (
                     <FormItem>
@@ -99,6 +180,72 @@ export function WebhookCloneConfig() {
                     </FormItem>
                 )}
             />
+
+            {selectedEvents.includes('merge_request') && (
+                <FormField
+                    control={form.control}
+                    name="mergeRequestActions"
+                    render={({ field }) => {
+                        const value: MergeRequestActionOption[] = field.value ?? [
+                            'opened',
+                            'updated',
+                        ];
+                        const toggle = (action: MergeRequestActionOption) => {
+                            field.onChange(
+                                value.includes(action)
+                                    ? value.filter((selected) => selected !== action)
+                                    : [...value, action],
+                            );
+                        };
+                        return (
+                            <FormItem>
+                                <FormLabel>{t('webhookMergeRequestActions')}</FormLabel>
+                                <div className="flex flex-wrap gap-4">
+                                    {MERGE_REQUEST_ACTIONS.map((action) => (
+                                        <Label
+                                            key={action}
+                                            className="flex cursor-pointer items-center gap-1.5 text-xs"
+                                        >
+                                            <Checkbox
+                                                checked={value.includes(action)}
+                                                onCheckedChange={() => toggle(action)}
+                                            />
+                                            {t(MERGE_REQUEST_ACTION_LABELS[action])}
+                                        </Label>
+                                    ))}
+                                </div>
+                                <FormDescription className={'text-xs'}>
+                                    {t('webhookMergeRequestActionsDescription')}
+                                </FormDescription>
+                                <FormMessage className="text-xs" />
+                            </FormItem>
+                        );
+                    }}
+                />
+            )}
+
+            {selectedEvents.includes('tag') && (
+                <FormField
+                    control={form.control}
+                    name="tagFilter"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('webhookTagFilter')}</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...field}
+                                    value={field.value ?? ''}
+                                    placeholder={t('webhookTagFilterPlaceholder')}
+                                />
+                            </FormControl>
+                            <FormDescription className={'text-xs'}>
+                                {t('webhookTagFilterDescription')}
+                            </FormDescription>
+                            <FormMessage className="text-xs" />
+                        </FormItem>
+                    )}
+                />
+            )}
 
             <FormField
                 control={form.control}

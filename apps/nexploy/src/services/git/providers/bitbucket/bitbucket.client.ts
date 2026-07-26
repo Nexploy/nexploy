@@ -147,7 +147,13 @@ export async function bitbucketCreateWebhook(
                 url: webhookUrl,
                 active: true,
                 secret,
-                events: ['repo:push'],
+                events: [
+                    'repo:push',
+                    'pullrequest:created',
+                    'pullrequest:updated',
+                    'pullrequest:fulfilled',
+                    'pullrequest:rejected',
+                ],
             },
         })
         .json<{ uuid: string }>();
