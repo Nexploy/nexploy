@@ -4,6 +4,7 @@ interface EventFilter {
     types?: string[];
     actions?: string[];
     actorIds?: string[];
+    names?: string[];
     search?: string;
 }
 
@@ -21,8 +22,11 @@ export interface EventsState {
 
     searchQuery: string;
     typeFilter: string;
+    nameFilter: string;
     setSearchQuery: (query: string) => void;
     setTypeFilter: (type: string) => void;
+    setNameFilter: (name: string) => void;
+    getAvailableNames: () => string[];
 
     setEvents: (events: DockerEventData[]) => void;
     addEvent: (event: DockerEventData) => void;

@@ -4,8 +4,8 @@ import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import { Bug, ChevronLeft, ChevronRight } from 'lucide-react';
 import dayjs from 'dayjs';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
-import { useEventsStore } from '@/stores/docker/useEventsStore';
-import { useState } from 'react';
+import { getEventDisplayName, useEventsStore } from '@/stores/docker/useEventsStore';
+import { useMemo, useState } from 'react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import {
@@ -27,7 +27,6 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
-import { DockerEventData } from '@workspace/typescript-interface/docker/docker.events';
 import { useTranslations } from 'next-intl';
 
 export default function EventsPage() {
@@ -35,13 +34,17 @@ export default function EventsPage() {
     const tCommon = useTranslations('common');
 
     const {
+        events,
         filteredEvents,
         lastUpdate,
         eventsReceived,
         searchQuery,
         typeFilter,
+        nameFilter,
         setSearchQuery,
         setTypeFilter,
+        setNameFilter,
+        getAvailableNames,
     } = useEventsStore();
 
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
@@ -58,6 +61,13 @@ export default function EventsPage() {
         setTypeFilter(value);
         setCurrentPage(0);
     };
+
+    const handleNameFilterChange = (value: string) => {
+        setNameFilter(value);
+        setCurrentPage(0);
+    };
+
+    const availableNames = useMemo(() => getAvailableNames(), [events, typeFilter]);
 
     const getActionColor = (action: string) => {
         switch (action) {
@@ -103,15 +113,6 @@ export default function EventsPage() {
         }
     };
 
-    const getEventName = (event: DockerEventData) => {
-        const name = event.Actor.Attributes?.name;
-        const id = event.Actor.ID;
-
-        if (name) return name;
-        if (id) return id.substring(0, 12);
-        return 'Unknown';
-    };
-
     const getLocaleDate = (timestamp: number) => {
         return dayjs(timestamp).format('DD/MM/YYYY HH:mm:ss');
     };
@@ -140,29 +141,53 @@ export default function EventsPage() {
                 </div>
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">
-                <div className={'space-y-3 pt-1 pb-5'}>
+                <div className={'space-y-3 pb-5 pt-1'}>
                     <div className={'mx-5 flex flex-wrap justify-between gap-3'}>
                         <Input
-                            className={'w-56 shadow-xs'}
+                            className={'shadow-xs w-56'}
                             placeholder={t('searchByNameAction')}
                             value={searchQuery}
                             onChange={(e) => handleSearchChange(e.target.value)}
                         />
-                        <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
-                            <SelectTrigger>
-                                <SelectValue placeholder={t('type')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>{t('type')}</SelectLabel>
-                                    <SelectItem value="all">{t('all')}</SelectItem>
-                                    <SelectItem value="container">{t('container')}</SelectItem>
-                                    <SelectItem value="image">{t('image')}</SelectItem>
-                                    <SelectItem value="network">{t('network')}</SelectItem>
-                                    <SelectItem value="volume">{t('volume')}</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                        <div className={'flex flex-wrap gap-3'}>
+                            <Select
+                                value={nameFilter}
+                                onValueChange={handleNameFilterChange}
+                                disabled={!availableNames.length}
+                            >
+                                <SelectTrigger className={'min-w-40 max-w-56'}>
+                                    <SelectValue placeholder={t('nameId')} />
+                                </SelectTrigger>
+                                <SelectContent className={'max-h-72'}>
+                                    <SelectGroup>
+                                        <SelectLabel>{t('nameId')}</SelectLabel>
+                                        <SelectItem value="all">{t('allNames')}</SelectItem>
+                                        {availableNames.map((name) => (
+                                            <SelectItem key={name} value={name}>
+                                                <span className={'truncate font-mono text-sm'}>
+                                                    {name}
+                                                </span>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
+                                <SelectTrigger className={'min-w-40 max-w-56'}>
+                                    <SelectValue placeholder={t('type')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>{t('type')}</SelectLabel>
+                                        <SelectItem value="all">{t('all')}</SelectItem>
+                                        <SelectItem value="container">{t('container')}</SelectItem>
+                                        <SelectItem value="image">{t('image')}</SelectItem>
+                                        <SelectItem value="network">{t('network')}</SelectItem>
+                                        <SelectItem value="volume">{t('volume')}</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
 
                     <div className="bg-card mx-5 overflow-hidden rounded-md border shadow-sm">
@@ -220,7 +245,7 @@ export default function EventsPage() {
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="max-w-60 truncate font-mono text-sm font-medium">
-                                                    {getEventName(event)}
+                                                    {getEventDisplayName(event)}
                                                 </TableCell>
                                             </TableRow>
                                         );

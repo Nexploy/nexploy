@@ -139,7 +139,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                         value={statusFilter}
                         onValueChange={(value: BuildStatus) => setStatusFilter(value)}
                     >
-                        <SelectTrigger className="w-40">
+                        <SelectTrigger className="min-w-40">
                             <SelectValue placeholder={t('filterByStatus')} />
                         </SelectTrigger>
                         <SelectContent>

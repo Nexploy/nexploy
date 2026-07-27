@@ -69,6 +69,7 @@
     "type": "Type",
     "action": "Action",
     "nameId": "Nom / ID",
+    "allNames": "Tous les noms",
     "searchByNameAction": "Rechercher par nom, action...",
     "all": "Tous",
     "container": "Conteneur",
