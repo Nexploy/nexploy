@@ -48,7 +48,7 @@ const nodeTypes = {
 const edgeTypes = { 'gradient-edge': GradientEdge };
 
 const canvasControlButtonClassName =
-    'bg-sidebar/85 border-border/70 hover:bg-sidebar size-8 border shadow-lg backdrop-blur-md';
+    'bg-sidebar/85 border-border/70 hover:bg-sidebar size-8 border  backdrop-blur-md';
 
 export function PipelineCanvas() {
     const t = useTranslations('repository.pipeline');
@@ -116,6 +116,11 @@ export function PipelineCanvas() {
         setNodes,
     } = usePipelineActions();
 
+    const selectedCount = useStore(
+        (s) => s.nodes.filter((n) => n.selected).length,
+        (a, b) => a === b,
+    );
+
     const activeBuildIndex = builds.findIndex((b) => b.id === activeBuildId);
     const activeBuildNumber = activeBuildIndex !== -1 ? builds.length - activeBuildIndex : null;
 
@@ -182,6 +187,7 @@ export function PipelineCanvas() {
     useHotkeys(['delete', 'backspace'], () => handleDeleteSelection(), {
         preventDefault: true,
         ref: wrapperRef,
+        enabled: selectedCount > 0,
     });
     useHotkeys('meta+z', () => undo(), { preventDefault: true, capture: true, ref: wrapperRef });
     useHotkeys('meta+shift+z', () => redo(), {

@@ -26,6 +26,11 @@ export const volumeDeleteSchema = z.object({
     volumeNames: z.array(z.string()).min(1, 'At least one volume name is required'),
 });
 
+export const volumePruneSchema = z.object({
+    all: z.boolean().optional().default(false),
+    filter: z.string().optional(),
+});
+
 export const volumeNameParamSchema = z.object({
     name: z.string().min(1),
 });

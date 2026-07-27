@@ -7,6 +7,8 @@ type Options = {
     stopPropagation?: boolean;
     capture?: boolean;
     ref?: RefObject<HTMLElement | null>;
+    enabled?: boolean;
+    ignoreInputs?: boolean;
 };
 
 const isMac = typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac');
@@ -40,9 +42,13 @@ export function useHotkeys(
         stopPropagation = false,
         capture = false,
         ref,
+        enabled = true,
+        ignoreInputs = true,
     } = options;
 
     useEffect(() => {
+        if (!enabled) return;
+
         const configs = (Array.isArray(hotkey) ? hotkey : [hotkey]).map(parseHotkey);
         const target: HTMLElement | Document = ref?.current ?? document;
 
@@ -50,6 +56,14 @@ export function useHotkeys(
             const event = e as KeyboardEvent;
 
             if (!event.key) return;
+
+            if (ignoreInputs) {
+                const el = event.target as HTMLElement | null;
+                const isTyping =
+                    el?.tagName === 'INPUT' || el?.tagName === 'TEXTAREA' || el?.isContentEditable;
+                if (isTyping) return;
+            }
+
             const raw = event.key.toLowerCase();
             const key = raw === ' ' ? 'space' : raw;
 

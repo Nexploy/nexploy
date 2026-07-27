@@ -32,6 +32,8 @@ import { tagImageExecutor } from './executors/tag-image.executor';
 import { scanImageExecutor } from './executors/scan-image.executor';
 import { pruneImagesExecutor } from './executors/prune-images.executor';
 import { pruneBuildCacheExecutor } from './executors/prune-build-cache.executor';
+import { pruneContainersExecutor } from './executors/prune-containers.executor';
+import { pruneVolumesExecutor } from './executors/prune-volumes.executor';
 import { downloadFileExecutor } from './executors/download-file.executor';
 import { backupVolumeBucketStorageExecutor } from './executors/backup-volume-bucket-storage.executor';
 import { createServiceExecutor } from './executors/create-service.executor';
@@ -102,6 +104,8 @@ const executors: INodeExecutor[] = [
     scanImageExecutor,
     pruneImagesExecutor,
     pruneBuildCacheExecutor,
+    pruneContainersExecutor,
+    pruneVolumesExecutor,
     deleteImageExecutor,
     deleteNetworkExecutor,
     deleteVolumeExecutor,

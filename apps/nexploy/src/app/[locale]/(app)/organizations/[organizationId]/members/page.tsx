@@ -57,6 +57,7 @@ export default async function OrganizationMembersPage({
                                 invitations={detail.invitations}
                                 currentUserId={session.user.id}
                                 canManageMembers={canManageMembers}
+                                callerRole={detail.callerRole}
                             />
                         </div>
                     </ScrollAreaWithShadow>

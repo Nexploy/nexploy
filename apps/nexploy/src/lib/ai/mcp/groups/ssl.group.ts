@@ -23,7 +23,7 @@ export const sslGroup: ToolGroup = {
             'listSslCertificates',
             { description: "List all SSL certificates (Let's Encrypt and custom)." },
             async () => {
-                const g = guard(ctx, 'repository', 'read');
+                const g = guard(ctx, 'ssl', 'read');
                 if (g) return g;
                 try {
                     const certs = await getCertificates();
@@ -49,7 +49,7 @@ export const sslGroup: ToolGroup = {
                 inputSchema: createLetsEncryptCertSchema.shape,
             },
             async ({ name, domain, email }) => {
-                const g = guard(ctx, 'repository', 'update');
+                const g = guard(ctx, 'ssl', 'manage');
                 if (g) return g;
                 try {
                     const cert = await createLetsEncryptCertificate(name, domain, email);
@@ -69,7 +69,7 @@ export const sslGroup: ToolGroup = {
                 inputSchema: createCustomCertSchema.shape,
             },
             async ({ name, domain, certificate, privateKey }) => {
-                const g = guard(ctx, 'repository', 'update');
+                const g = guard(ctx, 'ssl', 'manage');
                 if (g) return g;
                 try {
                     const cert = await createCustomCertificate(
@@ -94,7 +94,7 @@ export const sslGroup: ToolGroup = {
                 inputSchema: deleteCertSchema.shape,
             },
             async ({ id }) => {
-                const g = guardDestructive(ctx, 'repository', 'update', id);
+                const g = guardDestructive(ctx, 'ssl', 'manage', id);
                 if (g) return g;
                 try {
                     await deleteSslCertificate(id);

@@ -20,9 +20,7 @@ export const leaveOrganizationAction = authActionServer
             throw new Error(t('errors.cannotLeaveAsSoleOwner'));
         }
 
-        const wasActiveOrganization =
-            (session.session as { activeOrganizationId?: string | null }).activeOrganizationId ===
-            organizationId;
+        const wasActiveOrganization = session.session.activeOrganizationId === organizationId;
 
         try {
             const result = await auth.api.leaveOrganization({

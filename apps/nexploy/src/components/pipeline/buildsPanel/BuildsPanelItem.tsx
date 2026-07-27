@@ -35,7 +35,7 @@ export const BuildsPanelItem = memo(function BuildsPanelItem({
             onKeyDown={(e) => e.key === 'Enter' && setActiveBuildId(isSelected ? null : build.id)}
             className={cn(
                 buttonVariants({ variant: isSelected ? 'default' : 'ghost', size: 'sm' }),
-                'relative h-auto cursor-pointer flex-col items-start gap-0.5 border px-2.5 py-1.5 shadow-lg backdrop-blur-md duration-0',
+                'relative h-auto cursor-pointer flex-col items-start gap-0.5 border px-2.5 py-1.5 backdrop-blur-md duration-0',
                 isSelected
                     ? 'border-transparent'
                     : 'bg-sidebar/85 border-border/70 hover:bg-sidebar',

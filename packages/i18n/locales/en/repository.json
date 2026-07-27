@@ -535,6 +535,14 @@
                 "name": "Prune Build Cache",
                 "description": "Clear the Docker build cache to free disk space"
             },
+            "prune-containers": {
+                "name": "Prune Containers",
+                "description": "Remove all stopped containers to free disk space"
+            },
+            "prune-volumes": {
+                "name": "Prune Volumes",
+                "description": "Remove unused Docker volumes to free disk space"
+            },
             "delete-image": {
                 "name": "Delete Image",
                 "description": "Delete a specific Docker image by name or ID"
@@ -903,6 +911,7 @@
             "pruneFilterPlaceholder": "label=project=myapp",
             "pruneBuildCacheKeepStoragePlaceholder": "10GB",
             "pruneBuildCacheFilterPlaceholder": "until=24h",
+            "pruneVolumesAll": "Include Named Volumes",
             "webhookUrlPlaceholder": "https://hooks.example.com/…",
             "jsonBodyPlaceholder": "'{'\"key\": \"value\"'}'",
             "httpUrlPlaceholder": "https://example.com/webhook",
@@ -1049,6 +1058,10 @@
             "desc_removedImages": "Number of Docker images removed",
             "desc_deletedCaches": "Number of build cache entries removed",
             "desc_reclaimedSpace": "Disk space reclaimed in bytes",
+            "removedContainers": "Removed containers",
+            "desc_removedContainers": "Number of stopped containers removed",
+            "removedVolumes": "Removed volumes",
+            "desc_removedVolumes": "Number of unused volumes removed",
             "desc_versionNumber": "Version number that was saved",
             "serviceId": "Service ID",
             "desc_serviceId": "Docker Swarm service ID",

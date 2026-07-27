@@ -10,6 +10,11 @@ export const containerRemoveSchema = z.object({
     force: z.boolean().optional().default(false),
 });
 
+export const containerPruneSchema = z.object({
+    olderThan: z.string().optional(),
+    filter: z.string().optional(),
+});
+
 export const containerIdOrNameParamSchema = z.object({
     idOrName: z.string().min(1),
 });

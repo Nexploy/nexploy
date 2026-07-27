@@ -272,6 +272,16 @@ export const pruneBuildCacheConfigSchema = z.object({
     filter: z.string().optional(),
 });
 
+export const pruneContainersConfigSchema = z.object({
+    olderThan: z.string().optional(),
+    filter: z.string().optional(),
+});
+
+export const pruneVolumesConfigSchema = z.object({
+    all: z.boolean().default(false),
+    filter: z.string().optional(),
+});
+
 export const deleteImageConfigSchema = z.object({
     imageId: refable(z.string().min(1, 'Image ID is required')).default(''),
     force: z.boolean().default(false),

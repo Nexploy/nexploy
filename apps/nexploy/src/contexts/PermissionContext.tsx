@@ -2,6 +2,8 @@
 
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { hasPermission, PermissionActions, PermissionResource, Role } from '@/lib/auth/permissions';
+import { hasOrgPermission, type OrgPermissionResource } from '@/lib/auth/orgPermissions';
+import { isOrgScopedResource } from '@/lib/auth/orgScopedResources';
 
 export type NavPermission = {
     [R in PermissionResource]: { resource: R; action: PermissionActions[R] };
@@ -19,18 +21,30 @@ const PermissionContext = createContext<PermissionContextValue | null>(null);
 interface PermissionProviderProps {
     children: ReactNode;
     role?: string | null;
+    orgRole?: string | null;
 }
 
-export function PermissionProvider({ children, role }: PermissionProviderProps) {
+export function PermissionProvider({ children, role, orgRole }: PermissionProviderProps) {
     const value = useMemo<PermissionContextValue>(
         () => ({
             role: (role as Role) ?? null,
             isAdmin: role === 'admin',
             hasRole: (r: Role) => role === r,
-            can: <R extends PermissionResource>(resource: R, action: PermissionActions[R]) =>
-                hasPermission(role ?? '', resource, action as string),
+            can: <R extends PermissionResource>(resource: R, action: PermissionActions[R]) => {
+                if (isOrgScopedResource(resource) && role !== 'admin') {
+                    return (
+                        !!orgRole &&
+                        hasOrgPermission(
+                            orgRole,
+                            resource as OrgPermissionResource,
+                            action as string,
+                        )
+                    );
+                }
+                return hasPermission(role ?? '', resource, action as string);
+            },
         }),
-        [role],
+        [role, orgRole],
     );
 
     return <PermissionContext.Provider value={value}>{children}</PermissionContext.Provider>;

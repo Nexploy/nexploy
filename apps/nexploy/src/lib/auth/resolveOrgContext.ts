@@ -5,9 +5,15 @@ import { getDomains } from '@/services/traefik.service';
 import type { Session } from '@/lib/auth/auth';
 
 export async function resolveActiveOrganizationId(session: Session): Promise<string | null> {
-    const activeOrganizationId = (session.session as { activeOrganizationId?: string | null })
-        .activeOrganizationId;
-    if (activeOrganizationId) return activeOrganizationId;
+    const activeOrganizationId = session.session.activeOrganizationId;
+
+    if (activeOrganizationId) {
+        const activeMembership = await prisma.member.findFirst({
+            where: { userId: session.user.id, organizationId: activeOrganizationId },
+            select: { organizationId: true },
+        });
+        if (activeMembership) return activeMembership.organizationId;
+    }
 
     const member = await prisma.member.findFirst({
         where: { userId: session.user.id },
@@ -73,8 +79,12 @@ export async function getCallerOrgRole(userId: string, organizationId: string): 
 
 export type OrgResolver = (
     clientInput: unknown,
-    bindArgsClientInputs?: readonly unknown[],
+    bindArgsClientInputs: readonly unknown[] | undefined,
+    session: Session,
 ) => Promise<string | string[] | null>;
+
+export const byActiveOrganization: OrgResolver = (_input, _bindArgsClientInputs, session) =>
+    resolveActiveOrganizationId(session);
 
 export const byRepositoryId: OrgResolver = (input) =>
     resolveOrganizationIdForRepository((input as { repositoryId: string }).repositoryId);

@@ -59,6 +59,8 @@ export type NodeId =
     | 'scan-image'
     | 'prune-images'
     | 'prune-build-cache'
+    | 'prune-containers'
+    | 'prune-volumes'
     | 'delete-image'
     | 'delete-network'
     | 'delete-volume'

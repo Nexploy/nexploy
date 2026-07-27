@@ -5,6 +5,7 @@ import { getAISettings } from '@/services/aiSettings.service';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '../../../../prisma/prisma';
 import { getDefaultEnvironment } from '@/services/environment/environment.service';
+import { getOldestOrganizationId } from '@/services/organization.service';
 
 interface McpSession {
     server: McpServer;
@@ -77,16 +78,17 @@ async function mcpRouteHandler(request: Request): Promise<Response> {
         });
     }
 
-    const [user, defaultEnv] = await Promise.all([
+    const [user, defaultEnv, organizationId] = await Promise.all([
         prisma.user.findUnique({
             where: { id: userId },
             select: { role: true },
         }),
         getDefaultEnvironment(),
+        getOldestOrganizationId(userId),
     ]);
     const role = user?.role ?? 'read';
 
-    const server = createNexployMCPServer(userId, role, aiSettings, defaultEnv?.id);
+    const server = createNexployMCPServer(userId, role, organizationId, aiSettings, defaultEnv?.id);
 
     const transport = new WebStandardStreamableHTTPServerTransport({
         sessionIdGenerator: () => crypto.randomUUID(),

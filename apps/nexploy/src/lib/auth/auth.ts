@@ -5,7 +5,11 @@ import { nextCookies } from 'better-auth/next-js';
 import { admin, mcp, organization, twoFactor } from 'better-auth/plugins';
 import { apiKey } from '@better-auth/api-key';
 import { orgAc, orgAdmin, orgMember, orgOwner } from './orgPermissions';
-import { personalOrganizationSlug } from '@/services/organization.service';
+import {
+    getOldestOrganizationId,
+    personalOrganizationSlug,
+    teardownPersonalOrganizationRepositories,
+} from '@/services/organization.service';
 import { permission } from './permissions';
 
 const extraTrustedOrigins = process.env.TRUSTED_ORIGINS
@@ -35,6 +39,16 @@ export const auth = betterAuth({
         updateAge: 60 * 60 * 24,
     },
     databaseHooks: {
+        session: {
+            create: {
+                before: async (session) => ({
+                    data: {
+                        ...session,
+                        activeOrganizationId: await getOldestOrganizationId(session.userId),
+                    },
+                }),
+            },
+        },
         user: {
             create: {
                 after: async (user) => {
@@ -55,6 +69,16 @@ export const auth = betterAuth({
                 },
             },
             delete: {
+                before: async (user) => {
+                    try {
+                        await teardownPersonalOrganizationRepositories(user.id);
+                    } catch (error) {
+                        console.error(
+                            `[AUTH] Failed to tear down personal organization repositories for user ${user.id}`,
+                            error,
+                        );
+                    }
+                },
                 after: async (user) => {
                     try {
                         await prisma.organization.deleteMany({

@@ -38,6 +38,6 @@
         "@workspace/eslint-config": "workspace:^",
         "@workspace/typescript-config": "workspace:*",
         "tsx": "^4.20.6",
-        "typescript": "6.0.3"
+        "typescript": "7.0.2"
     }
 }

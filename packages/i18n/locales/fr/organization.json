@@ -18,7 +18,9 @@
         "invite": "Inviter un membre",
         "inviteDescription": "L'utilisateur invité doit déjà avoir un compte Nexploy",
         "remove": "Retirer le membre",
-        "confirmRemove": "Retirer {name} de cette organisation ?"
+        "confirmRemove": "Retirer {name} de cette organisation ?",
+        "transferOwnership": "Transférer la propriété",
+        "confirmTransferOwnership": "Faire de {name} un propriétaire de cette organisation ? Les propriétaires ont un contrôle total, y compris sa suppression."
     },
     "invitations": {
         "pending": "Invitations en attente",
@@ -44,6 +46,7 @@
         "notFound": "Organisation introuvable",
         "cannotRemoveLastOwner": "Impossible de retirer le dernier propriétaire de l'organisation",
         "cannotDemoteLastOwner": "Impossible de changer le rôle du dernier propriétaire",
+        "onlyOwnerCanTransferOwnership": "Seul un propriétaire peut transférer la propriété",
         "cannotLeaveAsSoleOwner": "Tu es l'unique propriétaire : supprime l'organisation avant de la quitter",
         "hasRepositories": "Cette organisation possède encore des dépôts. Réassigne-les ou supprime-les d'abord",
         "createFailed": "Échec de la création de l'organisation",

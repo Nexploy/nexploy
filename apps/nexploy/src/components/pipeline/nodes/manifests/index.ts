@@ -32,6 +32,8 @@ import { tagImageManifest } from './tag-image.manifest';
 import { scanImageManifest } from './scan-image.manifest';
 import { pruneImagesManifest } from './prune-images.manifest';
 import { pruneBuildCacheManifest } from './prune-build-cache.manifest';
+import { pruneContainersManifest } from './prune-containers.manifest';
+import { pruneVolumesManifest } from './prune-volumes.manifest';
 import { downloadFileManifest } from './download-file.manifest';
 import { backupVolumeBucketStorageManifest } from './backup-volume-bucket-storage.manifest';
 import { createServiceManifest } from './create-service.manifest';
@@ -101,6 +103,8 @@ export const allBuiltinManifests: NodeManifest[] = [
     scanImageManifest,
     pruneImagesManifest,
     pruneBuildCacheManifest,
+    pruneContainersManifest,
+    pruneVolumesManifest,
     deleteImageManifest,
     deleteNetworkManifest,
     deleteVolumeManifest,

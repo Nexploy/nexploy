@@ -7,6 +7,7 @@ import {
     volumeDeleteQuerySchema,
     volumeDeleteSchema,
     volumeNameParamSchema,
+    volumePruneSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { cacheRestoreSchema, cacheSaveSchema, } from '@workspace/schemas-zod/docker/volume/volumeCache.schema';
 import { restoreCache, saveCache } from '@/services/cacheService';
@@ -80,8 +81,22 @@ app.post(
 
 app.post(
     '/prune',
-    route(async () => {
-        return await docker.pruneVolumes();
+    route({ json: volumePruneSchema }, async (c) => {
+        const { all, filter } = c.req.valid('json');
+
+        const filters: Record<string, string[]> = {};
+        if (all) filters.all = ['true'];
+        if (filter) filters.label = [filter];
+
+        const result = (await docker.pruneVolumes({ filters: JSON.stringify(filters) })) as {
+            VolumesDeleted?: string[] | null;
+            SpaceReclaimed?: number;
+        };
+
+        return {
+            removedVolumes: result.VolumesDeleted?.length ?? 0,
+            reclaimedSpace: result.SpaceReclaimed ?? 0,
+        };
     }),
 );
 

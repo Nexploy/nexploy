@@ -38,6 +38,8 @@ export const nodeTypeSchema = z.enum([
     'scan-image',
     'prune-images',
     'prune-build-cache',
+    'prune-containers',
+    'prune-volumes',
     'delete-image',
     'delete-network',
     'delete-volume',
