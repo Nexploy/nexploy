@@ -1,3 +1,4 @@
+import '@/server/asyncLocalStorage';
 import 'dotenv/config';
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import next from 'next';
