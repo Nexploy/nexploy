@@ -9,11 +9,11 @@ import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 export const deleteEnvVariableAction = authActionServer
     .use(requirePermission('envVar', 'write', byRepositoryId))
     .inputSchema(z.object({ repositoryId: z.string(), envVariableId: z.string() }))
-    .action(async ({ parsedInput, ctx }) => {
+    .action(async ({ parsedInput }) => {
         const { repositoryId, envVariableId } = parsedInput;
 
         try {
-            await updateEnvVariables(repositoryId, ctx.session.user.id, {
+            await updateEnvVariables(repositoryId, {
                 updates: [],
                 creates: [],
                 deleteIds: [envVariableId],

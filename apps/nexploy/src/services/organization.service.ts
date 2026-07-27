@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { prisma } from '../../prisma/prisma';
 import type { UserOrganization } from '@workspace/typescript-interface/organization/organization';
+import { teardownRepositoryWebhook } from '@/services/webhook/repoWebhook.service';
 
 const PERSONAL_ORGANIZATION_SLUG_PREFIX = 'personal-';
 const ORGANIZATION_SLUG_MAX_LENGTH = 100;
@@ -61,6 +62,24 @@ export async function getUserOrganizations(userId: string): Promise<UserOrganiza
         canLeave: role !== 'owner' || organization.members.length > 1,
         isPersonal: organization.slug === personalOrganizationSlug(userId),
     }));
+}
+
+export async function teardownPersonalOrganizationRepositories(userId: string) {
+    const repositories = await prisma.repository.findMany({
+        where: { organization: { slug: personalOrganizationSlug(userId) } },
+        select: { id: true },
+    });
+
+    for (const { id } of repositories) {
+        try {
+            await teardownRepositoryWebhook(id);
+        } catch (error) {
+            console.error(
+                `[AUTH] Failed to tear down webhook for repository ${id} of deleted user ${userId}`,
+                error,
+            );
+        }
+    }
 }
 
 export async function countOrganizationOwners(organizationId: string) {

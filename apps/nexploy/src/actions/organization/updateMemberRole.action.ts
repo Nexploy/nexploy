@@ -28,7 +28,13 @@ export const updateMemberRoleAction = authActionServer
             throw new Error(t('errors.notFound'));
         }
 
-        if (target.role === 'owner') {
+        const isPromotionToOwner = parsedInput.role === 'owner';
+
+        if (isPromotionToOwner && callerRole !== 'owner') {
+            throw new Error(t('errors.onlyOwnerCanTransferOwnership'));
+        }
+
+        if (target.role === 'owner' && !isPromotionToOwner) {
             const ownerCount = await prisma.member.count({
                 where: { organizationId: parsedInput.organizationId, role: 'owner' },
             });

@@ -51,7 +51,7 @@ export const requirePermission = <R extends PermissionResource>(
             const t = await getTranslations('common');
 
             if (isOrgScopedResource(resource) && role !== 'admin' && orgResolver) {
-                const resolved = await orgResolver(clientInput, bindArgsClientInputs);
+                const resolved = await orgResolver(clientInput, bindArgsClientInputs, ctx.session);
                 const organizationIds = Array.isArray(resolved) ? resolved : resolved ? [resolved] : [];
 
                 if (organizationIds.length === 0) {

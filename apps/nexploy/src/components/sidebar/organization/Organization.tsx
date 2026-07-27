@@ -8,9 +8,7 @@ export async function Organization() {
 
     const organizations = await getUserOrganizations(session.user.id);
     const activeOrganizationId =
-        (session.session as { activeOrganizationId?: string | null }).activeOrganizationId ??
-        organizations[0]?.id ??
-        null;
+        session.session.activeOrganizationId ?? organizations[0]?.id ?? null;
 
     return (
         <DropdownOrganization

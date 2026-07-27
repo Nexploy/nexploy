@@ -34,6 +34,7 @@ import {
 import { removeMemberAction } from '@/actions/organization/removeMember.action';
 import { updateMemberRoleAction } from '@/actions/organization/updateMemberRole.action';
 import { cancelInvitationAction } from '@/actions/organization/cancelInvitation.action';
+import type { UpdateMemberRoleInput } from '@workspace/schemas-zod/organization/updateMemberRole.schema';
 
 interface MembersSectionProps {
     organizationId: string;
@@ -41,6 +42,7 @@ interface MembersSectionProps {
     invitations: OrganizationInvitation[];
     currentUserId: string;
     canManageMembers: boolean;
+    callerRole: string | null;
 }
 
 const getInitials = (name: string) =>
@@ -57,6 +59,7 @@ export function MembersSection({
     invitations,
     currentUserId,
     canManageMembers,
+    callerRole,
 }: MembersSectionProps) {
     const t = useTranslations('organization');
     const tCommon = useTranslations('common');
@@ -94,6 +97,23 @@ export function MembersSection({
     const { execute: executeCancel, isPending: isCancelling } = useAction(cancelInvitationAction, {
         onSuccess: ({ input }) => removeInvitationFromStore(input.invitationId),
     });
+
+    const canTransferOwnership = callerRole === 'owner';
+
+    const handleRoleChange = (member: OrganizationMember, role: UpdateMemberRoleInput['role']) => {
+        if (role !== 'owner') {
+            executeUpdateRole({ organizationId, memberId: member.id, role });
+            return;
+        }
+
+        openAlertDialog({
+            title: t('members.transferOwnership'),
+            description: t('members.confirmTransferOwnership', { name: member.user.name }),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: t('members.transferOwnership'),
+            onAction: async () => executeUpdateRole({ organizationId, memberId: member.id, role }),
+        });
+    };
 
     const handleRemove = (member: OrganizationMember) => {
         openAlertDialog({
@@ -147,16 +167,17 @@ export function MembersSection({
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        {canManageMembers && member.role !== 'owner' ? (
+                                        {canManageMembers &&
+                                        (member.role !== 'owner' ||
+                                            (canTransferOwnership && !isSoleOwner)) ? (
                                             <Select
                                                 value={member.role}
                                                 disabled={isUpdatingRole}
                                                 onValueChange={(role) =>
-                                                    executeUpdateRole({
-                                                        organizationId,
-                                                        memberId: member.id,
-                                                        role: role as 'admin' | 'member',
-                                                    })
+                                                    handleRoleChange(
+                                                        member,
+                                                        role as UpdateMemberRoleInput['role'],
+                                                    )
                                                 }
                                             >
                                                 <SelectTrigger size="sm" className="w-32">
@@ -169,6 +190,11 @@ export function MembersSection({
                                                     <SelectItem value="admin">
                                                         {t('roles.admin')}
                                                     </SelectItem>
+                                                    {canTransferOwnership && (
+                                                        <SelectItem value="owner">
+                                                            {t('roles.owner')}
+                                                        </SelectItem>
+                                                    )}
                                                 </SelectContent>
                                             </Select>
                                         ) : (

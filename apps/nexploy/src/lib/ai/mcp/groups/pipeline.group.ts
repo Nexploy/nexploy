@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { prisma } from '@/../prisma/prisma';
-import { fail, guard, ok } from '../helpers';
+import { fail, guard, guardRepository, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 import { decrypt } from '@/lib/encryption';
 import { getValidToken } from '@/services/git/core/token.service';
@@ -296,7 +296,7 @@ export const pipelineGroup: ToolGroup = {
                 inputSchema: analyzeRepositorySchema.shape,
             },
             async ({ repositoryId, branch }) => {
-                const g = guard(ctx, 'repository', 'read');
+                const g = await guardRepository(ctx, repositoryId, 'repository', 'read');
                 if (g) return g;
                 try {
                     const repo = await prisma.repository.findUnique({
@@ -404,7 +404,7 @@ export const pipelineGroup: ToolGroup = {
                 inputSchema: savePipelineMcpSchema.shape,
             },
             async ({ repositoryId, stageId, nodes, edges }) => {
-                const g = guard(ctx, 'repository', 'update');
+                const g = await guardRepository(ctx, repositoryId, 'pipeline', 'update');
                 if (g) return g;
                 try {
                     const repo = await prisma.repository.findUnique({

@@ -18,7 +18,9 @@
         "invite": "Invite member",
         "inviteDescription": "The invited user must already have a Nexploy account",
         "remove": "Remove member",
-        "confirmRemove": "Remove {name} from this organization?"
+        "confirmRemove": "Remove {name} from this organization?",
+        "transferOwnership": "Transfer ownership",
+        "confirmTransferOwnership": "Make {name} an owner of this organization? Owners have full control, including deleting it."
     },
     "invitations": {
         "pending": "Pending invitations",
@@ -44,6 +46,7 @@
         "notFound": "Organization not found",
         "cannotRemoveLastOwner": "Cannot remove the last owner of the organization",
         "cannotDemoteLastOwner": "Cannot change the role of the last owner",
+        "onlyOwnerCanTransferOwnership": "Only an owner can transfer ownership",
         "cannotLeaveAsSoleOwner": "You are the sole owner: delete the organization before leaving",
         "hasRepositories": "This organization still owns repositories. Reassign or delete them first",
         "createFailed": "Failed to create organization",

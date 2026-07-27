@@ -6,6 +6,7 @@ import { McpServerOptions } from '@workspace/typescript-interface/ai/mcp';
 export function createNexployMCPServer(
     userId: string,
     role: string,
+    organizationId: string | null,
     options: McpServerOptions = {},
     defaultEnvironmentId?: string,
 ): McpServer {
@@ -13,6 +14,7 @@ export function createNexployMCPServer(
     const ctx: ToolContext = {
         userId,
         role,
+        organizationId,
         environmentId: defaultEnvironmentId,
         ...options,
         confirmedTargets: new Set<string>(),

@@ -9,7 +9,7 @@ import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 export const onEnvVariableAction = authActionServer
     .use(requirePermission('envVar', 'write', byRepositoryId))
     .inputSchema(envVariableSchema)
-    .action(async ({ parsedInput, ctx }) => {
+    .action(async ({ parsedInput }) => {
         const { repositoryId, stageId, envVariables, deleteIds } = parsedInput;
 
         try {
@@ -30,7 +30,6 @@ export const onEnvVariableAction = authActionServer
 
             return await updateEnvVariables(
                 repositoryId,
-                ctx.session.user.id,
                 {
                     updates,
                     creates,

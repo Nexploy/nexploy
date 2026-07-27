@@ -11,7 +11,7 @@ import {
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { Container } from '@workspace/typescript-interface/docker/docker.container';
-import { fail, guard, guardDestructive, ok } from '../helpers';
+import { fail, guard, guardContainer, guardDestructiveContainer, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 
 async function resolveContainer(
@@ -120,8 +120,6 @@ export const containersGroup: ToolGroup = {
                 inputSchema: mcpContainerActionSchema.shape,
             },
             async ({ idOrName, action }) => {
-                const g = guard(ctx, 'container', 'manage');
-                if (g) return g;
                 try {
                     const containers = await kyDocker
                         .get('containers', { environmentId: ctx.environmentId } as KyDockerOptions)
@@ -138,13 +136,21 @@ export const containersGroup: ToolGroup = {
                     }
                     const name = match.name.replace(/^\//, '');
                     if (action === 'remove') {
-                        const gd = guardDestructive(ctx, 'container', 'manage', name);
+                        const gd = await guardDestructiveContainer(
+                            ctx,
+                            match.id,
+                            'container',
+                            'remove',
+                            name,
+                        );
                         if (gd) return gd;
                         await kyDocker.delete('container/remove', {
                             json: { containerIds: [match.id] },
                             environmentId: ctx.environmentId,
                         } as KyDockerOptions);
                     } else {
+                        const go = await guardContainer(ctx, match.id, 'container', 'manage');
+                        if (go) return go;
                         await kyDocker.post(`container/${action}`, {
                             json: { containerIds: [match.id] },
                             environmentId: ctx.environmentId,
@@ -166,11 +172,11 @@ export const containersGroup: ToolGroup = {
                 }).shape,
             },
             async ({ idOrName }) => {
-                const g = guard(ctx, 'container', 'manage');
-                if (g) return g;
                 try {
                     const resolved = await resolveContainer(idOrName, ctx.environmentId);
                     if (!resolved) return fail(`No container matching "${idOrName}"`);
+                    const g = await guardContainer(ctx, resolved.match.id, 'container', 'manage');
+                    if (g) return g;
                     await kyDocker.post('container/pause', {
                         json: { containerIds: [resolved.match.id] },
                         environmentId: ctx.environmentId,
@@ -191,11 +197,11 @@ export const containersGroup: ToolGroup = {
                 }).shape,
             },
             async ({ idOrName }) => {
-                const g = guard(ctx, 'container', 'manage');
-                if (g) return g;
                 try {
                     const resolved = await resolveContainer(idOrName, ctx.environmentId);
                     if (!resolved) return fail(`No container matching "${idOrName}"`);
+                    const g = await guardContainer(ctx, resolved.match.id, 'container', 'manage');
+                    if (g) return g;
                     await kyDocker.post('container/unpause', {
                         json: { containerIds: [resolved.match.id] },
                         environmentId: ctx.environmentId,
@@ -214,7 +220,7 @@ export const containersGroup: ToolGroup = {
                 inputSchema: containerRenameSchema.shape,
             },
             async (params) => {
-                const g = guard(ctx, 'container', 'manage');
+                const g = await guardContainer(ctx, params.containerId, 'container', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -238,7 +244,7 @@ export const containersGroup: ToolGroup = {
                 inputSchema: ContainerRecreateFormSchema.shape,
             },
             async (params: import('zod').infer<typeof ContainerRecreateFormSchema>) => {
-                const g = guard(ctx, 'container', 'manage');
+                const g = await guardContainer(ctx, params.containerId, 'container', 'manage');
                 if (g) return g;
                 try {
                     await kyDocker
@@ -284,9 +290,17 @@ export const containersGroup: ToolGroup = {
                 inputSchema: mcpExecInContainerSchema.shape,
             },
             async ({ idOrName, command }) => {
-                const g = guardDestructive(ctx, 'container', 'manage', idOrName);
-                if (g) return g;
                 try {
+                    const resolved = await resolveContainer(idOrName, ctx.environmentId);
+                    if (!resolved) return fail(`No container matching "${idOrName}"`);
+                    const g = await guardDestructiveContainer(
+                        ctx,
+                        resolved.match.id,
+                        'container',
+                        'manage',
+                        idOrName,
+                    );
+                    if (g) return g;
                     const result = await kyDocker
                         .post(`container/${idOrName}/exec`, {
                             json: { command },

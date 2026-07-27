@@ -22,7 +22,14 @@ import {
     removeBuild,
     startBuildRepository,
 } from '@/services/repository/build.service';
-import { fail, guard, guardDestructive, ok } from '../helpers';
+import {
+    fail,
+    guardBuild,
+    guardDestructiveRepository,
+    guardOrganization,
+    guardRepository,
+    ok,
+} from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 import { resolveOrganizationIdForBuild } from '@/lib/auth/resolveOrgContext';
 
@@ -39,10 +46,19 @@ export const repositoriesGroup: ToolGroup = {
                     'List all Nexploy repositories with their latest build/deployment status.',
             },
             async () => {
-                const g = guard(ctx, 'repository', 'read');
+                const g = await guardOrganization(
+                    ctx,
+                    'repository',
+                    'read',
+                    ctx.organizationId ?? null,
+                );
                 if (g) return g;
                 try {
-                    const repos = await getRepositories(ctx.userId, ctx.role === 'admin');
+                    const repos = await getRepositories(
+                        ctx.userId,
+                        ctx.role === 'admin',
+                        ctx.organizationId,
+                    );
                     const data = repos.map((repo) => ({
                         id: repo.id,
                         name: repo.name,
@@ -69,7 +85,7 @@ export const repositoriesGroup: ToolGroup = {
                 inputSchema: listBuildsSchema.shape,
             },
             async ({ repositoryId }) => {
-                const g = guard(ctx, 'repository', 'read');
+                const g = await guardRepository(ctx, repositoryId, 'repository', 'read');
                 if (g) return g;
                 try {
                     const repo = await getRepositorieById(repositoryId);
@@ -88,7 +104,7 @@ export const repositoriesGroup: ToolGroup = {
                 inputSchema: listBuildsSchema.shape,
             },
             async ({ repositoryId }) => {
-                const g = guard(ctx, 'build', 'read');
+                const g = await guardRepository(ctx, repositoryId, 'build', 'read');
                 if (g) return g;
                 try {
                     const builds = await getBuilds(repositoryId);
@@ -114,7 +130,7 @@ export const repositoriesGroup: ToolGroup = {
                 inputSchema: getBuildLogsSchema.shape,
             },
             async ({ repositoryId, buildId, nodeId }) => {
-                const g = guard(ctx, 'build', 'read');
+                const g = await guardRepository(ctx, repositoryId, 'build', 'read');
                 if (g) return g;
                 try {
                     const logs = await getBuildNodeLogs(repositoryId, buildId, nodeId);
@@ -133,7 +149,7 @@ export const repositoriesGroup: ToolGroup = {
                 inputSchema: mcpTriggerBuildSchema.shape,
             },
             async ({ repositoryId, branch }) => {
-                const g = guard(ctx, 'repository', 'deploy');
+                const g = await guardRepository(ctx, repositoryId, 'deployment', 'deploy');
                 if (g) return g;
                 try {
                     const build = await startBuildRepository({ repositoryId, branch }, ctx.userId);
@@ -152,7 +168,7 @@ export const repositoriesGroup: ToolGroup = {
                 inputSchema: setMcpEnvVariablesSchema.shape,
             },
             async ({ repositoryId, vars }) => {
-                const g = guard(ctx, 'repository', 'update');
+                const g = await guardRepository(ctx, repositoryId, 'envVar', 'write');
                 if (g) return g;
                 try {
                     const repo = await getRepositorieWithEnv(repositoryId);
@@ -171,7 +187,7 @@ export const repositoriesGroup: ToolGroup = {
                         }
                     }
 
-                    await updateEnvVariables(repositoryId, ctx.userId, {
+                    await updateEnvVariables(repositoryId, {
                         updates,
                         creates,
                         deleteIds: [],
@@ -192,7 +208,7 @@ export const repositoriesGroup: ToolGroup = {
                 inputSchema: cancelBuildSchema.shape,
             },
             async ({ buildId }) => {
-                const g = guard(ctx, 'build', 'cancel');
+                const g = await guardBuild(ctx, buildId, 'build', 'cancel');
                 if (g) return g;
                 try {
                     await cancelBuildRepository(buildId);
@@ -210,7 +226,7 @@ export const repositoriesGroup: ToolGroup = {
                 inputSchema: removeBuildSchema.shape,
             },
             async ({ buildId }) => {
-                const g = guard(ctx, 'build', 'delete');
+                const g = await guardBuild(ctx, buildId, 'build', 'delete');
                 if (g) return g;
                 try {
                     const organizationId = await resolveOrganizationIdForBuild(buildId);
@@ -231,7 +247,13 @@ export const repositoriesGroup: ToolGroup = {
                 inputSchema: deleteRepositorySchema.shape,
             },
             async (params) => {
-                const g = guardDestructive(ctx, 'repository', 'delete', params.confirmName);
+                const g = await guardDestructiveRepository(
+                    ctx,
+                    params.repositoryId,
+                    'repository',
+                    'delete',
+                    params.confirmName,
+                );
                 if (g) return g;
                 try {
                     await deleteRepository(params);

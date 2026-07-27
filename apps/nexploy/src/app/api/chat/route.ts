@@ -16,6 +16,7 @@ import type { Provider } from '@workspace/typescript-interface/ai/aiConfig';
 import { getProviderApiKey } from '@/services/aiConfig.service';
 import { getAISettings } from '@/services/aiSettings.service';
 import { createNexployMCPServer } from '@/lib/ai/nexploy-mcp-server';
+import { resolveActiveOrganizationId } from '@/lib/auth/resolveOrgContext';
 
 export const maxDuration = 60;
 
@@ -151,6 +152,7 @@ export const POST = route
             const mcpServer = createNexployMCPServer(
                 ctx.session.user.id,
                 ctx.session.user.role ?? 'read',
+                await resolveActiveOrganizationId(ctx.session),
                 aiSettings,
             );
 

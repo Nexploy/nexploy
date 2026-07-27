@@ -210,7 +210,6 @@ export async function deleteRepository({ repositoryId, confirmName }: DeleteRepo
 
 export async function updateEnvVariables(
     repositoryId: string,
-    userId: string,
     data: {
         updates: { id: string; key: string; value: string }[];
         creates: { key: string; value: string }[];
@@ -221,7 +220,7 @@ export async function updateEnvVariables(
     const t = await getErrorTranslator();
     try {
         const repository = await prisma.repository.findUnique({
-            where: { id: repositoryId, userId },
+            where: { id: repositoryId },
         });
 
         if (!repository) {

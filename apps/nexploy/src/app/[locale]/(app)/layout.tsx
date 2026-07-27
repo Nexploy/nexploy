@@ -12,6 +12,7 @@ import { ChatAIPanel } from '@/components/ai/ChatAIPanel.tsx';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { getAllGitProviders } from '@/services/git/gitProviders.service';
 import { PendingInvitations } from '@/components/organization/PendingInvitations.tsx';
+import { getCallerOrgRole, resolveActiveOrganizationId } from '@/lib/auth/resolveOrgContext';
 
 export default async function AppLayout({
     children,
@@ -28,8 +29,14 @@ export default async function AppLayout({
     const gitProviders = isAdmin ? await getAllGitProviders() : [];
     const showOnboardingTour = isAdmin && gitProviders.length === 0;
 
+    const activeOrganizationId = session ? await resolveActiveOrganizationId(session) : null;
+    const activeOrganizationRole =
+        session && activeOrganizationId
+            ? await getCallerOrgRole(session.user.id, activeOrganizationId)
+            : null;
+
     return (
-        <PermissionProvider role={session?.user?.role}>
+        <PermissionProvider role={session?.user?.role} orgRole={activeOrganizationRole}>
             <SidebarProvider defaultOpen={hasCookieSidebar ? defaultOpen : true}>
                 <AppSidebar variant={'inset'} />
                 <div className={'flex h-screen w-full flex-col'}>
