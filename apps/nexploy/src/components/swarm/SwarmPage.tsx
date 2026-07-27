@@ -14,6 +14,7 @@ import { LeaveSwarmDialog } from './LeaveSwarmDialog';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
+import { Can } from '@/components/permission/Can';
 
 const VALID_TABS = ['overview', 'nodes', 'services'] as const;
 type TabValue = (typeof VALID_TABS)[number];
@@ -41,7 +42,11 @@ export function SwarmPage() {
                                 : t('swarmNotActive')}
                         </p>
                     </div>
-                    {isSwarmActive && <LeaveSwarmDialog />}
+                    {isSwarmActive && (
+                        <Can resource="swarm" action="manage">
+                            <LeaveSwarmDialog />
+                        </Can>
+                    )}
                 </div>
                 {isSwarmActive && (
                     <Button className="mt-5" asChild>

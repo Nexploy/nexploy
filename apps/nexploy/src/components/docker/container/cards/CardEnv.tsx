@@ -96,7 +96,6 @@ export function CardEnv() {
                     </div>
                 ) : (
                     <ScrollAreaWithShadow
-                        colorShadow="from-card via-card/50"
                         bottomShadow
                         className="h-72 overflow-hidden px-6"
                     >

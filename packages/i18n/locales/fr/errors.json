@@ -15,6 +15,7 @@
         "notAuthorizedRelink": "Utilisateur non autorisé à relier ce dépôt",
         "relinkFailed": "Échec de la réassociation du compte Git",
         "alreadyInOrganization": "Le dépôt appartient déjà à cette organisation",
+        "alreadyExistsInTargetOrganization": "Ce dépôt a déjà été ajouté à l'organisation cible",
         "moveFailed": "Échec du déplacement du dépôt vers l'organisation",
         "workDirNotConfigured": "DEPLOYER_WORK_DIR n'est pas configuré"
     },
@@ -93,7 +94,9 @@
         "saveGithubAppFailed": "Échec de l'enregistrement de l'application GitHub",
         "saveGitlabFailed": "Échec de l'enregistrement du fournisseur GitLab",
         "saveGiteaFailed": "Échec de l'enregistrement du fournisseur Gitea",
-        "deleteProviderFailed": "Échec de la suppression du fournisseur Git"
+        "deleteProviderFailed": "Échec de la suppression du fournisseur Git",
+        "saveBitbucketFailed": "Échec de la sauvegarde du fournisseur Bitbucket",
+        "saveAzureReposFailed": "Échec de l’enregistrement du fournisseur Azure Repos"
     },
     "registry": {
         "getFailed": "Échec de la récupération des registres",

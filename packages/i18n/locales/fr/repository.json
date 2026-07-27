@@ -10,7 +10,9 @@
     "providers": {
         "github": "GitHub",
         "gitlab": "GitLab",
-        "gitea": "Gitea"
+        "gitea": "Gitea",
+        "bitbucket": "Bitbucket",
+        "azureRepos": "Azure Repos"
     },
     "create": {
         "title": "Nouveau dépôt",
@@ -230,6 +232,17 @@
             "importEnv": "Importer .env",
             "importSuccess": "{count} variable(s) importée(s)",
             "importError": "Aucune variable valide trouvée dans le fichier",
+            "importInvalidFile": "Seuls les fichiers .env peuvent être importés (.env, .env.local, .env.production…)",
+            "importEmptyFile": "Le fichier sélectionné est vide",
+            "importFileTooLarge": "Fichier trop volumineux (max {size} Mo)",
+            "importReadError": "Impossible de lire le fichier",
+            "importSkipped": "{count, plural, one {# entrée ignorée} other {# entrées ignorées}}",
+            "importDuplicates": "{count, plural, one {# clé en double, dernière valeur conservée} other {# clés en double, dernière valeur conservée}}",
+            "importSkipReason": {
+                "invalidKey": "Clé invalide",
+                "emptyValue": "Valeur vide",
+                "valueTooLong": "Valeur trop longue"
+            },
             "noVariables": "Aucune variable d'environnement configurée.",
             "keyPlaceholder": "Clé",
             "valuePlaceholder": "Valeur",
@@ -249,14 +262,19 @@
             "copied": "Valeur copiée dans le presse-papiers",
             "copyError": "Échec de la copie de la valeur",
             "show": "Afficher la valeur",
-            "hide": "Masquer la valeur"
+            "hide": "Masquer la valeur",
+            "showAll": "Tout afficher",
+            "hideAll": "Tout masquer",
+            "emptyValue": "Vide"
         },
         "source": {
             "connect": "Connecter {provider}",
             "repository": "Dépôt",
             "loading": "Chargement...",
             "selectRepository": "Sélectionner un dépôt",
-            "branch": "Branche"
+            "branch": "Branche",
+            "noRepositoryOnAccount": "Aucun dépôt trouvé sur ce compte",
+            "allRepositoriesAlreadyAdded": "Tous les dépôts de ce compte ont déjà été ajoutés à cette organisation"
         },
         "cloudflare": {
             "loading": "Chargement des zones Cloudflare...",
@@ -348,7 +366,8 @@
             "zoomOut": "Zoom arrière",
             "fitView": "Ajuster la vue",
             "zoomIn": "Zoom avant",
-            "autoLayout": "Réorganiser les nœuds"
+            "autoLayout": "Réorganiser les nœuds",
+            "closePanel": "Fermer le panneau"
         },
         "nodeCount": "{count, plural, one {# nœud} other {# nœuds}}",
         "disabledCount": "{count, plural, one {# désactivé} other {# désactivés}}",
@@ -356,6 +375,7 @@
         "palette": "Nœuds",
         "search": "Rechercher des nœuds...",
         "searchNoResults": "Aucun nœud ne correspond à votre recherche",
+        "addNodeHint": "Glissez ou cliquez pour ajouter",
         "categories": {
             "source": "Source",
             "build": "Build",
@@ -622,7 +642,7 @@
             "webhookSetupButton": "Configurer le webhook",
             "webhookBranchFilter": "Filtre de branche",
             "webhookBranchFilterPlaceholder": "ex. main, develop, feature/*",
-            "webhookBranchFilterDescription": "Déclenche le build uniquement pour les branches correspondantes. Accepte des valeurs séparées par des virgules et des wildcards (ex. feature/*). Laisser vide pour accepter toutes les branches.",
+            "webhookBranchFilterDescription": "Déclenche le build uniquement pour les branches correspondantes — la branche poussée pour un push, la branche de destination pour une merge request. Accepte des valeurs séparées par des virgules et des wildcards (ex. feature/*). Laisser vide pour accepter toutes les branches.",
             "cloneBranch": "Branche",
             "repoLoading": "Chargement du dépôt...",
             "branchLoading": "Chargement des branches...",
@@ -915,7 +935,22 @@
             "trivyVersionPlaceholder": "canary",
             "fileUrlPlaceholder": "https://example.com/file",
             "downloadDestinationPlaceholder": "downloads/files",
-            "pathPlaceholder": "/"
+            "pathPlaceholder": "/",
+            "webhookTriggerEvents": "Événements déclencheurs",
+            "webhookTriggerEventsDescription": "Événements Git qui lancent un build. Relancez la configuration du webhook après avoir activé de nouveaux événements pour que le fournisseur les envoie.",
+            "webhookEventPush": "Push",
+            "webhookEventMergeRequest": "Merge request",
+            "webhookEventTag": "Tag",
+            "webhookMergeRequestActions": "Actions de merge request",
+            "webhookMergeRequestActionsDescription": "États de merge request qui lancent un build. Les merge requests provenant d'un fork sont ignorées.",
+            "webhookMergeRequestActionOpened": "Ouverte",
+            "webhookMergeRequestActionUpdated": "Mise à jour",
+            "webhookMergeRequestActionMerged": "Fusionnée",
+            "webhookMergeRequestActionClosed": "Fermée",
+            "webhookTagFilter": "Filtre de tags",
+            "webhookTagFilterPlaceholder": "v*, release-*",
+            "webhookTagFilterDescription": "Noms de tags séparés par des virgules. Un * final correspond à un préfixe. Laissez vide pour accepter tous les tags.",
+            "webhookResyncButton": "Resynchroniser les événements"
         },
         "availableInputs": "Entrées disponibles",
         "dragHint": "Glisse dans n'importe quel input compatible pour l'utiliser comme valeur",
@@ -1045,7 +1080,7 @@
             "releaseUrl": "URL de la release",
             "desc_releaseUrl": "URL de la page de la release publiée",
             "targetBranch": "Branche cible",
-            "desc_targetBranch": "Branche dans laquelle la fusion a eu lieu",
+            "desc_targetBranch": "Branche de destination de la merge request, lorsqu’elle est disponible",
             "sourceBranch": "Branche source",
             "desc_sourceBranch": "Branche qui a été fusionnée",
             "context": "Nom du statut",
@@ -1059,7 +1094,11 @@
             "containerPort": "Port du conteneur",
             "desc_containerPort": "Port exposé par le conteneur pour ce domaine",
             "domainRemoved": "Domaine supprimé",
-            "desc_domainRemoved": "Indique si le domaine a été supprimé avec succès"
+            "desc_domainRemoved": "Indique si le domaine a été supprimé avec succès",
+            "webhookEvent": "Événement webhook",
+            "desc_webhookEvent": "Type d'événement webhook ayant déclenché le build (push, merge_request ou tag)",
+            "mergeRequestAction": "Action de la merge request",
+            "desc_mergeRequestAction": "Action de la merge request ayant déclenché le build (opened, updated, merged ou closed)"
         },
         "noInputsAvailable": "Aucune entrée disponible des noeuds précédents",
         "nodeOutputs": "Sorties du nœud",

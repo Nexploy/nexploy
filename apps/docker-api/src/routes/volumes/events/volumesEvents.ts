@@ -3,6 +3,7 @@ import { streamSSE } from 'hono/streaming';
 import { getVolumesStateManager } from '@/managers/list/volumesStateManager';
 import { logger } from '@/utils/logger';
 import { VolumeEvent } from '@workspace/typescript-interface/docker/docker.volume';
+import { createInitialStateGate } from '@/utils/initialStateGate';
 
 const app = new Hono();
 
@@ -75,15 +76,28 @@ app.get('/stream', (c) => {
             }
         }, 15000);
 
+        const gate = createInitialStateGate();
+        const onInitialState = gate.gate(handleInitialState);
+        const onStateChange = gate.gate(handleStateChange);
+        const onVolumeAdded = gate.gate(handleVolumeAdded);
+        const onVolumeUpdated = gate.gate(handleVolumeUpdated);
+        const onVolumeRemoved = gate.gate(handleVolumeRemoved);
+
         const cleanup = () => {
-            manager.off('state-change', handleStateChange);
-            manager.off('initial-state', handleInitialState);
-            manager.off('volume-added', handleVolumeAdded);
-            manager.off('volume-updated', handleVolumeUpdated);
-            manager.off('volume-removed', handleVolumeRemoved);
+            manager.off('state-change', onStateChange);
+            manager.off('initial-state', onInitialState);
+            manager.off('volume-added', onVolumeAdded);
+            manager.off('volume-updated', onVolumeUpdated);
+            manager.off('volume-removed', onVolumeRemoved);
 
             clearInterval(heartbeat);
         };
+
+        manager.on('state-change', onStateChange);
+        manager.on('initial-state', onInitialState);
+        manager.on('volume-added', onVolumeAdded);
+        manager.on('volume-updated', onVolumeUpdated);
+        manager.on('volume-removed', onVolumeRemoved);
 
         const initialVolumes = manager.getAllVolumes();
 
@@ -92,12 +106,7 @@ app.get('/stream', (c) => {
             volumes: initialVolumes,
             timestamp: Date.now(),
         });
-
-        manager.on('state-change', handleStateChange);
-        manager.on('initial-state', handleInitialState);
-        manager.on('volume-added', handleVolumeAdded);
-        manager.on('volume-updated', handleVolumeUpdated);
-        manager.on('volume-removed', handleVolumeRemoved);
+        await gate.release();
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

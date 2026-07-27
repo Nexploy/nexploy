@@ -8,9 +8,12 @@ import {
 } from '@workspace/typescript-interface/docker/docker.status';
 import { BaseMonitor } from '@/lib/base/BaseMonitor';
 
+const CONSECUTIVE_FAILURES_BEFORE_DISCONNECT = 3;
+
 export class DockerStatusManager extends BaseMonitor {
     private status: DockerStatus = 'disconnected';
     private readonly environmentId: string;
+    private consecutiveFailures = 0;
 
     constructor(environmentId: string) {
         super({
@@ -25,8 +28,22 @@ export class DockerStatusManager extends BaseMonitor {
         try {
             const dockerClient = dockerClientRegistry.getClient(this.environmentId);
             await dockerClient.ping();
+            this.consecutiveFailures = 0;
             return 'connected';
         } catch (err) {
+            this.consecutiveFailures++;
+
+            if (
+                this.status === 'connected' &&
+                this.consecutiveFailures < CONSECUTIVE_FAILURES_BEFORE_DISCONNECT
+            ) {
+                logger.warn(
+                    { environmentId: this.environmentId, attempt: this.consecutiveFailures },
+                    'Docker ping failed, waiting for confirmation before reporting a disconnection',
+                );
+                return this.status;
+            }
+
             logger.error({ environmentId: this.environmentId }, 'Docker daemon not available');
             return 'error';
         }

@@ -102,7 +102,11 @@ app.get('/stream/:volumeName', (c) => {
             }
         }, 30000);
 
+        let cleanedUp = false;
         const cleanup = () => {
+            if (cleanedUp) return;
+            cleanedUp = true;
+
             clearInterval(heartbeat);
             manager.off('initial-state', handleInitialState);
             manager.off('state-change', handleStateChange);

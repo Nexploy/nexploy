@@ -2,7 +2,16 @@
 
 import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 import { useTranslations } from 'next-intl';
-import { ArrowLeft, Boxes, ChevronRight, Search, SearchX, Wrench, X } from 'lucide-react';
+import {
+    ArrowLeft,
+    Boxes,
+    ChevronRight,
+    MousePointerClick,
+    Search,
+    SearchX,
+    Wrench,
+    X,
+} from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import {
     InputGroup,
@@ -14,6 +23,7 @@ import { useNodeRegistryStore } from '@/stores/useNodeRegistryStore';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { NodeItem } from '@/components/pipeline/nodes/add/NodeItem';
 import {
+    CATEGORY_BG,
     CATEGORY_BG_MUTED,
     CATEGORY_ICONS,
     CATEGORY_TEXT,
@@ -40,6 +50,7 @@ export function NodeAddPanel() {
         setPaletteSearch: setSearch,
         openPaletteCategory: openCategory,
         setPaletteCategory: setActiveCategory,
+        closePanel,
     } = usePipelinePanelStore();
 
     const grouped = definitions.reduce<Record<string, typeof definitions>>((acc, def) => {
@@ -101,16 +112,36 @@ export function NodeAddPanel() {
           })
         : [];
 
+    const groupedSearchResults = searchResults.reduce<Record<string, typeof definitions>>(
+        (acc, def) => {
+            if (!acc[def.category]) acc[def.category] = [];
+            acc[def.category]!.push(def);
+            return acc;
+        },
+        {},
+    );
+
     const CategoryIcon = activeCategory ? (CATEGORY_ICONS[activeCategory] ?? Wrench) : Wrench;
     const categoryNodes = activeCategory ? (grouped[activeCategory] ?? []) : [];
 
     return (
-        <div className="bg-sidebar flex h-full w-full flex-col overflow-hidden">
-            <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
+        <div className="flex h-full w-full flex-col overflow-hidden">
+            <div className="border-border/70 flex h-11 shrink-0 items-center gap-2 border-b px-2.5">
                 <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-sm">
                     <Boxes className="size-3.5" strokeWidth={1.7} />
                 </div>
-                <span className="text-foreground truncate text-xs">{t('palette')}</span>
+                <span className="text-foreground flex-1 truncate text-xs">{t('palette')}</span>
+                <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+                    {t('nodeCount', { count: definitions.length })}
+                </span>
+                <button
+                    onClick={closePanel}
+                    aria-label={t('canvas.closePanel')}
+                    title={t('canvas.closePanel')}
+                    className="text-muted-foreground hover:text-foreground hover:bg-muted flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md transition-colors"
+                >
+                    <X className="size-3.5" />
+                </button>
             </div>
             <div className="flex flex-1 flex-col overflow-hidden">
                 <div className="shrink-0 p-2">
@@ -132,44 +163,45 @@ export function NodeAddPanel() {
                         )}
                     </InputGroup>
                 </div>
+
                 {activeCategory && !isSearching && (
-                    <div className="px-2 pb-1">
+                    <div className="flex shrink-0 items-center gap-2 px-2 pb-2">
                         <button
                             onClick={() => setActiveCategory(null)}
-                            className="text-muted-foreground hover:text-foreground hover:bg-muted group flex w-full cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-1.5"
+                            aria-label={t('palette')}
+                            className="text-muted-foreground hover:text-foreground hover:bg-muted flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md transition-colors"
                         >
-                            <ArrowLeft className="size-3.5 shrink-0" />
-                            <span className="text-[10px] font-semibold tracking-wide">
-                                {t('palette')}
-                            </span>
-                            <ChevronRight className="size-3 shrink-0" />
-                            <div
-                                className={cn(
-                                    'flex size-5 shrink-0 items-center justify-center rounded-sm',
-                                    CATEGORY_BG_MUTED[activeCategory],
-                                    CATEGORY_TEXT[activeCategory],
-                                )}
-                            >
-                                <CategoryIcon className="size-3" strokeWidth={1.5} />
-                            </div>
-                            <span className="text-foreground truncate text-xs font-medium">
-                                {t(`categories.${activeCategory}`)}
-                            </span>
+                            <ArrowLeft className="size-3.5" />
                         </button>
+                        <div
+                            className={cn(
+                                'flex size-6 shrink-0 items-center justify-center rounded-md',
+                                CATEGORY_BG_MUTED[activeCategory],
+                                CATEGORY_TEXT[activeCategory],
+                            )}
+                        >
+                            <CategoryIcon className="size-3" strokeWidth={1.7} />
+                        </div>
+                        <span className="text-foreground min-w-0 flex-1 truncate text-xs font-medium">
+                            {t(`categories.${activeCategory}`)}
+                        </span>
+                        <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+                            {t('nodeCount', { count: categoryNodes.length })}
+                        </span>
                     </div>
                 )}
 
                 <ScrollAreaWithShadow
                     bottomShadow
+                    key={activeCategory ?? 'categories'}
                     className={'h-full overflow-hidden'}
-                    colorShadow="from-sidebar via-sidebar/50"
                 >
-                    <div className="p-2 pt-1">
+                    <div className="@container p-2 pt-0">
                         {isSearching && (
                             <>
                                 {searchResults.length === 0 ? (
-                                    <div className="flex flex-col items-center gap-2 py-10 text-center">
-                                        <div className="bg-muted text-muted-foreground flex size-9 items-center justify-center rounded-lg">
+                                    <div className="flex flex-col items-center gap-2.5 py-12 text-center">
+                                        <div className="bg-muted text-muted-foreground flex size-10 items-center justify-center rounded-xl">
                                             <SearchX className="size-4" />
                                         </div>
                                         <p className="text-muted-foreground text-xs">
@@ -177,58 +209,87 @@ export function NodeAddPanel() {
                                         </p>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col gap-1.5">
-                                        {searchResults.map((def) => (
-                                            <NodeItem
-                                                key={def.id}
-                                                def={def}
-                                                label={t(`nodes.${def.id}.name`)}
-                                                description={descriptionFor(def.id)}
-                                                onDragStart={onDragStart}
-                                                onClick={() => onClickAdd(def.id)}
-                                            />
-                                        ))}
+                                    <div className="flex flex-col gap-3">
+                                        {Object.entries(groupedSearchResults).map(
+                                            ([category, defs]) => (
+                                                <div
+                                                    key={category}
+                                                    className="flex flex-col gap-1.5"
+                                                >
+                                                    <div className="flex items-center gap-1.5 px-0.5">
+                                                        <span
+                                                            className={cn(
+                                                                'size-1.5 shrink-0 rounded-full',
+                                                                CATEGORY_BG[category],
+                                                            )}
+                                                        />
+                                                        <span className="text-muted-foreground truncate text-[10px] font-semibold uppercase tracking-wide">
+                                                            {t(`categories.${category}`)}
+                                                        </span>
+                                                        <span className="text-muted-foreground/60 shrink-0 text-[10px] tabular-nums">
+                                                            {defs.length}
+                                                        </span>
+                                                    </div>
+                                                    <div className="@[420px]:grid-cols-2 grid grid-cols-1 gap-1.5">
+                                                        {defs.map((def) => (
+                                                            <NodeItem
+                                                                key={def.id}
+                                                                def={def}
+                                                                label={t(`nodes.${def.id}.name`)}
+                                                                description={descriptionFor(def.id)}
+                                                                onDragStart={onDragStart}
+                                                                onClick={() => onClickAdd(def.id)}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ),
+                                        )}
                                     </div>
                                 )}
                             </>
                         )}
                         {!isSearching && !activeCategory && (
-                            <div className="grid grid-cols-2 gap-1.5">
+                            <div className="@[420px]:grid-cols-2 grid grid-cols-1 gap-1.5">
                                 {Object.entries(grouped).map(([category, defs]) => {
                                     const Icon = CATEGORY_ICONS[category] ?? Wrench;
                                     return (
                                         <button
                                             key={category}
                                             onClick={() => openCategory(category)}
-                                            className="border-border bg-card hover:border-foreground/15 hover:bg-muted flex cursor-pointer flex-col gap-2 rounded-lg border p-2.5 text-left"
+                                            className="border-border/60 bg-card hover:border-foreground/15 hover:bg-accent/40 group relative flex cursor-pointer items-center gap-2.5 overflow-hidden rounded-lg border p-2 pl-2.5 text-left transition-colors"
                                         >
-                                            <div className="flex justify-between">
-                                                <div
-                                                    className={cn(
-                                                        'flex size-8 shrink-0 items-center justify-center rounded-md',
-                                                        CATEGORY_BG_MUTED[category],
-                                                        CATEGORY_TEXT[category],
-                                                    )}
-                                                >
-                                                    <Icon className="size-4" strokeWidth={1.5} />
-                                                </div>
-                                                <ChevronRight className="text-muted-foreground size-3.5" />
+                                            <span
+                                                className={cn(
+                                                    'absolute inset-y-1 left-0 w-0.5 rounded-full opacity-0 transition-opacity group-hover:opacity-100',
+                                                    CATEGORY_BG[category],
+                                                )}
+                                            />
+                                            <div
+                                                className={cn(
+                                                    'flex size-7 shrink-0 items-center justify-center rounded-md',
+                                                    CATEGORY_BG_MUTED[category],
+                                                    CATEGORY_TEXT[category],
+                                                )}
+                                            >
+                                                <Icon className="size-3.5" strokeWidth={1.6} />
                                             </div>
-                                            <div className="min-w-0">
+                                            <div className="min-w-0 flex-1">
                                                 <span className="text-foreground block truncate text-xs font-medium">
                                                     {t(`categories.${category}`)}
                                                 </span>
-                                                <span className="text-muted-foreground text-[10px] tabular-nums">
-                                                    {defs.length} {t('palette').toLowerCase()}
+                                                <span className="text-muted-foreground block text-[10px] tabular-nums">
+                                                    {t('nodeCount', { count: defs.length })}
                                                 </span>
                                             </div>
+                                            <ChevronRight className="text-muted-foreground/50 group-hover:text-foreground size-3.5 shrink-0 transition-all group-hover:translate-x-0.5" />
                                         </button>
                                     );
                                 })}
                             </div>
                         )}
                         {!isSearching && activeCategory && (
-                            <div className="flex flex-col gap-1.5">
+                            <div className="@[420px]:grid-cols-2 grid grid-cols-1 gap-1.5">
                                 {categoryNodes.map((def) => (
                                     <NodeItem
                                         key={def.id}
@@ -243,6 +304,13 @@ export function NodeAddPanel() {
                         )}
                     </div>
                 </ScrollAreaWithShadow>
+
+                {(searchResults.length > 0 || (!isSearching && activeCategory)) && (
+                    <div className="text-muted-foreground flex h-8 shrink-0 items-center gap-1.5 border-t px-3">
+                        <MousePointerClick className="size-3 shrink-0" />
+                        <span className="truncate text-[10px]">{t('addNodeHint')}</span>
+                    </div>
+                )}
             </div>
         </div>
     );

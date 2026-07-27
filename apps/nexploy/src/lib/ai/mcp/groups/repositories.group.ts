@@ -137,6 +137,7 @@ export const repositoriesGroup: ToolGroup = {
                 if (g) return g;
                 try {
                     const build = await startBuildRepository({ repositoryId, branch }, ctx.userId);
+                    if (!build) return fail('Build was not started');
                     return ok(`Build started (ID: ${build.id})`);
                 } catch (e: any) {
                     return fail(e.message);

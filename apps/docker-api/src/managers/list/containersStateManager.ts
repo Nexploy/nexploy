@@ -44,11 +44,14 @@ export class ContainersStateManager extends BaseStateManager {
 
         try {
             const containers = await this.docker.listContainers({ all: true });
+            const containerMap = new Map<string, Containers>();
 
             for (const container of containers) {
                 const state = this.parseContainerInfo(container);
-                this.containers.set(state.id, state);
+                containerMap.set(state.id, state);
             }
+
+            this.containers = containerMap;
 
             logger.info({ count: this.containers.size }, 'Initial container state loaded');
 
@@ -112,33 +115,7 @@ export class ContainersStateManager extends BaseStateManager {
         }
 
         try {
-            const containers = await this.docker.listContainers({ all: true });
-
-            for (const container of containers) {
-                const newState = this.parseContainerInfo(container);
-                const oldState = this.containers.get(newState.id);
-
-                if (!oldState) {
-                    this.containers.set(newState.id, newState);
-                    const containerAddedData: ContainersEvent = {
-                        type: 'added',
-                        container: newState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('container-added', containerAddedData);
-                    continue;
-                }
-
-                if (this.hasStateChanged(oldState, newState)) {
-                    this.containers.set(newState.id, newState);
-                    this.emit('state-change', {
-                        type: 'updated',
-                        container: newState,
-                        changes: this.getStateChanges(oldState, newState),
-                        timestamp: Date.now(),
-                    });
-                }
-            }
+            await this.reconcileState();
         } catch (err) {
             logger.error({ err }, 'Error in full state sync');
         }
@@ -422,6 +399,76 @@ export class ContainersStateManager extends BaseStateManager {
         return this.containers.get(containerId);
     }
 
+    private async reconcileState(): Promise<void> {
+        const containers = await this.docker.listContainers({ all: true });
+        const newContainerMap = new Map<string, Containers>();
+
+        for (const container of containers) {
+            const state = this.parseContainerInfo(container);
+            const previous = this.containers.get(state.id);
+
+            newContainerMap.set(state.id, {
+                ...state,
+                health: state.health ?? previous?.health,
+                exitCode: state.exitCode ?? previous?.exitCode,
+                error: state.error ?? previous?.error,
+            });
+        }
+
+        for (const [containerId, oldState] of this.containers.entries()) {
+            if (!newContainerMap.has(containerId)) {
+                const containerRemovedData: ContainersEvent = {
+                    type: 'removed',
+                    containerId,
+                    oldState,
+                    timestamp: Date.now(),
+                };
+                this.emit('container-removed', containerRemovedData);
+
+                containerImageEvents.emit('container-usage-changed', {
+                    action: 'destroy',
+                    containerId,
+                    imageId: oldState.image,
+                });
+
+                logger.debug({ containerId }, 'Container detected as removed during state sync');
+            }
+        }
+
+        for (const [containerId, newState] of newContainerMap.entries()) {
+            const oldState = this.containers.get(containerId);
+
+            if (!oldState) {
+                const containerAddedData: ContainersEvent = {
+                    type: 'added',
+                    container: newState,
+                    timestamp: Date.now(),
+                };
+                this.emit('container-added', containerAddedData);
+
+                containerImageEvents.emit('container-usage-changed', {
+                    action: 'create',
+                    containerId,
+                    imageId: newState.image,
+                });
+
+                logger.debug({ containerId }, 'Container detected as added during state sync');
+            } else if (this.hasStateChanged(oldState, newState)) {
+                const containerStateChangeData: ContainersEvent = {
+                    type: 'updated',
+                    container: newState,
+                    changes: this.getStateChanges(oldState, newState),
+                    timestamp: Date.now(),
+                };
+                this.emit('state-change', containerStateChangeData);
+
+                logger.debug({ containerId }, 'Container detected as updated during state sync');
+            }
+        }
+
+        this.containers = newContainerMap;
+    }
+
     async hardRefresh(): Promise<void> {
         try {
             if (!this.getDockerStatusManager().isConnected()) {
@@ -436,53 +483,7 @@ export class ContainersStateManager extends BaseStateManager {
         logger.info('Starting hard refresh of container states');
 
         try {
-            const containers = await this.docker.listContainers({ all: true });
-            const currentIds = new Set(containers.map((c) => c.Id));
-            const oldIds = new Set(this.containers.keys());
-
-            for (const oldId of oldIds) {
-                if (!currentIds.has(oldId)) {
-                    const oldState = this.containers.get(oldId);
-                    this.containers.delete(oldId);
-
-                    if (oldState) {
-                        const containerRemovedData: ContainersEvent = {
-                            type: 'removed',
-                            containerId: oldId,
-                            oldState,
-                            timestamp: Date.now(),
-                        };
-                        this.emit('container-removed', containerRemovedData);
-                    }
-                }
-            }
-
-            for (const container of containers) {
-                const newState = this.parseContainerInfo(container);
-                const oldState = this.containers.get(newState.id);
-
-                if (!oldState) {
-                    this.containers.set(newState.id, newState);
-                    const containerAddedData: ContainersEvent = {
-                        type: 'added',
-                        container: newState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('container-added', containerAddedData);
-                } else if (this.hasStateChanged(oldState, newState)) {
-                    this.containers.set(newState.id, newState);
-                    const containerUpdatedData: ContainersEvent = {
-                        type: 'updated',
-                        container: newState,
-                        changes: this.getStateChanges(oldState, newState),
-                        timestamp: Date.now(),
-                    };
-                    this.emit('container-updated', containerUpdatedData);
-                } else {
-                    this.containers.set(newState.id, newState);
-                }
-            }
-
+            await this.reconcileState();
             logger.info({ count: this.containers.size }, 'Hard refresh completed');
         } catch (err) {
             logger.error({ err }, 'Error during hard refresh');

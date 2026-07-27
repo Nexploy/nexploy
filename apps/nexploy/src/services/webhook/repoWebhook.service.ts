@@ -25,6 +25,7 @@ const repoWebhookSelect = {
 export async function setupRepositoryWebhook(
     repositoryId: string,
     baseUrl: string,
+    options: { refresh?: boolean } = {},
 ): Promise<WebhookSetupResult> {
     const t = await getErrorTranslator();
     const repo = await prisma.repository.findUnique({
@@ -34,8 +35,12 @@ export async function setupRepositoryWebhook(
 
     if (!repo) throw new Error(t('webhook.repositoryNotFound'));
 
-    if (repo.webhookId) {
+    if (repo.webhookId && !options.refresh) {
         return { configured: true };
+    }
+
+    if (repo.webhookId) {
+        await teardownRepositoryWebhook(repositoryId);
     }
 
     const tokenOwnerId = repo.gitAccount?.userId;
@@ -44,7 +49,7 @@ export async function setupRepositoryWebhook(
     }
 
     const adapter = getGitAdapter(repo.gitProvider);
-    const webhookUrl = `${baseUrl}${adapter.webhookPath}`;
+    const webhookUrl = `${baseUrl}${adapter.webhookPath}?repositoryId=${repositoryId}`;
     const secret = crypto.randomUUID();
 
     try {

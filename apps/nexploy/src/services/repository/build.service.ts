@@ -11,12 +11,39 @@ import type { Realtime } from 'inngest';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
 import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
+import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
+import { PipelineNode } from '@workspace/typescript-interface/pipeline/node';
+import { matchesWebhookTrigger, WebhookCloneFilters } from '@/services/webhook/webhookTrigger';
+
+function pipelineAcceptsWebhookTrigger(
+    nodes: unknown,
+    trigger: WebhookTrigger,
+    branch?: string,
+): boolean {
+    const webhookNodes = (Array.isArray(nodes) ? (nodes as PipelineNode[]) : []).filter(
+        (node) => node?.data?.type === 'webhook-clone' && !node.data.disabled,
+    );
+
+    if (webhookNodes.length === 0) {
+        return trigger.event === 'push';
+    }
+
+    return webhookNodes.some(
+        (node) =>
+            matchesWebhookTrigger(
+                (node.data.config ?? {}) as WebhookCloneFilters,
+                trigger,
+                branch ?? '',
+            ).matched,
+    );
+}
 
 export async function startBuildRepository(
     { repositoryId, branch, stageId }: StartBuildSchemaType,
     userId: string,
     triggerSource: 'manual' | 'webhook' = 'manual',
     triggeredByStageId?: string,
+    webhookTrigger?: WebhookTrigger,
 ) {
     const t = await getErrorTranslator();
     const repository = await getRepositorieWithEnv(repositoryId);
@@ -51,6 +78,13 @@ export async function startBuildRepository(
         throw new Error(t('build.noPipelineConfig'));
     }
 
+    if (
+        webhookTrigger &&
+        !pipelineAcceptsWebhookTrigger(pipelineConfig.nodes, webhookTrigger, branch)
+    ) {
+        return null;
+    }
+
     const build = await createBuild({
         repositoryId: repository.id,
         stageId: stage.id,
@@ -67,6 +101,7 @@ export async function startBuildRepository(
         gitUrl: repository.repositoryUrl,
         buildId: build.id,
         triggerSource,
+        webhookTrigger,
         stageId: stage.id,
         environmentId: stage.environmentId ?? undefined,
     };

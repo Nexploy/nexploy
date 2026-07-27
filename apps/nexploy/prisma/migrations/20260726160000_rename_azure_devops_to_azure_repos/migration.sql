@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "GitProviderType" RENAME VALUE 'AZURE_DEVOPS' TO 'AZURE_REPOS';

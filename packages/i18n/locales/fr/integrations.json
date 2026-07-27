@@ -69,8 +69,31 @@
                 "baseUrlLabel": "URL de l'instance Gitea",
                 "baseUrlPlaceholder": "https://gitea.monentreprise.com",
                 "createApp": "Créer l'application Gitea"
+            },
+            "bitbucket": {
+                "step1": "Dans Bitbucket, allez dans Paramètres de l'espace de travail → Consommateurs OAuth → Ajouter un consommateur",
+                "step2": "Définissez l'URL de rappel sur : {url}/api/git/oauth/callback",
+                "step3": "Cochez les permissions : Compte (Lecture), Dépôts (Lecture, Écriture, Administration), Webhooks (Lecture et écriture), Pull requests (Lecture)",
+                "step4": "Copiez la Clé et le Secret du consommateur créé",
+                "keyLabel": "Clé (Client ID)",
+                "secretLabel": "Secret (Client Secret)",
+                "createApp": "Créer l'application Bitbucket"
+            },
+            "azureRepos": {
+                "step1": "Dans le portail Azure, allez dans Microsoft Entra ID → Inscriptions d'applications → Nouvelle inscription",
+                "step2": "Définissez l'URI de redirection (type Web) sur : {url}/api/git/oauth/callback",
+                "step3": "Dans Autorisations d'API, ajoutez Azure DevOps → user_impersonation, puis accordez le consentement administrateur",
+                "step4": "Dans Certificats et secrets, créez un secret client et copiez sa valeur",
+                "clientIdLabel": "ID d'application (client)",
+                "secretLabel": "Valeur du secret client",
+                "tenantIdLabel": "ID de répertoire (locataire)",
+                "tenantIdPlaceholder": "ex. 72f988bf-86f1-41af-91ab-2d7cd011db47",
+                "tenantIdDescription": "Requis pour les inscriptions d'application mono-locataire. Laissez vide pour les applications multi-locataires.",
+                "createApp": "Créer l'application Azure Repos"
             }
-        }
+        },
+        "addBitbucket": "Ajouter Bitbucket",
+        "addAzureRepos": "Ajouter Azure Repos"
     },
     "bucketStorage": {
         "title": "Stockage Bucket",
@@ -139,5 +162,13 @@
     "connect": "Connecter",
     "disconnect": "Déconnecter",
     "connected": "Connecté",
-    "connecting": "Connexion..."
+    "connecting": "Connexion...",
+    "bitbucket": {
+        "title": "Bitbucket",
+        "description": "Connectez votre espace de travail Bitbucket Cloud pour déployer des dépôts"
+    },
+    "azureRepos": {
+        "title": "Azure Repos",
+        "description": "Connectez vos organisations Azure DevOps pour déployer vos dépôts Azure Repos"
+    }
 }

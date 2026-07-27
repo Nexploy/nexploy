@@ -69,6 +69,7 @@
     "pleaseWaitSwarmLoading": "Please wait while the swarm state is being loaded.",
     "notInSwarmModeTitle": "Not in Swarm Mode",
     "notInSwarmModeDescription": "This Docker host is not part of a swarm cluster. Initialize a new swarm to become the first manager, or join an existing swarm.",
+    "activationRequiresAdmin": "Only an administrator can enable Swarm mode.",
     "service": "Service",
     "services": "Services",
     "image": "Image",

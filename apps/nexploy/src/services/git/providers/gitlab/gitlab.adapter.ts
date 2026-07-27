@@ -7,7 +7,7 @@ import {
     GitProviderToken,
     GitRepository,
 } from '@workspace/typescript-interface/git/git';
-import { WebhookPayload } from '@workspace/typescript-interface/webhook';
+import { MergeRequestAction, WebhookPayload } from '@workspace/typescript-interface/webhook';
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
 import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
@@ -16,9 +16,12 @@ import {
     gitlabCreateRelease,
     gitlabCreateWebhook,
     gitlabDeleteWebhook,
+    gitlabFetchAllPages,
+    gitlabRevokeToken,
     gitlabUpdateCommitStatus,
     kyGitlab,
 } from './gitlab.client';
+import { parseRepositoryUrl } from '@/services/git/core/repoUrl';
 import { GIT_OAUTH_EXCHANGE_FAILED } from '@/services/git/providers/github/github.adapter';
 
 function mapRepo(repo: GitlabRepo): GitRepository {
@@ -32,35 +35,30 @@ function mapRepo(repo: GitlabRepo): GitRepository {
     };
 }
 
+const GITLAB_MERGE_REQUEST_ACTIONS: Record<string, MergeRequestAction | undefined> = {
+    open: 'opened',
+    reopen: 'opened',
+    update: 'updated',
+    merge: 'merged',
+    close: 'closed',
+};
+
 export const gitlabAdapter: GitProviderAdapter = {
     type: 'GITLAB',
     cloneCredentialUsername: 'oauth2',
     webhookPath: '/api/webhooks/gitlab',
+    webhookEventHeader: 'x-gitlab-event',
 
     parseRepoUrl(url: string): ParsedRepoUrl {
-        const parsed = new URL(url);
-        const parts = parsed.pathname
-            .replace(/\.git$/, '')
-            .split('/')
-            .filter(Boolean);
-        if (parts.length < 2) throw new Error(`Invalid GitLab repository URL: ${url}`);
-        const repo = parts[parts.length - 1]!;
-        const owner = parts.slice(0, -1).join('/');
-        return {
-            baseUrl: `${parsed.protocol}//${parsed.host}`,
-            owner,
-            repo,
-            projectPath: `${owner}/${repo}`,
-        };
+        return parseRepositoryUrl(url, { providerLabel: 'GitLab', nestedNamespace: true });
     },
 
     async listRepositories({ token, baseUrl }): Promise<GitRepository[]> {
         const repositories = await tokenGitStorage.run(token, async () =>
-            kyGitlab(baseUrl)
-                .get('v4/projects', {
-                    searchParams: { membership: 'true', order_by: 'updated_at' },
-                })
-                .json<GitlabRepo[]>(),
+            gitlabFetchAllPages<GitlabRepo>(baseUrl, 'v4/projects', {
+                membership: 'true',
+                order_by: 'updated_at',
+            }),
         );
         return repositories.map(mapRepo);
     },
@@ -74,7 +72,10 @@ export const gitlabAdapter: GitProviderAdapter = {
 
     async listBranches({ token, baseUrl, repoId }): Promise<GitBranch[]> {
         const branches = await tokenGitStorage.run(token, async () =>
-            kyGitlab(baseUrl).get(`v4/projects/${repoId}/repository/branches`).json<GitlabBranch[]>(),
+            gitlabFetchAllPages<GitlabBranch>(
+                baseUrl,
+                `v4/projects/${repoId}/repository/branches`,
+            ),
         );
         return branches.map((branch: GitlabBranch) => ({
             name: branch.name,
@@ -83,22 +84,26 @@ export const gitlabAdapter: GitProviderAdapter = {
     },
 
     async getCommit({ token, repositoryUrl, branch, commitHash }) {
-        const { baseUrl, projectPath } = this.parseRepoUrl(repositoryUrl);
-        const encodedProject = encodeURIComponent(projectPath);
-        return tokenGitStorage.run(token, async () => {
-            const endpoint = commitHash
-                ? `v4/projects/${encodedProject}/repository/commits/${commitHash}`
-                : `v4/projects/${encodedProject}/repository/commits`;
-            const searchParams = commitHash ? undefined : { ref_name: branch, per_page: '1' };
+        try {
+            const { baseUrl, projectPath } = this.parseRepoUrl(repositoryUrl);
+            const encodedProject = encodeURIComponent(projectPath);
+            return await tokenGitStorage.run(token, async () => {
+                const endpoint = commitHash
+                    ? `v4/projects/${encodedProject}/repository/commits/${commitHash}`
+                    : `v4/projects/${encodedProject}/repository/commits`;
+                const searchParams = commitHash ? undefined : { ref_name: branch, per_page: '1' };
 
-            const response = await kyGitlab(baseUrl)
-                .get(endpoint, { searchParams })
-                .json<GitLabCommit | GitLabCommit[]>();
+                const response = await kyGitlab(baseUrl)
+                    .get(endpoint, { searchParams })
+                    .json<GitLabCommit | GitLabCommit[]>();
 
-            const commit = Array.isArray(response) ? response[0] : response;
-            if (!commit) return null;
-            return { hash: commit.short_id, message: commit.message };
-        });
+                const commit = Array.isArray(response) ? response[0] : response;
+                if (!commit) return null;
+                return { hash: commit.short_id, message: commit.message };
+            });
+        } catch {
+            return null;
+        }
     },
 
     async getAuthenticatedUser({ token, baseUrl }) {
@@ -122,12 +127,55 @@ export const gitlabAdapter: GitProviderAdapter = {
     },
 
     parseWebhookPayload(body: any): WebhookPayload | null {
+        const repositoryUrl = body.project?.git_http_url || body.project?.http_url;
+        if (!repositoryUrl) return null;
+
+        if (body.object_kind === 'merge_request') {
+            const attributes = body.object_attributes;
+            const action = GITLAB_MERGE_REQUEST_ACTIONS[attributes?.action as string];
+            if (!attributes || !action) return null;
+            if (
+                attributes.source_project_id &&
+                attributes.source_project_id !== attributes.target_project_id
+            ) {
+                return null;
+            }
+
+            return {
+                event: 'merge_request',
+                repositoryUrl,
+                branch: attributes.source_branch,
+                targetBranch: attributes.target_branch,
+                mergeRequestAction: action,
+                commitHash: attributes.last_commit?.id?.substring(0, 8),
+                commitMessage: attributes.last_commit?.message,
+            };
+        }
+
+        if (body.object_kind === 'tag_push') {
+            if (!body.ref?.startsWith('refs/tags/')) return null;
+            if (body.after && /^0+$/.test(body.after)) return null;
+
+            const tagName = body.ref.replace('refs/tags/', '');
+            const lastCommit = body.commits?.[body.commits.length - 1];
+            return {
+                event: 'tag',
+                repositoryUrl,
+                branch: tagName,
+                tagName,
+                commitHash: (lastCommit?.id ?? body.checkout_sha)?.substring(0, 8),
+                commitMessage: lastCommit?.message,
+            };
+        }
+
         if (body.object_kind !== 'push' || !body.ref?.startsWith('refs/heads/')) {
             return null;
         }
+
         const lastCommit = body.commits?.[body.commits.length - 1];
         return {
-            repositoryUrl: body.project?.git_http_url || body.project?.http_url,
+            event: 'push',
+            repositoryUrl,
             branch: body.ref.replace('refs/heads/', ''),
             commitHash: lastCommit?.id?.substring(0, 8),
             commitMessage: lastCommit?.message,
@@ -232,6 +280,15 @@ export const gitlabAdapter: GitProviderAdapter = {
                 ? dayjs().add(data.expires_in, 'second').toDate()
                 : null,
         };
+    },
+
+    async revokeToken({ token, credentials }): Promise<void> {
+        const { clientId, clientSecret, baseUrl } = credentials;
+        if (!token.accessToken || !baseUrl || !clientId || !clientSecret) return;
+        await gitlabRevokeToken(baseUrl, token.accessToken, clientId, clientSecret);
+        if (token.refreshToken) {
+            await gitlabRevokeToken(baseUrl, token.refreshToken, clientId, clientSecret);
+        }
     },
 
     async createRelease({ token, baseUrl, owner, repo, tagName, targetBranch, title, notes }) {

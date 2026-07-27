@@ -76,21 +76,6 @@ class GitService {
         });
     }
 
-    matchesBranchFilter(branch: string, filter: string): boolean {
-        const patterns = filter
-            .split(',')
-            .map((p) => p.trim())
-            .filter(Boolean);
-        if (patterns.length === 0) return true;
-
-        return patterns.some((pattern) => {
-            if (pattern.endsWith('*')) {
-                return branch.startsWith(pattern.slice(0, -1));
-            }
-            return branch === pattern;
-        });
-    }
-
     async cloneRepository(
         buildConfig: BuildConfig,
         onProgress?: ProgressCallback,

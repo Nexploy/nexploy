@@ -27,10 +27,24 @@ export const cloneRepositoryConfigSchema = z.object({
     submodules: z.boolean().default(false),
 });
 
+export const WEBHOOK_TRIGGER_EVENTS = ['push', 'merge_request', 'tag'] as const;
+export const MERGE_REQUEST_ACTIONS = ['opened', 'updated', 'merged', 'closed'] as const;
+
 export const webhookCloneConfigSchema = z.object({
+    triggerEvents: z
+        .array(z.enum(WEBHOOK_TRIGGER_EVENTS))
+        .min(1, 'At least one trigger event is required')
+        .default(['push']),
     branchFilter: z.string().optional(),
+    mergeRequestActions: z
+        .array(z.enum(MERGE_REQUEST_ACTIONS))
+        .min(1, 'At least one merge request action is required')
+        .default(['opened', 'updated']),
+    tagFilter: z.string().optional(),
     submodules: z.boolean().default(false),
 });
+
+export type WebhookCloneConfig = z.infer<typeof webhookCloneConfigSchema>;
 
 export const buildDockerImageConfigSchema = z.object({
     dockerfilePath: refable(relativePath('Dockerfile path')).default('Dockerfile'),

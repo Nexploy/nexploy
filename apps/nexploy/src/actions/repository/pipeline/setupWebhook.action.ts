@@ -16,7 +16,9 @@ export const setupWebhookAction = authActionServer
             const host = headersList.get('host') ?? '';
             const proto = headersList.get('x-forwarded-proto') ?? 'https';
             const baseUrl = `${proto}://${host}`;
-            return await setupRepositoryWebhook(parsedInput.repositoryId, baseUrl);
+            return await setupRepositoryWebhook(parsedInput.repositoryId, baseUrl, {
+                refresh: parsedInput.refresh,
+            });
         } catch (error: unknown) {
             if (error instanceof Error) {
                 await setToastServer({

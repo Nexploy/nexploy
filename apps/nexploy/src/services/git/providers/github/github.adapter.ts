@@ -7,6 +7,8 @@ import { GithubRepo } from '@workspace/typescript-interface/git/repository/githu
 import { GithubBranch } from '@workspace/typescript-interface/git/branch/github.branch';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { timingSafeEqual } from '@/lib/api/crypto-utils';
+import { parseRepositoryUrl } from '@/services/git/core/repoUrl';
+import { mapPullRequestAction } from '@/services/git/core/webhookEvent';
 import {
     githubCreateRelease,
     githubCreateWebhook,
@@ -40,15 +42,10 @@ export const githubAdapter: GitProviderAdapter = {
     type: 'GITHUB',
     cloneCredentialUsername: 'x-access-token',
     webhookPath: '/api/webhooks/github',
+    webhookEventHeader: 'x-github-event',
 
     parseRepoUrl(url: string): ParsedRepoUrl {
-        const match = url.match(/github\.com[\/:]([^\/]+)\/([^\/\.]+)/);
-        if (match && match[1] && match[2]) {
-            const owner = match[1];
-            const repo = match[2].replace('.git', '');
-            return { baseUrl: 'https://github.com', owner, repo, projectPath: `${owner}/${repo}` };
-        }
-        throw new Error(`Invalid GitHub repository URL: ${url}`);
+        return parseRepositoryUrl(url, { providerLabel: 'GitHub' });
     },
 
     async listRepositories({ token }): Promise<GitRepository[]> {
@@ -126,12 +123,48 @@ export const githubAdapter: GitProviderAdapter = {
         );
     },
 
-    parseWebhookPayload(body: any): WebhookPayload | null {
+    parseWebhookPayload(body: any, event: string | null): WebhookPayload | null {
+        const repositoryUrl = body.repository?.clone_url || body.repository?.html_url;
+        if (!repositoryUrl) return null;
+
+        if (event === 'pull_request') {
+            const pullRequest = body.pull_request;
+            const action = mapPullRequestAction(body.action, pullRequest?.merged);
+            if (!pullRequest || !action) return null;
+            if (pullRequest.head?.repo?.full_name !== body.repository?.full_name) return null;
+
+            return {
+                event: 'merge_request',
+                repositoryUrl,
+                branch: pullRequest.head.ref,
+                targetBranch: pullRequest.base?.ref,
+                mergeRequestAction: action,
+                commitHash: pullRequest.head.sha?.substring(0, 8),
+                commitMessage: pullRequest.title,
+            };
+        }
+
+        if (body.ref?.startsWith('refs/tags/')) {
+            if (body.deleted) return null;
+            const tagName = body.ref.replace('refs/tags/', '');
+            return {
+                event: 'tag',
+                repositoryUrl,
+                branch: tagName,
+                tagName,
+                targetBranch: body.base_ref?.replace('refs/heads/', ''),
+                commitHash: (body.head_commit?.id ?? body.after)?.substring(0, 8),
+                commitMessage: body.head_commit?.message,
+            };
+        }
+
         if (!body.ref?.startsWith('refs/heads/')) {
             return null;
         }
+
         return {
-            repositoryUrl: body.repository?.clone_url || body.repository?.html_url,
+            event: 'push',
+            repositoryUrl,
             branch: body.ref.replace('refs/heads/', ''),
             commitHash: body.head_commit?.id?.substring(0, 8),
             commitMessage: body.head_commit?.message,

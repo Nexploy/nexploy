@@ -395,22 +395,62 @@
     scrollbar-gutter: stable;
 }
 
-@utility scroll-fade-b {
-    mask-image: linear-gradient(to bottom, black calc(100% - 2rem), transparent 100%);
-}
-
-@utility scroll-fade-t {
-    mask-image: linear-gradient(to bottom, transparent 0, black 2rem);
-}
-
-@utility scroll-fade-tb {
-    mask-image: linear-gradient(
-        to bottom,
-        transparent 0,
-        black 2rem,
-        black calc(100% - 2rem),
-        transparent 100%
+@utility scroll-fade-xy {
+    --_scroll-fade-size-t: var(
+        --scroll-fade-t-size,
+        var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10)))
     );
+    --_scroll-fade-size-b: var(
+        --scroll-fade-b-size,
+        var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10)))
+    );
+    --_scroll-fade-size-s: var(
+        --scroll-fade-s-size,
+        var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10)))
+    );
+    --_scroll-fade-size-e: var(
+        --scroll-fade-e-size,
+        var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10)))
+    );
+    mask-image:
+        linear-gradient(
+            to bottom,
+            transparent 0,
+            #000 var(--scroll-fade-t, 0px),
+            #000 calc(100% - var(--scroll-fade-b, 0px)),
+            transparent 100%
+        ),
+        linear-gradient(
+            to right,
+            transparent 0,
+            #000 var(--scroll-fade-s, 0px),
+            #000 calc(100% - var(--scroll-fade-e, 0px)),
+            transparent 100%
+        );
+    mask-composite: intersect;
+    mask-repeat: no-repeat;
+
+    @supports (animation-timeline: scroll()) {
+        animation:
+            scroll-fade-reveal-t 1ms ease-in-out,
+            scroll-fade-reveal-b 1ms ease-in-out,
+            scroll-fade-reveal-s 1ms ease-in-out,
+            scroll-fade-reveal-e 1ms ease-in-out;
+        animation-timeline: scroll(self y), scroll(self y), scroll(self x), scroll(self x);
+        animation-range:
+            0 var(--scroll-fade-reveal, calc(var(--spacing) * 24)),
+            calc(100% - var(--scroll-fade-reveal, calc(var(--spacing) * 24))) 100%,
+            0 var(--scroll-fade-reveal, calc(var(--spacing) * 24)),
+            calc(100% - var(--scroll-fade-reveal, calc(var(--spacing) * 24))) 100%;
+        animation-fill-mode: both;
+    }
+
+    @supports not (animation-timeline: scroll()) {
+        --scroll-fade-t: var(--_scroll-fade-size-t);
+        --scroll-fade-b: var(--_scroll-fade-size-b);
+        --scroll-fade-s: var(--_scroll-fade-size-s);
+        --scroll-fade-e: var(--_scroll-fade-size-e);
+    }
 }
 
 @layer base {

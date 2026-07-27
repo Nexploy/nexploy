@@ -184,7 +184,6 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                         </DialogHeader>
                         <ScrollAreaWithShadow
                             ref={logsContainerRef}
-                            colorShadow={'from-black via-black/50'}
                             bottomShadow
                             thumbColor={'bg-[#282828] hover:bg-[#404040]'}
                             className="h-[600px] overflow-hidden font-mono text-xs"

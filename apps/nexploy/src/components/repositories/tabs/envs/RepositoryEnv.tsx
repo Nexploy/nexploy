@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent, CardHeader } from '@workspace/ui/components/card';
+import { Badge } from '@workspace/ui/components/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Eye, EyeOff, Key, Pencil, Plus, Trash2 } from 'lucide-react';
 import { onEnvVariableAction } from '@/actions/repository/updateEnvVariables.action';
 import { deleteEnvVariableAction } from '@/actions/repository/deleteEnvVariable.action';
 import { toast } from 'sonner';
-import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { ImportEnv } from './ImportEnv';
 import { EnvVariableForm } from './EnvVariableForm';
@@ -38,7 +38,12 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const { openDialog, closeDialog } = useConfirmationDialogStore();
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
-    const [copiedId, setCopiedId] = useState<string | null>(null);
+
+    const rowIds = useMemo(
+        () => envVariables.map((variable, index) => variable.id ?? `idx-${index}`),
+        [envVariables],
+    );
+    const areAllVisible = rowIds.length > 0 && rowIds.every((rowId) => showValues[rowId]);
 
     const { execute: importVariables } = useAction(onEnvVariableAction, {
         onSuccess: () => {
@@ -96,22 +101,40 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
         });
     };
 
-    const toggleShowValue = (id: string) => {
-        setShowValues((prev) => ({ ...prev, [id]: !prev[id] }));
+    const toggleShowValue = (rowId: string) => {
+        setShowValues((prev) => ({ ...prev, [rowId]: !prev[rowId] }));
+    };
+
+    const toggleShowAll = () => {
+        setShowValues(
+            areAllVisible ? {} : Object.fromEntries(rowIds.map((rowId) => [rowId, true])),
+        );
     };
 
     return (
-        <Card className="mx-5">
-            <CardHeader>
-                <div className="flex items-center justify-between">
-                    <CardHeaderWithIcon
-                        as={'div'}
-                        icon={Key}
-                        title={t('title')}
-                        description={t('description')}
-                    />
+        <div className="flex flex-col gap-2 px-5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-semibold">{t('title')}</h2>
+                    {envVariables.length > 0 && (
+                        <Badge variant="secondary" className="font-mono">
+                            {envVariables.length}
+                        </Badge>
+                    )}
+                </div>
+                <div className="flex items-center gap-2">
+                    {envVariables.length > 0 && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            icon={areAllVisible ? EyeOff : Eye}
+                            onClick={toggleShowAll}
+                        >
+                            {areAllVisible ? t('hideAll') : t('showAll')}
+                        </Button>
+                    )}
                     {canEdit && (
-                        <div className="flex items-center gap-2">
+                        <>
                             <ImportEnv
                                 onImport={(vars) => {
                                     importVariables({
@@ -122,91 +145,115 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                                     });
                                 }}
                             />
-                            <Button size="sm" onClick={handleAddNew}>
-                                <Plus />
+                            <Button size="sm" icon={Plus} onClick={handleAddNew}>
                                 {t('addVariable')}
                             </Button>
-                        </div>
+                        </>
                     )}
                 </div>
-            </CardHeader>
-            <CardContent>
-                {envVariables.length === 0 ? (
-                    <div className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noVariables')}
+            </div>
+
+            {envVariables.length === 0 ? (
+                <div className="flex flex-col items-center gap-3 rounded-md border p-8 text-center">
+                    <div className="bg-primary/10 flex size-9 items-center justify-center rounded-lg">
+                        <Key className="text-primary size-5" />
                     </div>
-                ) : (
-                    <div className="flex flex-col">
-                        <div className="text-muted-foreground border-b py-2 text-sm font-medium">
-                            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] items-center gap-4">
-                                <span>{t('key')}</span>
-                                <span>{t('value')}</span>
-                            </div>
-                        </div>
-                        {envVariables.map((variable, index) => {
-                            const rowId = variable.id ?? `idx-${index}`;
-                            const isVisible = showValues[rowId];
-                            return (
-                                <div
-                                    key={rowId}
-                                    className="group grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] items-center gap-4 border-b py-3 transition-colors last:border-0"
-                                >
-                                    <code className="min-w-0 truncate text-sm">{variable.key}</code>
-                                    <div className="flex min-w-0 items-center gap-1">
-                                        <CopyButton
-                                            className="size-8 shrink-0"
-                                            size="icon"
-                                            variant="ghost"
-                                            text={variable.value}
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            className="size-8 shrink-0"
-                                            title={isVisible ? t('hide') : t('show')}
-                                            onClick={() => toggleShowValue(rowId)}
-                                        >
-                                            {isVisible ? <Eye /> : <EyeOff />}
-                                        </Button>
-                                        <code className="text-muted-foreground min-w-0 flex-1 break-all font-mono text-sm">
-                                            {isVisible ? (
-                                                variable.value
-                                            ) : (
-                                                <span className="tracking-[0.2em]">
-                                                    ▪▪▪▪▪▪▪▪▪▪
-                                                </span>
-                                            )}
-                                        </code>
-                                        {canEdit && (
-                                            <div className="ml-auto flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="size-8"
-                                                    onClick={() => handleEdit(variable)}
-                                                >
-                                                    <Pencil className="size-4" />
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="size-8"
-                                                    onClick={() => handleRemove(variable)}
-                                                >
-                                                    <Trash2 className="text-destructive size-4" />
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
+                    <div className="flex flex-col gap-1">
+                        <span className="text-sm font-medium">{t('noVariables')}</span>
+                        <span className="text-muted-foreground text-sm">{t('description')}</span>
+                    </div>
+                    {canEdit && (
+                        <Button variant="outline" size="sm" icon={Plus} onClick={handleAddNew}>
+                            {t('addVariable')}
+                        </Button>
+                    )}
+                </div>
+            ) : (
+                <div className="flex flex-col divide-y overflow-hidden rounded-md border">
+                    {envVariables.map((variable, index) => {
+                        const rowId = rowIds[index]!;
+                        const isVisible = showValues[rowId];
+                        return (
+                            <div
+                                key={rowId}
+                                className="bg-card hover:bg-muted/70 group flex items-center gap-3 p-3 transition-colors"
+                            >
+                                <code className="w-1/3 min-w-0 shrink-0 break-all font-mono text-sm font-medium">
+                                    {variable.key}
+                                </code>
+                                <code className="text-muted-foreground min-w-0 flex-1 break-all font-mono text-sm">
+                                    {isVisible ? (
+                                        variable.value || (
+                                            <span className="italic">{t('emptyValue')}</span>
+                                        )
+                                    ) : (
+                                        <span className="tracking-[0.2em]">
+                                            •••••••••••••••••••
+                                        </span>
+                                    )}
+                                </code>
+                                <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100 has-[[data-state=open]]:opacity-100">
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon-sm"
+                                                onClick={() => toggleShowValue(rowId)}
+                                            >
+                                                {isVisible ? <EyeOff /> : <Eye />}
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {isVisible ? t('hide') : t('show')}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <CopyButton
+                                                size="icon-sm"
+                                                variant="ghost"
+                                                text={variable.value}
+                                            />
+                                        </TooltipTrigger>
+                                        <TooltipContent>{t('copy')}</TooltipContent>
+                                    </Tooltip>
+                                    {canEdit && (
+                                        <>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon-sm"
+                                                        onClick={() => handleEdit(variable)}
+                                                    >
+                                                        <Pencil />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>{t('editTitle')}</TooltipContent>
+                                            </Tooltip>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        type="button"
+                                                        variant="destructiveGhost"
+                                                        size="icon-sm"
+                                                        onClick={() => handleRemove(variable)}
+                                                    >
+                                                        <Trash2 />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>{t('remove')}</TooltipContent>
+                                            </Tooltip>
+                                        </>
+                                    )}
                                 </div>
-                            );
-                        })}
-                    </div>
-                )}
-            </CardContent>
-        </Card>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
     );
 }

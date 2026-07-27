@@ -11,7 +11,7 @@ import type { ReactNode } from 'react';
 import { GitProviderInfo } from '@/services/git/gitProviders.service';
 
 type GitProviderAccordionItemProps = {
-    value: 'github' | 'gitlab' | 'gitea';
+    value: 'github' | 'gitlab' | 'gitea' | 'bitbucket' | 'azureRepos';
     icon: ReactNode;
     titleKey: string;
     instances: GitProviderInfo[];

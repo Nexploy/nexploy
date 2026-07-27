@@ -3,6 +3,7 @@ import { streamSSE } from 'hono/streaming';
 import { getImagesStateManager } from '@/managers/list/imagesStateManager';
 import { logger } from '@/utils/logger';
 import { ImageEvent } from '@workspace/typescript-interface/docker/docker.image';
+import { createInitialStateGate } from '@/utils/initialStateGate';
 
 const app = new Hono();
 
@@ -75,14 +76,27 @@ app.get('/stream', (c) => {
             }
         }, 15000);
 
+        const gate = createInitialStateGate();
+        const onInitialState = gate.gate(handleInitialState);
+        const onStateChange = gate.gate(handleStateChange);
+        const onImageAdded = gate.gate(handleImageAdded);
+        const onImageUpdated = gate.gate(handleImageUpdated);
+        const onImageRemoved = gate.gate(handleImageRemoved);
+
         const cleanup = () => {
             clearInterval(heartbeat);
-            manager.off('state-change', handleStateChange);
-            manager.off('initial-state', handleInitialState);
-            manager.off('image-added', handleImageAdded);
-            manager.off('image-updated', handleImageUpdated);
-            manager.off('image-removed', handleImageRemoved);
+            manager.off('state-change', onStateChange);
+            manager.off('initial-state', onInitialState);
+            manager.off('image-added', onImageAdded);
+            manager.off('image-updated', onImageUpdated);
+            manager.off('image-removed', onImageRemoved);
         };
+
+        manager.on('state-change', onStateChange);
+        manager.on('initial-state', onInitialState);
+        manager.on('image-added', onImageAdded);
+        manager.on('image-updated', onImageUpdated);
+        manager.on('image-removed', onImageRemoved);
 
         const initialImages = manager.getAllImages();
         await handleInitialState({
@@ -90,12 +104,7 @@ app.get('/stream', (c) => {
             images: initialImages,
             timestamp: Date.now(),
         });
-
-        manager.on('state-change', handleStateChange);
-        manager.on('initial-state', handleInitialState);
-        manager.on('image-added', handleImageAdded);
-        manager.on('image-updated', handleImageUpdated);
-        manager.on('image-removed', handleImageRemoved);
+        await gate.release();
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

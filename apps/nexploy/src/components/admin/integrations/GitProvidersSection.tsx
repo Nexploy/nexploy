@@ -20,7 +20,7 @@ export async function GitProvidersSection() {
             <Accordion
                 type="multiple"
                 className="flex flex-col gap-3"
-                defaultValue={['github', 'gitlab', 'gitea']}
+                defaultValue={['github', 'gitlab', 'gitea', 'bitbucket', 'azureRepos']}
             >
                 <GitProviderAccordionItem
                     value="github"
@@ -39,6 +39,18 @@ export async function GitProvidersSection() {
                     icon={<PROVIDER_ICONS.GITEA className="size-5" />}
                     titleKey="gitea.title"
                     instances={providers.filter((p) => p.provider === 'GITEA')}
+                />
+                <GitProviderAccordionItem
+                    value="bitbucket"
+                    icon={<PROVIDER_ICONS.BITBUCKET className="size-5" />}
+                    titleKey="bitbucket.title"
+                    instances={providers.filter((p) => p.provider === 'BITBUCKET')}
+                />
+                <GitProviderAccordionItem
+                    value="azureRepos"
+                    icon={<PROVIDER_ICONS.AZURE_REPOS className="size-5" />}
+                    titleKey="azureRepos.title"
+                    instances={providers.filter((p) => p.provider === 'AZURE_REPOS')}
                 />
             </Accordion>
         </section>

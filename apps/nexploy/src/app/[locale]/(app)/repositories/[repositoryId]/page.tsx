@@ -12,6 +12,7 @@ import { getRepositorieById } from '@/services/repository.service';
 import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
 import { getHostname } from '@/utils/url';
+import { getRepositoryWebUrl } from '@/services/git/core/repoUrl';
 import Link from 'next/link';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 import { Separator } from '@workspace/ui/components/separator';
@@ -57,7 +58,7 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
                             </div>
                             <div className="mt-3.5 flex flex-col">
                                 <Link
-                                    href={repository.repositoryUrl}
+                                    href={getRepositoryWebUrl(repository.repositoryUrl)}
                                     className={'group flex items-center gap-1'}
                                     target="_blank"
                                 >

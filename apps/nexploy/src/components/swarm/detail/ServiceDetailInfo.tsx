@@ -74,7 +74,6 @@ export function ServiceDetailInfo() {
             <CardHeaderWithIcon icon={Hash} title={t('detail.infoTitle')} />
             <CardContent className="px-0">
                 <ScrollAreaWithShadow
-                    colorShadow="from-card via-card/50"
                     bottomShadow
                     className="h-60 overflow-hidden px-6"
                 >

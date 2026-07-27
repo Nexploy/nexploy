@@ -1,6 +1,6 @@
 export interface GitAccountSummary {
     id: string;
-    provider: 'GITHUB' | 'GITLAB' | 'GITEA';
+    provider: 'GITHUB' | 'GITLAB' | 'GITEA' | 'BITBUCKET' | 'AZURE_REPOS';
     providerAccountId: string;
     providerUsername: string | null;
     gitProviderId: string;
@@ -19,6 +19,12 @@ export interface GitRepository {
     url: string;
     private: boolean;
     defaultBranch: string;
+}
+
+export interface GitRepositoryList {
+    repositories: GitRepository[];
+    totalCount: number;
+    alreadyAddedCount: number;
 }
 
 export interface GitBranch {

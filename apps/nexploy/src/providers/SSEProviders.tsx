@@ -54,7 +54,6 @@ const DEFAULT_SSE_CONNECTIONS: SSEChannel[] = [
     'volumes',
     'networks',
     'events',
-    'swarm',
 ];
 const DEFAULT_SSE_PARAMS: SSEParams = {};
 

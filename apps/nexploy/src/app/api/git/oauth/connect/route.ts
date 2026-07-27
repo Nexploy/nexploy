@@ -48,6 +48,7 @@ export const GET = route
                     clientId,
                     clientSecret: decrypt(gitProvider.clientSecret),
                     appName: gitProvider.appName ?? undefined,
+                    tenantId: gitProvider.tenantId ?? undefined,
                     baseUrl: gitProvider.baseUrl ?? undefined,
                 },
                 state,

@@ -4,30 +4,41 @@ import { Button } from '@workspace/ui/components/button';
 import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 import { useTranslations } from 'next-intl';
 import { Can } from '@/components/permission/Can';
+import { cn } from '@workspace/ui/lib/utils';
+
+const panelButtonClassName =
+    'size-8 border shadow-lg backdrop-blur-md data-[active=false]:bg-sidebar/85 data-[active=false]:border-border/70 data-[active=false]:hover:bg-sidebar data-[active=true]:border-transparent';
 
 export function ButtonPanel() {
     const { activePanel, togglePanel } = usePipelinePanelStore();
     const t = useTranslations('repository.pipeline');
 
-
     return (
         <Can resource="repository" action="update">
-            <Panel position="top-right" className="m-2! flex flex-col items-center gap-1.5">
+            <Panel
+                position="top-right"
+                className={cn(
+                    'm-2! flex flex-col items-center gap-1.5 transition-transform duration-200 ease-out',
+                    activePanel && '-translate-x-[calc(--spacing(72)+--spacing(2))]',
+                )}
+            >
                 <Button
-                    variant={activePanel === 'palette' ? 'default' : 'secondary'}
+                    data-active={activePanel === 'palette'}
+                    variant={activePanel === 'palette' ? 'default' : 'ghost'}
                     size="icon"
                     onClick={() => togglePanel('palette')}
-                    className="size-8"
+                    className={panelButtonClassName}
                     title={t('nodePalette')}
                 >
                     <Plus />
                 </Button>
 
                 <Button
-                    variant={activePanel === 'template' ? 'default' : 'secondary'}
+                    data-active={activePanel === 'template'}
+                    variant={activePanel === 'template' ? 'default' : 'ghost'}
                     size="icon"
                     onClick={() => togglePanel('template')}
-                    className="size-8"
+                    className={panelButtonClassName}
                     title={t('pipelineTemplates')}
                 >
                     <Workflow />

@@ -1,10 +1,14 @@
 import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
-import { dockerStatusManager } from '@/managers/dockerStatusManager';
+import type { DockerStatusManager } from '@/managers/dockerStatusManager';
 import { DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import byline from 'byline';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import type Docker from 'dockerode';
+
+const STATUS_LISTENER_SETUP_RETRY_MS = 100;
+const STATUS_LISTENER_SETUP_MAX_ATTEMPTS = 50;
 
 export interface BaseSingleResourceStateManagerConfig {
     resourceType: string;
@@ -27,6 +31,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
     protected dockerEventStream: any = null;
     protected reconnectAttempts = 0;
     protected readonly MAX_RECONNECT_ATTEMPTS: number;
+    private onDockerStatusChanged: ((event: DockerStatusEvent) => void) | null = null;
 
     protected constructor(config: BaseSingleResourceStateManagerConfig) {
         super();
@@ -40,8 +45,34 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
         this.setupDockerStatusListeners();
     }
 
-    private setupDockerStatusListeners() {
-        dockerStatusManager.on('status-changed', async (event: DockerStatusEvent) => {
+    protected getDockerStatusManager(): DockerStatusManager | null {
+        return stateManagerFactory.getManagersSafe(this.environmentId)?.dockerStatus ?? null;
+    }
+
+    protected isDockerConnected(): boolean {
+        return this.getDockerStatusManager()?.isConnected() ?? false;
+    }
+
+    private setupDockerStatusListeners(attempt = 0) {
+        const dockerStatusManager = this.getDockerStatusManager();
+
+        if (!dockerStatusManager) {
+            if (attempt >= STATUS_LISTENER_SETUP_MAX_ATTEMPTS) {
+                logger.error(
+                    { resourceId: this.resourceId, environmentId: this.environmentId },
+                    `Docker status manager never became available for ${this.resourceType}`,
+                );
+                return;
+            }
+
+            setTimeout(
+                () => this.setupDockerStatusListeners(attempt + 1),
+                STATUS_LISTENER_SETUP_RETRY_MS,
+            );
+            return;
+        }
+
+        this.onDockerStatusChanged = async (event: DockerStatusEvent) => {
             if (this.monitoring && event.status === 'connected') {
                 logger.info(
                     { resourceId: this.resourceId },
@@ -64,7 +95,9 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
                 );
                 this.cleanupEventStream();
             }
-        });
+        };
+
+        dockerStatusManager.on('status-changed', this.onDockerStatusChanged);
     }
 
     async start(): Promise<void> {
@@ -79,17 +112,18 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
         this.monitoring = true;
         logger.info({ resourceId: this.resourceId }, `Starting ${this.resourceType} monitor`);
 
-        const status = dockerStatusManager.getStatus();
+        const dockerStatusManager = this.getDockerStatusManager();
+        const status = dockerStatusManager?.getStatus() ?? 'disconnected';
 
-        if (status === 'connecting') {
+        if (dockerStatusManager && status === 'connecting') {
             await new Promise<void>((resolve) => {
-                dockerStatusManager.once('status-changed', ({ status }) => {
+                dockerStatusManager.once('status-changed', ({ status }: DockerStatusEvent) => {
                     if (status !== 'connecting') resolve();
                 });
             });
         }
 
-        if (dockerStatusManager.isConnected()) {
+        if (this.isDockerConnected()) {
             try {
                 await this.loadInitialState();
                 await this.startDockerEventsListener();
@@ -118,6 +152,11 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
             this.pollInterval = null;
         }
 
+        if (this.onDockerStatusChanged) {
+            this.getDockerStatusManager()?.off('status-changed', this.onDockerStatusChanged);
+            this.onDockerStatusChanged = null;
+        }
+
         this.cleanupEventStream();
         this.currentState = null;
         this.removeAllListeners();
@@ -138,7 +177,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
     }
 
     private async loadInitialState(): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
+        if (!this.isDockerConnected()) {
             logger.warn(
                 { resourceId: this.resourceId },
                 `Cannot load initial state: Docker not connected`,
@@ -174,7 +213,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
     }
 
     private async startDockerEventsListener(): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
+        if (!this.isDockerConnected()) {
             logger.warn(
                 { resourceId: this.resourceId },
                 `Cannot start events listener: Docker not connected`,
@@ -256,7 +295,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
         );
 
         setTimeout(() => {
-            if (this.monitoring && dockerStatusManager.isConnected()) {
+            if (this.monitoring && this.isDockerConnected()) {
                 this.startDockerEventsListener();
             } else {
                 logger.warn(
@@ -275,7 +314,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
         this.pollInterval = setInterval(async () => {
             if (!this.monitoring) return;
 
-            if (!dockerStatusManager.isConnected()) {
+            if (!this.isDockerConnected()) {
                 logger.debug(
                     { resourceId: this.resourceId },
                     `Skipping ${this.resourceType} poll: Docker not connected`,
@@ -300,7 +339,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
     }
 
     private async pollResourceState(): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
+        if (!this.isDockerConnected()) {
             logger.debug(
                 { resourceId: this.resourceId },
                 `Skipping ${this.resourceType} poll: Docker not connected`,
@@ -331,7 +370,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
     }
 
     async handleDockerEvent(event: any): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
+        if (!this.isDockerConnected()) {
             logger.debug(
                 { resourceId: this.resourceId },
                 `Ignoring Docker event: Docker not connected`,
@@ -348,7 +387,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
     }
 
     protected async updateResourceState(action: string): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
+        if (!this.isDockerConnected()) {
             logger.debug(
                 { resourceId: this.resourceId },
                 `Skipping ${this.resourceType} state update: Docker not connected`,
@@ -410,13 +449,13 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
             hasState: this.currentState !== null,
             eventStreamActive: this.dockerEventStream !== null,
             reconnectAttempts: this.reconnectAttempts,
-            dockerConnected: dockerStatusManager.isConnected(),
+            dockerConnected: this.isDockerConnected(),
             ...this.getCustomStats(),
         };
     }
 
     async refresh(): Promise<void> {
-        if (!dockerStatusManager.isConnected()) {
+        if (!this.isDockerConnected()) {
             logger.warn(
                 { resourceId: this.resourceId },
                 `Cannot refresh ${this.resourceType}: Docker not connected`,

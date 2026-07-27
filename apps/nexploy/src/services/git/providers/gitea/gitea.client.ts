@@ -121,7 +121,7 @@ export async function giteaCreateWebhook(
             json: {
                 type: 'gitea',
                 active: true,
-                events: ['push'],
+                events: ['push', 'create', 'pull_request', 'pull_request_sync'],
                 config: {
                     url: webhookUrl,
                     content_type: 'json',

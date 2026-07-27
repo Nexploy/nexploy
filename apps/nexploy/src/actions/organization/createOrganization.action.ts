@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { createOrganizationSchema } from '@workspace/schemas-zod/organization/createOrganization.schema';
 import { getTranslations } from 'next-intl/server';
 import { revalidatePath } from 'next/cache';
+import { generateOrganizationSlug } from '@/services/organization.service';
 
 export const createOrganizationAction = authActionServer
     .inputSchema(createOrganizationSchema)
@@ -19,7 +20,10 @@ export const createOrganizationAction = authActionServer
 
         try {
             const organization = await auth.api.createOrganization({
-                body: parsedInput,
+                body: {
+                    name: parsedInput.name,
+                    slug: generateOrganizationSlug(parsedInput.name),
+                },
                 headers: await headers(),
             });
 

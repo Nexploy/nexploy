@@ -18,14 +18,6 @@ import { createOrganizationSchema } from '@workspace/schemas-zod/organization/cr
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useOrganizationStore } from '@/stores/organization/useOrganizationStore';
 
-function slugify(value: string) {
-    return value
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-}
-
 export function CreateOrganizationForm() {
     const t = useTranslations('organization');
     const { closeDialog } = useConfirmationDialogStore();
@@ -38,7 +30,6 @@ export function CreateOrganizationForm() {
             formProps: {
                 defaultValues: {
                     name: '',
-                    slug: '',
                 },
             },
             actionProps: {
@@ -70,30 +61,7 @@ export function CreateOrganizationForm() {
                         <FormItem>
                             <FormLabel>{t('name')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    placeholder={t('namePlaceholder')}
-                                    onChange={(e) => {
-                                        field.onChange(e);
-                                        if (!form.formState.dirtyFields.slug) {
-                                            form.setValue('slug', slugify(e.target.value));
-                                        }
-                                    }}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="slug"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>{t('slug')}</FormLabel>
-                            <FormControl>
-                                <Input {...field} placeholder={t('slugPlaceholder')} />
+                                <Input {...field} placeholder={t('namePlaceholder')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

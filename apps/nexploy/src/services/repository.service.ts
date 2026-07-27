@@ -347,12 +347,24 @@ export async function moveRepositoryToOrganization(
 
     const repo = await prisma.repository.findUnique({
         where: { id: repositoryId },
-        select: { organizationId: true },
+        select: { organizationId: true, gitId: true, repositoryUrl: true },
     });
 
     if (!repo) throw new Error(t('repository.notFound'));
     if (repo.organizationId === targetOrganizationId) {
         throw new Error(t('repository.alreadyInOrganization'));
+    }
+
+    const conflicting = await prisma.repository.findFirst({
+        where: {
+            organizationId: targetOrganizationId,
+            OR: [{ gitId: repo.gitId }, { repositoryUrl: repo.repositoryUrl }],
+        },
+        select: { id: true },
+    });
+
+    if (conflicting) {
+        throw new Error(t('repository.alreadyExistsInTargetOrganization'));
     }
 
     try {

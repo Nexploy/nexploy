@@ -11,6 +11,12 @@ import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { kyGithubApi } from '@/services/git/providers/github/github.client';
 import { kyGitlab } from '@/services/git/providers/gitlab/gitlab.client';
 import { kyGitea } from '@/services/git/providers/gitea/gitea.client';
+import { kyBitbucket } from '@/services/git/providers/bitbucket/bitbucket.client';
+import {
+    azureGetFileContent,
+    azureGetRepository,
+    azureGetRootItems,
+} from '@/services/git/providers/azureRepos/azureRepos.client';
 import { getGitAdapter } from '@/services/git/core/registry';
 import type { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { getCompactCatalog, PIPELINE_NODE_CATALOG } from '@/lib/ai/pipelineNodeCatalog';
@@ -53,6 +59,8 @@ type GiteaContentFile = {
 };
 
 type GitLabFileContent = { content: string; encoding: string };
+
+type BitbucketDirEntry = { path: string; type: string };
 
 async function fetchGithubFiles(
     owner: string,
@@ -158,6 +166,85 @@ async function fetchGiteaFiles(
     return { rootFiles, files };
 }
 
+async function fetchBitbucketFiles(
+    workspace: string,
+    repoSlug: string,
+    ref: string,
+): Promise<{ rootFiles: { name: string; type: string }[]; files: Record<string, string> }> {
+    const rootFiles: { name: string; type: string }[] = [];
+    const files: Record<string, string> = {};
+
+    try {
+        const listing = await kyBitbucket()
+            .get(`repositories/${workspace}/${repoSlug}/src/${ref}/`, {
+                searchParams: { pagelen: '100' },
+            })
+            .json<{ values: BitbucketDirEntry[] }>();
+        rootFiles.push(
+            ...listing.values.map((entry) => ({
+                name: entry.path.split('/').pop() ?? entry.path,
+                type: entry.type === 'commit_directory' ? 'dir' : 'file',
+            })),
+        );
+    } catch {}
+
+    for (const fileName of KEY_FILES) {
+        try {
+            const content = await kyBitbucket()
+                .get(`repositories/${workspace}/${repoSlug}/src/${ref}/${fileName}`)
+                .text();
+            files[fileName] = content.substring(0, 3000);
+        } catch {}
+    }
+
+    return { rootFiles, files };
+}
+
+async function fetchAzureReposFiles(
+    organization: string,
+    project: string,
+    repository: string,
+    ref: string,
+): Promise<{ rootFiles: { name: string; type: string }[]; files: Record<string, string> }> {
+    const rootFiles: { name: string; type: string }[] = [];
+    const files: Record<string, string> = {};
+    const branch = ref === 'HEAD' ? undefined : ref;
+
+    const defaultBranch = branch
+        ? branch
+        : (await azureGetRepository(organization, project, repository)).defaultBranch?.replace(
+              'refs/heads/',
+              '',
+          ) || 'main';
+
+    try {
+        const listing = await azureGetRootItems(organization, project, repository, defaultBranch);
+        rootFiles.push(
+            ...listing
+                .filter((entry) => entry.path !== '/')
+                .map((entry) => ({
+                    name: entry.path.replace(/^\//, ''),
+                    type: entry.isFolder ? 'dir' : 'file',
+                })),
+        );
+    } catch {}
+
+    for (const fileName of KEY_FILES) {
+        try {
+            const content = await azureGetFileContent(
+                organization,
+                project,
+                repository,
+                `/${fileName}`,
+                defaultBranch,
+            );
+            files[fileName] = content.substring(0, 3000);
+        } catch {}
+    }
+
+    return { rootFiles, files };
+}
+
 export const pipelineGroup: ToolGroup = {
     name: 'pipeline',
 
@@ -244,12 +331,16 @@ export const pipelineGroup: ToolGroup = {
                     let files: Record<string, string> = {};
 
                     if (repo.gitProvider === 'GITHUB') {
-                        const { owner, repo: repoName } = getGitAdapter('GITHUB').parseRepoUrl(repo.repositoryUrl);
+                        const { owner, repo: repoName } = getGitAdapter('GITHUB').parseRepoUrl(
+                            repo.repositoryUrl,
+                        );
                         ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
                             fetchGithubFiles(owner, repoName, ref),
                         ));
                     } else if (repo.gitProvider === 'GITLAB') {
-                        const { baseUrl } = getGitAdapter('GITLAB').parseRepoUrl(repo.repositoryUrl);
+                        const { baseUrl } = getGitAdapter('GITLAB').parseRepoUrl(
+                            repo.repositoryUrl,
+                        );
                         const url = new URL(repo.repositoryUrl);
                         const pathWithNamespace = url.pathname
                             .replace(/^\//, '')
@@ -260,11 +351,28 @@ export const pipelineGroup: ToolGroup = {
                             fetchGitlabFiles(baseUrl, encodedPath, ref),
                         ));
                     } else if (repo.gitProvider === 'GITEA') {
-                        const { baseUrl, owner, repo: repoName } = getGitAdapter(
-                            'GITEA',
-                        ).parseRepoUrl(repo.repositoryUrl);
+                        const {
+                            baseUrl,
+                            owner,
+                            repo: repoName,
+                        } = getGitAdapter('GITEA').parseRepoUrl(repo.repositoryUrl);
                         ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
                             fetchGiteaFiles(baseUrl, owner, repoName, ref),
+                        ));
+                    } else if (repo.gitProvider === 'BITBUCKET') {
+                        const { owner, repo: repoName } = getGitAdapter('BITBUCKET').parseRepoUrl(
+                            repo.repositoryUrl,
+                        );
+                        ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
+                            fetchBitbucketFiles(owner, repoName, ref),
+                        ));
+                    } else if (repo.gitProvider === 'AZURE_REPOS') {
+                        const { owner, repo: repoName } = getGitAdapter(
+                            'AZURE_REPOS',
+                        ).parseRepoUrl(repo.repositoryUrl);
+                        const [organization, project] = owner.split('/');
+                        ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
+                            fetchAzureReposFiles(organization!, project!, repoName, ref),
                         ));
                     } else {
                         return fail(`Unsupported git provider: ${repo.gitProvider}`);

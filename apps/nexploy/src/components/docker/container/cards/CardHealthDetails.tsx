@@ -47,7 +47,6 @@ export function CardHealthDetails() {
                             </div>
                         </div>
                         <ScrollAreaWithShadow
-                            colorShadow="from-card via-card/50"
                             bottomShadow
                             className="h-60 overflow-hidden px-6"
                         >

@@ -65,6 +65,7 @@ export const GET = route
                         credentials: {
                             clientId,
                             clientSecret,
+                            tenantId: gitProvider.tenantId ?? undefined,
                             baseUrl: gitProvider.baseUrl ?? undefined,
                         },
                         redirectUri,

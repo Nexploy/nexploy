@@ -1,8 +1,22 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { updateBuildGitInfo } from '@/services/repository/build.service';
 import { webhookCloneConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { matchesWebhookTrigger } from '@/services/webhook/webhookTrigger';
+import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
 import { z } from 'zod';
+
+const SKIP_MESSAGES: Record<string, (detail: string) => string> = {
+    'event-filter': (detail) => `Webhook event "${detail}" is not enabled on this node — skipping`,
+    'merge-request-action': (detail) =>
+        `Merge request action "${detail}" is not enabled on this node — skipping`,
+    'tag-filter': (detail) => `Tag "${detail}" does not match the tag filter — skipping`,
+    'branch-filter': (detail) => `Branch "${detail}" does not match the branch filter — skipping`,
+};
 
 export class WebhookCloneExecutor implements INodeExecutor {
     readonly type = 'webhook-clone';
@@ -21,20 +35,26 @@ export class WebhookCloneExecutor implements INodeExecutor {
             );
         }
 
-        const branchFilter = nodeConfig.branchFilter;
-        if (branchFilter && !gitService.matchesBranchFilter(branch, branchFilter)) {
+        const trigger: WebhookTrigger = buildConfig.webhookTrigger ?? { event: 'push' };
+        const match = matchesWebhookTrigger(nodeConfig, trigger, branch);
+
+        if (!match.matched) {
+            const describe = match.reason ? SKIP_MESSAGES[match.reason] : undefined;
             await logger.info(
                 nodeId,
-                `Branch "${branch}" does not match filter "${branchFilter}" — skipping`,
+                describe?.(match.detail ?? '') ?? 'Webhook event filtered out — skipping',
             );
             return {
-                output: { skipped: true, reason: 'branch-filter' },
+                output: { skipped: true, reason: match.reason },
             };
         }
 
+        const refLabel =
+            trigger.event === 'tag' ? `tag: ${trigger.tagName ?? branch}` : `branch: ${branch}`;
+
         await logger.info(
             nodeId,
-            `Cloning repository ${buildConfig.gitUrl} from webhook payload (branch: ${branch})`,
+            `Cloning repository ${buildConfig.gitUrl} from webhook payload (${refLabel})`,
         );
 
         const onProgress = async (progress: number, message: string) => {
@@ -64,7 +84,7 @@ export class WebhookCloneExecutor implements INodeExecutor {
 
             await logger.info(
                 nodeId,
-                `Repository cloned successfully from webhook (branch: ${branch}, commit: ${resolvedHash ?? 'unknown'})`,
+                `Repository cloned successfully from webhook (${refLabel}, commit: ${resolvedHash ?? 'unknown'})`,
             );
 
             return {
@@ -73,6 +93,10 @@ export class WebhookCloneExecutor implements INodeExecutor {
                     branch,
                     commitHash: resolvedHash,
                     commitMessage: resolvedMessage,
+                    event: trigger.event,
+                    tagName: trigger.tagName,
+                    targetBranch: trigger.targetBranch,
+                    mergeRequestAction: trigger.mergeRequestAction,
                 },
             };
         } catch (error) {

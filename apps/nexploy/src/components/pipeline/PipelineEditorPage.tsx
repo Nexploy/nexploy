@@ -1,6 +1,7 @@
 import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { PipelineEditor } from '@/components/pipeline/PipelineEditor';
 import { PipelineProvider } from '@/providers/PipelineProvider';
+import { SSEProvider } from '@/providers/SSEProviders';
 import { ReactFlowProvider } from '@xyflow/react';
 import { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore.ts';
 import '@xyflow/react/dist/style.css';
@@ -19,15 +20,17 @@ export function PipelineEditorPage({
     initialHasMore,
 }: PipelineEditorPageProps) {
     return (
-        <ReactFlowProvider>
-            <PipelineProvider
-                stageId={stageId}
-                initialGraph={initialGraph}
-                initialBuilds={initialBuilds}
-                initialHasMore={initialHasMore}
-            >
-                <PipelineEditor />
-            </PipelineProvider>
-        </ReactFlowProvider>
+        <SSEProvider connections={['swarm']}>
+            <ReactFlowProvider>
+                <PipelineProvider
+                    stageId={stageId}
+                    initialGraph={initialGraph}
+                    initialBuilds={initialBuilds}
+                    initialHasMore={initialHasMore}
+                >
+                    <PipelineEditor />
+                </PipelineProvider>
+            </ReactFlowProvider>
+        </SSEProvider>
     );
 }

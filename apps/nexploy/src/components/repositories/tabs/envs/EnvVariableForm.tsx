@@ -5,7 +5,14 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Eye, EyeOff } from 'lucide-react';
 import { onEnvVariableAction } from '@/actions/repository/updateEnvVariables.action';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
@@ -98,10 +105,11 @@ export function EnvVariableForm({ repositoryId, stageId, variable }: EnvVariable
                                         type="button"
                                         variant="ghost"
                                         size="xs"
+                                        title={showValue ? t('hide') : t('show')}
                                         className="absolute right-1 top-1/2 -translate-y-1/2"
                                         onClick={() => setShowValue((v) => !v)}
                                     >
-                                        {showValue ? <Eye /> : <EyeOff />}
+                                        {showValue ? <EyeOff /> : <Eye />}
                                     </Button>
                                 </div>
                             </FormControl>

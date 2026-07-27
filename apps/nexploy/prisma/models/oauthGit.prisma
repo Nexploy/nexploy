@@ -9,6 +9,7 @@ model GitProvider {
   clientId     String?
   clientSecret String?
   privateKey   String?
+  tenantId     String?
   baseUrl      String?
   enabled      Boolean         @default(true)
   createdAt    DateTime        @default(now())
@@ -43,4 +44,6 @@ enum GitProviderType {
   GITHUB
   GITLAB
   GITEA
+  BITBUCKET
+  AZURE_REPOS
 }

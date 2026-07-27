@@ -19,9 +19,16 @@ class SSEMultiplexerService {
         new Map();
     private reconnectTimeout: NodeJS.Timeout | null = null;
     private readonly RECONNECT_DELAY = 5000;
+    private readonly SYNC_DEBOUNCE_DELAY = 50;
     private activeChannelKeys: Set<string> = new Set();
     private currentEnvironmentId: string | null = null;
     private permanentErrors: Set<string> = new Set();
+    private syncTimeout: NodeJS.Timeout | null = null;
+    private forceReconnectOnSync = false;
+    private lastChannelMessageAt: Map<string, number> = new Map();
+    private watchdogInterval: NodeJS.Timeout | null = null;
+    private readonly WATCHDOG_CHECK_INTERVAL = 15000;
+    private readonly CHANNEL_STALE_THRESHOLD = 90000;
 
     subscribe(
         channel: SSEChannel,
@@ -52,12 +59,8 @@ class SSEMultiplexerService {
             if (!this.localEventSources.has(channelKey)) {
                 this.connectLocalChannel(channelKey, subscription.config);
             }
-        } else {
-            if (!this.multiplexedEventSource) {
-                this.connectMultiplexed();
-            } else if (isNewChannel) {
-                this.reconnectMultiplexed();
-            }
+        } else if (isNewChannel || !this.multiplexedEventSource) {
+            this.scheduleSync();
         }
 
         return () => this.unsubscribe(channel, event, handler, params);
@@ -85,23 +88,67 @@ class SSEMultiplexerService {
             subscription.handlers.delete(event);
         }
 
-        const hadChannel = this.subscriptions.has(channelKey);
-        if (subscription.handlers.size === 0) {
-            this.subscriptions.delete(channelKey);
+        if (subscription.handlers.size > 0) return;
 
-            const localEventSource = this.localEventSources.get(channelKey);
-            if (localEventSource) {
-                localEventSource.close();
-                this.localEventSources.delete(channelKey);
+        this.subscriptions.delete(channelKey);
+
+        const localEventSource = this.localEventSources.get(channelKey);
+        if (localEventSource) {
+            localEventSource.close();
+            this.localEventSources.delete(channelKey);
+        }
+
+        this.scheduleSync();
+    }
+
+    private getRemoteChannelKeys(): string[] {
+        return Array.from(this.subscriptions.keys()).filter((key) => {
+            const subscription = this.subscriptions.get(key);
+            return subscription && !(subscription.config.channel in LOCAL_CHANNELS);
+        });
+    }
+
+    private scheduleSync(force = false): void {
+        if (force) {
+            this.forceReconnectOnSync = true;
+        }
+
+        if (this.syncTimeout) return;
+
+        this.syncTimeout = setTimeout(() => {
+            this.syncTimeout = null;
+            const shouldForce = this.forceReconnectOnSync;
+            this.forceReconnectOnSync = false;
+            this.syncMultiplexed(shouldForce);
+        }, this.SYNC_DEBOUNCE_DELAY);
+    }
+
+    private syncMultiplexed(force: boolean): void {
+        const desiredChannelKeys = this.getRemoteChannelKeys();
+
+        if (desiredChannelKeys.length === 0) {
+            if (this.reconnectTimeout) {
+                clearTimeout(this.reconnectTimeout);
+                this.reconnectTimeout = null;
             }
+            this.permanentErrors.clear();
+            this.disconnectMultiplexed();
+            return;
         }
 
-        if (this.subscriptions.size === 0) {
-            this.disconnect();
-        } else if (hadChannel && !this.subscriptions.has(channelKey)) {
-            const isLocalChannel = channel in LOCAL_CHANNELS;
-            if (!isLocalChannel) this.reconnectMultiplexed();
+        if (!this.multiplexedEventSource) {
+            this.connectMultiplexed();
+            return;
         }
+
+        if (force || !this.hasSameChannels(desiredChannelKeys)) {
+            this.reconnectMultiplexed();
+        }
+    }
+
+    private hasSameChannels(desiredChannelKeys: string[]): boolean {
+        if (desiredChannelKeys.length !== this.activeChannelKeys.size) return false;
+        return desiredChannelKeys.every((key) => this.activeChannelKeys.has(key));
     }
 
     private getChannelKey(config: ChannelConfig): string {
@@ -183,10 +230,7 @@ class SSEMultiplexerService {
             return;
         }
 
-        const remoteChannelKeys = Array.from(this.subscriptions.keys()).filter((key) => {
-            const subscription = this.subscriptions.get(key);
-            return subscription && !(subscription.config.channel in LOCAL_CHANNELS);
-        });
+        const remoteChannelKeys = this.getRemoteChannelKeys();
 
         if (remoteChannelKeys.length === 0) {
             return;
@@ -208,7 +252,9 @@ class SSEMultiplexerService {
             this.activeChannelKeys = new Set(remoteChannelKeys);
 
             this.multiplexedEventSource.addEventListener('open', () => {
+                this.startWatchdog();
                 this.activeChannelKeys.forEach((channelKey) => {
+                    this.lastChannelMessageAt.set(channelKey, Date.now());
                     const subscription = this.subscriptions.get(channelKey);
                     if (subscription) {
                         this.dispatch(
@@ -224,6 +270,11 @@ class SSEMultiplexerService {
             this.multiplexedEventSource.addEventListener('message', (e) => {
                 try {
                     const { channel, event, data, params } = JSON.parse(e.data);
+
+                    this.lastChannelMessageAt.set(
+                        this.getChannelKey({ channel, params }),
+                        Date.now(),
+                    );
 
                     if (event === 'error') {
                         try {
@@ -341,12 +392,44 @@ class SSEMultiplexerService {
         }, this.RECONNECT_DELAY);
     }
 
+    private startWatchdog(): void {
+        this.stopWatchdog();
+
+        this.watchdogInterval = setInterval(() => {
+            if (!this.multiplexedEventSource) return;
+
+            const now = Date.now();
+            const staleChannelKey = Array.from(this.activeChannelKeys).find((channelKey) => {
+                const lastMessageAt = this.lastChannelMessageAt.get(channelKey);
+                return (
+                    lastMessageAt !== undefined &&
+                    now - lastMessageAt > this.CHANNEL_STALE_THRESHOLD
+                );
+            });
+
+            if (!staleChannelKey) return;
+
+            console.warn(`[SSE] No traffic on channel ${staleChannelKey}, reconnecting`);
+            this.reconnectMultiplexed();
+        }, this.WATCHDOG_CHECK_INTERVAL);
+    }
+
+    private stopWatchdog(): void {
+        if (this.watchdogInterval) {
+            clearInterval(this.watchdogInterval);
+            this.watchdogInterval = null;
+        }
+    }
+
     private disconnectMultiplexed(): void {
+        this.stopWatchdog();
+
         if (this.multiplexedEventSource) {
             this.multiplexedEventSource.close();
             this.multiplexedEventSource = null;
         }
         this.activeChannelKeys.clear();
+        this.lastChannelMessageAt.clear();
     }
 
     disconnect(): void {
@@ -354,6 +437,13 @@ class SSEMultiplexerService {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = null;
         }
+
+        if (this.syncTimeout) {
+            clearTimeout(this.syncTimeout);
+            this.syncTimeout = null;
+        }
+
+        this.forceReconnectOnSync = false;
 
         this.disconnectMultiplexed();
 
@@ -378,7 +468,7 @@ class SSEMultiplexerService {
         this.currentEnvironmentId = environmentId;
 
         if (this.subscriptions.size > 0) {
-            this.reconnectMultiplexed();
+            this.scheduleSync(true);
         }
     }
 

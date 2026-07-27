@@ -21,6 +21,7 @@ export interface GitProviderCredentials {
     privateKey?: string;
     appId?: string;
     appName?: string;
+    tenantId?: string;
     baseUrl?: string;
 }
 
@@ -97,6 +98,7 @@ export async function getGitProviderCredentials(
             privateKey: record.privateKey ? decrypt(record.privateKey) : undefined,
             appId: record.appId ?? undefined,
             appName: record.appName ?? undefined,
+            tenantId: record.tenantId ?? undefined,
             baseUrl: record.baseUrl ?? undefined,
         };
     } catch (error: unknown) {
@@ -119,6 +121,7 @@ async function getGitProviderCredentialsById(id: string): Promise<GitProviderCre
         privateKey: record.privateKey ? decrypt(record.privateKey) : undefined,
         appId: record.appId ?? undefined,
         appName: record.appName ?? undefined,
+        tenantId: record.tenantId ?? undefined,
         baseUrl: record.baseUrl ?? undefined,
     };
 }
@@ -196,6 +199,50 @@ export async function saveGiteaProvider(
         });
     } catch (error: unknown) {
         throw new Error(t('oauthProvider.saveGiteaFailed'));
+    }
+}
+
+export async function saveBitbucketProvider(
+    displayName: string,
+    clientId: string,
+    clientSecret: string,
+): Promise<void> {
+    const t = await getErrorTranslator();
+    try {
+        await prisma.gitProvider.create({
+            data: {
+                provider: 'BITBUCKET',
+                displayName,
+                clientId: encrypt(clientId),
+                clientSecret: encrypt(clientSecret),
+                baseUrl: 'https://bitbucket.org',
+            },
+        });
+    } catch (error: unknown) {
+        throw new Error(t('oauthProvider.saveBitbucketFailed'));
+    }
+}
+
+export async function saveAzureReposProvider(
+    displayName: string,
+    clientId: string,
+    clientSecret: string,
+    tenantId?: string,
+): Promise<void> {
+    const t = await getErrorTranslator();
+    try {
+        await prisma.gitProvider.create({
+            data: {
+                provider: 'AZURE_REPOS',
+                displayName,
+                clientId: encrypt(clientId),
+                clientSecret: encrypt(clientSecret),
+                tenantId: tenantId || null,
+                baseUrl: 'https://dev.azure.com',
+            },
+        });
+    } catch (error: unknown) {
+        throw new Error(t('oauthProvider.saveAzureReposFailed'));
     }
 }
 

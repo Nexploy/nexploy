@@ -1,6 +1,11 @@
 import { GitProviderType } from 'generated/client';
 import { prisma } from '@/../prisma/prisma';
-import { GitBranch, GitRepository } from '@workspace/typescript-interface/git/git';
+import {
+    GitBranch,
+    GitRepository,
+    GitRepositoryList,
+} from '@workspace/typescript-interface/git/git';
+import { decrypt } from '@/lib/encryption';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { getGitAdapter } from '@/services/git/core/registry';
 import { getGitProviderCredentials } from '@/services/git/gitProviders.service';
@@ -10,6 +15,8 @@ const DEFAULT_BASE_URL: Record<GitProviderType, string> = {
     GITHUB: 'https://github.com',
     GITLAB: 'https://gitlab.com',
     GITEA: '',
+    BITBUCKET: 'https://bitbucket.org',
+    AZURE_REPOS: 'https://dev.azure.com',
 };
 
 async function resolveBaseUrl(provider: GitProviderType, gitAccountId?: string): Promise<string> {
@@ -21,21 +28,28 @@ export async function getRepositories(
     provider: GitProviderType,
     gitAccountId: string,
     userId: string,
-): Promise<GitRepository[]> {
+    organizationId: string,
+): Promise<GitRepositoryList> {
     const t = await getErrorTranslator();
     const oldToken = await getGitProviderToken(provider, { gitAccountId });
     const token = await getValidToken(oldToken, provider, userId, gitAccountId);
     const baseUrl = await resolveBaseUrl(provider, gitAccountId);
 
     const existingRepos = await prisma.repository.findMany({
-        where: { userId, gitProvider: provider },
+        where: { organizationId, gitProvider: provider },
         select: { gitId: true },
     });
     const existingGitIds = new Set(existingRepos.map((r) => r.gitId));
 
     try {
         const repositories = await getGitAdapter(provider).listRepositories({ token, baseUrl });
-        return repositories.filter((repo) => !existingGitIds.has(repo.id));
+        const available = repositories.filter((repo) => !existingGitIds.has(repo.id));
+
+        return {
+            repositories: available,
+            totalCount: repositories.length,
+            alreadyAddedCount: repositories.length - available.length,
+        };
     } catch (error: unknown) {
         throw new Error(t('git.fetchReposFailed'));
     }
@@ -48,6 +62,7 @@ export async function getBranches(
     gitAccountId: string,
     owner?: string,
     repoName?: string,
+    repositoryUrl?: string,
 ): Promise<GitBranch[]> {
     const t = await getErrorTranslator();
     const oldToken = await getGitProviderToken(provider, {
@@ -64,6 +79,7 @@ export async function getBranches(
             repoId,
             owner,
             repoName,
+            repositoryUrl,
         });
     } catch (error: unknown) {
         throw new Error(t('git.fetchBranchesFailed'));
@@ -150,8 +166,10 @@ export async function disconnectGitAccount(userId: string, gitProviderId: string
             try {
                 await adapter.revokeToken({
                     token: {
-                        accessToken: gitAccount.accessToken,
-                        refreshToken: gitAccount.refreshToken,
+                        accessToken: decrypt(gitAccount.accessToken),
+                        refreshToken: gitAccount.refreshToken
+                            ? decrypt(gitAccount.refreshToken)
+                            : null,
                         accessTokenExpiresAt: gitAccount.accessTokenExpiresAt,
                     },
                     credentials,

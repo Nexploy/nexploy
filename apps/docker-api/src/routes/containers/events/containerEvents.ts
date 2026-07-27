@@ -111,7 +111,11 @@ app.get('/stream/:containerId', (c) => {
             }
         }, 30000);
 
+        let cleanedUp = false;
         const cleanup = () => {
+            if (cleanedUp) return;
+            cleanedUp = true;
+
             clearInterval(heartbeat);
             manager.off('initial-state', handleInitialState);
             manager.off('state-change', handleStateChange);
@@ -195,7 +199,11 @@ app.get('/stream/:containerId/logs/:follow/:tail', (c) => {
             }
         }, 30000);
 
+        let cleanedUp = false;
         const cleanup = () => {
+            if (cleanedUp) return;
+            cleanedUp = true;
+
             clearInterval(heartbeat);
             logsManager.off('log', handleLog);
             logsManager.stop();
@@ -285,7 +293,11 @@ app.get('/stream/:containerId/stats/:refreshRate', (c) => {
             }
         }, 30000);
 
+        let cleanedUp = false;
         const cleanup = () => {
+            if (cleanedUp) return;
+            cleanedUp = true;
+
             clearInterval(heartbeat);
 
             statsManager.off('initial-state', handleInitialState);
