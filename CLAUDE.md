@@ -180,7 +180,7 @@ Client-side call: `fetch('/api/my-resource/${id}')` instead of a server action.
 - `Repository` - Git repositories to deploy
 - `Build` - Build history with status tracking (QUEUED → BUILDING → DEPLOYING → COMPLETED/FAILED/CANCELLED)
 - `Log` - Build logs per step
-- `EnvVariable` - Encrypted environment variables (AES-256-CBC)
+- `EnvVariable` - Encrypted environment variables (AES-256-GCM)
 - `Session/Account/Verification/TwoFactor` - Auth tables
 
 **Key Patterns:**
@@ -205,7 +205,7 @@ Client-side call: `fetch('/api/my-resource/${id}')` instead of a server action.
 - OAuth token refresh via `getValidToken()`
 
 **Security:**
-- Encrypted environment variables (AES-256-CBC) - see `/apps/nexploy/src/lib/encryption.ts`
+- Encrypted environment variables (AES-256-GCM) - see `/apps/nexploy/src/lib/encryption.ts`
 - Webhook secrets for Git provider callbacks
 - CSRF protection via Better Auth
 

@@ -28,7 +28,7 @@
 | **Organizations** | Group repositories per team — email invitations, organization roles on top of instance roles, and repository transfer between organizations |
 | **Traefik reverse proxy** | Automatic routing, Let's Encrypt SSL and custom certificates |
 | **Real-time monitoring** | Live container stats, build logs, Docker events and Traefik requests via SSE |
-| **Encrypted environment variables** | AES-256-CBC encryption at rest |
+| **Encrypted environment variables** | AES-256-GCM encryption at rest |
 | **In-browser terminal** | WebSocket-powered Docker container terminal |
 | **Backups** | Scheduled Docker volume backups to S3-compatible storage |
 | **Automatic cleanup** | Scheduled prune of images, volumes, containers and build cache |
@@ -428,7 +428,7 @@ maintenance page shown on the wrong entrypoint).
 
 ## Security
 
-- Environment variables encrypted at rest (AES-256-CBC)
+- Environment variables encrypted at rest (AES-256-GCM)
 - OAuth tokens stored encrypted and refreshed automatically
 - Git provider app credentials (client IDs, secrets, GitHub App private keys) encrypted at rest
 - Webhook secrets validate Git provider callbacks
