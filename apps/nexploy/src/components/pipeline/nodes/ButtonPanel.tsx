@@ -7,7 +7,7 @@ import { Can } from '@/components/permission/Can';
 import { cn } from '@workspace/ui/lib/utils';
 
 const panelButtonClassName =
-    'size-8 border shadow-lg backdrop-blur-md data-[active=false]:bg-sidebar/85 data-[active=false]:border-border/70 data-[active=false]:hover:bg-sidebar data-[active=true]:border-transparent';
+    'size-8 border backdrop-blur-md data-[active=false]:bg-sidebar/85 data-[active=false]:border-border/70 data-[active=false]:hover:bg-sidebar data-[active=true]:border-transparent';
 
 export function ButtonPanel() {
     const { activePanel, togglePanel } = usePipelinePanelStore();
@@ -19,7 +19,7 @@ export function ButtonPanel() {
                 position="top-right"
                 className={cn(
                     'm-2! flex flex-col items-center gap-1.5 transition-transform duration-200 ease-out',
-                    activePanel && '-translate-x-[calc(--spacing(72)+--spacing(2))]',
+                    activePanel && '-translate-x-[calc(--spacing(72)+(--spacing(2)))]',
                 )}
             >
                 <Button

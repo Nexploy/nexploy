@@ -31,6 +31,8 @@ import {
     mergeBranchConfigSchema,
     pruneImagesConfigSchema,
     pruneBuildCacheConfigSchema,
+    pruneContainersConfigSchema,
+    pruneVolumesConfigSchema,
     pullFromRegistryConfigSchema,
     pushToRegistryConfigSchema,
     removeContainerConfigSchema,
@@ -347,6 +349,20 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
         description:
             'Clears the Docker build cache (docker builder prune) to free disk space. Use "all" to also remove cache still in use, "keepStorage" (e.g. 10GB) to cap retained cache, or "filter" (e.g. until=24h) to target old entries.',
         outputs: ['deletedCaches', 'reclaimedSpace'],
+    },
+    'prune-containers': {
+        schema: pruneContainersConfigSchema,
+        category: 'utility',
+        description:
+            'Removes all stopped containers (docker container prune) to free disk space. Use "olderThan" (e.g. 24h) to only remove containers stopped before that point, or "filter" (e.g. project=myapp) to restrict pruning to a label.',
+        outputs: ['removedContainers', 'reclaimedSpace'],
+    },
+    'prune-volumes': {
+        schema: pruneVolumesConfigSchema,
+        category: 'utility',
+        description:
+            'Removes unused Docker volumes (docker volume prune) to free disk space. By default only anonymous volumes are removed; enable "all" to also remove unused named volumes, or set "filter" (e.g. project=myapp) to restrict pruning to a label.',
+        outputs: ['removedVolumes', 'reclaimedSpace'],
     },
     'delete-image': {
         schema: deleteImageConfigSchema,

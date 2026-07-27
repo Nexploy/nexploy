@@ -535,6 +535,14 @@
                 "name": "Vider le cache de build",
                 "description": "Vide le cache de build Docker pour libérer de l'espace disque"
             },
+            "prune-containers": {
+                "name": "Nettoyer les conteneurs",
+                "description": "Supprimer tous les conteneurs arrêtés pour libérer de l'espace disque"
+            },
+            "prune-volumes": {
+                "name": "Nettoyer les volumes",
+                "description": "Supprimer les volumes Docker inutilisés pour libérer de l'espace disque"
+            },
             "delete-image": {
                 "name": "Supprimer une image",
                 "description": "Supprime une image Docker spécifique par nom ou identifiant"
@@ -903,6 +911,7 @@
             "pruneFilterPlaceholder": "label=project=myapp",
             "pruneBuildCacheKeepStoragePlaceholder": "10GB",
             "pruneBuildCacheFilterPlaceholder": "until=24h",
+            "pruneVolumesAll": "Inclure les volumes nommés",
             "webhookUrlPlaceholder": "https://hooks.example.com/…",
             "jsonBodyPlaceholder": "'{'\"key\": \"value\"'}'",
             "httpUrlPlaceholder": "https://example.com/webhook",
@@ -1049,6 +1058,10 @@
             "desc_removedImages": "Nombre d'images Docker supprimées",
             "desc_deletedCaches": "Nombre d'entrées du cache de build supprimées",
             "desc_reclaimedSpace": "Espace disque récupéré en octets",
+            "removedContainers": "Conteneurs supprimés",
+            "desc_removedContainers": "Nombre de conteneurs arrêtés supprimés",
+            "removedVolumes": "Volumes supprimés",
+            "desc_removedVolumes": "Nombre de volumes inutilisés supprimés",
             "desc_versionNumber": "Numéro de version qui a été sauvegardé",
             "serviceId": "ID du service",
             "desc_serviceId": "Identifiant du service Docker Swarm",

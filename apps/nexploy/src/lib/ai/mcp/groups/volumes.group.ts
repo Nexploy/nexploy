@@ -109,6 +109,7 @@ export const volumesGroup: ToolGroup = {
                 try {
                     const result = await kyDocker
                         .post('volumes/prune', {
+                            json: {},
                             environmentId: ctx.environmentId,
                         } as KyDockerOptions)
                         .json<any>();

@@ -145,7 +145,7 @@ export function NodeAddPanel() {
             </div>
             <div className="flex flex-1 flex-col overflow-hidden">
                 <div className="shrink-0 p-2">
-                    <InputGroup className="h-8">
+                    <InputGroup className="h-8 shadow-none">
                         <InputGroupAddon>
                             <Search className="size-3.5" />
                         </InputGroupAddon>
@@ -165,27 +165,31 @@ export function NodeAddPanel() {
                 </div>
 
                 {activeCategory && !isSearching && (
-                    <div className="flex shrink-0 items-center gap-2 px-2 pb-2">
+                    <div className={'mb-2 flex items-center gap-2'}>
                         <button
+                            type="button"
                             onClick={() => setActiveCategory(null)}
                             aria-label={t('palette')}
-                            className="text-muted-foreground hover:text-foreground hover:bg-muted flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md transition-colors"
+                            className="hover:bg-muted mx-2 flex flex-1 shrink-0 items-center gap-2 rounded-md p-1 pl-2 transition-colors"
                         >
-                            <ArrowLeft className="size-3.5" />
+                            <ArrowLeft className="text-muted-foreground size-3.5 shrink-0" />
+                            <div className={'flex flex-1 items-center gap-2'}>
+                                <div
+                                    className={cn(
+                                        'flex size-6 shrink-0 items-center justify-center rounded-md',
+                                        CATEGORY_BG_MUTED[activeCategory],
+                                        CATEGORY_TEXT[activeCategory],
+                                    )}
+                                >
+                                    <CategoryIcon className="size-3" strokeWidth={1.7} />
+                                </div>
+
+                                <span className="text-foreground min-w-0 flex-1 truncate text-left text-xs font-medium">
+                                    {t(`categories.${activeCategory}`)}
+                                </span>
+                            </div>
                         </button>
-                        <div
-                            className={cn(
-                                'flex size-6 shrink-0 items-center justify-center rounded-md',
-                                CATEGORY_BG_MUTED[activeCategory],
-                                CATEGORY_TEXT[activeCategory],
-                            )}
-                        >
-                            <CategoryIcon className="size-3" strokeWidth={1.7} />
-                        </div>
-                        <span className="text-foreground min-w-0 flex-1 truncate text-xs font-medium">
-                            {t(`categories.${activeCategory}`)}
-                        </span>
-                        <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+                        <span className="text-muted-foreground shrink-0 text-[10px]">
                             {t('nodeCount', { count: categoryNodes.length })}
                         </span>
                     </div>
@@ -209,39 +213,23 @@ export function NodeAddPanel() {
                                         </p>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col gap-3">
+                                    <div className="flex flex-col gap-1.5">
                                         {Object.entries(groupedSearchResults).map(
                                             ([category, defs]) => (
                                                 <div
                                                     key={category}
                                                     className="flex flex-col gap-1.5"
                                                 >
-                                                    <div className="flex items-center gap-1.5 px-0.5">
-                                                        <span
-                                                            className={cn(
-                                                                'size-1.5 shrink-0 rounded-full',
-                                                                CATEGORY_BG[category],
-                                                            )}
+                                                    {defs.map((def) => (
+                                                        <NodeItem
+                                                            key={def.id}
+                                                            def={def}
+                                                            label={t(`nodes.${def.id}.name`)}
+                                                            description={descriptionFor(def.id)}
+                                                            onDragStart={onDragStart}
+                                                            onClick={() => onClickAdd(def.id)}
                                                         />
-                                                        <span className="text-muted-foreground truncate text-[10px] font-semibold uppercase tracking-wide">
-                                                            {t(`categories.${category}`)}
-                                                        </span>
-                                                        <span className="text-muted-foreground/60 shrink-0 text-[10px] tabular-nums">
-                                                            {defs.length}
-                                                        </span>
-                                                    </div>
-                                                    <div className="@[420px]:grid-cols-2 grid grid-cols-1 gap-1.5">
-                                                        {defs.map((def) => (
-                                                            <NodeItem
-                                                                key={def.id}
-                                                                def={def}
-                                                                label={t(`nodes.${def.id}.name`)}
-                                                                description={descriptionFor(def.id)}
-                                                                onDragStart={onDragStart}
-                                                                onClick={() => onClickAdd(def.id)}
-                                                            />
-                                                        ))}
-                                                    </div>
+                                                    ))}
                                                 </div>
                                             ),
                                         )}
