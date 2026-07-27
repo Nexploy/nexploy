@@ -213,7 +213,7 @@ jobs:
         run: gh release delete "$GIT_TAG" --yes --repo "$GITHUB_REPOSITORY" || true
 
       - name: Create release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.tags.outputs.git }}
           body_path: /tmp/release-notes.md

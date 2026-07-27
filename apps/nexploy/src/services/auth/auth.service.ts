@@ -4,7 +4,6 @@ import { headers } from 'next/headers';
 import { setToastServer } from '@/lib/toastServer';
 import { prisma } from '../../../prisma/prisma';
 import { getTranslations } from 'next-intl/server';
-import { redirect, RedirectType } from 'next/navigation';
 import { TypeChangeUsernameFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 
 export async function getUserSession(headerCustom?: Headers): Promise<Session | null> {
@@ -35,7 +34,10 @@ export async function signInUser(email: string, password: string): Promise<User>
 
     const parseRes = await resSignIn.json();
 
-    if (parseRes.twoFactorRedirect) redirect('/2fa', RedirectType.push);
+    if (parseRes.twoFactorRedirect) {
+        const { redirect, RedirectType } = await import('next/navigation');
+        redirect('/2fa', RedirectType.push);
+    }
 
     if (parseRes.code) {
         throw new Error(`${parseRes.message} - ${t('errorContactAdmin')}`);
