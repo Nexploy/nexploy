@@ -19,13 +19,13 @@
 
 | Feature | Description |
 |---|---|
-| **Git integration** | Deploy from GitHub (GitHub App), GitLab and Gitea, with automatically configured webhooks |
+| **Git integration** | Deploy from GitHub (GitHub App), GitLab, Gitea, Bitbucket and Azure Repos — self-hosted GitLab/Gitea included — with automatically configured webhooks |
 | **Build pipeline** | Durable node graph run by Inngest, with real-time per-node log streaming |
 | **Visual pipeline editor** | Node-based editor (56 node types) to build custom deployment workflows |
 | **Deployment stages** | Staging, production… each with its own pipeline, env variables, Docker host and versions |
 | **Docker management** | Containers, images, volumes, networks and Docker Swarm from a single dashboard |
 | **Multi-host environments** | Deploy to several Docker hosts — local socket, TCP, or TCP with TLS |
-| **Organizations** | Group repositories per team, with organization roles on top of instance roles |
+| **Organizations** | Group repositories per team — email invitations, organization roles on top of instance roles, and repository transfer between organizations |
 | **Traefik reverse proxy** | Automatic routing, Let's Encrypt SSL and custom certificates |
 | **Real-time monitoring** | Live container stats, build logs, Docker events and Traefik requests via SSE |
 | **Encrypted environment variables** | AES-256-CBC encryption at rest |
@@ -180,7 +180,7 @@ OOM-killed below that.
 | `docker-api` answers `401` on every route | `NEXPLOY_API_KEY` differs between the two `.env` files, or the seed has been re-run since |
 | `EADDRINUSE: :::3300` | A previous `docker-api` is still alive — `lsof -nP -iTCP:3300 -sTCP:LISTEN` |
 | Prisma cannot reach the database | The dev stack listens on **5433**, not 5432 |
-| `pnpm lint` fails | Known issue: `next lint` was removed in Next 16 and the lint scripts are not migrated yet — use `pnpm types` |
+| `pnpm lint` reports nothing | `next lint` was removed in Next 16 and no workspace declares a `lint` script yet — `pnpm types` is the check that runs |
 
 ---
 
@@ -228,9 +228,11 @@ nexploy/
 │   ├── i18n/                 # Internationalization (en, fr)
 │   ├── eslint-config/        # Shared ESLint config
 │   └── typescript-config/    # Shared TypeScript config
-└── infra/
-    ├── docker/               # Compose files (dev, test, prod)
-    └── traefik/              # Traefik static + dynamic configuration
+├── infra/
+│   ├── docker/               # Compose files (dev, test, prod)
+│   └── traefik/              # Traefik static + dynamic configuration
+├── tests/e2e/                # Playwright end-to-end tests
+└── scripts/                  # e2e stack helper, changelog generation
 ```
 
 Each dependency is declared in the workspace that actually imports it; the root `package.json` only carries the
@@ -255,7 +257,7 @@ per-node status and duration streamed live onto the graph.
 secrets, backing up volumes, scanning images, notifying and more, wired together with conditions and field
 references. Two starting templates ship with the editor: Dockerfile
 (`clone-repository → build-docker-image → create-container`) and Docker Compose
-(`clone-repository → validate-compose → deploy-compose → clean-workdir`).
+(`clone-repository → validate-compose → deploy-compose → clean-workdir`, with a `save-version` branch).
 
 ### Permission model
 
@@ -428,6 +430,7 @@ maintenance page shown on the wrong entrypoint).
 
 - Environment variables encrypted at rest (AES-256-CBC)
 - OAuth tokens stored encrypted and refreshed automatically
+- Git provider app credentials (client IDs, secrets, GitHub App private keys) encrypted at rest
 - Webhook secrets validate Git provider callbacks
 - Service-to-service calls authenticated with a Better Auth API key
 - CSRF protection and session-based authentication
