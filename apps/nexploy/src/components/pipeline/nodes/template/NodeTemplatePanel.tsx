@@ -1,7 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { LayoutTemplate } from 'lucide-react';
+import { LayoutTemplate, MousePointerClick, X } from 'lucide-react';
+import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 import { PIPELINE_TEMPLATES, PipelineTemplate } from './pipelineTemplates';
 import { TemplateItem } from '@/components/pipeline/nodes/template/TemplateItem';
 import { useReactFlow } from '@xyflow/react';
@@ -15,6 +16,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 export function NodeTemplatePanel() {
     const t = useTranslations('repository.pipeline');
     const { screenToFlowPosition } = useReactFlow();
+    const closePanel = usePipelinePanelStore((s) => s.closePanel);
 
     const { setNodes, setEdges, triggerAutoSave } = usePipelineActions();
     const isViewingBuild = useIsViewingBuild();
@@ -66,19 +68,29 @@ export function NodeTemplatePanel() {
     };
 
     return (
-        <div className="bg-sidebar flex h-full w-full flex-col overflow-hidden">
-            <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
+        <div className="flex h-full w-full flex-col overflow-hidden">
+            <div className="border-border/70 flex h-11 shrink-0 items-center gap-2 border-b px-2.5">
                 <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-sm">
-                    <LayoutTemplate className="size-3.5" />
+                    <LayoutTemplate className="size-3.5" strokeWidth={1.7} />
                 </div>
-                <span className="text-foreground truncate text-xs">{t('templates.title')}</span>
+                <span className="text-foreground flex-1 truncate text-xs">
+                    {t('templates.title')}
+                </span>
+                <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+                    {PIPELINE_TEMPLATES.length}
+                </span>
+                <button
+                    onClick={closePanel}
+                    aria-label={t('canvas.closePanel')}
+                    title={t('canvas.closePanel')}
+                    className="text-muted-foreground hover:text-foreground hover:bg-muted flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md transition-colors"
+                >
+                    <X className="size-3.5" />
+                </button>
             </div>
 
-            <ScrollAreaWithShadow
-                bottomShadow
-                className={'h-full overflow-hidden'}
-            >
-                <div className="grid grid-cols-1 gap-2 p-2">
+            <ScrollAreaWithShadow bottomShadow className={'h-full overflow-hidden'}>
+                <div className="grid grid-cols-1 gap-1.5 p-2">
                     {PIPELINE_TEMPLATES.map((template) => (
                         <TemplateItem
                             key={template.id}
@@ -89,6 +101,11 @@ export function NodeTemplatePanel() {
                     ))}
                 </div>
             </ScrollAreaWithShadow>
+
+            <div className="text-muted-foreground border-border/70 flex h-8 shrink-0 items-center gap-1.5 border-t px-3">
+                <MousePointerClick className="size-3 shrink-0" />
+                <span className="truncate text-[10px]">{t('addNodeHint')}</span>
+            </div>
         </div>
     );
 }

@@ -52,6 +52,34 @@ const parseChannelConfig = (channelStr: string): ChannelConfig => {
     return { channel: channel as SSEChannel, params };
 };
 
+const parseSSEFrame = (raw: string): { event: string; data: string } | null => {
+    let event = 'message';
+    const dataLines: string[] = [];
+
+    for (const line of raw.split(/\r?\n/)) {
+        if (!line || line.startsWith(':')) continue;
+
+        const separatorIndex = line.indexOf(':');
+        const field = separatorIndex === -1 ? line : line.slice(0, separatorIndex);
+        let value = separatorIndex === -1 ? '' : line.slice(separatorIndex + 1);
+
+        if (value.startsWith(' ')) value = value.slice(1);
+
+        if (field === 'event') {
+            event = value;
+        } else if (field === 'data') {
+            dataLines.push(value);
+        }
+    }
+
+    if (dataLines.length === 0) return null;
+
+    const data = dataLines.join('\n');
+    if (!event || !data) return null;
+
+    return { event, data };
+};
+
 const buildEndpointUrl = (template: string, params?: Record<string, string>): string => {
     if (!params) return template;
 
@@ -303,17 +331,10 @@ export const GET = route
                             for (const raw of messages) {
                                 if (!raw.trim()) continue;
 
-                                const eventMatch = raw.match(/^event:\s*(.+)$/m);
-                                const dataMatch = raw.match(/^data:\s*(.+)$/m);
+                                const frame = parseSSEFrame(raw);
+                                if (!frame) continue;
 
-                                if (!eventMatch || !dataMatch) {
-                                    continue;
-                                }
-
-                                const event = eventMatch[1]?.trim();
-                                const data = dataMatch[1]?.trim();
-
-                                if (!event || !data) continue;
+                                const { event, data } = frame;
 
                                 try {
                                     controller.enqueue(
@@ -420,8 +441,12 @@ export const GET = route
                 await Promise.allSettled(channelConfigs.map((config) => connectChannel(config)));
             },
 
-            cancel() {},
+            cancel() {
+                cleanup();
+            },
         });
+
+        request.signal.addEventListener('abort', cleanup);
 
         return new Response(stream, {
             headers: {

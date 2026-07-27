@@ -23,7 +23,11 @@ import { cn } from '@workspace/ui/lib/utils';
 import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useAutoLayout } from '@/hooks/useAutoLayout';
-import { usePipelineActions, usePipelineBuilds, usePipelineDisplay, } from '@/stores/pipeline/usePipelineStore';
+import {
+    usePipelineActions,
+    usePipelineBuilds,
+    usePipelineDisplay,
+} from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
@@ -33,6 +37,8 @@ import { LargeNode } from '@/components/pipeline/nodes/types/LargeNode';
 import { BaseNode } from '@/components/pipeline/nodes/types/BaseNode';
 import { AttachNode } from '@/components/pipeline/nodes/types/AttachNode';
 import { BuildPreviewBanner } from '@/components/pipeline/BuildPreviewBanner';
+import { useFitViewOptions } from '@/components/pipeline/utils/fitView';
+import { PipelineSidePanel } from '@/components/pipeline/PipelineSidePanel.tsx';
 
 const nodeTypes = {
     'base-node': BaseNode,
@@ -40,6 +46,9 @@ const nodeTypes = {
     'attach-node': AttachNode,
 };
 const edgeTypes = { 'gradient-edge': GradientEdge };
+
+const canvasControlButtonClassName =
+    'bg-sidebar/85 border-border/70 hover:bg-sidebar size-8 border shadow-lg backdrop-blur-md';
 
 export function PipelineCanvas() {
     const t = useTranslations('repository.pipeline');
@@ -88,6 +97,7 @@ export function PipelineCanvas() {
     );
 
     const handleAutoLayout = useAutoLayout();
+    const fitViewOptions = useFitViewOptions();
 
     const { nodes, displayNodes, displayEdges, isViewingBuild } = usePipelineDisplay();
     const { builds } = usePipelineBuilds();
@@ -195,7 +205,7 @@ export function PipelineCanvas() {
             data-panning={isSpaceHeld}
             data-viewing={isViewingBuild}
             onContextMenu={(e) => e.preventDefault()}
-            className={cn('relative flex-1 transition-all outline-none')}
+            className={cn('relative flex-1 outline-none transition-all')}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
             onDrop={onDrop}
@@ -235,7 +245,7 @@ export function PipelineCanvas() {
                 onSelectionChange={isViewingBuild ? undefined : handleSelectionChange}
                 deleteKeyCode={undefined}
                 fitView
-                fitViewOptions={{ padding: 0.3 }}
+                fitViewOptions={fitViewOptions}
                 defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
                 proOptions={{ hideAttribution: true }}
             >
@@ -247,6 +257,7 @@ export function PipelineCanvas() {
                 />
                 <BuildsPanel />
                 <ButtonPanel />
+                <PipelineSidePanel />
                 {isViewingBuild && activeBuildNumber && (
                     <BuildPreviewBanner
                         buildNumber={activeBuildNumber}
@@ -257,36 +268,36 @@ export function PipelineCanvas() {
                     <Panel className={'m-2!'} position="bottom-left">
                         <div className="flex gap-1.5">
                             <Button
-                                variant="secondary"
+                                variant="ghost"
                                 size="icon"
-                                className="size-8"
+                                className={canvasControlButtonClassName}
                                 onClick={() => zoomOut()}
                                 title={t('canvas.zoomOut')}
                             >
                                 <Minus />
                             </Button>
                             <Button
-                                variant="secondary"
+                                variant="ghost"
                                 size="icon"
-                                className="size-8"
-                                onClick={() => fitView({ padding: 0.3 })}
+                                className={canvasControlButtonClassName}
+                                onClick={() => fitView(fitViewOptions)}
                                 title={t('canvas.fitView')}
                             >
                                 <Maximize />
                             </Button>
                             <Button
-                                variant="secondary"
+                                variant="ghost"
                                 size="icon"
-                                className="size-8"
+                                className={canvasControlButtonClassName}
                                 onClick={() => zoomIn()}
                                 title={t('canvas.zoomIn')}
                             >
                                 <Plus />
                             </Button>
                             <Button
-                                variant="secondary"
+                                variant="ghost"
                                 size="icon"
-                                className="size-8"
+                                className={canvasControlButtonClassName}
                                 onClick={handleAutoLayout}
                                 title={t('canvas.autoLayout')}
                             >

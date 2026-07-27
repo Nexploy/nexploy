@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { PipelineTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
-import { FileCode2 } from 'lucide-react';
+import { FileCode2, Plus } from 'lucide-react';
 import {
     NODE_BG_MUTED,
     NODE_ICONS,
@@ -32,23 +32,28 @@ export function TemplateItem({
             draggable
             onDragStart={onDragStart}
             onClick={onClick}
-            className="border-border bg-card hover:border-foreground/15 hover:bg-muted flex cursor-grab flex-col gap-3 overflow-hidden rounded-lg border p-3 active:cursor-grabbing active:opacity-60"
+            className="border-border/60 bg-card hover:border-foreground/15 hover:bg-accent/40 group relative flex cursor-grab flex-col gap-2.5 overflow-hidden rounded-lg border py-2 pl-2.5 pr-1.5 transition-colors active:cursor-grabbing active:opacity-60"
         >
-            <div className="flex gap-2.5">
-                <div className="bg-primary/10 text-primary flex size-8 shrink-0 items-center justify-center rounded-md">
-                    <Icon className="size-4" strokeWidth={1.5} />
+            <span className="bg-primary absolute inset-y-1 left-0 w-0.5 rounded-full opacity-0 transition-opacity group-hover:opacity-100" />
+
+            <div className="flex items-start gap-2.5">
+                <div className="bg-primary/10 text-primary flex size-7 shrink-0 items-center justify-center rounded-md">
+                    <Icon className="size-3.5" strokeWidth={1.6} />
                 </div>
-                <div className="flex flex-col gap-0.5">
-                    <p className="text-foreground line-clamp-2 text-xs font-semibold">
+                <div className="min-w-0 flex-1 py-px">
+                    <span className="text-foreground block truncate text-xs font-medium">
                         {t(`templates.${template.id}.name`)}
-                    </p>
-                    <p className="text-muted-foreground line-clamp-2 text-[10px] leading-3">
+                    </span>
+                    <span className="text-muted-foreground mt-0.5 line-clamp-2 text-[11px] leading-snug">
                         {t(`templates.${template.id}.description`)}
-                    </p>
+                    </span>
+                </div>
+                <div className="bg-muted text-muted-foreground group-hover:text-foreground mt-px flex size-5 shrink-0 items-center justify-center rounded-md opacity-0 transition-opacity group-hover:opacity-100">
+                    <Plus className="size-3" strokeWidth={2} />
                 </div>
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1 pl-0.5">
                 {template.nodes.map((node, i) => {
                     const NodeIcon = NODE_ICONS[node.type]!;
                     return (

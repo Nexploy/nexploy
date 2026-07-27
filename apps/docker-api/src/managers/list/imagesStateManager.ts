@@ -61,12 +61,7 @@ export class ImagesStateManager extends BaseStateManager {
         }
 
         try {
-            const images = await this.docker.listImages({ all: true });
-            const parsed = await Promise.all(images.map((image) => this.parseImageInfo(image)));
-
-            for (const state of parsed) {
-                this.images.set(state.id, state);
-            }
+            this.images = await this.buildImageMap();
 
             logger.info({ count: this.images.size }, 'Initial image state loaded');
 
@@ -96,27 +91,7 @@ export class ImagesStateManager extends BaseStateManager {
 
     async fullStateSync(): Promise<void> {
         try {
-            const images = await this.docker.listImages({ all: true });
-            const parsed = await Promise.all(images.map((image) => this.parseImageInfo(image)));
-
-            for (const newState of parsed) {
-                const oldState = this.images.get(newState.id);
-
-                if (!oldState) continue;
-
-                if (this.hasStateChanged(oldState, newState)) {
-                    this.images.set(newState.id, newState);
-
-                    const stateChangeDate: ImageEvent = {
-                        type: 'state-change',
-                        imageId: newState.id,
-                        image: newState,
-                        changes: this.getStateChanges(oldState, newState),
-                        timestamp: Date.now(),
-                    };
-                    this.emit('state-change', stateChangeDate);
-                }
-            }
+            await this.reconcileState();
         } catch (err) {
             logger.error({ err }, 'Error in full state sync');
         }
@@ -132,18 +107,42 @@ export class ImagesStateManager extends BaseStateManager {
         containerImageEvents.removeAllListeners('container-usage-changed');
     }
 
+    private async getImageUsageMap(): Promise<Map<string, number>> {
+        const containers = await this.docker.listContainers({ all: true });
+        const imageUsageMap = new Map<string, number>();
+
+        for (const container of containers) {
+            let imageId = container.ImageID;
+            if (imageId.includes(':')) {
+                imageId = imageId.split(':')[1];
+            }
+            imageUsageMap.set(imageId, (imageUsageMap.get(imageId) || 0) + 1);
+        }
+
+        return imageUsageMap;
+    }
+
+    private async buildImageMap(): Promise<Map<string, Image>> {
+        const images = await this.docker.listImages({ all: true });
+        const [parsed, imageUsageMap] = await Promise.all([
+            Promise.all(images.map((image) => this.parseImageInfo(image))),
+            this.getImageUsageMap(),
+        ]);
+
+        const imageMap = new Map<string, Image>();
+        for (const state of parsed) {
+            imageMap.set(state.id, {
+                ...state,
+                containersUsed: imageUsageMap.get(state.id) ?? 0,
+            });
+        }
+
+        return imageMap;
+    }
+
     private async updateImageUsageFromContainers() {
         try {
-            const containers = await this.docker.listContainers({ all: true });
-            const imageUsageMap = new Map<string, number>();
-
-            for (const container of containers) {
-                let imageId = container.ImageID;
-                if (imageId.includes(':')) {
-                    imageId = imageId.split(':')[1];
-                }
-                imageUsageMap.set(imageId, (imageUsageMap.get(imageId) || 0) + 1);
-            }
+            const imageUsageMap = await this.getImageUsageMap();
 
             for (const [imageId, image] of this.images.entries()) {
                 const newContainersUsed = imageUsageMap.get(imageId) || 0;
@@ -417,57 +416,55 @@ export class ImagesStateManager extends BaseStateManager {
         return Array.from(this.images.values()).find((image) => image.repoTags.includes(imageName));
     }
 
+    private async reconcileState(): Promise<void> {
+        const newImageMap = await this.buildImageMap();
+
+        for (const [imageId, oldState] of this.images.entries()) {
+            if (!newImageMap.has(imageId)) {
+                const imageRemovedData: ImageEvent = {
+                    type: 'removed',
+                    imageId: oldState.id,
+                    oldState,
+                    timestamp: Date.now(),
+                };
+                this.emit('image-removed', imageRemovedData);
+                await this.syncVersionDelete(oldState);
+                logger.debug({ imageId }, 'Image detected as removed during state sync');
+            }
+        }
+
+        for (const [imageId, newState] of newImageMap.entries()) {
+            const oldState = this.images.get(imageId);
+
+            if (!oldState) {
+                const imageAdded: ImageEvent = {
+                    type: 'added',
+                    image: newState,
+                    timestamp: Date.now(),
+                };
+                this.emit('image-added', imageAdded);
+                logger.debug({ imageId }, 'Image detected as added during state sync');
+            } else if (this.hasStateChanged(oldState, newState)) {
+                const imageUpdated: ImageEvent = {
+                    type: 'updated',
+                    oldState,
+                    image: newState,
+                    changes: this.getStateChanges(oldState, newState),
+                    timestamp: Date.now(),
+                };
+                this.emit('image-updated', imageUpdated);
+                logger.debug({ imageId }, 'Image detected as updated during state sync');
+            }
+        }
+
+        this.images = newImageMap;
+    }
+
     async hardRefresh(): Promise<void> {
         logger.info('Starting hard refresh of image state');
 
         try {
-            const images = await this.docker.listImages({ all: true });
-            const newImageMap = new Map<string, Image>();
-            const parsed = await Promise.all(images.map((image) => this.parseImageInfo(image)));
-
-            for (const state of parsed) {
-                newImageMap.set(state.id, state);
-            }
-
-            for (const [imageId, oldState] of this.images.entries()) {
-                if (!newImageMap.has(imageId)) {
-                    const imageRemovedData: ImageEvent = {
-                        type: 'removed',
-                        imageId: oldState.id,
-                        oldState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('image-removed', imageRemovedData);
-                    await this.syncVersionDelete(oldState);
-                    logger.debug({ imageId }, 'Image detected as removed during hard refresh');
-                }
-            }
-
-            for (const [imageId, newState] of newImageMap.entries()) {
-                const oldState = this.images.get(imageId);
-
-                if (!oldState) {
-                    const imageAdded: ImageEvent = {
-                        type: 'added',
-                        image: newState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('image-added', imageAdded);
-                    logger.debug({ imageId }, 'Image detected as added during hard refresh');
-                } else if (this.hasStateChanged(oldState, newState)) {
-                    const imageUpdated: ImageEvent = {
-                        type: 'updated',
-                        oldState,
-                        image: newState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('image-updated', imageUpdated);
-                    logger.debug({ imageId }, 'Image detected as updated during hard refresh');
-                }
-            }
-
-            this.images = newImageMap;
-
+            await this.reconcileState();
             logger.info({ count: this.images.size }, 'Hard refresh completed successfully');
         } catch (err) {
             logger.error({ err }, 'Error during hard refresh of image state');

@@ -46,7 +46,13 @@ export class SingleResourceManagerRegistry<TManager extends BaseSingleResourceSt
         const key = `${environmentId}:${resourceId}`;
         const entry = this.instances.get(key);
 
-        if (!entry) return;
+        if (!entry) {
+            logger.warn(
+                { resourceId, environmentId },
+                `Released an unknown ${this.resourceType} manager reference`,
+            );
+            return;
+        }
 
         entry.refCount--;
         logger.debug(

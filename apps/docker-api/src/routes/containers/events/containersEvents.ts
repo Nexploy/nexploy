@@ -7,6 +7,7 @@ import {
     filterNexployContainers,
     isNexployInfrastructureContainer,
 } from '@workspace/shared/nexployFilter';
+import { createInitialStateGate } from '@/utils/initialStateGate';
 
 const app = new Hono();
 
@@ -129,24 +130,32 @@ app.get('/stream', (c) => {
             }
         }, 15000);
 
+        const gate = createInitialStateGate();
+        const onInitialState = gate.gate(handleInitialState);
+        const onStateChange = gate.gate(handleStateChange);
+        const onContainerAdded = gate.gate(handleContainerAdded);
+        const onContainerUpdated = gate.gate(handleContainerUpdated);
+        const onContainerRemoved = gate.gate(handleContainerRemoved);
+
         const cleanup = () => {
             clearInterval(heartbeat);
-            manager.off('initial-state', handleInitialState);
-            manager.off('state-change', handleStateChange);
-            manager.off('container-added', handleContainerAdded);
-            manager.off('container-updated', handleContainerUpdated);
-            manager.off('container-removed', handleContainerRemoved);
+            manager.off('initial-state', onInitialState);
+            manager.off('state-change', onStateChange);
+            manager.off('container-added', onContainerAdded);
+            manager.off('container-updated', onContainerUpdated);
+            manager.off('container-removed', onContainerRemoved);
         };
+
+        manager.on('initial-state', onInitialState);
+        manager.on('state-change', onStateChange);
+        manager.on('container-added', onContainerAdded);
+        manager.on('container-updated', onContainerUpdated);
+        manager.on('container-removed', onContainerRemoved);
 
         const allContainers = manager.getAllStates();
         const containers = filterNexployContainers(allContainers);
         await handleInitialState({ type: 'initial', containers, timestamp: Date.now() });
-
-        manager.on('initial-state', handleInitialState);
-        manager.on('state-change', handleStateChange);
-        manager.on('container-added', handleContainerAdded);
-        manager.on('container-updated', handleContainerUpdated);
-        manager.on('container-removed', handleContainerRemoved);
+        await gate.release();
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

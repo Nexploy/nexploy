@@ -232,6 +232,17 @@
             "importEnv": "Importer .env",
             "importSuccess": "{count} variable(s) importée(s)",
             "importError": "Aucune variable valide trouvée dans le fichier",
+            "importInvalidFile": "Seuls les fichiers .env peuvent être importés (.env, .env.local, .env.production…)",
+            "importEmptyFile": "Le fichier sélectionné est vide",
+            "importFileTooLarge": "Fichier trop volumineux (max {size} Mo)",
+            "importReadError": "Impossible de lire le fichier",
+            "importSkipped": "{count, plural, one {# entrée ignorée} other {# entrées ignorées}}",
+            "importDuplicates": "{count, plural, one {# clé en double, dernière valeur conservée} other {# clés en double, dernière valeur conservée}}",
+            "importSkipReason": {
+                "invalidKey": "Clé invalide",
+                "emptyValue": "Valeur vide",
+                "valueTooLong": "Valeur trop longue"
+            },
             "noVariables": "Aucune variable d'environnement configurée.",
             "keyPlaceholder": "Clé",
             "valuePlaceholder": "Valeur",
@@ -251,7 +262,10 @@
             "copied": "Valeur copiée dans le presse-papiers",
             "copyError": "Échec de la copie de la valeur",
             "show": "Afficher la valeur",
-            "hide": "Masquer la valeur"
+            "hide": "Masquer la valeur",
+            "showAll": "Tout afficher",
+            "hideAll": "Tout masquer",
+            "emptyValue": "Vide"
         },
         "source": {
             "connect": "Connecter {provider}",
@@ -352,7 +366,8 @@
             "zoomOut": "Zoom arrière",
             "fitView": "Ajuster la vue",
             "zoomIn": "Zoom avant",
-            "autoLayout": "Réorganiser les nœuds"
+            "autoLayout": "Réorganiser les nœuds",
+            "closePanel": "Fermer le panneau"
         },
         "nodeCount": "{count, plural, one {# nœud} other {# nœuds}}",
         "disabledCount": "{count, plural, one {# désactivé} other {# désactivés}}",
@@ -360,6 +375,7 @@
         "palette": "Nœuds",
         "search": "Rechercher des nœuds...",
         "searchNoResults": "Aucun nœud ne correspond à votre recherche",
+        "addNodeHint": "Glissez ou cliquez pour ajouter",
         "categories": {
             "source": "Source",
             "build": "Build",

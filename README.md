@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://nexploy.app">
-    <img src="./.github/assets/nexploy-banner.svg" alt="Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker" width="100%" />
+    <img src="./.github/assets/nexploy-banner-dark.svg" alt="Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker" width="100%" />
   </a>
 </p>
 

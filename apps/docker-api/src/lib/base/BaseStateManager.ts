@@ -15,6 +15,9 @@ export interface BaseStateManagerConfig {
     maxListeners?: number;
 }
 
+const MAX_EVENT_REPLAY_WINDOW_SECONDS = 300;
+const MAX_RECONNECT_DELAY_MS = 30000;
+
 export abstract class BaseStateManager extends EventEmitter {
     protected readonly managerName: string;
     protected readonly environmentId: string;
@@ -25,6 +28,8 @@ export abstract class BaseStateManager extends EventEmitter {
     protected dockerEventStream: any = null;
     protected reconnectAttempts = 0;
     protected readonly MAX_RECONNECT_ATTEMPTS: number;
+    private lastEventTimestamp: number | null = null;
+    private reconnectTimer: NodeJS.Timeout | null = null;
 
     protected constructor(config: BaseStateManagerConfig) {
         super();
@@ -129,6 +134,11 @@ export abstract class BaseStateManager extends EventEmitter {
             this.pollInterval = null;
         }
 
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = null;
+        }
+
         this.cleanupEventStream();
         this.onStop();
         this.removeAllListeners();
@@ -152,14 +162,25 @@ export abstract class BaseStateManager extends EventEmitter {
             return;
         }
 
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = null;
+        }
+
         this.cleanupEventStream();
+
+        const isReconnection = this.lastEventTimestamp !== null;
 
         try {
             const filters = this.getEventFilters();
-            const stream = await this.docker.getEvents({ filters });
+            const since = this.getReplaySince();
+            const stream = await this.docker.getEvents(
+                since !== null ? { filters, since } : { filters },
+            );
 
             this.dockerEventStream = stream;
             this.reconnectAttempts = 0;
+            this.lastEventTimestamp = Math.floor(Date.now() / 1000);
 
             const lineStream = byline.createStream(stream);
 
@@ -169,6 +190,9 @@ export abstract class BaseStateManager extends EventEmitter {
 
                 try {
                     const event = JSON.parse(str);
+                    if (typeof event.time === 'number') {
+                        this.lastEventTimestamp = event.time;
+                    }
                     await this.handleDockerEvent(event);
                 } catch (err) {
                     logger.error({ err, raw: str }, 'Error parsing Docker event');
@@ -177,53 +201,83 @@ export abstract class BaseStateManager extends EventEmitter {
 
             lineStream.on('error', (err: Error) => {
                 logger.error({ err }, `${this.managerName} events stream error`);
-                this.handleStreamError();
+                this.handleStreamError(stream);
             });
 
             lineStream.on('end', () => {
                 logger.warn(`${this.managerName} events stream ended`);
-                this.handleStreamError();
+                this.handleStreamError(stream);
             });
 
-            logger.info(`${this.managerName} events listener started`);
+            logger.info({ since }, `${this.managerName} events listener started`);
+
+            if (isReconnection) {
+                this.fullStateSync().catch((err) => {
+                    logger.error(
+                        { err },
+                        `Error during ${this.managerName} resync after event stream reconnection`,
+                    );
+                });
+            }
         } catch (err) {
             logger.error({ err }, `Error starting ${this.managerName} events listener`);
             await this.handleStreamError();
         }
     }
 
-    protected async handleStreamError(): Promise<void> {
+    private getReplaySince(): number | null {
+        if (this.lastEventTimestamp === null) return null;
+
+        const oldestAllowed = Math.floor(Date.now() / 1000) - MAX_EVENT_REPLAY_WINDOW_SECONDS;
+        return Math.max(this.lastEventTimestamp, oldestAllowed);
+    }
+
+    protected async handleStreamError(source?: any): Promise<void> {
         if (!this.polling) return;
+        if (source && this.dockerEventStream !== source) return;
+        if (this.reconnectTimer) return;
 
         this.dockerEventStream = null;
         this.reconnectAttempts++;
 
-        if (this.reconnectAttempts > this.MAX_RECONNECT_ATTEMPTS) {
-            logger.error(`Max reconnection attempts reached for ${this.managerName}`);
-            return;
+        const backoffDelay = Math.min(
+            1000 * Math.pow(2, this.reconnectAttempts),
+            MAX_RECONNECT_DELAY_MS,
+        );
+
+        if (this.reconnectAttempts === this.MAX_RECONNECT_ATTEMPTS) {
+            logger.error(
+                { attempt: this.reconnectAttempts },
+                `${this.managerName} keeps failing to attach to Docker events, retrying at a reduced rate`,
+            );
         }
 
-        const backoffDelay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
         logger.info(
             { backoffDelay, attempt: this.reconnectAttempts },
             `Reconnecting ${this.managerName} to Docker events`,
         );
 
-        setTimeout(() => {
+        this.reconnectTimer = setTimeout(() => {
+            this.reconnectTimer = null;
+
             try {
                 const dockerStatusManager = this.getDockerStatusManager();
-                if (this.polling && dockerStatusManager.isConnected()) {
+                if (!this.polling) return;
+
+                if (dockerStatusManager.isConnected()) {
                     this.startDockerEventsListener();
                 } else {
                     logger.warn(
                         `Skipping ${this.managerName} event listener reconnection: Docker not connected`,
                     );
+                    this.handleStreamError();
                 }
             } catch (err) {
                 logger.error(
                     { err },
                     `Failed to reconnect ${this.managerName} event listener: Docker status manager not available`,
                 );
+                this.handleStreamError();
             }
         }, backoffDelay);
     }

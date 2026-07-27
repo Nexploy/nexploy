@@ -7,6 +7,7 @@ import { InitSwarmForm } from './InitSwarmDialog';
 import { JoinSwarmForm } from './JoinSwarmDialog';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
+import { Can } from '@/components/permission/Can';
 
 export function SwarmNotActive() {
     const [isPending, setIsPending] = useState(false);
@@ -49,16 +50,26 @@ export function SwarmNotActive() {
         <div className="flex flex-1 flex-col items-center justify-center p-8 pb-32 text-center">
             <h2 className="mb-2 text-2xl font-semibold">{t('notInSwarmModeTitle')}</h2>
             <p className="text-muted-foreground mb-8 max-w-md">{t('notInSwarmModeDescription')}</p>
-            <div className="flex justify-center gap-4">
-                <Button onClick={handleInitSwarm}>
-                    <Play />
-                    {t('initializeSwarm')}
-                </Button>
-                <Button variant="outline" onClick={handleJoinSwarm}>
-                    <UserPlus />
-                    {t('joinSwarm')}
-                </Button>
-            </div>
+            <Can
+                resource="swarm"
+                action="manage"
+                fallback={
+                    <p className="text-muted-foreground max-w-md text-sm">
+                        {t('activationRequiresAdmin')}
+                    </p>
+                }
+            >
+                <div className="flex justify-center gap-4">
+                    <Button onClick={handleInitSwarm}>
+                        <Play />
+                        {t('initializeSwarm')}
+                    </Button>
+                    <Button variant="outline" onClick={handleJoinSwarm}>
+                        <UserPlus />
+                        {t('joinSwarm')}
+                    </Button>
+                </div>
+            </Can>
         </div>
     );
 }

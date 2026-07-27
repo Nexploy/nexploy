@@ -232,6 +232,17 @@
             "importEnv": "Import .env",
             "importSuccess": "{count} variable(s) imported",
             "importError": "No valid variables found in file",
+            "importInvalidFile": "Only .env files can be imported (.env, .env.local, .env.production…)",
+            "importEmptyFile": "The selected file is empty",
+            "importFileTooLarge": "File is too large (max {size} MB)",
+            "importReadError": "Unable to read the file",
+            "importSkipped": "{count, plural, one {# entry ignored} other {# entries ignored}}",
+            "importDuplicates": "{count, plural, one {# duplicate key, last value kept} other {# duplicate keys, last value kept}}",
+            "importSkipReason": {
+                "invalidKey": "Invalid key",
+                "emptyValue": "Empty value",
+                "valueTooLong": "Value too long"
+            },
             "noVariables": "No environment variables configured.",
             "keyPlaceholder": "VARIABLE_NAME",
             "valuePlaceholder": "value",
@@ -251,7 +262,10 @@
             "copied": "Value copied to clipboard",
             "copyError": "Failed to copy value",
             "show": "Show value",
-            "hide": "Hide value"
+            "hide": "Hide value",
+            "showAll": "Show all",
+            "hideAll": "Hide all",
+            "emptyValue": "Empty"
         },
         "source": {
             "connect": "Connect {provider}",
@@ -352,7 +366,8 @@
             "zoomOut": "Zoom out",
             "fitView": "Fit view",
             "zoomIn": "Zoom in",
-            "autoLayout": "Auto-arrange nodes"
+            "autoLayout": "Auto-arrange nodes",
+            "closePanel": "Close panel"
         },
         "nodeCount": "{count, plural, one {# node} other {# nodes}}",
         "disabledCount": "{count, plural, one {# disabled} other {# disabled}}",
@@ -360,6 +375,7 @@
         "palette": "Nodes",
         "search": "Search nodes...",
         "searchNoResults": "No nodes match your search",
+        "addNodeHint": "Drag or click to add to the canvas",
         "categories": {
             "source": "Source",
             "build": "Build",

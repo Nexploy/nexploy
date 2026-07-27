@@ -39,11 +39,14 @@ export class VolumesStateManager extends BaseStateManager {
         try {
             const volumesResponse = await this.docker.df();
             const volumes = volumesResponse.Volumes || [];
+            const volumeMap = new Map<string, Volume>();
 
             for (const volume of volumes) {
                 const state = this.parseVolumeInfo(volume);
-                this.volumes.set(state.name, state);
+                volumeMap.set(state.name, state);
             }
+
+            this.volumes = volumeMap;
 
             logger.info({ count: this.volumes.size }, 'Initial volume state loaded');
 
@@ -75,28 +78,7 @@ export class VolumesStateManager extends BaseStateManager {
 
     async fullStateSync(): Promise<void> {
         try {
-            const volumesResponse = await this.docker.df();
-            const volumes = volumesResponse.Volumes || [];
-
-            for (const volume of volumes) {
-                const newState = this.parseVolumeInfo(volume);
-                const oldState = this.volumes.get(newState.name);
-
-                if (!oldState) continue;
-
-                if (this.hasStateChanged(oldState, newState)) {
-                    this.volumes.set(newState.name, newState);
-
-                    const stateChangeDate: VolumeEvent = {
-                        type: 'state-change',
-                        volumeName: newState.name,
-                        volume: newState,
-                        changes: this.getStateChanges(oldState, newState),
-                        timestamp: Date.now(),
-                    };
-                    this.emit('state-change', stateChangeDate);
-                }
-            }
+            await this.reconcileState();
         } catch (err) {
             logger.error({ err }, 'Error in full state sync');
         }
@@ -247,57 +229,61 @@ export class VolumesStateManager extends BaseStateManager {
         }
     }
 
+    private async reconcileState(): Promise<void> {
+        const volumesResponse = await this.docker.df();
+        const volumes = volumesResponse.Volumes || [];
+        const newVolumeMap = new Map<string, Volume>();
+
+        for (const volume of volumes) {
+            const state = this.parseVolumeInfo(volume);
+            newVolumeMap.set(state.name, state);
+        }
+
+        for (const [volumeName, oldState] of this.volumes.entries()) {
+            if (!newVolumeMap.has(volumeName)) {
+                const volumeRemovedData: VolumeEvent = {
+                    type: 'removed',
+                    volumeName: oldState.name,
+                    oldState,
+                    timestamp: Date.now(),
+                };
+                this.emit('volume-removed', volumeRemovedData);
+                logger.debug({ volumeName }, 'Volume detected as removed during state sync');
+            }
+        }
+
+        for (const [volumeName, newState] of newVolumeMap.entries()) {
+            const oldState = this.volumes.get(volumeName);
+
+            if (!oldState) {
+                const volumeAdded: VolumeEvent = {
+                    type: 'added',
+                    volume: newState,
+                    timestamp: Date.now(),
+                };
+                this.emit('volume-added', volumeAdded);
+                logger.debug({ volumeName }, 'Volume detected as added during state sync');
+            } else if (this.hasStateChanged(oldState, newState)) {
+                const volumeUpdated: VolumeEvent = {
+                    type: 'updated',
+                    oldState,
+                    volume: newState,
+                    changes: this.getStateChanges(oldState, newState),
+                    timestamp: Date.now(),
+                };
+                this.emit('volume-updated', volumeUpdated);
+                logger.debug({ volumeName }, 'Volume detected as updated during state sync');
+            }
+        }
+
+        this.volumes = newVolumeMap;
+    }
+
     async hardRefresh(): Promise<void> {
         logger.info('Starting hard refresh of volume state');
 
         try {
-            const volumesResponse = await this.docker.df();
-            const volumes = volumesResponse.Volumes || [];
-            const newVolumeMap = new Map<string, Volume>();
-
-            for (const volume of volumes) {
-                const state = this.parseVolumeInfo(volume);
-                newVolumeMap.set(state.name, state);
-            }
-
-            for (const [volumeName, oldState] of this.volumes.entries()) {
-                if (!newVolumeMap.has(volumeName)) {
-                    const volumeRemovedData: VolumeEvent = {
-                        type: 'removed',
-                        volumeName: oldState.name,
-                        oldState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('volume-removed', volumeRemovedData);
-                    logger.debug({ volumeName }, 'Volume detected as removed during hard refresh');
-                }
-            }
-
-            for (const [volumeName, newState] of newVolumeMap.entries()) {
-                const oldState = this.volumes.get(volumeName);
-
-                if (!oldState) {
-                    const volumeAdded: VolumeEvent = {
-                        type: 'added',
-                        volume: newState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('volume-added', volumeAdded);
-                    logger.debug({ volumeName }, 'Volume detected as added during hard refresh');
-                } else if (this.hasStateChanged(oldState, newState)) {
-                    const volumeUpdated: VolumeEvent = {
-                        type: 'updated',
-                        oldState,
-                        volume: newState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('volume-updated', volumeUpdated);
-                    logger.debug({ volumeName }, 'Volume detected as updated during hard refresh');
-                }
-            }
-
-            this.volumes = newVolumeMap;
-
+            await this.reconcileState();
             logger.info({ count: this.volumes.size }, 'Hard refresh completed successfully');
         } catch (err) {
             logger.error({ err }, 'Error during hard refresh of volume state');

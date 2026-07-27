@@ -46,15 +46,7 @@ export class NetworksStateManager extends BaseStateManager {
         }
 
         try {
-            const networks = await this.docker.listNetworks();
-            const inspected = await Promise.all(
-                networks.map(({ Id }) => this.docker.getNetwork(Id).inspect()),
-            );
-
-            for (const network of inspected) {
-                const state = this.parseNetworkInfo(network);
-                this.networks.set(state.id, state);
-            }
+            this.networks = await this.buildNetworkMap();
 
             logger.info({ count: this.networks.size }, 'Initial network state loaded');
 
@@ -84,30 +76,7 @@ export class NetworksStateManager extends BaseStateManager {
 
     async fullStateSync(): Promise<void> {
         try {
-            const networks = await this.docker.listNetworks();
-            const inspected = await Promise.all(
-                networks.map(({ Id }) => this.docker.getNetwork(Id).inspect()),
-            );
-
-            for (const network of inspected) {
-                const newState = this.parseNetworkInfo(network);
-                const oldState = this.networks.get(newState.id);
-
-                if (!oldState) continue;
-
-                if (this.hasStateChanged(oldState, newState)) {
-                    this.networks.set(newState.id, newState);
-
-                    const stateChangeData: NetworkEvent = {
-                        type: 'state-change',
-                        networkId: newState.id,
-                        network: newState,
-                        changes: this.getStateChanges(oldState, newState),
-                        timestamp: Date.now(),
-                    };
-                    this.emit('state-change', stateChangeData);
-                }
-            }
+            await this.reconcileState();
         } catch (err) {
             logger.error({ err }, 'Error in full state sync');
         }
@@ -311,59 +280,69 @@ export class NetworksStateManager extends BaseStateManager {
         }
     }
 
+    private async buildNetworkMap(): Promise<Map<string, Network>> {
+        const networks = await this.docker.listNetworks();
+        const inspected = await Promise.all(
+            networks.map(({ Id }) => this.docker.getNetwork(Id).inspect()),
+        );
+
+        const networkMap = new Map<string, Network>();
+        for (const network of inspected) {
+            const state = this.parseNetworkInfo(network);
+            networkMap.set(state.id, state);
+        }
+
+        return networkMap;
+    }
+
+    private async reconcileState(): Promise<void> {
+        const newNetworkMap = await this.buildNetworkMap();
+
+        for (const [networkId, oldState] of this.networks.entries()) {
+            if (!newNetworkMap.has(networkId)) {
+                const networkRemovedData: NetworkEvent = {
+                    type: 'removed',
+                    networkId: oldState.id,
+                    oldState,
+                    timestamp: Date.now(),
+                };
+                this.emit('network-removed', networkRemovedData);
+                logger.debug({ networkId }, 'Network detected as removed during state sync');
+            }
+        }
+
+        for (const [networkId, newState] of newNetworkMap.entries()) {
+            const oldState = this.networks.get(networkId);
+
+            if (!oldState) {
+                const networkAdded: NetworkEvent = {
+                    type: 'added',
+                    network: newState,
+                    timestamp: Date.now(),
+                };
+                this.emit('network-added', networkAdded);
+                logger.debug({ networkId }, 'Network detected as added during state sync');
+            } else if (this.hasStateChanged(oldState, newState)) {
+                const networkUpdated: NetworkEvent = {
+                    type: 'updated',
+                    oldState,
+                    network: newState,
+                    changes: this.getStateChanges(oldState, newState),
+                    timestamp: Date.now(),
+                };
+                this.emit('network-updated', networkUpdated);
+                logger.debug({ networkId }, 'Network detected as updated during state sync');
+            }
+        }
+
+        this.networks = newNetworkMap;
+    }
+
     async hardRefresh(): Promise<void> {
         logger.info('Starting hard refresh of network state');
 
         try {
-            const networks = await this.docker.listNetworks();
-            const newNetworkMap = new Map<string, Network>();
-            const inspected = await Promise.all(
-                networks.map(({ Id }) => this.docker.getNetwork(Id).inspect()),
-            );
-
-            for (const network of inspected) {
-                const state = this.parseNetworkInfo(network);
-                newNetworkMap.set(state.id, state);
-            }
-
-            for (const [networkId, oldState] of this.networks.entries()) {
-                if (!newNetworkMap.has(networkId)) {
-                    const networkRemovedData: NetworkEvent = {
-                        type: 'removed',
-                        networkId: oldState.id,
-                        oldState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('network-removed', networkRemovedData);
-                    logger.debug({ networkId }, 'Network detected as removed during hard refresh');
-                }
-            }
-
-            for (const [networkId, newState] of newNetworkMap.entries()) {
-                const oldState = this.networks.get(networkId);
-
-                if (!oldState) {
-                    const networkAdded: NetworkEvent = {
-                        type: 'added',
-                        network: newState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('network-added', networkAdded);
-                    logger.debug({ networkId }, 'Network detected as added during hard refresh');
-                } else if (this.hasStateChanged(oldState, newState)) {
-                    const networkUpdated: NetworkEvent = {
-                        type: 'updated',
-                        oldState,
-                        network: newState,
-                        timestamp: Date.now(),
-                    };
-                    this.emit('network-updated', networkUpdated);
-                    logger.debug({ networkId }, 'Network detected as updated during hard refresh');
-                }
-            }
-
-            this.networks = newNetworkMap;
-
+            await this.reconcileState();
             logger.info({ count: this.networks.size }, 'Hard refresh completed successfully');
         } catch (err) {
             logger.error({ err }, 'Error during hard refresh of network state');

@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { Position, useReactFlow } from '@xyflow/react';
 import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { useFitViewOptions } from '@/components/pipeline/utils/fitView';
 
 const H_GAP = 80;
 const V_GAP = 120;
@@ -60,6 +61,7 @@ function spreadNodes(
 export function useAutoLayout() {
     const { getNodes, getEdges, fitView } = useReactFlow();
     const { setNodes, triggerAutoSave } = usePipelineActions();
+    const fitViewOptions = useFitViewOptions();
 
     return useCallback(() => {
         const currentNodes = getNodes();
@@ -257,6 +259,6 @@ export function useAutoLayout() {
         );
 
         triggerAutoSave();
-        requestAnimationFrame(() => fitView({ padding: 0.3 }));
-    }, [getNodes, getEdges, setNodes, triggerAutoSave, fitView]);
+        requestAnimationFrame(() => fitView(fitViewOptions));
+    }, [getNodes, getEdges, setNodes, triggerAutoSave, fitView, fitViewOptions]);
 }

@@ -68,6 +68,7 @@
     "pleaseWaitSwarmLoading": "Veuillez patienter pendant le chargement de l'état du swarm.",
     "notInSwarmModeTitle": "Mode Swarm non actif",
     "notInSwarmModeDescription": "Cet hôte Docker ne fait pas partie d'un cluster swarm. Initialisez un nouveau swarm pour devenir le premier manager, ou rejoignez un swarm existant.",
+    "activationRequiresAdmin": "Seul un administrateur peut activer le mode Swarm.",
     "optional": "(optionnel)",
     "service": "Service",
     "services": "Services",

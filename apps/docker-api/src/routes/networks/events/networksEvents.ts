@@ -7,6 +7,7 @@ import {
     filterNexployNetworks,
     isNexployInfrastructureNetwork,
 } from '@workspace/shared/nexployFilter';
+import { createInitialStateGate } from '@/utils/initialStateGate';
 
 const app = new Hono();
 
@@ -100,15 +101,28 @@ app.get('/stream', (c) => {
             }
         }, 15000);
 
+        const gate = createInitialStateGate();
+        const onInitialState = gate.gate(handleInitialState);
+        const onStateChange = gate.gate(handleStateChange);
+        const onNetworkAdded = gate.gate(handleNetworkAdded);
+        const onNetworkUpdated = gate.gate(handleNetworkUpdated);
+        const onNetworkRemoved = gate.gate(handleNetworkRemoved);
+
         const cleanup = () => {
             clearInterval(heartbeat);
 
-            manager.off('state-change', handleStateChange);
-            manager.off('initial-state', handleInitialState);
-            manager.off('network-added', handleNetworkAdded);
-            manager.off('network-updated', handleNetworkUpdated);
-            manager.off('network-removed', handleNetworkRemoved);
+            manager.off('state-change', onStateChange);
+            manager.off('initial-state', onInitialState);
+            manager.off('network-added', onNetworkAdded);
+            manager.off('network-updated', onNetworkUpdated);
+            manager.off('network-removed', onNetworkRemoved);
         };
+
+        manager.on('state-change', onStateChange);
+        manager.on('initial-state', onInitialState);
+        manager.on('network-added', onNetworkAdded);
+        manager.on('network-updated', onNetworkUpdated);
+        manager.on('network-removed', onNetworkRemoved);
 
         const allNetworks = manager.getAllNetworks();
         const initialNetworks = filterNexployNetworks(allNetworks);
@@ -117,12 +131,7 @@ app.get('/stream', (c) => {
             networks: initialNetworks,
             timestamp: Date.now(),
         });
-
-        manager.on('state-change', handleStateChange);
-        manager.on('initial-state', handleInitialState);
-        manager.on('network-added', handleNetworkAdded);
-        manager.on('network-updated', handleNetworkUpdated);
-        manager.on('network-removed', handleNetworkRemoved);
+        await gate.release();
 
         c.req.raw.signal.addEventListener('abort', cleanup);
 

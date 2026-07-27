@@ -5,7 +5,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { useEffect, useRef } from 'react';
 import { useLocale } from 'next-intl';
 import { Panel } from '@xyflow/react';
-import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
+import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { usePipelineBuilds } from '@/stores/pipeline/usePipelineStore';
 import { BuildsPanelItem } from '@/components/pipeline/buildsPanel/BuildsPanelItem';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
@@ -43,9 +43,8 @@ export function BuildsPanel() {
 
     return (
         <Panel position="top-left" className="m-0!">
-            <ScrollAreaWithShadow
-                ref={scrollViewportRef}
-                bottomShadow
+            <ScrollArea
+                viewportRef={scrollViewportRef}
                 className="h-[100px] transition-[height] duration-200 hover:h-[250px]"
             >
                 <div className={'m-2 flex flex-col gap-1'}>
@@ -63,7 +62,7 @@ export function BuildsPanel() {
                         </div>
                     )}
                 </div>
-            </ScrollAreaWithShadow>
+            </ScrollArea>
         </Panel>
     );
 }
