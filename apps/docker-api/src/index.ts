@@ -37,6 +37,7 @@ import registriesRoutes from '@/routes/registriesRoutes';
 import systemRoutes from '@/routes/system/systemRoutes';
 import { dockerEnvironmentMiddleware } from '@/middleware/dockerEnvironment.middleware';
 import { authMiddleware } from '@/middleware/auth.middleware';
+import { actorAuditMiddleware } from '@/middleware/actorAudit.middleware';
 import { securityHeadersMiddleware } from '@/middleware/securityHeaders.middleware';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
@@ -56,6 +57,7 @@ const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
 
 app.use('*', securityHeadersMiddleware);
 app.use('*', authMiddleware);
+app.use('*', actorAuditMiddleware);
 app.use('*', dockerEnvironmentMiddleware);
 
 app.use(

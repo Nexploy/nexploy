@@ -472,6 +472,45 @@ export const fetchSecretsDopplerConfigSchema = z.object({
     config: refable(z.string()).optional(),
 });
 
+export const fetchSecretsInfisicalConfigSchema = z
+    .object({
+        siteUrl: refable(z.string()).default('https://app.infisical.com'),
+        authMethod: z.enum(['universal-auth', 'access-token']).default('universal-auth'),
+        clientId: refable(z.string()).default(''),
+        clientSecret: refable(z.string()).default(''),
+        accessToken: refable(z.string()).default(''),
+        projectId: refable(z.string().min(1, 'Project ID is required')).default(''),
+        environment: refable(z.string().min(1, 'Environment slug is required')).default('dev'),
+        secretPath: refable(z.string().min(1)).default('/'),
+        recursive: z.boolean().default(false),
+        expandSecretReferences: z.boolean().default(true),
+        includeImports: z.boolean().default(true),
+    })
+    .superRefine((data, ctx) => {
+        if (data.authMethod === 'universal-auth') {
+            if (typeof data.clientId === 'string' && data.clientId.trim() === '') {
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['clientId'],
+                    message: 'Client ID is required',
+                });
+            }
+            if (typeof data.clientSecret === 'string' && data.clientSecret.trim() === '') {
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['clientSecret'],
+                    message: 'Client Secret is required',
+                });
+            }
+        } else if (typeof data.accessToken === 'string' && data.accessToken.trim() === '') {
+            ctx.addIssue({
+                code: 'custom',
+                path: ['accessToken'],
+                message: 'Access token is required',
+            });
+        }
+    });
+
 // ─── Domain & SSL ─────────────────────────────────────────────────────────────
 
 export const addDomainConfigSchema = z

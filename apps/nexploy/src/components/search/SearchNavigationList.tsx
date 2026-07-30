@@ -41,7 +41,7 @@ export function SearchNavigationList() {
         { href: '/monitoring', icon: Activity, label: tNav('monitoring') },
         { href: '/requests', icon: Send, label: tNav('requests') },
         { href: '/swarm', icon: Network, label: tNav('swarm') },
-        { href: '/admin/registry', icon: Warehouse, label: tNav('registry') },
+        { href: '/registry', icon: Warehouse, label: tNav('registry') },
     ].filter((item) => matchesQuery(item.label, inputValue));
 
     const dockerItems: NavItem[] = [

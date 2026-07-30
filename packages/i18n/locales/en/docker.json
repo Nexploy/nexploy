@@ -412,7 +412,21 @@
         "refreshRatePlaceholder": "refresh rate...",
         "refreshRate": "Refresh Rate",
         "download": "Download",
-        "close": "Close"
+        "close": "Close",
+        "cpu": "CPU",
+        "cpuCores": "{count} CPUs allocated",
+        "networkThroughput": "Network throughput",
+        "networkThroughputDescription": "Received and sent per second",
+        "blockThroughput": "Disk throughput",
+        "blockThroughputDescription": "Block read and write per second",
+        "memoryLimit": "Memory limit",
+        "memoryCache": "Cache",
+        "onlineCpus": "Available CPUs",
+        "networkRxTotal": "Total received",
+        "networkTxTotal": "Total sent",
+        "blockReadTotal": "Total read",
+        "blockWriteTotal": "Total written",
+        "waitingForData": "Waiting for data…"
     },
     "containerTerminal": {
         "title": "Console — {name}",

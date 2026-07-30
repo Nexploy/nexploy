@@ -1,4 +1,6 @@
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
+import { HOST_SCOPED, resolveActiveOrganizationId } from '@/lib/auth/resolveOrgContext';
+import { actorToHeaders } from '@workspace/shared/actor';
 import dayjs from 'dayjs';
 import ky from 'ky';
 import { NextResponse } from 'next/server';
@@ -12,6 +14,7 @@ const CHANNEL_ENDPOINTS: Record<SSEChannel, string> = {
     container: `/api/container/events/stream/:containerId`,
     logs: `/api/container/events/stream/:containerId/logs/:follow/:tail`,
     stats: `/api/container/events/stream/:containerId/stats/:refreshRate`,
+    containersStats: '/api/containers/events/stream/stats/:refreshRate',
     image: '/api/image/events/stream/:imageId',
     images: '/api/images/events/stream',
     volume: '/api/volume/events/stream/:volumeName',
@@ -93,7 +96,7 @@ const buildEndpointUrl = (template: string, params?: Record<string, string>): st
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('container', 'read'))
+    .use(requirePermission('container', 'read', HOST_SCOPED))
     .handler(async (request: Request, context) => {
         const { searchParams } = new URL(request.url);
         const channelsParam = searchParams.get('channels');
@@ -132,6 +135,13 @@ export const GET = route
         }
 
         const connectionId = context.ctx.session.user.id;
+        const actorHeaders = actorToHeaders({
+            source: 'user',
+            userId: context.ctx.session.user.id,
+            email: context.ctx.session.user.email ?? null,
+            role: context.ctx.session.user.role ?? null,
+            organizationId: await resolveActiveOrganizationId(context.ctx.session),
+        });
         const encoder = new TextEncoder();
         const decoder = new TextDecoder();
         const abortController = new AbortController();
@@ -248,6 +258,7 @@ export const GET = route
                             'Cache-Control': 'no-cache',
                             Connection: 'keep-alive',
                             'X-Client-Id': connectionId,
+                            ...actorHeaders,
                         };
                         if (process.env.NEXPLOY_API_KEY) {
                             sseHeaders['Authorization'] = `Bearer ${process.env.NEXPLOY_API_KEY}`;

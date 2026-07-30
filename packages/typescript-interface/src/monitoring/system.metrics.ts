@@ -4,6 +4,7 @@ export interface SystemMetrics {
     cpuPercent: number;
     cpuCount: number;
     cpuModel: string;
+    cpuCoresPercent: number[];
     loadAverage: number[];
 
     memoryTotal: number;
@@ -18,6 +19,8 @@ export interface SystemMetrics {
 
     uptime: number;
     platform: string;
+    arch: string;
+    release: string;
     hostname: string;
 }
 

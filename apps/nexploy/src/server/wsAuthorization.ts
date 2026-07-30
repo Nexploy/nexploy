@@ -7,6 +7,7 @@ import {
     resolveOrganizationIdForContainerId,
 } from '@/lib/auth/resolveContainerOrgForProxy';
 import { extractContainerId } from '@/server/wsRoutes';
+import type { Actor } from '@workspace/shared/actor';
 
 const EXEC_USER_PATTERN = /^[a-zA-Z0-9_.-]+(:[a-zA-Z0-9_.-]+)?$/;
 
@@ -15,10 +16,14 @@ export interface UpgradeDenial {
     reason: string;
 }
 
+export type UpgradeAuthorization =
+    | { authorized: false; denial: UpgradeDenial }
+    | { authorized: true; actor: Actor };
+
 export async function authorizeContainerUpgrade(
     req: IncomingMessage,
     parsedUrl: URL,
-): Promise<UpgradeDenial | null> {
+): Promise<UpgradeAuthorization> {
     const headers = new Headers();
     if (req.headers.cookie) headers.set('cookie', req.headers.cookie);
 
@@ -26,12 +31,14 @@ export async function authorizeContainerUpgrade(
     const role = session?.user?.role ?? '';
 
     if (!session?.user || !hasPermission(role, 'container', 'manage')) {
-        return { status: 401, reason: 'Unauthorized' };
+        return { authorized: false, denial: { status: 401, reason: 'Unauthorized' } };
     }
+
+    let organizationId: string | null = session.session?.activeOrganizationId ?? null;
 
     if (role !== 'admin') {
         const containerId = extractContainerId(parsedUrl.pathname);
-        const organizationId = containerId
+        organizationId = containerId
             ? await resolveOrganizationIdForContainerId(containerId)
             : null;
         const orgRole = organizationId
@@ -39,14 +46,23 @@ export async function authorizeContainerUpgrade(
             : null;
 
         if (!orgRole || !hasOrgPermission(orgRole, 'container', 'manage')) {
-            return { status: 403, reason: 'Forbidden' };
+            return { authorized: false, denial: { status: 403, reason: 'Forbidden' } };
         }
     }
 
     const userParam = parsedUrl.searchParams.get('user');
     if (userParam && !EXEC_USER_PATTERN.test(userParam)) {
-        return { status: 400, reason: 'Bad Request' };
+        return { authorized: false, denial: { status: 400, reason: 'Bad Request' } };
     }
 
-    return null;
+    return {
+        authorized: true,
+        actor: {
+            source: 'user',
+            userId: session.user.id,
+            email: session.user.email ?? null,
+            role,
+            organizationId,
+        },
+    };
 }

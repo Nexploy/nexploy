@@ -1,35 +1,18 @@
 'use client';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
-import dayjs from 'dayjs';
-import { Activity, Download } from 'lucide-react';
+import { Activity, Cpu, Download, HardDrive, MemoryStick, Network } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
-import * as React from 'react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { SSEProvider } from '@/providers/SSEProviders';
 import { useContainerStatsStore } from '@/stores/docker/useContainerStatsStore';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from '@workspace/ui/components/chart';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { statusMap } from '@/utils/statusMap';
 import { Separator } from '@workspace/ui/components/separator';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
-import { formatBytes } from '@/utils/formatBytes';
-import { ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Skeleton } from '@workspace/ui/components/skeleton';
+import { formatBytes } from '@/utils/formatBytes';
 import {
     Select,
     SelectContent,
@@ -42,6 +25,14 @@ import {
 import { useLocalStorage } from 'usehooks-ts';
 import { refreshRateOptions } from '@/utils/refreshRate';
 import { useTranslations } from 'next-intl';
+import { MetricCard } from '@/components/monitoring/MetricCard';
+import { MetricAreaChart } from '@/components/monitoring/MetricAreaChart';
+import {
+    formatPercent,
+    formatRate,
+    MONITORING_CHART_COLORS,
+    usageToneClass,
+} from '@/components/monitoring/monitoringUtils';
 
 interface ContainerStatsProps {
     children: (props: { openStats: () => void }) => ReactNode;
@@ -54,19 +45,16 @@ export function ContainerStats({ children }: ContainerStatsProps) {
     const tStatus = useTranslations('docker.status');
 
     const container = useContainerStore((state) => state.container);
-    const { connectionState, history, exportStats, stats } = useContainerStatsStore(
-        (state) => state,
-    );
+    const connectionState = useContainerStatsStore((state) => state.connectionState);
+    const history = useContainerStatsStore((state) => state.history);
+    const stats = useContainerStatsStore((state) => state.stats);
+    const exportStats = useContainerStatsStore((state) => state.exportStats);
 
     const currentStatus = statusMap[connectionState];
+    const isLoading = connectionState === 'connecting' || !stats;
 
-    const handleOpen = async () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     useEffect(() => {
         if (!container) setOpen(false);
@@ -74,149 +62,78 @@ export function ContainerStats({ children }: ContainerStatsProps) {
 
     const chartData = useMemo(
         () =>
-            history.map((stat) => ({
-                timestamp: dayjs(stat.timestamp).format('HH:mm:ss'),
-                cpuPercent: stat.cpuPercent,
-                memoryUsage: stat.memoryUsage,
-                networkRx: stat.networkRx,
-                networkTx: stat.networkTx,
-                blockRead: stat.blockRead,
-                blockWrite: stat.blockWrite,
-                memoryPercent: stat.memoryPercent,
-                pidsCount: stat.pidsCount,
-            })),
+            history.map((stat, index) => {
+                const previous = index > 0 ? history[index - 1] : undefined;
+                const elapsedSeconds = previous ? (stat.timestamp - previous.timestamp) / 1000 : 0;
+                const toRate = (current: number, before: number) =>
+                    elapsedSeconds > 0 ? Math.max(0, (current - before) / elapsedSeconds) : 0;
+
+                return {
+                    timestamp: stat.timestamp,
+                    cpuPercent: stat.cpuPercent,
+                    memoryUsage: stat.memoryUsage,
+                    memoryPercent: stat.memoryPercent,
+                    pidsCount: stat.pidsCount,
+                    networkRxRate: previous ? toRate(stat.networkRx, previous.networkRx) : 0,
+                    networkTxRate: previous ? toRate(stat.networkTx, previous.networkTx) : 0,
+                    blockReadRate: previous ? toRate(stat.blockRead, previous.blockRead) : 0,
+                    blockWriteRate: previous ? toRate(stat.blockWrite, previous.blockWrite) : 0,
+                };
+            }),
         [history],
     );
 
-    const statsCard = useMemo(
-        () => [
-            {
-                title: t('cpuUsage'),
-                description: t('cpuDescription'),
-                config: {
-                    cpuPercent: {
-                        label: t('cpuPercent'),
-                        color: 'var(--chart-2)',
-                    },
-                },
-                areas: [
-                    {
-                        idFill: 'fillCpuPercent',
-                        dataKey: 'cpuPercent',
-                        fill: 'url(#fillCpuPercent)',
-                        color: 'var(--color-cpuPercent)',
-                    },
-                ],
-                formatValue: (value?: ValueType) => {
-                    const numValue = parseFloat(String(value));
-                    return `${numValue.toFixed(3)}%`;
-                },
-            },
-            {
-                title: t('memoryUsage'),
-                description: t('memoryDescription'),
-                config: {
-                    memoryUsage: {
-                        label: t('memory'),
-                        color: 'var(--chart-2)',
-                    },
-                },
-                areas: [
-                    {
-                        idFill: 'fillMemoryUsage',
-                        dataKey: 'memoryUsage',
-                        fill: 'url(#fillMemoryUsage)',
-                        color: 'var(--color-memoryUsage)',
-                    },
-                ],
-                formatValue: (value?: ValueType) => {
-                    const numValue = parseFloat(String(value));
-                    return formatBytes(numValue);
-                },
-            },
-            {
-                title: t('network'),
-                description: t('networkDescription'),
-                config: {
-                    networkRx: {
-                        label: t('rx'),
-                        color: 'var(--chart-2)',
-                    },
-                    networkTx: {
-                        label: t('tx'),
-                        color: 'var(--chart-1)',
-                    },
-                },
-                areas: [
-                    {
-                        idFill: 'fillNetworkRx',
-                        dataKey: 'networkRx',
-                        fill: 'url(#fillNetworkRx)',
-                        color: 'var(--color-networkRx)',
-                    },
-                    {
-                        idFill: 'fillNetworkTx',
-                        dataKey: 'networkTx',
-                        fill: 'url(#fillNetworkTx)',
-                        color: 'var(--color-networkTx)',
-                    },
-                ],
-                formatValue: (value?: ValueType) => {
-                    const numValue = parseFloat(String(value));
-                    return formatBytes(numValue);
-                },
-            },
-            {
-                title: t('blockIo'),
-                description: t('blockIoDescription'),
-                config: {
-                    blockRead: {
-                        label: t('read'),
-                        color: 'var(--chart-2)',
-                    },
-                    blockWrite: {
-                        label: t('write'),
-                        color: 'var(--chart-1)',
-                    },
-                },
-                areas: [
-                    {
-                        idFill: 'fillBlockRead',
-                        dataKey: 'blockRead',
-                        fill: 'url(#fillBlockRead)',
-                        color: 'var(--color-blockRead)',
-                    },
-                    {
-                        idFill: 'fillBlockWrite',
-                        dataKey: 'blockWrite',
-                        fill: 'url(#fillBlockWrite)',
-                        color: 'var(--color-blockWrite)',
-                    },
-                ],
-                formatValue: (value?: ValueType) => {
-                    const numValue = parseFloat(String(value));
-                    return formatBytes(numValue);
-                },
-            },
-        ],
-        [],
-    );
+    const latest = chartData.length > 0 ? chartData[chartData.length - 1]! : null;
 
-    const smallsStats = useMemo(
-        () => [
-            {
-                title: t('pidsCount'),
-                description: t('pidsDescription'),
-                value: stats?.pidsCount || 0,
-            },
-            {
-                title: t('memoryPercent'),
-                description: t('memoryPercentDescription'),
-                value: `${stats?.memoryPercent?.toFixed(3) || 0}%`,
-            },
-        ],
-        [t, stats],
-    );
+    const summaryCards = [
+        {
+            key: 'cpu',
+            title: t('cpu'),
+            icon: Cpu,
+            value: formatPercent(stats?.cpuPercent ?? 0, 2),
+            valueClassName: usageToneClass(stats?.cpuPercent ?? 0),
+            description: t('cpuCores', { count: stats?.onlineCpus ?? 0 }),
+            percent: stats?.cpuPercent ?? 0,
+            sparklineValues: chartData.map((point) => point.cpuPercent),
+        },
+        {
+            key: 'memory',
+            title: t('memory'),
+            icon: MemoryStick,
+            value: formatBytes(stats?.memoryUsage ?? 0),
+            valueClassName: usageToneClass(stats?.memoryPercent ?? 0),
+            description: `${formatPercent(stats?.memoryPercent ?? 0)} · ${formatBytes(stats?.memoryLimit ?? 0)}`,
+            percent: stats?.memoryPercent ?? 0,
+            sparklineValues: chartData.map((point) => point.memoryUsage),
+        },
+        {
+            key: 'network',
+            title: t('network'),
+            icon: Network,
+            value: formatRate((latest?.networkRxRate ?? 0) + (latest?.networkTxRate ?? 0)),
+            description: `↓ ${formatRate(latest?.networkRxRate ?? 0)} · ↑ ${formatRate(latest?.networkTxRate ?? 0)}`,
+            sparklineValues: chartData.map((point) => point.networkRxRate + point.networkTxRate),
+        },
+        {
+            key: 'block',
+            title: t('blockIo'),
+            icon: HardDrive,
+            value: formatRate((latest?.blockReadRate ?? 0) + (latest?.blockWriteRate ?? 0)),
+            description: `${t('read')} ${formatRate(latest?.blockReadRate ?? 0)} · ${t('write')} ${formatRate(latest?.blockWriteRate ?? 0)}`,
+            sparklineValues: chartData.map((point) => point.blockReadRate + point.blockWriteRate),
+        },
+    ];
+
+    const details = [
+        { label: t('memoryLimit'), value: formatBytes(stats?.memoryLimit ?? 0) },
+        { label: t('memoryPercent'), value: formatPercent(stats?.memoryPercent ?? 0, 2) },
+        { label: t('memoryCache'), value: formatBytes(stats?.memoryCache ?? 0) },
+        { label: t('onlineCpus'), value: `${stats?.onlineCpus ?? 0}` },
+        { label: t('networkRxTotal'), value: formatBytes(stats?.networkRx ?? 0) },
+        { label: t('networkTxTotal'), value: formatBytes(stats?.networkTx ?? 0) },
+        { label: t('blockReadTotal'), value: formatBytes(stats?.blockRead ?? 0) },
+        { label: t('blockWriteTotal'), value: formatBytes(stats?.blockWrite ?? 0) },
+    ];
 
     return (
         <>
@@ -226,7 +143,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                     showCloseButton={false}
                     onOpenAutoFocus={(e) => e.preventDefault()}
                     aria-describedby={undefined}
-                    className="gap-0 overflow-x-visible overflow-y-hidden p-0 sm:max-w-5/6"
+                    className="sm:max-w-5/6 gap-0 overflow-y-hidden overflow-x-visible p-0"
                 >
                     <SSEProvider
                         connections={['stats']}
@@ -258,8 +175,8 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>{t('refreshRate')}</SelectLabel>
-                                            {refreshRateOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value}>
+                                            {refreshRateOptions.map((option) => (
+                                                <SelectItem key={option.value} value={option.value}>
                                                     {option.label}
                                                 </SelectItem>
                                             ))}
@@ -282,104 +199,134 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                 </Button>
                             </div>
                         </DialogHeader>
-                        <ScrollAreaWithShadow bottomShadow className="h-150 overflow-y-auto">
-                            <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2">
-                                {smallsStats.map((stat, index) =>
-                                    connectionState === 'connecting' ? (
-                                        <Skeleton key={index} className="h-[150px] w-full" />
-                                    ) : (
-                                        <Card key={index} className={'bg-transparent'}>
-                                            <CardHeader>
-                                                <CardTitle>{stat.title}</CardTitle>
-                                                <CardDescription>
-                                                    {stat.description}
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent className={'text-2xl font-bold'}>
-                                                {stat.value}
-                                            </CardContent>
-                                        </Card>
-                                    ),
-                                )}
-                                {statsCard.map((stat, index) =>
-                                    connectionState === 'connecting' ? (
-                                        <Skeleton key={index} className="h-[250px] w-full" />
-                                    ) : (
-                                        <Card
-                                            key={index}
-                                            className={'rounded-md bg-transparent py-4'}
-                                        >
-                                            <CardHeader className={'border-b px-4 pb-4!'}>
-                                                <CardTitle>{stat.title}</CardTitle>
-                                                <CardDescription>
-                                                    {stat.description}
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent className={'p-0'}>
-                                                <ChartContainer
-                                                    config={stat.config as unknown as ChartConfig}
-                                                    className="h-[180px] w-full"
-                                                >
-                                                    <AreaChart className="w-full" data={chartData}>
-                                                        <CartesianGrid vertical={false} />
-                                                        <XAxis
-                                                            dataKey="timestamp"
-                                                            tickLine={false}
-                                                            axisLine={false}
-                                                            tickMargin={8}
-                                                        />
-                                                        <ChartTooltip
-                                                            content={(props) => (
-                                                                <ChartTooltipContent
-                                                                    {...(props as React.ComponentProps<
-                                                                        typeof ChartTooltipContent
-                                                                    >)}
-                                                                    formatter={(value) =>
-                                                                        stat.formatValue(value)
-                                                                    }
-                                                                />
-                                                            )}
-                                                        />
-                                                        <defs>
-                                                            {stat.areas.map((area) => (
-                                                                <linearGradient
-                                                                    key={area.idFill}
-                                                                    id={area.idFill}
-                                                                    x1="0"
-                                                                    y1="0"
-                                                                    x2="0"
-                                                                    y2="1"
-                                                                >
-                                                                    <stop
-                                                                        offset="5%"
-                                                                        stopColor={area.color}
-                                                                        stopOpacity={0.8}
-                                                                    />
-                                                                    <stop
-                                                                        offset="95%"
-                                                                        stopColor={area.color}
-                                                                        stopOpacity={0.1}
-                                                                    />
-                                                                </linearGradient>
-                                                            ))}
-                                                        </defs>
 
-                                                        {stat.areas.map((area) => (
-                                                            <Area
-                                                                key={area.dataKey}
-                                                                dataKey={area.dataKey}
-                                                                type="bump"
-                                                                fill={area.fill}
-                                                                fillOpacity={0.4}
-                                                                stroke={area.color}
-                                                            />
-                                                        ))}
-                                                    </AreaChart>
-                                                </ChartContainer>
-                                            </CardContent>
-                                        </Card>
-                                    ),
-                                )}
+                        <ScrollAreaWithShadow bottomShadow className="h-150 overflow-y-auto">
+                            <div className="space-y-4 p-4">
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                                    {isLoading
+                                        ? Array.from({ length: 4 }).map((_, index) => (
+                                              <Skeleton key={index} className="h-[190px] w-full" />
+                                          ))
+                                        : summaryCards.map((card) => (
+                                              <MetricCard
+                                                  key={card.key}
+                                                  title={card.title}
+                                                  icon={card.icon}
+                                                  value={card.value}
+                                                  valueClassName={card.valueClassName}
+                                                  description={card.description}
+                                                  percent={card.percent}
+                                                  sparklineValues={card.sparklineValues}
+                                              />
+                                          ))}
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                                    <MetricAreaChart
+                                        title={t('cpuUsage')}
+                                        description={t('cpuDescription')}
+                                        data={chartData}
+                                        series={[
+                                            {
+                                                dataKey: 'cpuPercent',
+                                                label: t('cpuPercent'),
+                                                color: MONITORING_CHART_COLORS[0]!,
+                                            },
+                                        ]}
+                                        formatValue={(value) => formatPercent(value, 2)}
+                                        chartClassName="h-[200px]"
+                                        emptyLabel={t('waitingForData')}
+                                    />
+                                    <MetricAreaChart
+                                        title={t('memoryUsage')}
+                                        description={t('memoryDescription')}
+                                        data={chartData}
+                                        series={[
+                                            {
+                                                dataKey: 'memoryUsage',
+                                                label: t('memory'),
+                                                color: MONITORING_CHART_COLORS[1]!,
+                                            },
+                                        ]}
+                                        formatValue={(value) => formatBytes(value)}
+                                        chartClassName="h-[200px]"
+                                        emptyLabel={t('waitingForData')}
+                                    />
+                                    <MetricAreaChart
+                                        title={t('networkThroughput')}
+                                        description={t('networkThroughputDescription')}
+                                        data={chartData}
+                                        series={[
+                                            {
+                                                dataKey: 'networkRxRate',
+                                                label: t('rx'),
+                                                color: MONITORING_CHART_COLORS[0]!,
+                                            },
+                                            {
+                                                dataKey: 'networkTxRate',
+                                                label: t('tx'),
+                                                color: MONITORING_CHART_COLORS[3]!,
+                                            },
+                                        ]}
+                                        formatValue={(value) => formatRate(value)}
+                                        chartClassName="h-[200px]"
+                                        emptyLabel={t('waitingForData')}
+                                    />
+                                    <MetricAreaChart
+                                        title={t('blockThroughput')}
+                                        description={t('blockThroughputDescription')}
+                                        data={chartData}
+                                        series={[
+                                            {
+                                                dataKey: 'blockReadRate',
+                                                label: t('read'),
+                                                color: MONITORING_CHART_COLORS[2]!,
+                                            },
+                                            {
+                                                dataKey: 'blockWriteRate',
+                                                label: t('write'),
+                                                color: MONITORING_CHART_COLORS[4]!,
+                                            },
+                                        ]}
+                                        formatValue={(value) => formatRate(value)}
+                                        chartClassName="h-[200px]"
+                                        emptyLabel={t('waitingForData')}
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                                    <MetricAreaChart
+                                        title={t('pidsCount')}
+                                        description={t('pidsDescription')}
+                                        data={chartData}
+                                        series={[
+                                            {
+                                                dataKey: 'pidsCount',
+                                                label: t('pidsCount'),
+                                                color: MONITORING_CHART_COLORS[2]!,
+                                            },
+                                        ]}
+                                        formatValue={(value) => `${Math.round(value)}`}
+                                        className="lg:col-span-2"
+                                        chartClassName="h-[180px]"
+                                        emptyLabel={t('waitingForData')}
+                                    />
+                                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
+                                        {details.map((detail) => (
+                                            <div
+                                                key={detail.label}
+                                                className="bg-muted/40 flex items-center justify-between gap-2 rounded-md px-3 py-1.5"
+                                            >
+                                                <span className="text-muted-foreground truncate text-xs">
+                                                    {detail.label}
+                                                </span>
+                                                <span className="truncate text-sm font-medium tabular-nums">
+                                                    {detail.value}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         </ScrollAreaWithShadow>
                     </SSEProvider>

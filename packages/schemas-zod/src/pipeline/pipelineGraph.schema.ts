@@ -65,6 +65,7 @@ export const nodeTypeSchema = z.enum([
     // Secrets
     'fetch-secrets-vault',
     'fetch-secrets-doppler',
+    'fetch-secrets-infisical',
     // Code Quality
     'sonarqube-scan',
     // Domain & SSL

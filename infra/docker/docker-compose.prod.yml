@@ -102,7 +102,6 @@ services:
     restart: unless-stopped
     networks:
       - nexploy_network_prod
-      - nexploy_traefik_network_prod
     environment:
       NODE_ENV: production
       PORT: 3300

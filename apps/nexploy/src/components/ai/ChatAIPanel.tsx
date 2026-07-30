@@ -27,8 +27,10 @@ import {
 import { SelectModel } from '@/components/ai/panel/SelectModel.tsx';
 import { StreamAutoScroll } from '@/components/ai/panel/StreamAutoScroll';
 import { useTranslations } from 'next-intl';
-import { BotOff, Settings2 } from 'lucide-react';
+import { BotOff, Minimize2, Settings2 } from 'lucide-react';
 import { useLocalStorage } from 'usehooks-ts';
+import { Button } from '@workspace/ui/components/button';
+import { Dialog, DialogContent, DialogTitle } from '@workspace/ui/components/dialog';
 
 export function ChatAIPanel() {
     const t = useTranslations('ai.chat');
@@ -41,6 +43,8 @@ export function ChatAIPanel() {
 
     const selectedModel = useAIPanelStore((s) => s.selectedModel);
     const openModelSelector = useAIPanelStore((s) => s.openModelSelector);
+    const isFullscreen = useAIPanelStore((s) => s.isFullscreen);
+    const setFullscreen = useAIPanelStore((s) => s.setFullscreen);
 
     const [input, setInput] = useState('');
     const selectedModelRef = useRef(selectedModel);
@@ -126,6 +130,41 @@ export function ChatAIPanel() {
         clearPersistedMessages();
     }, [stop, setMessages, clearPersistedMessages]);
 
+    const chatBody = (
+        <>
+            <MessageScrollerProvider
+                autoScroll
+                defaultScrollPosition={messages.length === 0 ? 'start' : 'end'}
+            >
+                <MessageScroller className="min-h-0 flex-1">
+                    <MessageScrollerViewport className="px-3">
+                        <MessageScrollerContent className="gap-4 pb-2">
+                            {messages.length === 0 && (
+                                <MessageScrollerItem>
+                                    <Suggestions
+                                        categories={categories}
+                                        onSelect={trySendMessage}
+                                    />
+                                </MessageScrollerItem>
+                            )}
+                            <ChatMessages messages={messages} isLoading={isLoading} error={error} />
+                        </MessageScrollerContent>
+                    </MessageScrollerViewport>
+                    <StreamAutoScroll turnId={streamingTurnId} isStreaming={isLoading} />
+                    <MessageScrollerButton className="rounded-full shadow-sm" />
+                </MessageScroller>
+            </MessageScrollerProvider>
+            <SelectModel />
+            <ChatInput
+                input={input}
+                onChange={setInput}
+                onSubmit={() => trySendMessage(input)}
+                onStop={stop}
+                isLoading={isLoading}
+            />
+        </>
+    );
+
     return (
         <div
             className={cn(
@@ -167,43 +206,41 @@ export function ChatAIPanel() {
                         </div>
                     ) : (
                         <>
-                            <MessageScrollerProvider
-                                autoScroll
-                                defaultScrollPosition={messages.length === 0 ? 'start' : 'end'}
-                            >
-                                <MessageScroller className="min-h-0 flex-1">
-                                    <MessageScrollerViewport className="px-3">
-                                        <MessageScrollerContent className="gap-4 pb-2">
-                                            {messages.length === 0 && (
-                                                <MessageScrollerItem>
-                                                    <Suggestions
-                                                        categories={categories}
-                                                        onSelect={trySendMessage}
-                                                    />
-                                                </MessageScrollerItem>
-                                            )}
-                                            <ChatMessages
-                                                messages={messages}
-                                                isLoading={isLoading}
-                                                error={error}
-                                            />
-                                        </MessageScrollerContent>
-                                    </MessageScrollerViewport>
-                                    <StreamAutoScroll
-                                        turnId={streamingTurnId}
-                                        isStreaming={isLoading}
+                            {isFullscreen ? (
+                                <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
+                                    <p className="text-muted-foreground text-xs">
+                                        {t('fullscreenActive')}
+                                    </p>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-7 text-xs"
+                                        onClick={() => setFullscreen(false)}
+                                    >
+                                        <Minimize2 className="size-3.5" />
+                                        {t('exitFullscreen')}
+                                    </Button>
+                                </div>
+                            ) : (
+                                chatBody
+                            )}
+                            <Dialog open={isFullscreen} onOpenChange={setFullscreen}>
+                                <DialogContent
+                                    showCloseButton={false}
+                                    className="flex h-[100dvh] w-screen max-w-none flex-col gap-0 rounded-none border-0 p-0 sm:max-w-none"
+                                >
+                                    <DialogTitle className="sr-only">{t('panelTitle')}</DialogTitle>
+                                    <PanelHeader
+                                        isLoading={isLoading}
+                                        hasMessages={messages.length > 0}
+                                        onNewChat={handleResetChat}
+                                        onClose={() => setFullscreen(false)}
                                     />
-                                    <MessageScrollerButton className="rounded-full shadow-sm" />
-                                </MessageScroller>
-                            </MessageScrollerProvider>
-                            <SelectModel />
-                            <ChatInput
-                                input={input}
-                                onChange={setInput}
-                                onSubmit={() => trySendMessage(input)}
-                                onStop={stop}
-                                isLoading={isLoading}
-                            />
+                                    <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col">
+                                        {isFullscreen && chatBody}
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
                             <ModelSelectorModal />
                         </>
                     )}

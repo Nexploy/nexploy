@@ -26,8 +26,12 @@ export function DockerEnvironmentGuard({ children }: { children: ReactNode }) {
     return (
         <Empty className="h-full flex-1">
             <EmptyHeader>
-                <EmptyMedia variant="icon">
-                    <ServerOff />
+                <EmptyMedia
+                    className={
+                        'bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg'
+                    }
+                >
+                    <ServerOff className={'text-primary'} />
                 </EmptyMedia>
                 <EmptyTitle>{t('environmentUnavailable.title')}</EmptyTitle>
                 <EmptyDescription>

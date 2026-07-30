@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import {
     Table,
     TableBody,
@@ -10,17 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from '@workspace/ui/components/table';
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
-import { Badge } from '@workspace/ui/components/badge';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
-import { Button } from '@workspace/ui/components/button';
-import { Mail, Trash2, X } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import type {
     OrganizationInvitation,
@@ -35,6 +26,10 @@ import { removeMemberAction } from '@/actions/organization/removeMember.action';
 import { updateMemberRoleAction } from '@/actions/organization/updateMemberRole.action';
 import { cancelInvitationAction } from '@/actions/organization/cancelInvitation.action';
 import type { UpdateMemberRoleInput } from '@workspace/schemas-zod/organization/updateMemberRole.schema';
+import {
+    getColumnsOrganizationInvitations,
+    getColumnsOrganizationMembers,
+} from '@/components/organization/members/ColumnsOrganizationMembers';
 
 interface MembersSectionProps {
     organizationId: string;
@@ -45,13 +40,62 @@ interface MembersSectionProps {
     callerRole: string | null;
 }
 
-const getInitials = (name: string) =>
-    name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
+function DataTable<TData>({
+    data,
+    columns,
+    rowClassName,
+}: {
+    data: TData[];
+    columns: ColumnDef<TData>[];
+    rowClassName: string;
+}) {
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    });
+
+    return (
+        <div className="bg-card overflow-hidden rounded-md border shadow-sm">
+            <Table>
+                <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                        <TableRow key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => (
+                                <TableHead
+                                    key={header.id}
+                                    style={
+                                        header.column.columnDef.size
+                                            ? { width: header.column.columnDef.size }
+                                            : undefined
+                                    }
+                                >
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(
+                                              header.column.columnDef.header,
+                                              header.getContext(),
+                                          )}
+                                </TableHead>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableHeader>
+                <TableBody>
+                    {table.getRowModel().rows.map((row) => (
+                        <TableRow key={row.id} className={rowClassName}>
+                            {row.getVisibleCells().map((cell) => (
+                                <TableCell key={cell.id}>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
+    );
+}
 
 export function MembersSection({
     organizationId,
@@ -125,104 +169,44 @@ export function MembersSection({
         });
     };
 
+    const membersColumns = useMemo(
+        () =>
+            getColumnsOrganizationMembers({
+                t,
+                currentUserId,
+                ownerCount,
+                canManageMembers,
+                canTransferOwnership,
+                isUpdatingRole,
+                isRemoving,
+                onRoleChange: handleRoleChange,
+                onRemove: handleRemove,
+            }),
+        [
+            t,
+            organizationId,
+            currentUserId,
+            ownerCount,
+            canManageMembers,
+            canTransferOwnership,
+            isUpdatingRole,
+            isRemoving,
+        ],
+    );
+
+    const invitationsColumns = useMemo(
+        () =>
+            getColumnsOrganizationInvitations({
+                t,
+                isCancelling,
+                onCancel: (invitation) => executeCancel({ invitationId: invitation.id }),
+            }),
+        [t, isCancelling],
+    );
+
     return (
         <div className="flex flex-col gap-8">
-            <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>{t('members.member')}</TableHead>
-                            <TableHead>{t('members.role')}</TableHead>
-                            {canManageMembers && <TableHead className="w-10" />}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {visibleMembers.map((member) => {
-                            const isCurrentUser = member.user.id === currentUserId;
-                            const isSoleOwner = member.role === 'owner' && ownerCount <= 1;
-
-                            return (
-                                <TableRow key={member.id} className="h-14">
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <Avatar className="size-8">
-                                                <AvatarImage src={member.user.image || undefined} />
-                                                <AvatarFallback className="text-xs">
-                                                    {getInitials(member.user.name)}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <div className="flex flex-col">
-                                                <span className="font-medium">
-                                                    {member.user.name}
-                                                    {isCurrentUser && (
-                                                        <span className="text-muted-foreground ml-2 text-xs">
-                                                            {t('members.you')}
-                                                        </span>
-                                                    )}
-                                                </span>
-                                                <span className="text-muted-foreground text-xs">
-                                                    {member.user.email}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        {canManageMembers &&
-                                        (member.role !== 'owner' ||
-                                            (canTransferOwnership && !isSoleOwner)) ? (
-                                            <Select
-                                                value={member.role}
-                                                disabled={isUpdatingRole}
-                                                onValueChange={(role) =>
-                                                    handleRoleChange(
-                                                        member,
-                                                        role as UpdateMemberRoleInput['role'],
-                                                    )
-                                                }
-                                            >
-                                                <SelectTrigger size="sm" className="w-32">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="member">
-                                                        {t('roles.member')}
-                                                    </SelectItem>
-                                                    <SelectItem value="admin">
-                                                        {t('roles.admin')}
-                                                    </SelectItem>
-                                                    {canTransferOwnership && (
-                                                        <SelectItem value="owner">
-                                                            {t('roles.owner')}
-                                                        </SelectItem>
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
-                                        ) : (
-                                            <Badge variant="outline">
-                                                {t(`roles.${member.role}`)}
-                                            </Badge>
-                                        )}
-                                    </TableCell>
-                                    {canManageMembers && (
-                                        <TableCell>
-                                            {!isCurrentUser && !isSoleOwner && (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    disabled={isRemoving}
-                                                    onClick={() => handleRemove(member)}
-                                                >
-                                                    <Trash2 className="text-destructive size-4" />
-                                                </Button>
-                                            )}
-                                        </TableCell>
-                                    )}
-                                </TableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </div>
+            <DataTable data={visibleMembers} columns={membersColumns} rowClassName="h-14" />
 
             {canManageMembers && visibleInvitations.length > 0 && (
                 <div className="flex flex-col gap-3">
@@ -230,41 +214,11 @@ export function MembersSection({
                         <Mail className="size-4" />
                         {t('invitations.pending')}
                     </h2>
-                    <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>{t('members.email')}</TableHead>
-                                    <TableHead>{t('members.role')}</TableHead>
-                                    <TableHead className="w-10" />
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {visibleInvitations.map((invitation) => (
-                                    <TableRow key={invitation.id} className="h-12">
-                                        <TableCell>{invitation.email}</TableCell>
-                                        <TableCell>
-                                            <Badge variant="outline">
-                                                {t(`roles.${invitation.role ?? 'member'}`)}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                disabled={isCancelling}
-                                                onClick={() =>
-                                                    executeCancel({ invitationId: invitation.id })
-                                                }
-                                            >
-                                                <X className="size-4" />
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
+                    <DataTable
+                        data={visibleInvitations}
+                        columns={invitationsColumns}
+                        rowClassName="h-12"
+                    />
                 </div>
             )}
         </div>

@@ -4,7 +4,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { TableDomains } from '@/components/domains/TableDomains.tsx';
 import { AddDomainButton } from '@/components/domains/AddDomainButton';
 import type { Metadata } from 'next';
-import { getDomains } from '@/services/traefik.service.ts';
+import { getVisibleDomains } from '@/services/visibleDomains.service';
 
 export const metadata: Metadata = {
     title: 'Domains',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function DomainsPage() {
     const [t, domains] = await Promise.all([
         getTranslations('repository.settings.domains'),
-        getDomains(),
+        getVisibleDomains(),
     ]);
 
     return (

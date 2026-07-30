@@ -1,5 +1,7 @@
 import { cookies, headers } from 'next/headers';
 import ky, { type Options } from 'ky';
+import { actorToHeaders } from '@workspace/shared/actor';
+import { getCurrentActor } from '@/lib/api/currentActor';
 
 export interface KyDockerOptions extends Options {
     environmentId?: string;
@@ -43,6 +45,10 @@ export const kyDocker = ky.create({
 
                 if (NEXPLOY_API_KEY) {
                     request.headers.set('Authorization', `Bearer ${NEXPLOY_API_KEY}`);
+                }
+
+                for (const [name, value] of Object.entries(actorToHeaders(await getCurrentActor()))) {
+                    request.headers.set(name, value);
                 }
 
                 try {

@@ -15,14 +15,19 @@ docker pull nexploy/docker-api:latest
 ## Run
 
 ```bash
+docker network create nexploy_network
+
 docker run -d \
   --name docker-api \
-  -p 3300:3300 \
+  --network nexploy_network \
   -v /var/run/docker.sock:/var/run/docker.sock \
   nexploy/docker-api:latest
 ```
 
 The service needs access to the Docker socket to manage containers, images, volumes, and networks on the host.
+
+> [!WARNING]
+> Because it holds the Docker socket, this API grants full control over the host. Never publish its port (`-p 3300:3300`) and never route it through a reverse proxy. Keep it on an internal Docker network reachable only by the `nexploy/nexploy` app, which addresses it as `http://docker-api:3300`.
 
 ## Environment variables
 

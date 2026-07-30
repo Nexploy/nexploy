@@ -1,6 +1,7 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { HOST_SCOPED } from '@/lib/auth/resolveOrgContext';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
@@ -8,7 +9,7 @@ import { getTranslations } from 'next-intl/server';
 import { dockerRefreshSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
 
 export const onDockerRefreshAction = authActionServer
-    .use(requirePermission('container', 'read'))
+    .use(requirePermission('container', 'read', HOST_SCOPED))
     .inputSchema(dockerRefreshSchema)
     .action(async ({ parsedInput: { environmentName } }) => {
         try {

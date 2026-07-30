@@ -27,7 +27,7 @@ export const deleteRegistryAction = authActionServer
                 }
             }
 
-            revalidatePath('/admin/registry');
+            revalidatePath('/registry');
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 const body = await err.response.json<{ message: string }>();

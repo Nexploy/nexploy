@@ -13,6 +13,9 @@ const SIMPLE_REDIRECTS: Record<string, string> = {
     '/': '/repositories',
     '/docker': '/docker/containers',
     '/admin/ai': '/admin/ai/models',
+    '/admin/traefik': '/traefik',
+    '/admin/ssl-certificates': '/ssl-certificates',
+    '/admin/registry': '/registry',
 };
 
 const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: string }[] = [
@@ -27,10 +30,10 @@ const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: s
     { path: '/admin/integrations', resource: 'gitProvider', action: 'create' },
     { path: '/admin/ai', resource: 'ai', action: 'manage' },
     { path: '/admin/backups', resource: 'backup', action: 'read' },
-    { path: '/admin/ssl-certificates', resource: 'ssl', action: 'manage' },
-    { path: '/admin/registry', resource: 'registry', action: 'read' },
+    { path: '/ssl-certificates', resource: 'ssl', action: 'manage' },
+    { path: '/registry', resource: 'registry', action: 'read' },
     { path: '/admin/settings', resource: 'setting', action: 'manage' },
-    { path: '/admin/traefik', resource: 'traefik', action: 'manage' },
+    { path: '/traefik', resource: 'traefik', action: 'manage' },
 ];
 
 async function getRedirectUrl(request: NextRequest): Promise<string | NextResponse | null> {
@@ -52,6 +55,11 @@ async function getRedirectUrl(request: NextRequest): Promise<string | NextRespon
     if (publicRoute) return '/';
 
     const role = session.user.role ?? '';
+
+    if (path.startsWith('/admin') && role !== 'admin') {
+        return NextResponse.rewrite(new URL('/_not-found', request.url));
+    }
+
     for (const route of PERMISSION_ROUTES) {
         if (path.startsWith(route.path) && !hasPermission(role, route.resource, route.action)) {
             return NextResponse.rewrite(new URL('/_not-found', request.url));

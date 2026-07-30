@@ -1,13 +1,14 @@
 import { getBranches } from '@/services/git/gitAccounts.service';
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
+import { HOST_SCOPED } from '@/lib/auth/resolveOrgContext';
 import { Session } from '@/lib/auth/auth';
 import { getBranchesSchema } from '@workspace/schemas-zod/git/git.schema';
 import { z } from 'zod';
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('repository', 'read'))
+    .use(requirePermission('repository', 'read', HOST_SCOPED))
     .query(getBranchesSchema)
     .handler(
         async (

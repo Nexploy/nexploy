@@ -24,6 +24,7 @@ import {
     deleteVolumeConfigSchema,
     downloadFileConfigSchema,
     fetchSecretsDopplerConfigSchema,
+    fetchSecretsInfisicalConfigSchema,
     fetchSecretsVaultConfigSchema,
     gitCloneExtraConfigSchema,
     gitTagConfigSchema,
@@ -320,6 +321,13 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
         category: 'config',
         description: 'Fetches secrets from Doppler.',
         outputs: ['secrets'],
+    },
+    'fetch-secrets-infisical': {
+        schema: fetchSecretsInfisicalConfigSchema,
+        category: 'config',
+        description:
+            'Fetches secrets from Infisical (cloud or self-hosted) for a given project, environment and secret path, and injects them as environment variables for downstream nodes. Authenticates with a machine identity (Universal Auth client ID + secret) or a raw access token.',
+        outputs: ['envVariables', 'secretCount'],
     },
     'clean-workdir': {
         schema: null,

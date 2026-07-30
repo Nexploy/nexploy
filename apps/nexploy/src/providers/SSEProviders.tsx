@@ -12,6 +12,7 @@ import { useImageStore } from '../stores/docker/useImageStore';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore';
 import { SSEChannel } from '@workspace/typescript-interface/sse';
 import { useContainerStatsStore } from '@/stores/docker/useContainerStatsStore';
+import { useContainersStatsStore } from '@/stores/docker/useContainersStatsStore';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { useMonitoringStore } from '@/stores/monitoring/useMonitoringStore';
@@ -37,6 +38,9 @@ type SSEParams = {
     node?: ExtractConnectParams<ReturnType<typeof useSwarmNodeStore.getState>['connect']>;
     logs?: ExtractConnectParams<ReturnType<typeof useContainerLogsStore.getState>['connect']>;
     stats?: ExtractConnectParams<ReturnType<typeof useContainerStatsStore.getState>['connect']>;
+    containersStats?: ExtractConnectParams<
+        ReturnType<typeof useContainersStatsStore.getState>['connect']
+    >;
     swarm?: ExtractConnectParams<ReturnType<typeof useSwarmStore.getState>['connect']>;
     traefik?: ExtractConnectParams<ReturnType<typeof useRequestsStore.getState>['connect']>;
     monitoring?: ExtractConnectParams<ReturnType<typeof useMonitoringStore.getState>['connect']>;
@@ -101,6 +105,9 @@ export function SSEProvider({
     const containerStatsConnect = useContainerStatsStore((s) => s.connect);
     const containerStatsDisconnect = useContainerStatsStore((s) => s.disconnect);
 
+    const containersStatsConnect = useContainersStatsStore((s) => s.connect);
+    const containersStatsDisconnect = useContainersStatsStore((s) => s.disconnect);
+
     const swarmServiceConnect = useSwarmServiceStore((s) => s.connect);
     const swarmServiceDisconnect = useSwarmServiceStore((s) => s.disconnect);
 
@@ -126,6 +133,7 @@ export function SSEProvider({
             service: swarmServiceConnect,
             node: swarmNodeConnect,
             stats: containerStatsConnect,
+            containersStats: containersStatsConnect,
             logs: containerLogsConnect,
             images: imageConnect,
             docker: dockerConnect,
@@ -144,6 +152,7 @@ export function SSEProvider({
             images: imageDisconnect,
             logs: containerLogsDisconnect,
             stats: containerStatsDisconnect,
+            containersStats: containersStatsDisconnect,
             docker: dockerDisconnect,
             events: eventsDisconnect,
             volume: volumeDisconnect,

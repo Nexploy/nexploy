@@ -9,8 +9,12 @@ import {
     type PermissionResource,
 } from '@/lib/auth/permissions';
 import { hasOrgPermission, type OrgPermissionResource } from '@/lib/auth/orgPermissions';
-import { isOrgScopedResource } from '@/lib/auth/orgScopedResources';
-import { getCallerOrgRole, type RequestOrgResolver } from '@/lib/auth/resolveOrgContext';
+import { isOrgScopedResource, type OrgScopedResource } from '@/lib/auth/orgScopedResources';
+import {
+    getCallerOrgRole,
+    HOST_SCOPED,
+    type RequestOrgScopeResolver,
+} from '@/lib/auth/resolveOrgContext';
 import { prisma } from '../../../prisma/prisma.ts';
 
 export const route = createZodRoute({
@@ -76,16 +80,24 @@ export function internalApiAuth(
     };
 }
 
+type RequestOrgScopeArgs<R extends PermissionResource> = R extends OrgScopedResource
+    ? [orgResolver: RequestOrgScopeResolver]
+    : [orgResolver?: never];
+
 export const requirePermission =
     <R extends PermissionResource>(
         resource: R,
         action: PermissionActions[R],
-        orgResolver?: RequestOrgResolver,
+        ...[orgResolver]: RequestOrgScopeArgs<R>
     ): MiddlewareFunction<{ session: Session }, { session: Session }> =>
     async ({ next, ctx, request }) => {
         const role = ctx.session.user.role as string;
 
-        if (isOrgScopedResource(resource) && role !== 'admin' && orgResolver) {
+        if (isOrgScopedResource(resource) && role !== 'admin' && orgResolver !== HOST_SCOPED) {
+            if (!orgResolver) {
+                throw new Error(`Forbidden: missing permission ${resource}.${action as string}`);
+            }
+
             const resolved = await orgResolver(request);
             const organizationIds = Array.isArray(resolved) ? resolved : resolved ? [resolved] : [];
 

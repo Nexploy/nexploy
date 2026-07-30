@@ -1,6 +1,7 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { HOST_SCOPED } from '@/lib/auth/resolveOrgContext';
 import { HTTPError } from 'ky';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { setToastServer } from '@/lib/toastServer';
@@ -8,7 +9,7 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { getRegistryWithPassword } from '@/services/registry.service';
 
 export const onContainerCreateAction = authActionServer
-    .use(requirePermission('container', 'manage'))
+    .use(requirePermission('container', 'manage', HOST_SCOPED))
     .inputSchema(containerCreateFormSchema)
     .action(async ({ parsedInput }) => {
         const { registryId, ...createInput } = parsedInput;

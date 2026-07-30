@@ -128,7 +128,7 @@ export function NodeAddPanel() {
         <div className="flex h-full w-full flex-col overflow-hidden">
             <div className="border-border/70 flex h-11 shrink-0 items-center gap-2 border-b px-2.5">
                 <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-sm">
-                    <Boxes className="size-3.5" strokeWidth={1.7} />
+                    <Boxes className="size-3.5" />
                 </div>
                 <span className="text-foreground flex-1 truncate text-xs">{t('palette')}</span>
                 <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">

@@ -29,19 +29,19 @@ export function ChatInput({ input, onChange, onSubmit, onStop, isLoading }: Chat
     return (
         <div className="shrink-0 px-3 pb-2">
             <div className="bg-card flex items-end rounded-xl rounded-tl-none border">
-                <ScrollAreaWithShadow
-                    viewportClassName="max-h-24"
-                >
-                    <Textarea
-                        ref={textareaRef}
-                        value={input}
-                        onChange={(e) => onChange(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        placeholder={t('inputPlaceholder')}
-                        className="resize-none border-0 bg-transparent! shadow-none focus-visible:ring-0"
-                        rows={1}
-                    />
-                </ScrollAreaWithShadow>
+                <div className="min-w-0 flex-1">
+                    <ScrollAreaWithShadow viewportClassName="max-h-24 [&>div]:w-full! [&>div]:table-fixed!">
+                        <Textarea
+                            ref={textareaRef}
+                            value={input}
+                            onChange={(e) => onChange(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder={t('inputPlaceholder')}
+                            className="bg-transparent! wrap-break-word w-full max-w-full resize-none border-0 shadow-none focus-visible:ring-0"
+                            rows={1}
+                        />
+                    </ScrollAreaWithShadow>
+                </div>
                 {isLoading ? (
                     <Button
                         onClick={onStop}

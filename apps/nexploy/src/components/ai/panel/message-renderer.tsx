@@ -62,7 +62,7 @@ function makeComponents(blur: Blur): Components {
                 </code>
             ) : (
                 <code
-                    className="bg-background/80 break-all rounded px-1.5 py-0.5 font-mono"
+                    className="bg-background/80 text-foreground break-all rounded px-1.5 py-0.5 font-mono"
                     {...props}
                 >
                     {children}
@@ -70,7 +70,7 @@ function makeComponents(blur: Blur): Components {
             );
         },
         pre: ({ children }) => (
-            <pre className="bg-background/80 my-2 overflow-x-hidden whitespace-pre-wrap break-all rounded border p-2.5 font-mono text-xs leading-relaxed">
+            <pre className="bg-background/80 text-foreground my-2 overflow-x-hidden whitespace-pre-wrap break-all rounded border p-2.5 font-mono text-xs leading-relaxed">
                 {children}
             </pre>
         ),

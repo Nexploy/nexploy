@@ -5,7 +5,7 @@ import { List } from 'lucide-react';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
-import { useImageStore } from '../../../../stores/docker/useImageStore';
+import { useImageStore } from '@/stores/docker/useImageStore.ts';
 import { Table, TableBody, TableCell, TableRow } from '@workspace/ui/components/table';
 
 export function CardImageConfig() {

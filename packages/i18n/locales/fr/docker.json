@@ -412,7 +412,21 @@
         "refreshRatePlaceholder": "fréquence de rafraîchissement...",
         "refreshRate": "Fréquence de rafraîchissement",
         "download": "Télécharger",
-        "close": "Fermer"
+        "close": "Fermer",
+        "cpu": "CPU",
+        "cpuCores": "{count} CPU alloués",
+        "networkThroughput": "Débit réseau",
+        "networkThroughputDescription": "Reçu et envoyé par seconde",
+        "blockThroughput": "Débit disque",
+        "blockThroughputDescription": "Lecture et écriture bloc par seconde",
+        "memoryLimit": "Limite mémoire",
+        "memoryCache": "Cache",
+        "onlineCpus": "CPU disponibles",
+        "networkRxTotal": "Total reçu",
+        "networkTxTotal": "Total envoyé",
+        "blockReadTotal": "Total lu",
+        "blockWriteTotal": "Total écrit",
+        "waitingForData": "En attente de données…"
     },
     "containerTerminal": {
         "title": "Console — {name}",

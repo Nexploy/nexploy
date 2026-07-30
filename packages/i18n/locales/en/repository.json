@@ -603,6 +603,10 @@
                 "name": "Doppler Secrets",
                 "description": "Fetch secrets from Doppler. Variables accumulate throughout the pipeline."
             },
+            "fetch-secrets-infisical": {
+                "name": "Infisical Secrets",
+                "description": "Fetch secrets from Infisical (cloud or self-hosted). Variables accumulate throughout the pipeline."
+            },
             "sonarqube-scan": {
                 "name": "SonarQube Scan",
                 "description": "Analyze code quality with SonarQube or SonarCloud"
@@ -828,6 +832,24 @@
             "dopplerServiceToken": "Service Token",
             "dopplerProject": "Project (optional)",
             "dopplerConfig": "Config / Environment (optional)",
+            "infisicalSiteUrl": "Instance URL",
+            "infisicalSiteUrlPlaceholder": "https://app.infisical.com",
+            "infisicalSiteUrlDescription": "Use https://eu.infisical.com for the EU region, or your own URL for a self-hosted instance.",
+            "infisicalAuthMethod": "Authentication Method",
+            "infisicalAuthMethodUniversal": "Machine Identity (Universal Auth)",
+            "infisicalAuthMethodToken": "Access Token",
+            "infisicalClientId": "Client ID",
+            "infisicalClientIdPlaceholder": "Machine identity client ID",
+            "infisicalClientSecret": "Client Secret",
+            "infisicalAccessToken": "Access Token",
+            "infisicalProjectId": "Project ID",
+            "infisicalProjectIdPlaceholder": "Infisical project ID",
+            "infisicalEnvironment": "Environment Slug",
+            "infisicalEnvironmentPlaceholder": "dev",
+            "infisicalSecretPath": "Secret Path",
+            "infisicalRecursive": "Include subfolders",
+            "infisicalExpandReferences": "Expand secret references",
+            "infisicalIncludeImports": "Include imported secrets",
             "bucketName": "Bucket Name",
             "sonarqubeMode": "Mode",
             "sonarqubeModeCustom": "Custom SonarQube / SonarCloud",

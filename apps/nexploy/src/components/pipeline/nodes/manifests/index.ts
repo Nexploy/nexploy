@@ -46,6 +46,7 @@ import { gitTagManifest } from './git-tag.manifest';
 import { gitCloneExtraManifest } from './git-clone-extra.manifest';
 import { fetchSecretsVaultManifest } from './fetch-secrets-vault.manifest';
 import { fetchSecretsDopplerManifest } from './fetch-secrets-doppler.manifest';
+import { fetchSecretsInfisicalManifest } from './fetch-secrets-infisical.manifest';
 import { sonarqubeScanManifest } from './sonarqube-scan.manifest';
 import { createReleaseManifest } from './create-release.manifest';
 import { cherryPickCommitManifest } from './cherry-pick-commit.manifest';
@@ -130,6 +131,7 @@ export const allBuiltinManifests: NodeManifest[] = [
     // Secrets
     fetchSecretsVaultManifest,
     fetchSecretsDopplerManifest,
+    fetchSecretsInfisicalManifest,
     // Code Quality
     sonarqubeScanManifest,
     // Domain & SSL

@@ -77,11 +77,17 @@ export async function getCallerOrgRole(userId: string, organizationId: string): 
     return member?.role ?? null;
 }
 
+export const HOST_SCOPED = 'host-scoped' as const;
+
+export type HostScoped = typeof HOST_SCOPED;
+
 export type OrgResolver = (
     clientInput: unknown,
     bindArgsClientInputs: readonly unknown[] | undefined,
     session: Session,
 ) => Promise<string | string[] | null>;
+
+export type OrgScopeResolver = OrgResolver | HostScoped;
 
 export const byActiveOrganization: OrgResolver = (_input, _bindArgsClientInputs, session) =>
     resolveActiveOrganizationId(session);
@@ -108,6 +114,8 @@ export const byContainerIds: OrgResolver = (input) => {
 };
 
 export type RequestOrgResolver = (request: Request) => Promise<string | string[] | null>;
+
+export type RequestOrgScopeResolver = RequestOrgResolver | HostScoped;
 
 export const byRepositoryIdParam: RequestOrgResolver = (request) => {
     const match = new URL(request.url).pathname.match(/\/repositories\/([^/]+)/);

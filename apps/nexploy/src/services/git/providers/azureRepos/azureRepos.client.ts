@@ -71,6 +71,21 @@ async function azureGet<T>(
         .json<T>();
 }
 
+async function azureGetPage<T>(
+    url: string,
+    searchParams: Record<string, string> = {},
+    explicitToken?: string,
+): Promise<{ data: T; continuationToken: string | null }> {
+    const response = await ky.get(url, {
+        headers: authHeaders(explicitToken),
+        searchParams: { ...searchParams, 'api-version': API_VERSION },
+    });
+    return {
+        data: await response.json<T>(),
+        continuationToken: response.headers.get('x-ms-continuationtoken'),
+    };
+}
+
 async function azurePost<T>(
     url: string,
     json: unknown,
@@ -141,10 +156,13 @@ export async function azureGetBranches(
     repository: string,
 ): Promise<AzureReposRef[]> {
     const refs: AzureReposRef[] = [];
-    let continuationToken: string | undefined;
+    let continuationToken: string | null = null;
 
     for (let visited = 0; visited < MAX_PAGES; visited++) {
-        const page = await azureGet<AzureReposCollection<AzureReposRef>>(
+        const page: {
+            data: AzureReposCollection<AzureReposRef>;
+            continuationToken: string | null;
+        } = await azureGetPage<AzureReposCollection<AzureReposRef>>(
             `${azureRepositoryApiUrl(organization, project, repository)}/refs`,
             {
                 filter: 'heads/',
@@ -152,9 +170,8 @@ export async function azureGetBranches(
                 ...(continuationToken && { continuationToken }),
             },
         );
-        refs.push(...(page.value ?? []));
-        if ((page.value?.length ?? 0) < PAGE_LIMIT) break;
-        continuationToken = page.value[page.value.length - 1]?.objectId;
+        refs.push(...(page.data.value ?? []));
+        continuationToken = page.continuationToken;
         if (!continuationToken) break;
     }
 

@@ -1,5 +1,4 @@
 import { logger } from '@/utils/logger';
-import { BaseSingleResourceStateManager } from '@/lib/base/BaseSingleResourceStateManager';
 
 interface RegistryEntry<TManager> {
     manager: TManager;
@@ -7,7 +6,12 @@ interface RegistryEntry<TManager> {
     startPromise: Promise<void>;
 }
 
-export class SingleResourceManagerRegistry<TManager extends BaseSingleResourceStateManager<any>> {
+interface StartableManager {
+    start(): Promise<void>;
+    stop(): void | Promise<void>;
+}
+
+export class SingleResourceManagerRegistry<TManager extends StartableManager> {
     private readonly instances = new Map<string, RegistryEntry<TManager>>();
     private readonly resourceType: string;
 

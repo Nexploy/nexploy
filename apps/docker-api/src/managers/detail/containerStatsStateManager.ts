@@ -98,15 +98,25 @@ export class ContainerStatsStateManager extends BaseSingleResourceStateManager<C
     }
 
     private parseContainerStats(stats: any): ContainerStats {
-        const cpuDelta =
-            stats.cpu_stats.cpu_usage.total_usage -
-            (stats.precpu_stats.cpu_usage?.total_usage || 0);
-        const systemDelta =
-            stats.cpu_stats.system_cpu_usage - (stats.precpu_stats.system_cpu_usage || 0);
+        const cpuUsage = stats.cpu_stats.cpu_usage.total_usage;
+        const systemCpuUsage = stats.cpu_stats.system_cpu_usage;
         const cpuCount = stats.cpu_stats.online_cpus || 1;
-        const cpuPercent = systemDelta > 0 ? (cpuDelta / systemDelta) * cpuCount * 100 : 0;
 
-        const memoryUsage = stats.memory_stats.usage || 0;
+        let cpuDelta = cpuUsage - (stats.precpu_stats.cpu_usage?.total_usage || 0);
+        let systemDelta = systemCpuUsage - (stats.precpu_stats.system_cpu_usage || 0);
+
+        if (systemDelta <= 0 && this.currentState) {
+            cpuDelta = cpuUsage - this.currentState.cpuUsage;
+            systemDelta = systemCpuUsage - this.currentState.systemCpuUsage;
+        }
+
+        const cpuPercent =
+            systemDelta > 0 && cpuDelta > 0 ? (cpuDelta / systemDelta) * cpuCount * 100 : 0;
+
+        const memoryUsage = Math.max(
+            0,
+            (stats.memory_stats.usage || 0) - (stats.memory_stats.stats?.inactive_file || 0),
+        );
         const memoryLimit = stats.memory_stats.limit || 1;
         const memoryPercent = (memoryUsage / memoryLimit) * 100;
 
@@ -121,11 +131,10 @@ export class ContainerStatsStateManager extends BaseSingleResourceStateManager<C
 
         let blockRead = 0;
         let blockWrite = 0;
-        if (stats.blkio_stats?.io_service_bytes_recursive) {
-            for (const entry of stats.blkio_stats.io_service_bytes_recursive) {
-                if (entry.op === 'read') blockRead += entry.value;
-                if (entry.op === 'write') blockWrite += entry.value;
-            }
+        for (const entry of stats.blkio_stats?.io_service_bytes_recursive ?? []) {
+            const op = String(entry.op).toLowerCase();
+            if (op === 'read') blockRead += entry.value || 0;
+            if (op === 'write') blockWrite += entry.value || 0;
         }
 
         return {

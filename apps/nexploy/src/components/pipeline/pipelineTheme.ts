@@ -26,6 +26,7 @@ import {
     HardDrive,
     HeartPulse,
     KeyRound,
+    KeySquare,
     Layers,
     type LucideIcon,
     Milestone,
@@ -193,6 +194,7 @@ const NODE_CATEGORY: Record<string, string> = {
     // Secrets & Config
     'fetch-secrets-vault': 'config',
     'fetch-secrets-doppler': 'config',
+    'fetch-secrets-infisical': 'config',
     // Code Quality
     'sonarqube-scan': 'build',
     // Git CI/CD
@@ -276,6 +278,7 @@ export const NODE_ICONS: Record<string, LucideIcon> = {
     // Secrets
     'fetch-secrets-vault': ShieldCheck,
     'fetch-secrets-doppler': KeyRound,
+    'fetch-secrets-infisical': KeySquare,
     // Code Quality
     'sonarqube-scan': ScanSearch,
     // Git CI/CD

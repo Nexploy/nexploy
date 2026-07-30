@@ -603,6 +603,10 @@
                 "name": "Secrets Doppler",
                 "description": "Récupère les secrets depuis Doppler. Les variables s'accumulent tout au long du pipeline."
             },
+            "fetch-secrets-infisical": {
+                "name": "Secrets Infisical",
+                "description": "Récupère les secrets depuis Infisical (cloud ou auto-hébergé). Les variables s'accumulent tout au long du pipeline."
+            },
             "sonarqube-scan": {
                 "name": "Analyse SonarQube",
                 "description": "Analyse la qualité du code avec SonarQube ou SonarCloud"
@@ -800,6 +804,24 @@
             "dopplerServiceToken": "Token de service",
             "dopplerProject": "Projet (optionnel)",
             "dopplerConfig": "Config / Environnement (optionnel)",
+            "infisicalSiteUrl": "URL de l'instance",
+            "infisicalSiteUrlPlaceholder": "https://app.infisical.com",
+            "infisicalSiteUrlDescription": "Utilisez https://eu.infisical.com pour la région EU, ou votre propre URL pour une instance auto-hébergée.",
+            "infisicalAuthMethod": "Méthode d'authentification",
+            "infisicalAuthMethodUniversal": "Identité machine (Universal Auth)",
+            "infisicalAuthMethodToken": "Token d'accès",
+            "infisicalClientId": "Client ID",
+            "infisicalClientIdPlaceholder": "Client ID de l'identité machine",
+            "infisicalClientSecret": "Client Secret",
+            "infisicalAccessToken": "Token d'accès",
+            "infisicalProjectId": "ID du projet",
+            "infisicalProjectIdPlaceholder": "ID du projet Infisical",
+            "infisicalEnvironment": "Slug de l'environnement",
+            "infisicalEnvironmentPlaceholder": "dev",
+            "infisicalSecretPath": "Chemin du secret",
+            "infisicalRecursive": "Inclure les sous-dossiers",
+            "infisicalExpandReferences": "Résoudre les références de secrets",
+            "infisicalIncludeImports": "Inclure les secrets importés",
             "serviceForceUpdate": "Forcer la mise à jour",
             "serviceImage": "Image",
             "serviceName": "Nom du service",

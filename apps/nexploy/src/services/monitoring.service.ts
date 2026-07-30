@@ -5,10 +5,13 @@ import { exec } from 'child_process';
 
 const execAsync = promisify(exec);
 
-let previousCpuInfo: {
+interface CpuSample {
     idle: number;
     total: number;
-} | null = null;
+}
+
+let previousCpuInfo: CpuSample | null = null;
+let previousCoreSamples: CpuSample[] | null = null;
 
 async function getDiskStats(): Promise<{ total: number; used: number; free: number }> {
     try {
@@ -49,32 +52,44 @@ async function getDiskStats(): Promise<{ total: number; used: number; free: numb
     }
 }
 
-function getCpuUsage(): number {
-    const cpus = os.cpus();
-    let totalIdle = 0;
-    let totalTick = 0;
-
-    cpus.forEach((cpu) => {
-        for (const type in cpu.times) {
-            totalTick += cpu.times[type as keyof typeof cpu.times];
-        }
-        totalIdle += cpu.times.idle;
-    });
-
-    const idle = totalIdle / cpus.length;
-    const total = totalTick / cpus.length;
-
-    if (previousCpuInfo) {
-        const idleDifference = idle - previousCpuInfo.idle;
-        const totalDifference = total - previousCpuInfo.total;
-        const cpuPercent = 100 - ~~((100 * idleDifference) / totalDifference);
-
-        previousCpuInfo = { idle, total };
-        return cpuPercent;
+function toCpuSample(times: os.CpuInfo['times']): CpuSample {
+    let total = 0;
+    for (const type in times) {
+        total += times[type as keyof typeof times];
     }
+    return { idle: times.idle, total };
+}
 
-    previousCpuInfo = { idle, total };
-    return 0;
+function computeUsagePercent(previous: CpuSample | undefined, current: CpuSample): number {
+    if (!previous) return 0;
+
+    const totalDifference = current.total - previous.total;
+    if (totalDifference <= 0) return 0;
+
+    const idleDifference = current.idle - previous.idle;
+    const percent = 100 - (100 * idleDifference) / totalDifference;
+
+    return Math.max(0, Math.min(100, percent));
+}
+
+function getCpuUsage(): { cpuPercent: number; cpuCoresPercent: number[] } {
+    const cpus = os.cpus();
+    const coreSamples = cpus.map((cpu) => toCpuSample(cpu.times));
+
+    const aggregate = coreSamples.reduce<CpuSample>(
+        (acc, sample) => ({ idle: acc.idle + sample.idle, total: acc.total + sample.total }),
+        { idle: 0, total: 0 },
+    );
+
+    const cpuPercent = computeUsagePercent(previousCpuInfo ?? undefined, aggregate);
+    const cpuCoresPercent = coreSamples.map((sample, index) =>
+        computeUsagePercent(previousCoreSamples?.[index], sample),
+    );
+
+    previousCpuInfo = aggregate;
+    previousCoreSamples = coreSamples;
+
+    return { cpuPercent, cpuCoresPercent };
 }
 
 export async function getSystemMetrics(): Promise<SystemMetrics> {
@@ -84,7 +99,7 @@ export async function getSystemMetrics(): Promise<SystemMetrics> {
     const usedMem = totalMem - freeMem;
     const loadAvg = os.loadavg();
 
-    const cpuPercent = getCpuUsage();
+    const { cpuPercent, cpuCoresPercent } = getCpuUsage();
 
     const disk = await getDiskStats();
 
@@ -94,6 +109,7 @@ export async function getSystemMetrics(): Promise<SystemMetrics> {
         cpuPercent,
         cpuCount: cpus.length,
         cpuModel: cpus[0]?.model || 'Unknown',
+        cpuCoresPercent,
         loadAverage: loadAvg,
 
         memoryTotal: totalMem,
@@ -108,6 +124,8 @@ export async function getSystemMetrics(): Promise<SystemMetrics> {
 
         uptime: os.uptime(),
         platform: os.platform(),
+        arch: os.arch(),
+        release: os.release(),
         hostname: os.hostname(),
     };
 }

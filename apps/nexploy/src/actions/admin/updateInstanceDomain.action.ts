@@ -1,7 +1,7 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
-import { instanceDomainSchema } from '@workspace/schemas-zod/admin/traefikFile.schema';
+import { instanceDomainSchema } from '@workspace/schemas-zod/admin/instance.schema';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/lib/toastServer';
 

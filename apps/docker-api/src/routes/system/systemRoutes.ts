@@ -7,7 +7,7 @@ import { wait, waitForContainerHealthy, waitForFile } from '@/utils/wait';
 import { logger } from '@/utils/logger';
 import { HttpError } from '@workspace/shared/http-error';
 import { buildCachePruneSchema, type CleanupTarget, } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
-import { instanceDomainSchema, upgradeSchema, } from '@workspace/schemas-zod/admin/traefikFile.schema';
+import { instanceDomainSchema, upgradeSchema, } from '@workspace/schemas-zod/admin/instance.schema';
 import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 import {
     DOCKER_API_CONTAINER_NAME,

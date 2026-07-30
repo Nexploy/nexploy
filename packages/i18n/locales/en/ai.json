@@ -151,6 +151,9 @@
         "thinking": "Thinking...",
         "keyboardHint": "Enter to send · Shift+Enter for new line",
         "selectModel": "Select model",
+        "fullscreen": "Fullscreen",
+        "exitFullscreen": "Exit fullscreen",
+        "fullscreenActive": "The assistant is open in fullscreen.",
         "modelSelector": {
             "title": "Select a model",
             "search": "Search models…",

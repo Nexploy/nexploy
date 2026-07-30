@@ -151,6 +151,9 @@
         "thinking": "Réflexion...",
         "keyboardHint": "Entrée pour envoyer · Maj+Entrée pour nouvelle ligne",
         "selectModel": "Sélectionner un modèle",
+        "fullscreen": "Plein écran",
+        "exitFullscreen": "Quitter le plein écran",
+        "fullscreenActive": "L'assistant est ouvert en plein écran.",
         "modelSelector": {
             "title": "Sélectionner un modèle",
             "search": "Rechercher des modèles…",

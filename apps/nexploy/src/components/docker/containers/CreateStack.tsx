@@ -48,8 +48,8 @@ const DEFAULT_COMPOSE = `services:
 export default function CreateStack() {
     const router = useRouter();
     const t = useTranslations('docker.createStack');
-    const { theme } = useTheme();
-    const monacoTheme = theme === 'dark' ? 'vs-dark' : 'vs-light';
+    const { resolvedTheme } = useTheme();
+    const monacoTheme = resolvedTheme === 'dark' ? 'vs-dark' : 'vs-light';
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const sanitizeProjectName = (value: string) =>
@@ -205,14 +205,18 @@ export default function CreateStack() {
                                         <FormItem className="h-full">
                                             <FormControl>
                                                 <div className="flex-1 overflow-hidden rounded-lg border">
-                                                    <Editor
-                                                        height="100%"
-                                                        language="yaml"
-                                                        value={field.value}
-                                                        onChange={(v) => field.onChange(v ?? '')}
-                                                        options={EDITOR_OPTIONS}
-                                                        theme={monacoTheme}
-                                                    />
+                                                    {resolvedTheme && (
+                                                        <Editor
+                                                            height="100%"
+                                                            language="yaml"
+                                                            value={field.value}
+                                                            onChange={(v) =>
+                                                                field.onChange(v ?? '')
+                                                            }
+                                                            options={EDITOR_OPTIONS}
+                                                            theme={monacoTheme}
+                                                        />
+                                                    )}
                                                 </div>
                                             </FormControl>
                                             <FormMessage />

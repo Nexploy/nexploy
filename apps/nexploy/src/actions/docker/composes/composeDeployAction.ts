@@ -1,13 +1,14 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { HOST_SCOPED } from '@/lib/auth/resolveOrgContext';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { deployComposeSchema } from '@workspace/schemas-zod/docker/composes/composesAction.schema';
 
 export const onComposeDeployAction = authActionServer
-    .use(requirePermission('container', 'manage'))
+    .use(requirePermission('container', 'manage', HOST_SCOPED))
     .inputSchema(deployComposeSchema)
     .action(async ({ parsedInput }) => {
         try {

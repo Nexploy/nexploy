@@ -46,6 +46,7 @@ import { gitTagExecutor } from './executors/git-tag.executor';
 import { gitCloneExtraExecutor } from './executors/git-clone-extra.executor';
 import { fetchSecretsVaultExecutor } from './executors/fetch-secrets-vault.executor';
 import { fetchSecretsDopplerExecutor } from './executors/fetch-secrets-doppler.executor';
+import { fetchSecretsInfisicalExecutor } from './executors/fetch-secrets-infisical.executor';
 import { sonarqubeScanExecutor } from './executors/sonarqube-scan.executor';
 import { createReleaseExecutor } from './executors/create-release.executor';
 import { cherryPickCommitExecutor } from './executors/cherry-pick-commit.executor';
@@ -131,6 +132,7 @@ const executors: INodeExecutor[] = [
     // Secrets
     fetchSecretsVaultExecutor,
     fetchSecretsDopplerExecutor,
+    fetchSecretsInfisicalExecutor,
     // Code Quality
     sonarqubeScanExecutor,
     // Domain & SSL

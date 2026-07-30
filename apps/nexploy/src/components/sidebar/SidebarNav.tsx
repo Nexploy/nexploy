@@ -87,6 +87,12 @@ const groups: PermissionedSidebarNavGroup[] = [
                     { titleKey: 'volumes', icon: HardDrive, href: '/docker/volumes' },
                     { titleKey: 'networks', icon: EthernetPort, href: '/docker/networks' },
                     { titleKey: 'events', icon: Bug, href: '/docker/events' },
+                    {
+                        titleKey: 'registry',
+                        icon: Warehouse,
+                        href: '/registry',
+                        permission: { resource: 'registry', action: 'read' },
+                    },
                 ],
             },
             {
@@ -104,21 +110,15 @@ const groups: PermissionedSidebarNavGroup[] = [
             },
             {
                 titleKey: 'sslCertificates',
-                href: '/admin/ssl-certificates',
+                href: '/ssl-certificates',
                 icon: Shield,
                 permission: { resource: 'ssl', action: 'manage' },
             },
             {
                 titleKey: 'traefik',
-                href: '/admin/traefik',
+                href: '/traefik',
                 icon: FileCog,
                 permission: { resource: 'traefik', action: 'manage' },
-            },
-            {
-                titleKey: 'registry',
-                href: '/admin/registry',
-                icon: Warehouse,
-                permission: { resource: 'registry', action: 'read' },
             },
         ],
     },
@@ -170,12 +170,16 @@ export function SidebarNav() {
     const t = useTranslations('navigation');
     const { can } = usePermissions();
 
+    const isAllowed = (item: PermissionedSidebarItem) =>
+        !item.permission || can(item.permission.resource, item.permission.action);
+
     const filteredGroups = groups
         .map((group) => ({
             ...group,
-            children: group.children.filter(
-                (item) => !item.permission || can(item.permission.resource, item.permission.action),
-            ),
+            children: group.children.filter(isAllowed).map((item) => ({
+                ...item,
+                children: item.children?.filter(isAllowed),
+            })),
         }))
         .filter((group) => group.children.length > 0);
 

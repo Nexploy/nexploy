@@ -18,7 +18,7 @@ import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import { Button } from '@workspace/ui/components/button';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
-import { instanceDomainSchema } from '@workspace/schemas-zod/admin/traefikFile.schema';
+import { instanceDomainSchema } from '@workspace/schemas-zod/admin/instance.schema';
 import { updateInstanceDomainAction } from '@/actions/admin/updateInstanceDomain.action';
 import type { InstanceDomainSettings } from '@/lib/instance/domain';
 
