@@ -423,6 +423,18 @@
                 "name": "Déployer Compose",
                 "description": "Déployer une stack Docker Compose"
             },
+            "compose-build": {
+                "name": "Compose Build",
+                "description": "Construire les images de la stack Compose sans la démarrer"
+            },
+            "compose-run": {
+                "name": "Compose Run",
+                "description": "Exécuter une commande ponctuelle dans un service Compose"
+            },
+            "compose-up": {
+                "name": "Compose Up",
+                "description": "Démarrer la stack Compose construite au préalable"
+            },
             "push-to-registry": {
                 "name": "Pousser une image vers un registre",
                 "description": "Pousser une image Docker vers un registre privé ou public"
@@ -659,6 +671,7 @@
             "repoLoading": "Chargement du dépôt...",
             "branchLoading": "Chargement des branches...",
             "branchSelect": "Sélectionner une branche",
+            "branchNotExist": "La branche n'existe plus",
             "cloneCommitHash": "Hash du commit",
             "cloneCommitHashPlaceholder": "ex. abc1234",
             "cloneCommitHashDescription": "Laisser vide pour utiliser le dernier commit de la branche",
@@ -685,6 +698,23 @@
             "composeFilePathPlaceholder": "Laisser vide pour la racine du dépôt",
             "noCache": "Sans cache",
             "noCacheDescription": "Construire les images sans utiliser le cache Docker (--no-cache)",
+            "composeService": "Service",
+            "composeServicePlaceholder": "api",
+            "composeServiceDescription": "Nom du service, tel que déclaré dans le fichier compose",
+            "composeRunCommand": "Commande",
+            "composeRunCommandPlaceholder": "python manage.py migrate",
+            "composeRunCommandDescription": "Laisser vide pour utiliser la commande par défaut de l'image. Exécutée sans TTY (-T) : la commande doit être non interactive.",
+            "composeRunWorkingDir": "Répertoire de travail",
+            "composeRunUser": "Utilisateur",
+            "composeRunNoDeps": "Sans les dépendances",
+            "composeRunNoDepsDescription": "Ne pas démarrer les services dont celui-ci dépend (--no-deps)",
+            "composeRunContinueOnErrorDescription": "Poursuivre le pipeline même si la commande sort avec un code non nul",
+            "composeUpRecreate": "Recréer les conteneurs",
+            "composeUpRecreateDescription": "Exécuter docker compose down avant de démarrer la stack",
+            "composeUpRemoveOrphans": "Supprimer les orphelins",
+            "composeUpRemoveOrphansDescription": "Supprimer les conteneurs des services qui ne sont plus déclarés dans le fichier compose (--remove-orphans)",
+            "composeUpKeepComposeFile": "Conserver le fichier compose généré",
+            "composeUpKeepComposeFileDescription": "Conserver le fichier compose traité dans le répertoire de travail pour le débogage",
             "projectName": "Nom du projet",
             "registry": "Registre",
             "registryPlaceholder": "Sélectionner un registre",
@@ -1016,6 +1046,7 @@
             "networkName": "Nom du réseau",
             "delayed": "Délai (secondes)",
             "projectName": "Nom du projet",
+            "composeFile": "Fichier compose",
             "url": "URL",
             "outputFile": "Fichier de sortie",
             "filename": "Nom de fichier",
@@ -1072,6 +1103,7 @@
             "desc_networkName": "Nom du réseau Docker",
             "desc_delayed": "Nombre de secondes pendant lesquelles le pipeline a été retardé",
             "desc_projectName": "Nom du projet Docker Compose",
+            "desc_composeFile": "Chemin du fichier compose traité, consommé par Compose Run et Compose Up",
             "desc_url": "URL de la ressource",
             "desc_outputFile": "Chemin complet vers le fichier téléchargé",
             "desc_filename": "Nom du fichier téléchargé",

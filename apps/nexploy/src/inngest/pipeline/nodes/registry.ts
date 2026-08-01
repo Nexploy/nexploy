@@ -3,6 +3,9 @@ import { cloneRepositoryExecutor } from './executors/clone-repository.executor';
 import { webhookCloneExecutor } from './executors/webhook-clone.executor';
 import { buildDockerImageExecutor } from './executors/build-docker-image.executor';
 import { deployComposeExecutor } from './executors/deploy-compose.executor';
+import { composeBuildExecutor } from './executors/compose-build.executor';
+import { composeRunExecutor } from './executors/compose-run.executor';
+import { composeUpExecutor } from './executors/compose-up.executor';
 import { pushToRegistryExecutor } from './executors/push-to-registry.executor';
 import { pullFromRegistryExecutor } from './executors/pull-from-registry.executor';
 import { validateDockerfileExecutor } from './executors/validate-dockerfile.executor';
@@ -71,6 +74,9 @@ const executors: INodeExecutor[] = [
     pullFromRegistryExecutor,
     // Deploy
     deployComposeExecutor,
+    composeBuildExecutor,
+    composeRunExecutor,
+    composeUpExecutor,
     // Utility
     setEnvVarsExecutor,
     cleanWorkdirExecutor,

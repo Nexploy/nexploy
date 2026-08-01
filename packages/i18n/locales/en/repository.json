@@ -423,6 +423,18 @@
                 "name": "Deploy Compose",
                 "description": "Deploy a Docker Compose stack"
             },
+            "compose-build": {
+                "name": "Compose Build",
+                "description": "Build the Compose stack images without starting it"
+            },
+            "compose-run": {
+                "name": "Compose Run",
+                "description": "Run a one-off command in a Compose service"
+            },
+            "compose-up": {
+                "name": "Compose Up",
+                "description": "Start the Compose stack built beforehand"
+            },
             "push-to-registry": {
                 "name": "Push an image to a registry",
                 "description": "Push a Docker image to a private or public registry"
@@ -659,6 +671,7 @@
             "repoLoading": "Loading repository...",
             "branchLoading": "Loading branches...",
             "branchSelect": "Select a branch",
+            "branchNotExist": "Branch no longer exists",
             "cloneCommitHash": "Commit Hash",
             "cloneCommitHashPlaceholder": "e.g. abc1234",
             "cloneCommitHashDescription": "Leave empty to use the latest commit of the branch",
@@ -685,6 +698,23 @@
             "composeFilePathPlaceholder": "Leave empty for repository root",
             "noCache": "No cache",
             "noCacheDescription": "Build images without using the Docker cache (--no-cache)",
+            "composeService": "Service",
+            "composeServicePlaceholder": "api",
+            "composeServiceDescription": "Name of the service, as declared in the compose file",
+            "composeRunCommand": "Command",
+            "composeRunCommandPlaceholder": "python manage.py migrate",
+            "composeRunCommandDescription": "Leave empty to use the image default command. Runs without a TTY (-T): the command must be non-interactive.",
+            "composeRunWorkingDir": "Working Directory",
+            "composeRunUser": "User",
+            "composeRunNoDeps": "Without dependencies",
+            "composeRunNoDepsDescription": "Do not start the services this one depends on (--no-deps)",
+            "composeRunContinueOnErrorDescription": "Continue the pipeline even if the command exits with a non-zero code",
+            "composeUpRecreate": "Recreate containers",
+            "composeUpRecreateDescription": "Run docker compose down before starting the stack",
+            "composeUpRemoveOrphans": "Remove orphans",
+            "composeUpRemoveOrphansDescription": "Remove containers of services no longer declared in the compose file (--remove-orphans)",
+            "composeUpKeepComposeFile": "Keep the generated compose file",
+            "composeUpKeepComposeFileDescription": "Keep the processed compose file in the working directory for debugging",
             "projectName": "Project Name",
             "registry": "Registry",
             "registryPlaceholder": "Select a registry",
@@ -1016,6 +1046,7 @@
             "networkName": "Network name",
             "delayed": "Delayed (seconds)",
             "projectName": "Project name",
+            "composeFile": "Compose file",
             "url": "URL",
             "outputFile": "Output file",
             "filename": "Filename",
@@ -1072,6 +1103,7 @@
             "desc_networkName": "Docker network name",
             "desc_delayed": "Number of seconds the pipeline was delayed",
             "desc_projectName": "Docker Compose project name",
+            "desc_composeFile": "Path to the processed compose file, consumed by Compose Run and Compose Up",
             "desc_url": "URL of the resource",
             "desc_outputFile": "Full path to the downloaded file",
             "desc_filename": "Name of the downloaded file",

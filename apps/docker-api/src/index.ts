@@ -24,6 +24,7 @@ import { createTerminalRoutes } from '@/routes/terminalRoutes';
 import volumesRoutes from '@/routes/volumes/volumesRoutes';
 import networksRoutes from '@/routes/networks/networksRoutes';
 import pipelineEvents from '@/routes/events/pipelineEvents';
+import composePhaseEvents from '@/routes/events/composePhaseEvents';
 import pipelineRoutes from '@/routes/pipelineRoutes';
 import swarmRoutes from '@/routes/swarm';
 import swarmEvents from '@/routes/swarm/events/swarmEvents';
@@ -94,6 +95,7 @@ app.route('/api/networks/events', networksEvents);
 app.route('/api/networks', networksRoutes);
 
 app.route('/api/pipeline/events', pipelineEvents);
+app.route('/api/pipeline/events', composePhaseEvents);
 app.route('/api/pipeline', pipelineRoutes);
 
 app.route('/api/swarm/events', swarmEvents);

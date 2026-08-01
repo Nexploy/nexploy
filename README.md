@@ -226,7 +226,6 @@ nexploy/
 │   ├── typescript-interface/ # Shared TypeScript types
 │   ├── shared/               # Shared utilities
 │   ├── i18n/                 # Internationalization (en, fr)
-│   ├── eslint-config/        # Shared ESLint config
 │   └── typescript-config/    # Shared TypeScript config
 ├── infra/
 │   ├── docker/               # Compose files (dev, test, prod)

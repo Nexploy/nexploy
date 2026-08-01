@@ -64,6 +64,29 @@ export const composeFileConfigSchema = z.object({
     noCache: z.boolean().default(false),
 });
 
+export const composeBuildConfigSchema = z.object({
+    composeFileName: refable(z.string().min(1, 'Compose file name is required')).default(
+        'docker-compose.yml',
+    ),
+    composeFilePath: refable(relativePath('Compose file path')).optional(),
+    noCache: z.boolean().default(false),
+});
+
+export const composeRunConfigSchema = z.object({
+    service: refable(z.string().min(1, 'Service is required')).default(''),
+    command: refable(z.string()).default(''),
+    workingDir: refable(z.string()).default(''),
+    user: refable(z.string()).default(''),
+    noDeps: z.boolean().default(false),
+    continueOnError: z.boolean().default(false),
+});
+
+export const composeUpConfigSchema = z.object({
+    recreate: z.boolean().default(true),
+    removeOrphans: z.boolean().default(true),
+    keepComposeFile: z.boolean().default(false),
+});
+
 export const varEntrySchema = z.object({
     id: z.string(),
     key: z.string().min(1, 'Key is required'),

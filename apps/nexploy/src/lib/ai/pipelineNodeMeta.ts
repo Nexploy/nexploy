@@ -11,6 +11,9 @@ import {
     cherryPickCommitConfigSchema,
     cloneRepositoryConfigSchema,
     composeFileConfigSchema,
+    composeBuildConfigSchema,
+    composeRunConfigSchema,
+    composeUpConfigSchema,
     conditionConfigSchema,
     createContainerConfigSchema,
     createNetworkConfigSchema,
@@ -153,6 +156,30 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
             'Deploys a docker-compose stack (runs docker-compose up --build internally — no separate build-docker-image needed). Needs a workDir from an upstream source node. Supports an optional save-version attach-node via its bottom attachment handle.',
         consumesFromUpstream: ['workDir'],
         outputs: [],
+    },
+    'compose-build': {
+        schema: composeBuildConfigSchema,
+        category: 'deploy',
+        description:
+            'Pulls and builds the images of a docker-compose stack WITHOUT starting it. Use it instead of deploy-compose only when a one-off command (compose-run) must run between the build and the start. Needs a workDir from an upstream source node.',
+        consumesFromUpstream: ['workDir'],
+        outputs: ['projectName', 'composeFile', 'services', 'builtServices', 'composeConfig'],
+    },
+    'compose-run': {
+        schema: composeRunConfigSchema,
+        category: 'deploy',
+        description:
+            'Runs a one-off command in a compose service (docker compose run --rm), typically a migration or a bootstrap task, before the stack is started. Must be placed between compose-build and compose-up.',
+        consumesFromUpstream: ['workDir', 'composeFile', 'projectName'],
+        outputs: ['exitCode', 'service', 'projectName', 'composeFile'],
+    },
+    'compose-up': {
+        schema: composeUpConfigSchema,
+        category: 'deploy',
+        description:
+            'Starts the compose stack built by compose-build (docker compose up -d). Must be placed after a compose-build node. Supports an optional save-version attach-node via its bottom attachment handle.',
+        consumesFromUpstream: ['workDir', 'composeFile', 'projectName'],
+        outputs: ['projectName', 'containers', 'composeConfig'],
     },
     'set-environment': {
         schema: setEnvironmentConfigSchema,

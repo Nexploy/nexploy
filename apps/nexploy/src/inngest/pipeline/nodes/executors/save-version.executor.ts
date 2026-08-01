@@ -14,7 +14,7 @@ export class SaveVersionExecutor implements INodeExecutor {
 
         let composeConfig = undefined;
         for (const inputNode of inputNodes) {
-            if (inputNode.type === 'deploy-compose') {
+            if (inputNode.type === 'deploy-compose' || inputNode.type === 'compose-up') {
                 const deployOutput = allOutputs.get(inputNode.id);
                 if (deployOutput?.composeConfig && typeof deployOutput.composeConfig === 'string') {
                     composeConfig = deployOutput.composeConfig;

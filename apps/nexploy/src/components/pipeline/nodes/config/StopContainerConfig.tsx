@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -47,16 +41,8 @@ export function StopContainerConfig() {
                         <FormLabel>{t('container')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Select
-                                    {...field}
-                                    onValueChange={field.onChange}
-                                    disabled={isLoading}
-                                >
-                                    <SelectTrigger
-                                        className={
-                                            'w-full overflow-hidden pl-0! data-[placeholder]:pl-3!'
-                                        }
-                                    >
+                                <Select {...field} onValueChange={field.onChange} disabled={isLoading}>
+                                    <SelectTrigger className={'pl-0! data-placeholder:pl-3! w-full overflow-hidden'}>
                                         {isLoading ? (
                                             <span className="text-muted-foreground flex items-center gap-2 pl-2">
                                                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -68,9 +54,7 @@ export function StopContainerConfig() {
                                                 {t('containerUnavailable')}
                                             </span>
                                         ) : (
-                                            <SelectValue
-                                                placeholder={t('containerNamePlaceholder')}
-                                            />
+                                            <SelectValue placeholder={t('containerNamePlaceholder')} />
                                         )}
                                     </SelectTrigger>
                                     <SelectContent>
@@ -90,16 +74,12 @@ export function StopContainerConfig() {
                                                         <Status
                                                             className="m-0 flex-1 rounded-none border-0 p-0 pl-2.5 text-sm"
                                                             status={
-                                                                container.state === 'running'
-                                                                    ? 'online'
-                                                                    : 'offline'
+                                                                container.state === 'running' ? 'online' : 'offline'
                                                             }
                                                             variant="outline"
                                                         >
                                                             <StatusIndicator className="pl-2" />
-                                                            <span className="truncate">
-                                                                {container.name}
-                                                            </span>
+                                                            <span className="truncate">{container.name}</span>
                                                         </Status>
                                                     </SelectItem>
                                                 ))

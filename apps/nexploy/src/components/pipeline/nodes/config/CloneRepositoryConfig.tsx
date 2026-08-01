@@ -64,6 +64,8 @@ export function CloneRepositoryConfig() {
         }
     }, [branches]);
 
+    const isBranchExist = branches?.some((branch) => branch.name === currentBranch);
+
     return (
         <div className="space-y-4">
             <FormField
@@ -80,15 +82,13 @@ export function CloneRepositoryConfig() {
                             <FormControl>
                                 <SelectTrigger>
                                     {isLoadingRepo ? (
-                                        <span className="text-muted-foreground">
-                                            {t('repoLoading')}
-                                        </span>
+                                        <span className="text-muted-foreground">{t('repoLoading')}</span>
                                     ) : isLoadingBranches ? (
-                                        <span className="text-muted-foreground">
-                                            {t('branchLoading')}
-                                        </span>
-                                    ) : (
+                                        <span className="text-muted-foreground">{t('branchLoading')}</span>
+                                    ) : isBranchExist ? (
                                         <SelectValue placeholder={t('branchSelect')} />
+                                    ) : (
+                                        <span className="text-muted-foreground">{t('branchNotExist')}</span>
                                     )}
                                 </SelectTrigger>
                             </FormControl>
@@ -118,9 +118,7 @@ export function CloneRepositoryConfig() {
                     <FormItem>
                         <FormLabel>
                             {t('cloneCommitHash')}
-                            <span className="text-muted-foreground text-xs">
-                                {tCommon('optional')}
-                            </span>
+                            <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
                         </FormLabel>
                         <FormControl>
                             <Input

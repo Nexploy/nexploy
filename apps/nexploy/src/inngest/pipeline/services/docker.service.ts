@@ -63,6 +63,96 @@ class DockerService {
         );
     }
 
+    async composeBuild(
+        workDir: string,
+        projectName: string,
+        composePath: string,
+        envVars: Record<string, string>,
+        signal: AbortSignal,
+        onLog: (message: string) => Promise<void>,
+        environmentId?: string,
+        labels?: Record<string, string>,
+        noCache?: boolean,
+    ): Promise<{
+        success: boolean;
+        projectName: string;
+        composeFile: string;
+        services: string[];
+        builtServices: string[];
+        composeConfig: string;
+    }> {
+        return this.streamSSERequest(
+            'pipeline/events/stream/compose-build',
+            { workDir, projectName, composePath, envVars, labels, noCache },
+            signal,
+            onLog,
+            environmentId,
+        );
+    }
+
+    async composeRun(
+        workDir: string,
+        projectName: string,
+        composeFile: string,
+        service: string,
+        command: string | undefined,
+        envVars: Record<string, string>,
+        signal: AbortSignal,
+        onLog: (message: string) => Promise<void>,
+        environmentId?: string,
+        options?: { noDeps?: boolean; user?: string; workingDir?: string },
+    ): Promise<{ success: boolean; exitCode: number; service: string }> {
+        return this.streamSSERequest(
+            'pipeline/events/stream/compose-run',
+            {
+                workDir,
+                projectName,
+                composeFile,
+                service,
+                command,
+                envVars,
+                noDeps: options?.noDeps,
+                user: options?.user,
+                workingDir: options?.workingDir,
+            },
+            signal,
+            onLog,
+            environmentId,
+        );
+    }
+
+    async composeUp(
+        workDir: string,
+        projectName: string,
+        composeFile: string,
+        envVars: Record<string, string>,
+        signal: AbortSignal,
+        onLog: (message: string) => Promise<void>,
+        environmentId?: string,
+        options?: { recreate?: boolean; removeOrphans?: boolean; keepComposeFile?: boolean },
+    ): Promise<{
+        success: boolean;
+        projectName: string;
+        containers: string[];
+        composeConfig: string;
+    }> {
+        return this.streamSSERequest(
+            'pipeline/events/stream/compose-up',
+            {
+                workDir,
+                projectName,
+                composeFile,
+                envVars,
+                recreate: options?.recreate,
+                removeOrphans: options?.removeOrphans,
+                keepComposeFile: options?.keepComposeFile,
+            },
+            signal,
+            onLog,
+            environmentId,
+        );
+    }
+
     private async streamSSERequest<T>(
         endpoint: string,
         body: Record<string, unknown>,

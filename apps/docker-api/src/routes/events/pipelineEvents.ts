@@ -11,6 +11,11 @@ import fs from 'fs';
 import yaml from 'yaml';
 import { findUnresolvedVariables, substituteEnvVars } from '@/utils/compose/composePreprocessor';
 import {
+    cleanupEnvFile,
+    ensureEnvIgnoredInBuildContext,
+    writeEnvFile,
+} from '@/utils/compose/composePhases';
+import {
     getTransformationSummary,
     transformBindMountsForRemote,
 } from '@/utils/compose/composeVolumeTransformer';
@@ -21,66 +26,6 @@ import { networksStateManager } from '@/managers/list/networksStateManager';
 import { docker } from '@/utils/dockerClient';
 
 const app = new Hono();
-
-function writeEnvFile(workDir: string, envVars: Record<string, string>): string {
-    const envFilePath = path.join(workDir, '.env');
-    const envContent = Object.entries(envVars)
-        .map(([key, value]) => {
-            const escapedValue =
-                value.includes('\n') || value.includes('"') || value.includes("'")
-                    ? `"${value.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`
-                    : value;
-            return `${key}=${escapedValue}`;
-        })
-        .join('\n');
-
-    fs.writeFileSync(envFilePath, envContent, 'utf8');
-    return envFilePath;
-}
-
-function cleanupEnvFile(workDir: string): void {
-    const envFilePath = path.join(workDir, '.env');
-    try {
-        if (fs.existsSync(envFilePath)) {
-            fs.unlinkSync(envFilePath);
-        }
-    } catch (error) {
-        logger.warn({ error, envFilePath }, 'Failed to cleanup .env file');
-    }
-}
-
-function ensureEnvIgnoredInBuildContext(workDir: string): void {
-    const dockerignorePath = path.join(workDir, '.dockerignore');
-    const requiredEntries = ['.env', '.env.*'];
-
-    let existing = '';
-    try {
-        if (fs.existsSync(dockerignorePath)) {
-            existing = fs.readFileSync(dockerignorePath, 'utf8');
-        }
-    } catch (error) {
-        logger.warn({ error, dockerignorePath }, 'Failed to read existing .dockerignore');
-        return;
-    }
-
-    const existingLines = new Set(existing.split('\n').map((line) => line.trim()));
-    const missingEntries = requiredEntries.filter((entry) => !existingLines.has(entry));
-
-    if (missingEntries.length === 0) {
-        return;
-    }
-
-    try {
-        const separator = existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
-        fs.writeFileSync(
-            dockerignorePath,
-            `${existing}${separator}${missingEntries.join('\n')}\n`,
-            'utf8',
-        );
-    } catch (error) {
-        logger.warn({ error, dockerignorePath }, 'Failed to update .dockerignore');
-    }
-}
 
 app.post('/stream/compose', async (c) => {
     const { workDir, projectName, composePath, envVars, labels, noCache } = await c.req.json<{

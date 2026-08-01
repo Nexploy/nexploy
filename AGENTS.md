@@ -57,21 +57,26 @@ pnpm --filter=nexploy db:studio
 
 ### Code Quality
 
+Linting and formatting are handled by **Biome** (`biome.json` at the repo root, single config for the whole monorepo).
+
 ```bash
-# Lint all apps
+# Lint the whole repo
 pnpm lint
 
-# Fix linting issues
-pnpm --filter=nexploy lint:fix
-
-# Type check all TypeScript
-pnpm types
+# Lint and apply safe fixes
+pnpm lint:fix
 
 # Format all code
 pnpm format
 
-# Type check with Turbo
-pnpm check-types
+# Lint + format + import sorting in one pass
+pnpm check
+
+# Same, applying every safe fix
+pnpm check:fix
+
+# Type check all TypeScript
+pnpm types
 ```
 
 ## Architecture
@@ -90,7 +95,6 @@ This is a **pnpm + Turborepo** monorepo with workspace packages:
 - `@workspace/schemas-zod` - Zod validation schemas
 - `@workspace/typescript-interface` - Shared TypeScript types
 - `@workspace/i18n` - Internationalization utilities
-- `@workspace/eslint-config` - Shared ESLint config
 - `@workspace/typescript-config` - Shared TypeScript config
 
 ### Key Architectural Patterns
