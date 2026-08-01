@@ -1,42 +1,42 @@
 {
-    "name": "nexploy-monorepo",
-    "version": "0.0.1",
-    "description": "Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker",
-    "private": true,
-    "license": "GPL-3.0",
-    "scripts": {
-        "dev": "turbo run dev --filter=nexploy --filter=docker-api",
-        "dev:nexploy": "turbo run dev --filter=nexploy --ui stream",
-        "dev:docker-api": "turbo run dev --filter=docker-api --ui stream",
-        "build": "turbo run build",
-        "lint": "biome lint .",
-        "lint:fix": "biome lint --write .",
-        "check": "biome check .",
-        "check:fix": "biome check --write .",
-        "types": "turbo run typecheck",
-        "format": "biome format --write .",
-        "check-types": "turbo run typecheck",
-        "test:e2e": "bash scripts/e2e.sh run",
-        "test:e2e:ui": "bash scripts/e2e.sh run --ui",
-        "test:e2e:stack:up": "bash scripts/e2e.sh up",
-        "test:e2e:stack:down": "bash scripts/e2e.sh down",
-        "test:e2e:report": "playwright show-report"
-    },
-    "dependencies": {
-        "@workspace/typescript-config": "workspace:*"
-    },
-    "devDependencies": {
-        "@biomejs/biome": "^2.5.6",
-        "@playwright/test": "^1.61.0",
-        "@turbo/gen": "^2.9.4",
-        "@types/node": "^24.7.2",
-        "baseline-browser-mapping": "^2.9.19",
-        "tsx": "^4.20.6",
-        "turbo": "^2.9.4",
-        "typescript": "7.0.2"
-    },
-    "packageManager": "pnpm@11.9.0+sha512.bd682d5d03fe525ef7c9fd6780c6884d1e756ac4c9c9fe00c538782824310dcf90e3ddc4f53835f06dfaebd5085e41855e0bcbb3b60de2ac5bbab89e5036f03b",
-    "engines": {
-        "node": ">=22.13"
-    }
+  "name": "nexploy-monorepo",
+  "version": "0.0.1",
+  "description": "Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker",
+  "private": true,
+  "license": "GPL-3.0",
+  "scripts": {
+    "dev": "turbo run dev --filter=nexploy --filter=docker-api",
+    "dev:nexploy": "turbo run dev --filter=nexploy --ui stream",
+    "dev:docker-api": "turbo run dev --filter=docker-api --ui stream",
+    "build": "turbo run build",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "types": "turbo run typecheck",
+    "format": "biome format --write .",
+    "check-types": "turbo run typecheck",
+    "test:e2e": "bash scripts/e2e.sh run",
+    "test:e2e:ui": "bash scripts/e2e.sh run --ui",
+    "test:e2e:stack:up": "bash scripts/e2e.sh up",
+    "test:e2e:stack:down": "bash scripts/e2e.sh down",
+    "test:e2e:report": "playwright show-report"
+  },
+  "dependencies": {
+    "@workspace/typescript-config": "workspace:*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.6",
+    "@playwright/test": "^1.61.0",
+    "@turbo/gen": "^2.9.4",
+    "@types/node": "^24.7.2",
+    "baseline-browser-mapping": "^2.9.19",
+    "tsx": "^4.20.6",
+    "turbo": "^2.9.4",
+    "typescript": "7.0.2"
+  },
+  "packageManager": "pnpm@11.9.0+sha512.bd682d5d03fe525ef7c9fd6780c6884d1e756ac4c9c9fe00c538782824310dcf90e3ddc4f53835f06dfaebd5085e41855e0bcbb3b60de2ac5bbab89e5036f03b",
+  "engines": {
+    "node": ">=22.13"
+  }
 }

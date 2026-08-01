@@ -24,13 +24,13 @@ import {
     MessageScrollerProvider,
     MessageScrollerViewport,
 } from '@workspace/ui/components/message-scroller';
-import { SelectModel } from '@/components/ai/panel/SelectModel.tsx';
 import { StreamAutoScroll } from '@/components/ai/panel/StreamAutoScroll';
 import { useTranslations } from 'next-intl';
 import { BotOff, Minimize2, Settings2 } from 'lucide-react';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from '@workspace/ui/components/button';
 import { Dialog, DialogContent, DialogTitle } from '@workspace/ui/components/dialog';
+import { ChatToolbar } from '@/components/ai/panel/ChatToolbar.tsx';
 
 export function ChatAIPanel() {
     const t = useTranslations('ai.chat');
@@ -50,9 +50,10 @@ export function ChatAIPanel() {
     const selectedModelRef = useRef(selectedModel);
     selectedModelRef.current = selectedModel;
 
-    const [persistedMessages, setPersistedMessages, clearPersistedMessages] = useLocalStorage<
-        UIMessage[]
-    >('ai-chat-messages', []);
+    const [persistedMessages, setPersistedMessages, clearPersistedMessages] = useLocalStorage<UIMessage[]>(
+        'ai-chat-messages',
+        [],
+    );
 
     const { messages, sendMessage, stop, status, setMessages, error } = useChat({
         transport: new DefaultChatTransport({
@@ -132,19 +133,13 @@ export function ChatAIPanel() {
 
     const chatBody = (
         <>
-            <MessageScrollerProvider
-                autoScroll
-                defaultScrollPosition={messages.length === 0 ? 'start' : 'end'}
-            >
+            <MessageScrollerProvider autoScroll defaultScrollPosition={messages.length === 0 ? 'start' : 'end'}>
                 <MessageScroller className="min-h-0 flex-1">
                     <MessageScrollerViewport className="px-3">
                         <MessageScrollerContent className="gap-4 pb-2">
                             {messages.length === 0 && (
                                 <MessageScrollerItem>
-                                    <Suggestions
-                                        categories={categories}
-                                        onSelect={trySendMessage}
-                                    />
+                                    <Suggestions categories={categories} onSelect={trySendMessage} />
                                 </MessageScrollerItem>
                             )}
                             <ChatMessages messages={messages} isLoading={isLoading} error={error} />
@@ -154,7 +149,7 @@ export function ChatAIPanel() {
                     <MessageScrollerButton className="rounded-full shadow-sm" />
                 </MessageScroller>
             </MessageScrollerProvider>
-            <SelectModel />
+            <ChatToolbar />
             <ChatInput
                 input={input}
                 onChange={setInput}
@@ -187,9 +182,7 @@ export function ChatAIPanel() {
                             </div>
                             <div className="flex flex-col gap-1">
                                 <p className="text-sm font-medium">{t('disabled')}</p>
-                                <p className="text-muted-foreground text-xs">
-                                    {t('disabledDescription')}
-                                </p>
+                                <p className="text-muted-foreground text-xs">{t('disabledDescription')}</p>
                             </div>
                         </div>
                     ) : !providersLoading && !hasConfiguredProvider ? (
@@ -199,18 +192,14 @@ export function ChatAIPanel() {
                             </div>
                             <div className="flex flex-col gap-1">
                                 <p className="text-sm font-medium">{t('noProvider')}</p>
-                                <p className="text-muted-foreground text-xs">
-                                    {t('noProviderDescription')}
-                                </p>
+                                <p className="text-muted-foreground text-xs">{t('noProviderDescription')}</p>
                             </div>
                         </div>
                     ) : (
                         <>
                             {isFullscreen ? (
                                 <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-                                    <p className="text-muted-foreground text-xs">
-                                        {t('fullscreenActive')}
-                                    </p>
+                                    <p className="text-muted-foreground text-xs">{t('fullscreenActive')}</p>
                                     <Button
                                         size="sm"
                                         variant="outline"
@@ -227,7 +216,7 @@ export function ChatAIPanel() {
                             <Dialog open={isFullscreen} onOpenChange={setFullscreen}>
                                 <DialogContent
                                     showCloseButton={false}
-                                    className="flex h-[100dvh] w-screen max-w-none flex-col gap-0 rounded-none border-0 p-0 sm:max-w-none"
+                                    className="flex h-dvh w-screen max-w-none flex-col gap-0 rounded-none border-0 p-0 sm:max-w-none"
                                 >
                                     <DialogTitle className="sr-only">{t('panelTitle')}</DialogTitle>
                                     <PanelHeader

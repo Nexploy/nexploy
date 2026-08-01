@@ -4,7 +4,7 @@ import { ChevronDown, Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button.tsx';
 import { useTranslations } from 'next-intl';
 
-export function SelectModel() {
+export function ChatToolbar() {
     const t = useTranslations('ai.chat');
 
     const selectedModel = useAIPanelStore((s) => s.selectedModel);
@@ -15,16 +15,14 @@ export function SelectModel() {
     const tabClassName = 'flex h-7 items-center rounded-2xl rounded-b-none border-b-0 text-xs';
 
     return (
-        <div className="mt-1 flex items-center gap-1.5 px-3 pt-1">
+        <div className="mt-1 flex items-center justify-between gap-1.5 px-3 pt-1">
             <Button
                 size="sm"
                 variant="outline"
                 onClick={openModelSelector}
                 className={cn(
                     tabClassName,
-                    selectedModel
-                        ? 'text-foreground hover:bg-muted'
-                        : 'text-muted-foreground hover:bg-muted',
+                    selectedModel ? 'text-foreground hover:bg-muted' : 'text-muted-foreground hover:bg-muted',
                 )}
             >
                 <span className="max-w-[180px] truncate font-medium">
@@ -37,16 +35,10 @@ export function SelectModel() {
                 variant="outline"
                 onClick={toggleFullscreen}
                 title={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
+                aria-label={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
                 className={cn(tabClassName, 'text-muted-foreground hover:bg-muted px-2')}
             >
-                {isFullscreen ? (
-                    <Minimize2 className="size-3 shrink-0" />
-                ) : (
-                    <Maximize2 className="size-3 shrink-0" />
-                )}
-                <span className="sr-only">
-                    {isFullscreen ? t('exitFullscreen') : t('fullscreen')}
-                </span>
+                {isFullscreen ? <Minimize2 className="size-3 shrink-0" /> : <Maximize2 className="size-3 shrink-0" />}
             </Button>
         </div>
     );

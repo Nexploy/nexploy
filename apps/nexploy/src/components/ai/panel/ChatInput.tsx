@@ -28,7 +28,7 @@ export function ChatInput({ input, onChange, onSubmit, onStop, isLoading }: Chat
 
     return (
         <div className="shrink-0 px-3 pb-2">
-            <div className="bg-card flex items-end rounded-xl rounded-tl-none border">
+            <div className="bg-card flex items-end rounded-xl rounded-t-none border">
                 <div className="min-w-0 flex-1">
                     <ScrollAreaWithShadow viewportClassName="max-h-24 [&>div]:w-full! [&>div]:table-fixed!">
                         <Textarea
@@ -60,9 +60,7 @@ export function ChatInput({ input, onChange, onSubmit, onStop, isLoading }: Chat
                     />
                 )}
             </div>
-            <p className="text-muted-foreground mt-1.5 text-center text-[10px]">
-                {t('keyboardHint')}
-            </p>
+            <p className="text-muted-foreground mt-1.5 text-center text-[10px]">{t('keyboardHint')}</p>
         </div>
     );
 }
