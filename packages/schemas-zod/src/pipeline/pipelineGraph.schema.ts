@@ -127,10 +127,7 @@ export const analyzeRepositorySchema = z.object({
 
 export const savePipelineMcpSchema = z.object({
     repositoryId: z.string().min(1).describe('The ID of the repository'),
-    stageId: z
-        .string()
-        .optional()
-        .describe('Deployment stage ID (defaults to the production stage)'),
+    stageId: z.string().optional().describe('Deployment stage ID (defaults to the production stage)'),
     nodes: z.array(pipelineNodeSchema).describe('Pipeline nodes'),
     edges: z.array(pipelineEdgeSchema).describe('Pipeline edges connecting nodes'),
 });

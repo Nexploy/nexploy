@@ -1,19 +1,12 @@
 'use client';
 
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@workspace/ui/components/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { cn } from '@workspace/ui/lib/utils.ts';
 
 export function ConfirmationDialog() {
-    const { isOpen, title, description, closeDialog, content, closeOnBackground, props } =
-        useConfirmationDialogStore();
+    const { isOpen, title, description, closeDialog, content, closeOnBackground, props } = useConfirmationDialogStore();
 
     return (
         <Dialog open={isOpen} onOpenChange={closeDialog}>
@@ -30,9 +23,7 @@ export function ConfirmationDialog() {
                         </DialogHeader>
                     )}
                     <ScrollAreaWithShadow bottomShadow className="h-full">
-                        <div className="px-6 pb-6">
-                            {typeof content === 'function' ? content() : content}
-                        </div>
+                        <div className="px-6 pb-6">{typeof content === 'function' ? content() : content}</div>
                     </ScrollAreaWithShadow>
                 </div>
             </DialogContent>

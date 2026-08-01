@@ -190,8 +190,7 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
     'create-container': {
         schema: createContainerConfigSchema,
         category: 'deploy',
-        description:
-            'Creates a Docker container from an image. Chain with start-container to run it.',
+        description: 'Creates a Docker container from an image. Chain with start-container to run it.',
         outputs: ['containerId', 'containerName'],
     },
     'start-container': {
@@ -409,8 +408,7 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
     'check-container-logs': {
         schema: checkContainerLogsConfigSchema,
         category: 'utility',
-        description:
-            'Searches container logs for a pattern and optionally fails the pipeline if not found.',
+        description: 'Searches container logs for a pattern and optionally fails the pipeline if not found.',
         consumesFromUpstream: ['containerId'],
         outputs: ['found', 'matchedLine'],
     },
@@ -441,8 +439,7 @@ export const NODE_META_MAP: Record<string, NodeMeta> = {
     'send-notification': {
         schema: sendNotificationConfigSchema,
         category: 'integration',
-        description:
-            'Sends a webhook notification (Slack, Discord, etc.) on success, failure, or always.',
+        description: 'Sends a webhook notification (Slack, Discord, etc.) on success, failure, or always.',
         isEndNode: true,
         outputs: ['sent'],
     },

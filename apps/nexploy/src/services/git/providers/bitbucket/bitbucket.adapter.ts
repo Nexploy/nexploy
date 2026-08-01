@@ -1,11 +1,7 @@
 import crypto from 'crypto';
 import dayjs from 'dayjs';
 import { GitProviderAdapter, ParsedRepoUrl } from '@/services/git/core/GitProviderAdapter';
-import {
-    GitBranch,
-    GitProviderToken,
-    GitRepository,
-} from '@workspace/typescript-interface/git/git';
+import { GitBranch, GitProviderToken, GitRepository } from '@workspace/typescript-interface/git/git';
 import { MergeRequestAction, WebhookPayload } from '@workspace/typescript-interface/webhook';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { timingSafeEqual } from '@/lib/api/crypto-utils';
@@ -83,9 +79,7 @@ export const bitbucketAdapter: GitProviderAdapter = {
 
     async getRepository({ token, repositoryUrl }): Promise<GitRepository> {
         const { owner, repo } = this.parseRepoUrl(repositoryUrl);
-        const repoData = await tokenGitStorage.run(token, async () =>
-            bitbucketGetRepository(owner, repo),
-        );
+        const repoData = await tokenGitStorage.run(token, async () => bitbucketGetRepository(owner, repo));
         return mapRepo(repoData);
     },
 
@@ -127,9 +121,7 @@ export const bitbucketAdapter: GitProviderAdapter = {
 
     async deleteWebhook({ token, repo, webhookId }): Promise<void> {
         const { workspace, repoSlug } = splitFullName(repo.fullName);
-        await tokenGitStorage.run(token, async () =>
-            bitbucketDeleteWebhook(workspace, repoSlug, webhookId),
-        );
+        await tokenGitStorage.run(token, async () => bitbucketDeleteWebhook(workspace, repoSlug, webhookId));
     },
 
     parseWebhookPayload(body: any, event: string | null): WebhookPayload | null {
@@ -168,9 +160,7 @@ export const bitbucketAdapter: GitProviderAdapter = {
             };
         }
 
-        const branchChange = changes.find(
-            (entry) => entry?.new?.type === 'branch' && entry.new.name,
-        );
+        const branchChange = changes.find((entry) => entry?.new?.type === 'branch' && entry.new.name);
         if (!branchChange) return null;
 
         return {
@@ -185,8 +175,7 @@ export const bitbucketAdapter: GitProviderAdapter = {
     verifyWebhookSignature({ headers, rawBody, secret }): boolean {
         const signature = headers.get('x-hub-signature');
         if (!signature) return false;
-        const expected =
-            'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+        const expected = 'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
         return timingSafeEqual(signature, expected);
     },
 
@@ -211,9 +200,7 @@ export const bitbucketAdapter: GitProviderAdapter = {
 
         const accessToken = tokenData.access_token;
         const refreshToken = tokenData.refresh_token ?? null;
-        const accessTokenExpiresAt = tokenData.expires_in
-            ? dayjs().add(tokenData.expires_in, 'second').toDate()
-            : null;
+        const accessTokenExpiresAt = tokenData.expires_in ? dayjs().add(tokenData.expires_in, 'second').toDate() : null;
 
         const user = await this.getAuthenticatedUser({
             token: { accessToken, refreshToken, accessTokenExpiresAt },
@@ -236,16 +223,12 @@ export const bitbucketAdapter: GitProviderAdapter = {
         }
         const data = await bitbucketRefreshAccessToken(refreshToken, clientId, clientSecret);
         if (data.error || !data.access_token) {
-            throw new Error(
-                data.error_description || data.error || 'Bitbucket token refresh failed',
-            );
+            throw new Error(data.error_description || data.error || 'Bitbucket token refresh failed');
         }
         return {
             accessToken: data.access_token,
             refreshToken: data.refresh_token ?? refreshToken,
-            accessTokenExpiresAt: data.expires_in
-                ? dayjs().add(data.expires_in, 'second').toDate()
-                : null,
+            accessTokenExpiresAt: data.expires_in ? dayjs().add(data.expires_in, 'second').toDate() : null,
         };
     },
 
@@ -254,8 +237,7 @@ export const bitbucketAdapter: GitProviderAdapter = {
         const tag = await bitbucketCreateTag(token, owner, repo, tagName, commitHash);
         return {
             releaseId: tag.name,
-            releaseUrl:
-                tag.links.html?.href ?? `${BITBUCKET_WEB_URL}/${owner}/${repo}/src/${tagName}`,
+            releaseUrl: tag.links.html?.href ?? `${BITBUCKET_WEB_URL}/${owner}/${repo}/src/${tagName}`,
         };
     },
 

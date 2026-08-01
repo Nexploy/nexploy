@@ -42,8 +42,7 @@ export class DeleteImageExecutor implements INodeExecutor {
             if (result.skipped?.length) {
                 for (const skipped of result.skipped) {
                     const message =
-                        skipReasonToMessage[skipped.reason] ??
-                        `Image skipped (${skipped.reason}): ${skipped.name}`;
+                        skipReasonToMessage[skipped.reason] ?? `Image skipped (${skipped.reason}): ${skipped.name}`;
                     await logger.warn(nodeId, message);
                 }
                 return { output: { deletedImageId: imageId }, skipped: true };
@@ -53,9 +52,7 @@ export class DeleteImageExecutor implements INodeExecutor {
 
             return { output: { deletedImageId: imageId } };
         } catch (error) {
-            throw new Error(
-                `Failed to delete image: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to delete image: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

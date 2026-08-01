@@ -40,8 +40,7 @@ export const metadata: Metadata = {
         url: 'https://nexploy.app',
         siteName: 'Nexploy',
         title: 'Nexploy - Docker Container Management Platform',
-        description:
-            'Powerful Docker container management platform for deployment, monitoring, and orchestration.',
+        description: 'Powerful Docker container management platform for deployment, monitoring, and orchestration.',
         images: [
             {
                 url: '/assets/nexploy-logo.svg',
@@ -54,8 +53,7 @@ export const metadata: Metadata = {
     twitter: {
         card: 'summary_large_image',
         title: 'Nexploy - Docker Container Management Platform',
-        description:
-            'Powerful Docker container management platform for deployment, monitoring, and orchestration.',
+        description: 'Powerful Docker container management platform for deployment, monitoring, and orchestration.',
         images: ['/assets/nexploy-logo.svg'],
     },
     icons: {

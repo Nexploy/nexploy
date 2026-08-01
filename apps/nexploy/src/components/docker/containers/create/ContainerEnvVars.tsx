@@ -16,11 +16,7 @@ export function ContainerEnvVars() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={KeyRound}
-                title={t('envVars')}
-                description={t('envVarsDescription')}
-            >
+            <CardHeaderWithIcon icon={KeyRound} title={t('envVars')} description={t('envVarsDescription')}>
                 <Button
                     type="button"
                     size="sm"
@@ -34,9 +30,7 @@ export function ContainerEnvVars() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noEnvVarsConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noEnvVarsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -47,10 +41,7 @@ export function ContainerEnvVars() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={t('keyPlaceholder')}
-                                                />
+                                                <Input {...field} placeholder={t('keyPlaceholder')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -63,10 +54,7 @@ export function ContainerEnvVars() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={t('valuePlaceholder')}
-                                                />
+                                                <Input {...field} placeholder={t('valuePlaceholder')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

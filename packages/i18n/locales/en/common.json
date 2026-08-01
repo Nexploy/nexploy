@@ -1,71 +1,71 @@
 {
-    "optional": "(optional)",
-    "loading": "Loading...",
-    "save": "Save",
-    "cancel": "Cancel",
-    "close": "Close",
-    "delete": "Delete",
-    "confirm": "Confirm",
-    "edit": "Edit",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "success": "Success",
-    "error": "Error",
-    "search": "Search",
-    "searchPlaceholder": "Search...",
-    "actions": "Actions",
-    "remove": "Remove",
-    "create": "Create",
-    "add": "Add",
-    "perPage": "per page",
-    "pageOf": "Page {current} of {total}",
-    "all": "All",
-    "size": "Size",
-    "noResults": "No results found",
-    "noMatchSearch": "No results match your search.",
-    "connect": "Connect",
-    "disconnect": "Disconnect",
-    "start": "Start",
-    "stop": "Stop",
-    "restart": "Restart",
-    "applyChanges": "Apply changes",
-    "container": "container",
-    "containers": "containers",
-    "active": "active",
-    "stopped": "stopped",
-    "empty": "(empty)",
-    "toggleMenu": "Toggle menu",
-    "up": "Up",
-    "down": "Down",
-    "forbidden": "You don't have permission to perform this action.",
-    "onboarding": {
-        "welcome": {
-            "title": "Welcome to Nexploy 🎉",
-            "content": "Your admin account is ready. Let's take a quick tour to get you started in just a few steps."
-        },
-        "docker": {
-            "title": "Docker",
-            "content": "This is your Docker hub — manage your containers, images, volumes, networks and events, all in one place."
-        },
-        "integrations": {
-            "title": "Integrations",
-            "content": "Start here by adding a Git provider (GitHub, GitLab, Gitea, Bitbucket or Azure Repos). This is the connection Nexploy uses to reach your repositories."
-        },
-        "account": {
-            "title": "Link your account",
-            "content": "Once a provider is added, come to your account to link your personal account to it. This authorizes Nexploy to clone and deploy your repositories."
-        },
-        "repositories": {
-            "title": "Repositories",
-            "content": "You're all set! Create your first repository here and deploy it to Docker in a few clicks."
-        },
-        "controls": {
-            "back": "Back",
-            "close": "Close",
-            "last": "Done",
-            "next": "Next",
-            "skip": "Skip tour"
-        }
+  "optional": "(optional)",
+  "loading": "Loading...",
+  "save": "Save",
+  "cancel": "Cancel",
+  "close": "Close",
+  "delete": "Delete",
+  "confirm": "Confirm",
+  "edit": "Edit",
+  "back": "Back",
+  "next": "Next",
+  "previous": "Previous",
+  "success": "Success",
+  "error": "Error",
+  "search": "Search",
+  "searchPlaceholder": "Search...",
+  "actions": "Actions",
+  "remove": "Remove",
+  "create": "Create",
+  "add": "Add",
+  "perPage": "per page",
+  "pageOf": "Page {current} of {total}",
+  "all": "All",
+  "size": "Size",
+  "noResults": "No results found",
+  "noMatchSearch": "No results match your search.",
+  "connect": "Connect",
+  "disconnect": "Disconnect",
+  "start": "Start",
+  "stop": "Stop",
+  "restart": "Restart",
+  "applyChanges": "Apply changes",
+  "container": "container",
+  "containers": "containers",
+  "active": "active",
+  "stopped": "stopped",
+  "empty": "(empty)",
+  "toggleMenu": "Toggle menu",
+  "up": "Up",
+  "down": "Down",
+  "forbidden": "You don't have permission to perform this action.",
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to Nexploy 🎉",
+      "content": "Your admin account is ready. Let's take a quick tour to get you started in just a few steps."
+    },
+    "docker": {
+      "title": "Docker",
+      "content": "This is your Docker hub — manage your containers, images, volumes, networks and events, all in one place."
+    },
+    "integrations": {
+      "title": "Integrations",
+      "content": "Start here by adding a Git provider (GitHub, GitLab, Gitea, Bitbucket or Azure Repos). This is the connection Nexploy uses to reach your repositories."
+    },
+    "account": {
+      "title": "Link your account",
+      "content": "Once a provider is added, come to your account to link your personal account to it. This authorizes Nexploy to clone and deploy your repositories."
+    },
+    "repositories": {
+      "title": "Repositories",
+      "content": "You're all set! Create your first repository here and deploy it to Docker in a few clicks."
+    },
+    "controls": {
+      "back": "Back",
+      "close": "Close",
+      "last": "Done",
+      "next": "Next",
+      "skip": "Skip tour"
     }
+  }
 }

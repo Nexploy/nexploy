@@ -29,17 +29,13 @@ export function CardVolumeDetails() {
                 <Table>
                     <TableBody>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('name')}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('name')}</TableCell>
                             <TableCell className="max-w-0">
                                 <span className="truncate text-sm font-medium">{volume.name}</span>
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('driver')}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('driver')}</TableCell>
                             <TableCell className="max-w-0">
                                 <Badge variant="secondary" className="font-mono">
                                     {volume.driver}
@@ -47,9 +43,7 @@ export function CardVolumeDetails() {
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('mountpoint')}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('mountpoint')}</TableCell>
                             <TableCell className="max-w-0">
                                 <div className="flex items-center gap-2">
                                     <code className="text-muted-foreground block truncate text-xs">
@@ -65,29 +59,21 @@ export function CardVolumeDetails() {
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('scope')}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('scope')}</TableCell>
                             <TableCell className="max-w-0 truncate">
                                 <Badge variant="outline">{volume.scope}</Badge>
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('created')}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('created')}</TableCell>
                             <TableCell className="max-w-0 truncate">
                                 {dayjs(volume.createdAt).format('YYYY-MM-DD HH:mm:ss')}
                             </TableCell>
                         </TableRow>
                         {volume.usageData && volume.usageData.Size >= 0 && (
                             <TableRow>
-                                <TableCell className="text-muted-foreground w-32 font-medium">
-                                    {t('size')}
-                                </TableCell>
-                                <TableCell className="max-w-0 truncate">
-                                    {formatBytes(volume.usageData.Size)}
-                                </TableCell>
+                                <TableCell className="text-muted-foreground w-32 font-medium">{t('size')}</TableCell>
+                                <TableCell className="max-w-0 truncate">{formatBytes(volume.usageData.Size)}</TableCell>
                             </TableRow>
                         )}
                         {volume.usageData && (
@@ -109,9 +95,7 @@ export function CardVolumeDetails() {
                                     <div className="flex flex-col gap-1">
                                         {Object.entries(volume.options).map(([key, value]) => (
                                             <div key={key} className="flex gap-2 text-sm">
-                                                <span className="text-muted-foreground shrink-0">
-                                                    {key}
-                                                </span>
+                                                <span className="text-muted-foreground shrink-0">{key}</span>
                                                 <span className="truncate">{value}</span>
                                             </div>
                                         ))}
@@ -128,9 +112,7 @@ export function CardVolumeDetails() {
                                     <div className="flex flex-col gap-1">
                                         {labelEntries.map(([key, value]) => (
                                             <div key={key} className="flex gap-2 text-sm">
-                                                <span className="text-muted-foreground shrink-0">
-                                                    {key}
-                                                </span>
+                                                <span className="text-muted-foreground shrink-0">{key}</span>
                                                 <span className="truncate">{value}</span>
                                             </div>
                                         ))}

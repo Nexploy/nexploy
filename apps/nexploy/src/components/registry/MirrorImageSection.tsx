@@ -5,9 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { mirrorImageSchema } from '@workspace/schemas-zod/registry/mirrorImage.schema';
 import { mirrorImageAction } from '@/actions/registry/mirrorImage.action';
 import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { Input } from '@workspace/ui/components/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -99,10 +99,7 @@ export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
                                 onCheckedChange={setPrivateSource}
                                 disabled={isSubmitting}
                             />
-                            <label
-                                htmlFor="private-source"
-                                className="cursor-pointer text-sm font-medium"
-                            >
+                            <label htmlFor="private-source" className="cursor-pointer text-sm font-medium">
                                 {t('privateSource')}
                             </label>
                         </div>
@@ -165,14 +162,9 @@ export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
                                         </FormControl>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>
-                                                    {t('targetRegistryLabel')}
-                                                </SelectLabel>
+                                                <SelectLabel>{t('targetRegistryLabel')}</SelectLabel>
                                                 {registries.map((registry) => (
-                                                    <SelectItem
-                                                        key={registry.id}
-                                                        value={registry.id}
-                                                    >
+                                                    <SelectItem key={registry.id} value={registry.id}>
                                                         {registry.name} ({registry.url})
                                                     </SelectItem>
                                                 ))}

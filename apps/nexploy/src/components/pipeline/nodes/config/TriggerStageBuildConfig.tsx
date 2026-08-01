@@ -5,13 +5,7 @@ import { useFormContext } from 'react-hook-form';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 import { AlertTriangle, Loader2 } from 'lucide-react';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Switch } from '@workspace/ui/components/switch';
 import {
     Select,
@@ -50,10 +44,7 @@ export function TriggerStageBuildConfig() {
                 control={form.control}
                 name="stageId"
                 render={({ field }) => {
-                    const isStale =
-                        !isLoading &&
-                        !!field.value &&
-                        !targetStages.find((s) => s.id === field.value);
+                    const isStale = !isLoading && !!field.value && !targetStages.find((s) => s.id === field.value);
 
                     return (
                         <FormItem>

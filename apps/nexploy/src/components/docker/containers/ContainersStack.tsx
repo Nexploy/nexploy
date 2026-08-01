@@ -29,11 +29,7 @@ export function ContainersStack() {
             ) : (
                 <div className="space-y-3">
                     {stacks.map(([stackName, stackContainers]) => (
-                        <StackGroup
-                            key={stackName}
-                            stackName={stackName}
-                            containers={stackContainers}
-                        />
+                        <StackGroup key={stackName} stackName={stackName} containers={stackContainers} />
                     ))}
                 </div>
             )}

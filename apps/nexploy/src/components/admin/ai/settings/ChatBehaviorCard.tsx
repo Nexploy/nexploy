@@ -5,14 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { MessageSquare } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Switch } from '@workspace/ui/components/switch';
 import { Slider } from '@workspace/ui/components/slider';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
@@ -24,10 +17,7 @@ interface ChatBehaviorCardProps {
     maxSteps: number;
 }
 
-export function ChatBehaviorCard({
-    requireDestructiveConfirmation,
-    maxSteps,
-}: ChatBehaviorCardProps) {
+export function ChatBehaviorCard({ requireDestructiveConfirmation, maxSteps }: ChatBehaviorCardProps) {
     const t = useTranslations('ai.admin.settings');
 
     const { form, handleSubmitWithAction, action } = useHookFormAction(
@@ -55,9 +45,7 @@ export function ChatBehaviorCard({
                                 <FormItem>
                                     <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
                                         <div className="flex flex-col">
-                                            <span className="text-base">
-                                                {t('requireConfirmation')}
-                                            </span>
+                                            <span className="text-base">{t('requireConfirmation')}</span>
                                             <span className="text-muted-foreground text-xs">
                                                 {t('requireConfirmationDescription')}
                                             </span>
@@ -104,9 +92,7 @@ export function ChatBehaviorCard({
                                                         onValueChange={(values) =>
                                                             field.onChange(values[0] ?? field.value)
                                                         }
-                                                        onValueCommit={() =>
-                                                            handleSubmitWithAction()
-                                                        }
+                                                        onValueCommit={() => handleSubmitWithAction()}
                                                     />
                                                 </FormControl>
                                                 <span
@@ -119,12 +105,8 @@ export function ChatBehaviorCard({
                                                 </span>
                                             </div>
                                             <div className="text-muted-foreground relative h-3 text-xs">
-                                                {field.value !== 1 && (
-                                                    <span className={'absolute left-0'}>1</span>
-                                                )}
-                                                {field.value !== 20 && (
-                                                    <span className={'absolute right-0'}>20</span>
-                                                )}
+                                                {field.value !== 1 && <span className={'absolute left-0'}>1</span>}
+                                                {field.value !== 20 && <span className={'absolute right-0'}>20</span>}
                                             </div>
                                             <FormMessage />
                                         </div>

@@ -26,7 +26,12 @@ export const waitForPortManifest: NodeManifest = {
     configSchema: waitForPortConfigSchema,
     configPanel: WaitForPortConfig,
     inputFields: [
-        { key: 'containerId', labelKey: 'pipeline.inputs.containerId', descriptionKey: 'pipeline.inputs.desc_containerId', type: 'input' },
+        {
+            key: 'containerId',
+            labelKey: 'pipeline.inputs.containerId',
+            descriptionKey: 'pipeline.inputs.desc_containerId',
+            type: 'input',
+        },
         { key: 'port', labelKey: 'pipeline.inputs.port', descriptionKey: 'pipeline.inputs.desc_port', type: 'input' },
         { key: 'open', labelKey: 'pipeline.inputs.open', descriptionKey: 'pipeline.inputs.desc_open', type: 'input' },
     ],

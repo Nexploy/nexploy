@@ -1,22 +1,9 @@
 'use client';
 
-import {
-    Container as IconContainer,
-    Container,
-    Layers,
-    LayoutGrid,
-    Plus,
-    Table2,
-} from 'lucide-react';
+import { Container as IconContainer, Container, Layers, LayoutGrid, Plus, Table2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { Badge } from '@workspace/ui/components/badge';
-import {
-    Empty,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
-} from '@workspace/ui/components/empty';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@workspace/ui/components/empty';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { ContainersStack } from '@/components/docker/containers/ContainersStack';
@@ -83,9 +70,7 @@ export default function ContainersPage() {
                         <Container className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight">
-                            {tNav('dockerContainers')}
-                        </h1>
+                        <h1 className="text-3xl font-semibold tracking-tight">{tNav('dockerContainers')}</h1>
                         {isLoading ? (
                             <Skeleton className={'my-1 h-3 w-40'} />
                         ) : (
@@ -147,11 +132,7 @@ export default function ContainersPage() {
                     <div className="mx-5 mb-2 flex items-center justify-between gap-2">
                         <TabsList>
                             {tabs.map((tab) => (
-                                <TabsTrigger
-                                    key={tab.id}
-                                    value={tab.id}
-                                    className="flex flex-1 gap-2"
-                                >
+                                <TabsTrigger key={tab.id} value={tab.id} className="flex flex-1 gap-2">
                                     <div className="flex items-center gap-2">
                                         <tab.icon />
                                         <span>{tab.label}</span>
@@ -211,16 +192,10 @@ export default function ContainersPage() {
                             ) : (
                                 <>
                                     <TabsContent value="all">
-                                        <TableDockerContainers
-                                            containers={containers}
-                                            isLoading={isLoading}
-                                        />
+                                        <TableDockerContainers containers={containers} isLoading={isLoading} />
                                     </TabsContent>
                                     <TabsContent value="stacks">
-                                        <TableDockerContainers
-                                            containers={allStackContainers}
-                                            isLoading={isLoading}
-                                        />
+                                        <TableDockerContainers containers={allStackContainers} isLoading={isLoading} />
                                     </TabsContent>
                                     <TabsContent value="containers">
                                         <TableDockerContainers

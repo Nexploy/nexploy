@@ -12,25 +12,15 @@ export class PruneVolumesExecutor implements INodeExecutor {
     readonly type = 'prune-volumes';
     readonly configSchema = pruneVolumesConfigSchema;
 
-    async execute(
-        ctx: NodeExecutionContext<z.infer<typeof pruneVolumesConfigSchema>>,
-    ): Promise<NodeExecutionResult> {
+    async execute(ctx: NodeExecutionContext<z.infer<typeof pruneVolumesConfigSchema>>): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const all = nodeConfig.all ?? false;
         const filter = nodeConfig.filter;
 
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
-        await logger.info(
-            nodeId,
-            `Pruning unused volumes (all: ${all}${filter ? `, filter: ${filter}` : ''})`,
-        );
+        await logger.info(nodeId, `Pruning unused volumes (all: ${all}${filter ? `, filter: ${filter}` : ''})`);
 
         try {
             const result = await kyDocker
@@ -54,9 +44,7 @@ export class PruneVolumesExecutor implements INodeExecutor {
                 },
             };
         } catch (error) {
-            throw new Error(
-                `Failed to prune volumes: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to prune volumes: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

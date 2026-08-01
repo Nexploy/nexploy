@@ -26,10 +26,7 @@ export function ScrollAreaWithShadow({
     if (orientation === 'horizontal') {
         return (
             <div className="relative min-w-0 overflow-hidden">
-                <div
-                    ref={ref}
-                    className={cn('scroll-fade-x overflow-x-auto', FADE_SIZE, className)}
-                >
+                <div ref={ref} className={cn('scroll-fade-x overflow-x-auto', FADE_SIZE, className)}>
                     {children}
                 </div>
             </div>
@@ -37,9 +34,7 @@ export function ScrollAreaWithShadow({
     }
 
     const fadeClassName =
-        orientation === 'both'
-            ? 'scroll-fade-xy'
-            : cn('scroll-fade', !bottomShadow && 'scroll-fade-b-0');
+        orientation === 'both' ? 'scroll-fade-xy' : cn('scroll-fade', !bottomShadow && 'scroll-fade-b-0');
 
     return (
         <div className="relative flex-1 overflow-hidden">

@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { restartContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -16,12 +20,7 @@ export class RestartContainerExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const containerId = nodeConfig.containerId;
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         const opts = { signal: abortSignal, environmentId } as KyDockerOptions;
 
         await logger.info(nodeId, `Restarting container: ${containerId}`);

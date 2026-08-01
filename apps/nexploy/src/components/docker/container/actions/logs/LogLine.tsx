@@ -24,16 +24,12 @@ export const LogLine = memo(
                         <span className="text-neutral-500">[{formatTimestamp(log.timestamp)}]</span>
                     </>
                 )}
-                <span className={log.stream === 'stderr' ? 'text-destructive' : 'text-green-400'}>
-                    [{log.stream}]
-                </span>
+                <span className={log.stream === 'stderr' ? 'text-destructive' : 'text-green-400'}>[{log.stream}]</span>
                 <span className="text-white">{log.message}</span>
             </div>
         );
     },
     (prevProps, nextProps) => {
-        return (
-            prevProps.log === nextProps.log && prevProps.showTimestamp === nextProps.showTimestamp
-        );
+        return prevProps.log === nextProps.log && prevProps.showTimestamp === nextProps.showTimestamp;
     },
 );

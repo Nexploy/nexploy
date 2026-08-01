@@ -23,9 +23,7 @@ export default async function RegistryPage() {
                         <Warehouse className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight break-all">
-                            {t('title')}
-                        </h1>
+                        <h1 className="text-3xl font-semibold tracking-tight break-all">{t('title')}</h1>
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>

@@ -2,32 +2,13 @@
 
 import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 import { useTranslations } from 'next-intl';
-import {
-    ArrowLeft,
-    Boxes,
-    ChevronRight,
-    MousePointerClick,
-    Search,
-    SearchX,
-    Wrench,
-    X,
-} from 'lucide-react';
+import { ArrowLeft, Boxes, ChevronRight, MousePointerClick, Search, SearchX, Wrench, X } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupButton,
-    InputGroupInput,
-} from '@workspace/ui/components/input-group';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@workspace/ui/components/input-group';
 import { useNodeRegistryStore } from '@/stores/useNodeRegistryStore';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { NodeItem } from '@/components/pipeline/nodes/add/NodeItem';
-import {
-    CATEGORY_BG,
-    CATEGORY_BG_MUTED,
-    CATEGORY_ICONS,
-    CATEGORY_TEXT,
-} from '@/components/pipeline/pipelineTheme';
+import { CATEGORY_BG, CATEGORY_BG_MUTED, CATEGORY_ICONS, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigDefaults } from '@/components/pipeline/nodeManifestRegistry';
@@ -112,14 +93,11 @@ export function NodeAddPanel() {
           })
         : [];
 
-    const groupedSearchResults = searchResults.reduce<Record<string, typeof definitions>>(
-        (acc, def) => {
-            if (!acc[def.category]) acc[def.category] = [];
-            acc[def.category]!.push(def);
-            return acc;
-        },
-        {},
-    );
+    const groupedSearchResults = searchResults.reduce<Record<string, typeof definitions>>((acc, def) => {
+        if (!acc[def.category]) acc[def.category] = [];
+        acc[def.category]!.push(def);
+        return acc;
+    }, {});
 
     const CategoryIcon = activeCategory ? (CATEGORY_ICONS[activeCategory] ?? Wrench) : Wrench;
     const categoryNodes = activeCategory ? (grouped[activeCategory] ?? []) : [];
@@ -208,31 +186,24 @@ export function NodeAddPanel() {
                                         <div className="bg-muted text-muted-foreground flex size-10 items-center justify-center rounded-xl">
                                             <SearchX className="size-4" />
                                         </div>
-                                        <p className="text-muted-foreground text-xs">
-                                            {t('searchNoResults')}
-                                        </p>
+                                        <p className="text-muted-foreground text-xs">{t('searchNoResults')}</p>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col gap-1.5">
-                                        {Object.entries(groupedSearchResults).map(
-                                            ([category, defs]) => (
-                                                <div
-                                                    key={category}
-                                                    className="flex flex-col gap-1.5"
-                                                >
-                                                    {defs.map((def) => (
-                                                        <NodeItem
-                                                            key={def.id}
-                                                            def={def}
-                                                            label={t(`nodes.${def.id}.name`)}
-                                                            description={descriptionFor(def.id)}
-                                                            onDragStart={onDragStart}
-                                                            onClick={() => onClickAdd(def.id)}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            ),
-                                        )}
+                                        {Object.entries(groupedSearchResults).map(([category, defs]) => (
+                                            <div key={category} className="flex flex-col gap-1.5">
+                                                {defs.map((def) => (
+                                                    <NodeItem
+                                                        key={def.id}
+                                                        def={def}
+                                                        label={t(`nodes.${def.id}.name`)}
+                                                        description={descriptionFor(def.id)}
+                                                        onDragStart={onDragStart}
+                                                        onClick={() => onClickAdd(def.id)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        ))}
                                     </div>
                                 )}
                             </>

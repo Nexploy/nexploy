@@ -56,11 +56,7 @@ export const useImagesStore = create<ImageState>((set, get) => ({
         const untagged: Image[] = [];
 
         get().images.forEach((image) => {
-            if (
-                image.repoTags &&
-                image.repoTags.length > 0 &&
-                !image.repoTags.includes('<none>:<none>')
-            ) {
+            if (image.repoTags && image.repoTags.length > 0 && !image.repoTags.includes('<none>:<none>')) {
                 image.repoTags.forEach((tag) => {
                     if (!tagged.has(tag)) {
                         tagged.set(tag, []);
@@ -137,11 +133,7 @@ export const useImagesStore = create<ImageState>((set, get) => ({
                     const imageName = data.image.repoTags?.find((t) => t !== '<none>:<none>');
                     if (imageName) {
                         toast.dismiss('downloadingImage');
-                        notifyDocker(
-                            'images',
-                            'success',
-                            clientT('toasts.imageAdded', { name: imageName }),
-                        );
+                        notifyDocker('images', 'success', clientT('toasts.imageAdded', { name: imageName }));
                     }
                     set({ lastUpdate: data.timestamp });
                 }),
@@ -166,11 +158,7 @@ export const useImagesStore = create<ImageState>((set, get) => ({
                     get().removeImage(data.imageId);
                     const imageName = data.oldState?.repoTags?.find((t) => t !== '<none>:<none>');
                     if (imageName) {
-                        notifyDocker(
-                            'images',
-                            'success',
-                            clientT('toasts.imageRemoved', { name: imageName }),
-                        );
+                        notifyDocker('images', 'success', clientT('toasts.imageRemoved', { name: imageName }));
                     }
                     set({ lastUpdate: data.timestamp });
                 }),

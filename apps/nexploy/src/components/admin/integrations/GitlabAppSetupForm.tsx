@@ -6,14 +6,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { saveGitLabProviderAction } from '@/actions/git/saveGitLabProvider.action';
@@ -71,9 +64,7 @@ export function GitlabAppSetupForm() {
                                     onCheckedChange={field.onChange}
                                 />
                             </FormControl>
-                            <FormLabel className="mt-0! cursor-pointer">
-                                {t('guide.gitlab.useCustomUrl')}
-                            </FormLabel>
+                            <FormLabel className="mt-0! cursor-pointer">{t('guide.gitlab.useCustomUrl')}</FormLabel>
                         </FormItem>
                     )}
                 />
@@ -86,11 +77,7 @@ export function GitlabAppSetupForm() {
                             <FormItem>
                                 <FormLabel>{t('guide.gitlab.customUrlLabel')}</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="url"
-                                        placeholder={t('guide.gitlab.customUrlPlaceholder')}
-                                        {...field}
-                                    />
+                                    <Input type="url" placeholder={t('guide.gitlab.customUrlPlaceholder')} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -105,11 +92,7 @@ export function GitlabAppSetupForm() {
                         <FormItem>
                             <FormLabel>{t('displayName')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="text"
-                                    placeholder={t('displayNamePlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="text" placeholder={t('displayNamePlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -122,11 +105,7 @@ export function GitlabAppSetupForm() {
                         <FormItem>
                             <FormLabel>{t('clientId')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="text"
-                                    placeholder={t('clientIdPlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="text" placeholder={t('clientIdPlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -139,11 +118,7 @@ export function GitlabAppSetupForm() {
                         <FormItem>
                             <FormLabel>{t('clientSecret')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="password"
-                                    placeholder={t('clientSecretPlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="password" placeholder={t('clientSecretPlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

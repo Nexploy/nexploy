@@ -50,10 +50,7 @@ export function usageToneClass(percent: number): string {
     return 'text-foreground';
 }
 
-export function sortContainersBy(
-    stats: ContainerStatsSample[],
-    metric: ContainerMetricKey,
-): ContainerStatsSample[] {
+export function sortContainersBy(stats: ContainerStatsSample[], metric: ContainerMetricKey): ContainerStatsSample[] {
     return [...stats].sort((a, b) => (b[metric] as number) - (a[metric] as number));
 }
 
@@ -82,10 +79,7 @@ export function buildContainerSeries(
     }));
 }
 
-export function buildMultiSeriesData(
-    series: ContainerSeries[],
-    metric: ContainerMetricKey,
-): MultiSeriesPoint[] {
+export function buildMultiSeriesData(series: ContainerSeries[], metric: ContainerMetricKey): MultiSeriesPoint[] {
     const length = series.reduce((max, entry) => Math.max(max, entry.points.length), 0);
     if (length === 0) return [];
 

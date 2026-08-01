@@ -5,13 +5,7 @@ import { useFormContext } from 'react-hook-form';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 import { useEffect } from 'react';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Switch } from '@workspace/ui/components/switch';
@@ -94,13 +88,9 @@ export function CreateReleaseConfig() {
                             <FormControl>
                                 <SelectTrigger>
                                     {isLoadingRepo ? (
-                                        <span className="text-muted-foreground">
-                                            {t('repoLoading')}
-                                        </span>
+                                        <span className="text-muted-foreground">{t('repoLoading')}</span>
                                     ) : isLoadingBranches ? (
-                                        <span className="text-muted-foreground">
-                                            {t('branchLoading')}
-                                        </span>
+                                        <span className="text-muted-foreground">{t('branchLoading')}</span>
                                     ) : (
                                         <SelectValue placeholder={t('branchSelect')} />
                                     )}
@@ -147,11 +137,7 @@ export function CreateReleaseConfig() {
                         <FormLabel>{t('releaseNotes')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Textarea
-                                    {...field}
-                                    placeholder={t('releaseNotesPlaceholder')}
-                                    rows={5}
-                                />
+                                <Textarea {...field} placeholder={t('releaseNotesPlaceholder')} rows={5} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />

@@ -23,10 +23,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
         size: 28,
         header: ({ table }) => (
             <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && 'indeterminate')
-                }
+                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                 aria-label="Select all"
             />
@@ -44,10 +41,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
     {
         accessorKey: 'name',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('name')}
                 <ArrowUpDown />
             </Button>
@@ -59,15 +53,8 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
             const volumeUsed = usageData?.RefCount;
 
             return (
-                <Link
-                    href={`/docker/volumes/${encodeURIComponent(name)}`}
-                    className="flex w-fit items-start gap-2"
-                >
-                    <Status
-                        className={'border-0 text-sm'}
-                        status={volumeUsed ? 'online' : 'offline'}
-                        variant="outline"
-                    >
+                <Link href={`/docker/volumes/${encodeURIComponent(name)}`} className="flex w-fit items-start gap-2">
+                    <Status className={'border-0 text-sm'} status={volumeUsed ? 'online' : 'offline'} variant="outline">
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <StatusIndicator />
@@ -86,10 +73,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
     {
         accessorKey: 'driver',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('driver')}
                 <ArrowUpDown />
             </Button>
@@ -110,19 +94,14 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
             const mountpoint = row.original.mountpoint ?? '';
 
             return (
-                <Badge variant="secondary">
-                    {mountpoint.length > 20 ? mountpoint.slice(0, 20) + '…' : mountpoint}
-                </Badge>
+                <Badge variant="secondary">{mountpoint.length > 20 ? mountpoint.slice(0, 20) + '…' : mountpoint}</Badge>
             );
         },
     },
     {
         accessorKey: 'createdAt',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('created')}
                 <ArrowUpDown />
             </Button>
@@ -137,10 +116,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
     {
         accessorKey: 'usageData',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('size')}
                 <ArrowUpDown />
             </Button>

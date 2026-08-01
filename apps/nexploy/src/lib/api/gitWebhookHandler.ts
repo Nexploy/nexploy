@@ -42,10 +42,7 @@ export async function handleGitWebhook(request: Request, provider: GitProviderTy
         const linked = authenticated.filter((repo) => repo.userId);
 
         if (linked.length === 0) {
-            return NextResponse.json(
-                { message: 'No Git account linked to this repository' },
-                { status: 409 },
-            );
+            return NextResponse.json({ message: 'No Git account linked to this repository' }, { status: 409 });
         }
 
         const results = await Promise.all(

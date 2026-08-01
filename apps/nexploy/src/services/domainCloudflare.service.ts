@@ -6,10 +6,7 @@ import {
 } from '@/services/cloudflare.service';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
-export async function provisionDomainDns(
-    domain: Domain,
-    host: string,
-): Promise<string | undefined> {
+export async function provisionDomainDns(domain: Domain, host: string): Promise<string | undefined> {
     if (!(domain.cloudflareCredentialId && domain.cloudflareZoneId && domain.cloudflareZoneName)) {
         return undefined;
     }
@@ -29,11 +26,7 @@ export async function provisionDomainDns(
     }
 }
 
-export async function syncDomainDns(
-    domain: Domain,
-    original: Domain,
-    host: string,
-): Promise<string | undefined> {
+export async function syncDomainDns(domain: Domain, original: Domain, host: string): Promise<string | undefined> {
     const credentialId = domain.cloudflareCredentialId ?? original.cloudflareCredentialId;
     if (!credentialId) {
         return domain.cloudflareDnsRecordId;
@@ -42,17 +35,12 @@ export async function syncDomainDns(
     const t = await getErrorTranslator();
     const wasCloudflare = !!original.cloudflareZoneId;
     const isCloudflare = !!domain.cloudflareZoneId;
-    const zoneChanged =
-        wasCloudflare && isCloudflare && original.cloudflareZoneId !== domain.cloudflareZoneId;
+    const zoneChanged = wasCloudflare && isCloudflare && original.cloudflareZoneId !== domain.cloudflareZoneId;
     const hostChanged = original.host !== host;
 
     if (wasCloudflare && !isCloudflare && original.cloudflareDnsRecordId) {
         try {
-            await deleteCloudflareDnsRecord(
-                credentialId,
-                original.cloudflareZoneId!,
-                original.cloudflareDnsRecordId,
-            );
+            await deleteCloudflareDnsRecord(credentialId, original.cloudflareZoneId!, original.cloudflareDnsRecordId);
         } catch (error) {
             console.error('Failed to delete Cloudflare DNS:', error);
         }
@@ -125,9 +113,7 @@ export async function syncDomainDns(
 }
 
 export async function removeDomainDns(domain: Domain): Promise<void> {
-    if (
-        !(domain.cloudflareCredentialId && domain.cloudflareZoneId && domain.cloudflareDnsRecordId)
-    ) {
+    if (!(domain.cloudflareCredentialId && domain.cloudflareZoneId && domain.cloudflareDnsRecordId)) {
         return;
     }
 

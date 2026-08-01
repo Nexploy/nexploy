@@ -156,10 +156,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                         <Activity />
                                     </div>
                                     {t('title', { name: container?.name ?? 'Unknown container' })}
-                                    <Status
-                                        className="rounded-none bg-transparent"
-                                        status={currentStatus.status}
-                                    >
+                                    <Status className="rounded-none bg-transparent" status={currentStatus.status}>
                                         <StatusIndicator />
                                         <StatusLabel className={currentStatus.text}>
                                             {tStatus(currentStatus.labelKey)}

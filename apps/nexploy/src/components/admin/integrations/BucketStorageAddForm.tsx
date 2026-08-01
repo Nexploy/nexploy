@@ -18,13 +18,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
@@ -187,11 +181,7 @@ export function BucketStorageAddForm() {
                         <FormItem>
                             <FormLabel>{t('secretAccessKeyLabel')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="password"
-                                    placeholder={t('secretAccessKeyPlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="password" placeholder={t('secretAccessKeyPlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

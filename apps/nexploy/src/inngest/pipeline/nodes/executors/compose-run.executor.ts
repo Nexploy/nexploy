@@ -8,10 +8,7 @@ import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { composeRunConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
-import {
-    requireComposeFileFromAncestor,
-    resolveComposeEnvVars,
-} from '@/inngest/pipeline/utils/composeContext';
+import { requireComposeFileFromAncestor, resolveComposeEnvVars } from '@/inngest/pipeline/utils/composeContext';
 
 export class ComposeRunExecutor implements INodeExecutor {
     readonly type = 'compose-run';
@@ -25,9 +22,7 @@ export class ComposeRunExecutor implements INodeExecutor {
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
         if (!workDir) {
-            throw new Error(
-                'No workDir found in input nodes — connect this node after a Clone Repository node',
-            );
+            throw new Error('No workDir found in input nodes — connect this node after a Clone Repository node');
         }
 
         const { composeFile, projectName } = requireComposeFileFromAncestor(ctx);
@@ -40,17 +35,9 @@ export class ComposeRunExecutor implements INodeExecutor {
         }
 
         const envVars = await resolveComposeEnvVars(ctx);
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
-        await logger.info(
-            nodeId,
-            `Running one-off compose command in "${service}"${command ? `: ${command}` : ''}`,
-        );
+        await logger.info(nodeId, `Running one-off compose command in "${service}"${command ? `: ${command}` : ''}`);
 
         try {
             const result = await dockerService.composeRun(
@@ -77,10 +64,7 @@ export class ComposeRunExecutor implements INodeExecutor {
             const message = error instanceof Error ? error.message : 'Unknown error';
 
             if (nodeConfig.continueOnError) {
-                await logger.warn(
-                    nodeId,
-                    `Compose run failed (continuing due to continueOnError): ${message}`,
-                );
+                await logger.warn(nodeId, `Compose run failed (continuing due to continueOnError): ${message}`);
                 return { output: { exitCode: 1, service, projectName, composeFile } };
             }
 

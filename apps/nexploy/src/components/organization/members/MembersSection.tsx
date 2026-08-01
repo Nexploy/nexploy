@@ -3,14 +3,7 @@
 import { useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { Mail } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import type {
@@ -72,10 +65,7 @@ function DataTable<TData>({
                                 >
                                     {header.isPlaceholder
                                         ? null
-                                        : flexRender(
-                                              header.column.columnDef.header,
-                                              header.getContext(),
-                                          )}
+                                        : flexRender(header.column.columnDef.header, header.getContext())}
                                 </TableHead>
                             ))}
                         </TableRow>
@@ -109,10 +99,7 @@ export function MembersSection({
     const tCommon = useTranslations('common');
     const { openAlertDialog } = useAlertConfirmationDialogStore();
 
-    useEffect(
-        () => initializeOrganizationMembersStore(organizationId, members, invitations),
-        [organizationId],
-    );
+    useEffect(() => initializeOrganizationMembersStore(organizationId, members, invitations), [organizationId]);
 
     const storeOrganizationId = useOrganizationMembersStore((s) => s.organizationId);
     const storeMembers = useOrganizationMembersStore((s) => s.members);
@@ -131,12 +118,9 @@ export function MembersSection({
         onSuccess: ({ input }) => removeMemberFromStore(input.memberIdOrEmail),
     });
 
-    const { execute: executeUpdateRole, isPending: isUpdatingRole } = useAction(
-        updateMemberRoleAction,
-        {
-            onSuccess: ({ input }) => updateMemberRoleInStore(input.memberId, input.role),
-        },
-    );
+    const { execute: executeUpdateRole, isPending: isUpdatingRole } = useAction(updateMemberRoleAction, {
+        onSuccess: ({ input }) => updateMemberRoleInStore(input.memberId, input.role),
+    });
 
     const { execute: executeCancel, isPending: isCancelling } = useAction(cancelInvitationAction, {
         onSuccess: ({ input }) => removeInvitationFromStore(input.invitationId),
@@ -214,11 +198,7 @@ export function MembersSection({
                         <Mail className="size-4" />
                         {t('invitations.pending')}
                     </h2>
-                    <DataTable
-                        data={visibleInvitations}
-                        columns={invitationsColumns}
-                        rowClassName="h-12"
-                    />
+                    <DataTable data={visibleInvitations} columns={invitationsColumns} rowClassName="h-12" />
                 </div>
             )}
         </div>

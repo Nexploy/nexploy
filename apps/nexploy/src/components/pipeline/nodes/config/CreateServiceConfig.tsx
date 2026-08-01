@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -128,12 +122,8 @@ export function CreateServiceConfig() {
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>{t('createServiceMode')}</SelectLabel>
-                                        <SelectItem value="replicated">
-                                            {t('createServiceModeReplicated')}
-                                        </SelectItem>
-                                        <SelectItem value="global">
-                                            {t('createServiceModeGlobal')}
-                                        </SelectItem>
+                                        <SelectItem value="replicated">{t('createServiceModeReplicated')}</SelectItem>
+                                        <SelectItem value="global">{t('createServiceModeGlobal')}</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
@@ -167,9 +157,7 @@ export function CreateServiceConfig() {
                         variant="outline"
                         size="sm"
                         className="h-7 text-xs"
-                        onClick={() =>
-                            appendPort({ publishedPort: '', targetPort: '', protocol: 'tcp' })
-                        }
+                        onClick={() => appendPort({ publishedPort: '', targetPort: '', protocol: 'tcp' })}
                     >
                         <Plus className="size-3" />
                         {tDocker('addPort')}
@@ -201,11 +189,7 @@ export function CreateServiceConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    type="number"
-                                                    placeholder={tDocker('hostPort')}
-                                                />
+                                                <Input {...field} type="number" placeholder={tDocker('hostPort')} />
                                             </FormControl>
                                             <FormMessage className="text-xs" />
                                         </FormItem>
@@ -234,10 +218,7 @@ export function CreateServiceConfig() {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <Select
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
-                                                >
+                                                <Select value={field.value} onValueChange={field.onChange}>
                                                     <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
@@ -370,12 +351,7 @@ export function CreateServiceConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={t(
-                                                        'createServiceNetworkPlaceholder',
-                                                    )}
-                                                />
+                                                <Input {...field} placeholder={t('createServiceNetworkPlaceholder')} />
                                             </FormControl>
                                             <FormMessage className="text-xs" />
                                         </FormItem>
@@ -420,9 +396,7 @@ export function CreateServiceConfig() {
                                             <FormControl>
                                                 <Input
                                                     {...field}
-                                                    placeholder={t(
-                                                        'createServiceConstraintPlaceholder',
-                                                    )}
+                                                    placeholder={t('createServiceConstraintPlaceholder')}
                                                     className="font-mono"
                                                 />
                                             </FormControl>

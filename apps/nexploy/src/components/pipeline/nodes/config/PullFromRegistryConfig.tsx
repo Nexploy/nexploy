@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -50,9 +44,7 @@ export function PullFromRegistryConfig() {
                             </FormControl>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value={DOCKER_HUB}>
-                                        {t('dockerHubLabel')}
-                                    </SelectItem>
+                                    <SelectItem value={DOCKER_HUB}>{t('dockerHubLabel')}</SelectItem>
                                 </SelectGroup>
                                 <SelectSeparator />
                                 <SelectGroup>

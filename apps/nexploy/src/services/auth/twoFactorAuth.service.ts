@@ -1,9 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/lib/auth/auth';
-import {
-    TypeTwoFactorAuthCodeSchema,
-    TypeTwoFactorAuthSchema,
-} from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
+import { TypeTwoFactorAuthCodeSchema, TypeTwoFactorAuthSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
 import { TOTP } from '@workspace/typescript-interface/auth/twoFactorAuth';
 import { headers } from 'next/headers';
 

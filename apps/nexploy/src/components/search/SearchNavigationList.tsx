@@ -66,19 +66,13 @@ export function SearchNavigationList() {
 
     return (
         <>
-            {homeItems.length > 0 && (
-                <CommandGroup heading={tNav('home')}>{homeItems.map(renderItem)}</CommandGroup>
-            )}
+            {homeItems.length > 0 && <CommandGroup heading={tNav('home')}>{homeItems.map(renderItem)}</CommandGroup>}
             {dockerItems.length > 0 && (
                 <CommandGroup heading={tNav('docker')}>{dockerItems.map(renderItem)}</CommandGroup>
             )}
             {showAccount && (
                 <CommandGroup heading={t('system')}>
-                    <CommandItem
-                        {...getItemProps(t('account'), () =>
-                            runCommand(() => router.push('/account')),
-                        )}
-                    >
+                    <CommandItem {...getItemProps(t('account'), () => runCommand(() => router.push('/account')))}>
                         <User className="text-muted-foreground shrink-0" />
                         <span className="text-sm font-medium">{t('account')}</span>
                     </CommandItem>

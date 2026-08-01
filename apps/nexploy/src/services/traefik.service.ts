@@ -29,9 +29,7 @@ export async function generateTraefikConfig(domains: TraefikDomainInput[]): Prom
         where: { id: { in: certIds } },
         select: { id: true, type: true, domain: true },
     });
-    const certMap = new Map(
-        certs.map((c) => [c.id, { type: c.type as 'LETS_ENCRYPT' | 'CUSTOM', domain: c.domain }]),
-    );
+    const certMap = new Map(certs.map((c) => [c.id, { type: c.type as 'LETS_ENCRYPT' | 'CUSTOM', domain: c.domain }]));
 
     const config: {
         http: {
@@ -77,11 +75,7 @@ export async function generateTraefikConfig(domains: TraefikDomainInput[]): Prom
             };
         }
 
-        if (
-            domain.internalPath &&
-            domain.internalPath !== '/' &&
-            domain.internalPath !== domain.path
-        ) {
+        if (domain.internalPath && domain.internalPath !== '/' && domain.internalPath !== domain.path) {
             const addPrefixMiddlewareName = key.replace(/^domain-/, 'addprefix-');
             middlewares.push(addPrefixMiddlewareName);
             config.http.middlewares[addPrefixMiddlewareName] = {
@@ -114,10 +108,7 @@ export async function generateTraefikConfig(domains: TraefikDomainInput[]): Prom
         config.http.routers[routerName] = router;
 
         if (isRemote && remoteHost) {
-            const portMappings = await getContainerPortMappings(
-                containerName,
-                domain.environmentId,
-            );
+            const portMappings = await getContainerPortMappings(containerName, domain.environmentId);
             const hostPort = portMappings[domain.containerPort];
 
             if (hostPort === undefined) {

@@ -14,20 +14,9 @@ export type ContainerStateEvents =
     | 'health_status'
     | 'rename';
 
-export type ContainerType =
-    | 'initial'
-    | 'added'
-    | 'updated'
-    | 'removed'
-    | 'heartbeat'
-    | 'state-change';
+export type ContainerType = 'initial' | 'added' | 'updated' | 'removed' | 'heartbeat' | 'state-change';
 
-export type Event =
-    | 'state-change'
-    | 'initial-state'
-    | 'container-added'
-    | 'container-removed'
-    | 'container-updated';
+export type Event = 'state-change' | 'initial-state' | 'container-added' | 'container-removed' | 'container-updated';
 
 export type ContainerState = 'created' | 'running' | 'restarting' | 'paused' | 'exited' | 'dead';
 

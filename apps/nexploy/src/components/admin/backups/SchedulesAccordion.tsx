@@ -3,7 +3,7 @@ import { CalendarClock } from 'lucide-react';
 import dayjs from 'dayjs';
 import { BackupSchedule } from 'generated/client';
 import { Badge } from '@workspace/ui/components/badge';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from '@workspace/ui/components/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
 import { DeleteScheduleButton } from './DeleteScheduleButton';
 
 const frequencyKeys = {
@@ -13,15 +13,7 @@ const frequencyKeys = {
     MONTHLY: 'frequencyMonthly',
 } as const;
 
-const DAY_OF_WEEK_KEYS = [
-    'sunday',
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-] as const;
+const DAY_OF_WEEK_KEYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 
 type TFunction = Awaited<ReturnType<typeof getTranslations<'admin'>>>;
 
@@ -80,9 +72,7 @@ export async function SchedulesAccordion({ volumeSchedules }: SchedulesAccordion
                                         className="bg-muted/50 flex items-center justify-between rounded-md border px-3 py-2"
                                     >
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-medium">
-                                                {schedule.bucket}
-                                            </span>
+                                            <span className="text-sm font-medium">{schedule.bucket}</span>
                                             <span className="text-muted-foreground text-xs">
                                                 {t(frequencyKeys[schedule.frequency])} —{' '}
                                                 {formatScheduleDetail(schedule, t)}
@@ -90,16 +80,11 @@ export async function SchedulesAccordion({ volumeSchedules }: SchedulesAccordion
                                             <span className="text-muted-foreground text-xs">
                                                 {t('lastRun')}:{' '}
                                                 {schedule.lastRunAt
-                                                    ? dayjs(schedule.lastRunAt).format(
-                                                          'DD/MM/YYYY HH:mm',
-                                                      )
+                                                    ? dayjs(schedule.lastRunAt).format('DD/MM/YYYY HH:mm')
                                                     : t('never')}
                                             </span>
                                             <span className="text-muted-foreground text-xs">
-                                                {t('nextRun')}:{' '}
-                                                {dayjs(schedule.nextRunAt).format(
-                                                    'DD/MM/YYYY HH:mm',
-                                                )}
+                                                {t('nextRun')}: {dayjs(schedule.nextRunAt).format('DD/MM/YYYY HH:mm')}
                                             </span>
                                         </div>
                                         <DeleteScheduleButton scheduleId={schedule.id} />

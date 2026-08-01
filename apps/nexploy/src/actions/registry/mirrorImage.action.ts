@@ -24,9 +24,7 @@ export const mirrorImageAction = authActionServer
             const targetName = `${registry.url}/${sourceBase}`;
 
             const sourceAuth =
-                sourceUsername && sourcePassword
-                    ? { username: sourceUsername, password: sourcePassword }
-                    : undefined;
+                sourceUsername && sourcePassword ? { username: sourceUsername, password: sourcePassword } : undefined;
 
             await kyDocker
                 .post('images/mirror', {

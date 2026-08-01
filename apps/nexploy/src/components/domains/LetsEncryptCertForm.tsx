@@ -102,10 +102,7 @@ export function LetsEncryptCertForm({ onClose }: LetsEncryptCertFormProps) {
                         <FormItem className="flex flex-col gap-3">
                             <div className={'flex items-center gap-3'}>
                                 <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
+                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                                 </FormControl>
                                 <FormLabel className="cursor-pointer">
                                     {t('agreeToTos.prefix')}{' '}

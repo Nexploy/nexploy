@@ -10,7 +10,7 @@ import { useImagesStore } from '@/stores/docker/useImagesStore';
 import { useVolumesStore } from '@/stores/docker/useVolumesStore';
 import { useNetworksStore } from '@/stores/docker/useNetworksStore';
 import { useSearchItemSelect } from '@/hooks/search/useSearchItemSelect';
-import { filterContainers, filterImages, filterNetworks, filterVolumes, } from '@/hooks/search/searchFilters';
+import { filterContainers, filterImages, filterNetworks, filterVolumes } from '@/hooks/search/searchFilters';
 import { useAIPanelStore } from '@/stores/useAIPanelStore.ts';
 
 export function AskAiGroup() {

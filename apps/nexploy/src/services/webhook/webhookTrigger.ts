@@ -1,12 +1,5 @@
-import {
-    MERGE_REQUEST_ACTIONS,
-    WEBHOOK_TRIGGER_EVENTS,
-} from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import {
-    MergeRequestAction,
-    WebhookEventType,
-    WebhookTrigger,
-} from '@workspace/typescript-interface/webhook';
+import { MERGE_REQUEST_ACTIONS, WEBHOOK_TRIGGER_EVENTS } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { MergeRequestAction, WebhookEventType, WebhookTrigger } from '@workspace/typescript-interface/webhook';
 
 type TriggerEvent = (typeof WEBHOOK_TRIGGER_EVENTS)[number];
 
@@ -20,11 +13,7 @@ export interface WebhookCloneFilters {
     tagFilter?: string;
 }
 
-export type WebhookSkipReason =
-    | 'event-filter'
-    | 'merge-request-action'
-    | 'tag-filter'
-    | 'branch-filter';
+export type WebhookSkipReason = 'event-filter' | 'merge-request-action' | 'tag-filter' | 'branch-filter';
 
 export interface WebhookTriggerMatch {
     matched: boolean;
@@ -53,9 +42,7 @@ function readTriggerEvents(filters: WebhookCloneFilters): WebhookEventType[] {
 }
 
 function readMergeRequestActions(filters: WebhookCloneFilters): MergeRequestAction[] {
-    const actions = filters.mergeRequestActions?.filter((action) =>
-        MERGE_REQUEST_ACTIONS.includes(action),
-    );
+    const actions = filters.mergeRequestActions?.filter((action) => MERGE_REQUEST_ACTIONS.includes(action));
     return actions?.length ? actions : DEFAULT_MERGE_REQUEST_ACTIONS;
 }
 

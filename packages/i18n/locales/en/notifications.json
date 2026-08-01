@@ -1,11 +1,11 @@
 {
-    "success": "Success",
-    "error": "Error",
-    "warning": "Warning",
-    "info": "Info",
-    "saved": "Changes saved",
-    "deleted": "Successfully deleted",
-    "created": "Successfully created",
-    "updated": "Successfully updated",
-    "reconnecting": "Reconnecting..."
+  "success": "Success",
+  "error": "Error",
+  "warning": "Warning",
+  "info": "Info",
+  "saved": "Changes saved",
+  "deleted": "Successfully deleted",
+  "created": "Successfully created",
+  "updated": "Successfully updated",
+  "reconnecting": "Reconnecting..."
 }

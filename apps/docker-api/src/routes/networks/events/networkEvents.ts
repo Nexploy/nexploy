@@ -17,8 +17,7 @@ const app = new Hono();
 app.get('/stream/:networkId', (c) => {
     const networkId = c.req.param('networkId');
 
-    const environmentId =
-        getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
+    const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
 
     return streamSSE(c, async (stream) => {
         const clientId = c.req.header('x-client-id');

@@ -5,12 +5,7 @@ import type {
     ParsedBindMount,
     VolumeTransformationResult,
 } from '@workspace/typescript-interface/docker/docker.compose.volume';
-import {
-    getBindMountsByService,
-    isBindMount,
-    parseComposeBindMounts,
-    parseVolumeSpec,
-} from './composeVolumeParser';
+import { getBindMountsByService, isBindMount, parseComposeBindMounts, parseVolumeSpec } from './composeVolumeParser';
 import { logger } from '../logger';
 
 export function transformBindMountsForRemote(
@@ -55,11 +50,7 @@ export function transformBindMountsForRemote(
         }
     }
 
-    const modifiedComposeContent = applyTransformations(
-        composeContent,
-        transformations,
-        generatedDockerfiles,
-    );
+    const modifiedComposeContent = applyTransformations(composeContent, transformations, generatedDockerfiles);
 
     return {
         transformations,
@@ -70,10 +61,7 @@ export function transformBindMountsForRemote(
     };
 }
 
-function createTransformation(
-    mount: ParsedBindMount,
-    projectName: string,
-): BindMountTransformation {
+function createTransformation(mount: ParsedBindMount, projectName: string): BindMountTransformation {
     if (!mount.exists) {
         return {
             serviceName: mount.serviceName,
@@ -100,11 +88,7 @@ function createTransformation(
     };
 }
 
-function generateVolumeName(
-    projectName: string,
-    serviceName: string,
-    containerPath: string,
-): string {
+function generateVolumeName(projectName: string, serviceName: string, containerPath: string): string {
     const pathPart = containerPath
         .replace(/^\//, '')
         .replace(/\//g, '_')

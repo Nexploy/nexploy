@@ -52,9 +52,7 @@ export function ToolCallRow({ tool }: ToolCallRowProps) {
                 <Icon className="h-2.5 w-2.5" />
             </div>
 
-            <span className="text-foreground/70 flex-1 truncate font-mono text-[11px]">
-                {tool.toolName}
-            </span>
+            <span className="text-foreground/70 flex-1 truncate font-mono text-[11px]">{tool.toolName}</span>
 
             <div
                 className={cn(

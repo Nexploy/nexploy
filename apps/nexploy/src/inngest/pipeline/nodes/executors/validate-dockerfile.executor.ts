@@ -20,9 +20,7 @@ export class ValidateDockerfileExecutor implements INodeExecutor {
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
         if (!workDir) {
-            throw new Error(
-                'No workDir found in input nodes — connect this node after a Clone Repository node',
-            );
+            throw new Error('No workDir found in input nodes — connect this node after a Clone Repository node');
         }
 
         const dockerfilePath = nodeConfig.dockerfilePath;

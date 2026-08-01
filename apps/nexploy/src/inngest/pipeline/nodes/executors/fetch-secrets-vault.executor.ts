@@ -1,6 +1,10 @@
 import ky from 'ky';
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { fetchSecretsVaultConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
@@ -16,10 +20,7 @@ export class FetchSecretsVaultExecutor implements INodeExecutor {
 
         const { endpoint, token, secretPath, kvVersion, namespace } = nodeConfig;
 
-        await logger.info(
-            nodeId,
-            `Fetching secrets from HashiCorp Vault (KV ${kvVersion}) at path: ${secretPath}`,
-        );
+        await logger.info(nodeId, `Fetching secrets from HashiCorp Vault (KV ${kvVersion}) at path: ${secretPath}`);
 
         const nsPrefix = namespace ? `${namespace}/` : '';
         const base = `${endpoint.replace(/\/$/, '')}/v1/${nsPrefix}`;
@@ -51,20 +52,12 @@ export class FetchSecretsVaultExecutor implements INodeExecutor {
         await logger.info(nodeId, `Fetched ${count} secret(s) from Vault`);
 
         const ancestorEnvs =
-            getFromClosestAncestor<{ key: string; value: string }[]>(
-                allOutputs,
-                edges,
-                nodeId,
-                'envVariables',
-            ) ?? [];
+            getFromClosestAncestor<{ key: string; value: string }[]>(allOutputs, edges, nodeId, 'envVariables') ?? [];
         const ancestorMap = Object.fromEntries(ancestorEnvs.map((e) => [e.key, e.value]));
         const merged = { ...ancestorMap, ...secrets };
         const envVariables = Object.entries(merged).map(([key, value]) => ({ key, value }));
 
-        await logger.info(
-            nodeId,
-            `Injecting ${envVariables.length} secret(s) as environment variables`,
-        );
+        await logger.info(nodeId, `Injecting ${envVariables.length} secret(s) as environment variables`);
         return { output: { envVariables, secretCount: count } };
     }
 }

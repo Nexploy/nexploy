@@ -56,8 +56,7 @@ export function BucketStorageInstanceCard({
                     <Status status={statusMap['connected'].status}>
                         <StatusIndicator />
                         <StatusLabel>
-                            {t('configured')} — {endpoint ? new URL(endpoint).host : 'AWS S3'} ·{' '}
-                            {region}
+                            {t('configured')} — {endpoint ? new URL(endpoint).host : 'AWS S3'} · {region}
                         </StatusLabel>
                     </Status>
                 </div>

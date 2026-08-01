@@ -5,9 +5,7 @@ import { TableCell, TableRow } from '@workspace/ui/components/table';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import type { SwarmTask, SwarmTaskState } from '@workspace/typescript-interface/docker/swarm';
 
-function taskStateToStatus(
-    state: SwarmTaskState,
-): 'online' | 'offline' | 'maintenance' | 'degraded' | 'waiting' {
+function taskStateToStatus(state: SwarmTaskState): 'online' | 'offline' | 'maintenance' | 'degraded' | 'waiting' {
     switch (state) {
         case 'running':
             return 'online';
@@ -32,11 +30,7 @@ export function TaskRow({ task }: { task: SwarmTask }) {
                 {task.slot !== undefined ? `#${task.slot}` : task.id.slice(0, 12)}
             </TableCell>
             <TableCell>
-                <Status
-                    className="border-0 text-sm"
-                    status={taskStateToStatus(task.state)}
-                    variant="outline"
-                >
+                <Status className="border-0 text-sm" status={taskStateToStatus(task.state)} variant="outline">
                     <StatusIndicator />
                     <StatusLabel className="text-sm capitalize">{task.state}</StatusLabel>
                 </Status>
@@ -48,13 +42,9 @@ export function TaskRow({ task }: { task: SwarmTask }) {
             </TableCell>
             <TableCell className="text-sm">{task.nodeHostname ?? '—'}</TableCell>
             <TableCell className="font-mono text-xs">
-                {task.containerStatus?.containerId
-                    ? task.containerStatus.containerId.slice(0, 12)
-                    : '—'}
+                {task.containerStatus?.containerId ? task.containerStatus.containerId.slice(0, 12) : '—'}
             </TableCell>
-            <TableCell className="max-w-[200px] truncate text-xs text-red-500">
-                {task.error ?? '—'}
-            </TableCell>
+            <TableCell className="max-w-[200px] truncate text-xs text-red-500">{task.error ?? '—'}</TableCell>
         </TableRow>
     );
 }

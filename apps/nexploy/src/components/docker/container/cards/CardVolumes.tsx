@@ -17,9 +17,7 @@ export function CardVolumes() {
 
     const { openDialog } = useConfirmationDialogStore();
     const { volumeChanges } = useContainerChangesStore();
-    const isSwarmContainer = useContainerStore(
-        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
-    );
+    const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
     const t = useTranslations('docker.containerVolumes');
 
     const handleOpenDialog = () => {
@@ -46,11 +44,7 @@ export function CardVolumes() {
                 <div className="flex items-center justify-between gap-3">
                     <CardHeaderWithIcon as={'div'} icon={HardDrive} title={t('title')} />
                     {!isSwarmContainer && (
-                        <Button
-                            className="size-9 md:size-fit"
-                            icon={Plus}
-                            onClick={handleOpenDialog}
-                        >
+                        <Button className="size-9 md:size-fit" icon={Plus} onClick={handleOpenDialog}>
                             <span className="hidden md:flex">{t('addVolume')}</span>
                         </Button>
                     )}
@@ -62,10 +56,7 @@ export function CardVolumes() {
                         {t('noVolumes')}
                     </div>
                 ) : (
-                    <ScrollAreaWithShadow
-                        bottomShadow
-                        className="h-70 overflow-hidden px-6"
-                    >
+                    <ScrollAreaWithShadow bottomShadow className="h-70 overflow-hidden px-6">
                         <div className="space-y-3">
                             {container?.mounts.map((mount, idx) => (
                                 <VolumeItem key={idx} mount={mount} />

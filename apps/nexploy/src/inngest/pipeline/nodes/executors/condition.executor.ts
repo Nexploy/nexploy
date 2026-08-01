@@ -1,4 +1,8 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { findClosestEnabledNodes } from '@/helpers/pipeline.helpers';
 import { conditionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -7,9 +11,7 @@ export class ConditionExecutor implements INodeExecutor {
     readonly type = 'condition';
     readonly configSchema = conditionConfigSchema;
 
-    async execute(
-        ctx: NodeExecutionContext<z.infer<typeof conditionConfigSchema>>,
-    ): Promise<NodeExecutionResult> {
+    async execute(ctx: NodeExecutionContext<z.infer<typeof conditionConfigSchema>>): Promise<NodeExecutionResult> {
         const { logger, nodeId, edges, nodes, allOutputs, nodeConfig } = ctx;
 
         const enabledParents = findClosestEnabledNodes(nodeId, nodes, edges);

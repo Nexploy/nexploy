@@ -95,14 +95,11 @@ export const byActiveOrganization: OrgResolver = (_input, _bindArgsClientInputs,
 export const byRepositoryId: OrgResolver = (input) =>
     resolveOrganizationIdForRepository((input as { repositoryId: string }).repositoryId);
 
-export const byBuildId: OrgResolver = (input) =>
-    resolveOrganizationIdForBuild((input as { buildId: string }).buildId);
+export const byBuildId: OrgResolver = (input) => resolveOrganizationIdForBuild((input as { buildId: string }).buildId);
 
-export const byStageId: OrgResolver = (input) =>
-    resolveOrganizationIdForStage((input as { stageId: string }).stageId);
+export const byStageId: OrgResolver = (input) => resolveOrganizationIdForStage((input as { stageId: string }).stageId);
 
-export const byStageEntityId: OrgResolver = (input) =>
-    resolveOrganizationIdForStage((input as { id: string }).id);
+export const byStageEntityId: OrgResolver = (input) => resolveOrganizationIdForStage((input as { id: string }).id);
 
 export const byBoundRepositoryId: OrgResolver = (_input, bindArgsClientInputs) =>
     resolveOrganizationIdForRepository(bindArgsClientInputs?.[0] as string);

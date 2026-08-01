@@ -33,11 +33,7 @@ export function StageSelect({ repositoryId }: StageSelectProps) {
     return (
         <div className="flex items-center gap-1">
             <ButtonGroup>
-                <Select
-                    value={stageId ?? ''}
-                    onValueChange={setStageId}
-                    disabled={stages.length === 0}
-                >
+                <Select value={stageId ?? ''} onValueChange={setStageId} disabled={stages.length === 0}>
                     <SelectTrigger>
                         <SelectValue placeholder={t('selectStage')} />
                     </SelectTrigger>
@@ -46,16 +42,14 @@ export function StageSelect({ repositoryId }: StageSelectProps) {
                             <SelectLabel>{t('stages')}</SelectLabel>
                             {stages.map((stage) => {
                                 const environmentName = stage.environmentId
-                                    ? (environments.find((env) => env.id === stage.environmentId)
-                                          ?.name ?? stage.environmentId)
+                                    ? (environments.find((env) => env.id === stage.environmentId)?.name ??
+                                      stage.environmentId)
                                     : t('environmentNotSet');
                                 return (
                                     <SelectItem key={stage.id} value={stage.id}>
                                         <div className="flex items-center gap-1">
                                             <span>{stage.name}</span>
-                                            <span className={'text-muted-foreground text-xs'}>
-                                                ({environmentName})
-                                            </span>
+                                            <span className={'text-muted-foreground text-xs'}>({environmentName})</span>
                                         </div>
                                     </SelectItem>
                                 );

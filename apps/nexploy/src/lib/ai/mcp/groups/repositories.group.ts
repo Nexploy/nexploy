@@ -17,19 +17,8 @@ import {
     getRepositorieWithEnv,
     updateEnvVariables,
 } from '@/services/repository.service';
-import {
-    cancelBuildRepository,
-    removeBuild,
-    startBuildRepository,
-} from '@/services/repository/build.service';
-import {
-    fail,
-    guardBuild,
-    guardDestructiveRepository,
-    guardOrganization,
-    guardRepository,
-    ok,
-} from '../helpers';
+import { cancelBuildRepository, removeBuild, startBuildRepository } from '@/services/repository/build.service';
+import { fail, guardBuild, guardDestructiveRepository, guardOrganization, guardRepository, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
 import { resolveOrganizationIdForBuild } from '@/lib/auth/resolveOrgContext';
 
@@ -42,23 +31,13 @@ export const repositoriesGroup: ToolGroup = {
         server.registerTool(
             'listRepositories',
             {
-                description:
-                    'List all Nexploy repositories with their latest build/deployment status.',
+                description: 'List all Nexploy repositories with their latest build/deployment status.',
             },
             async () => {
-                const g = await guardOrganization(
-                    ctx,
-                    'repository',
-                    'read',
-                    ctx.organizationId ?? null,
-                );
+                const g = await guardOrganization(ctx, 'repository', 'read', ctx.organizationId ?? null);
                 if (g) return g;
                 try {
-                    const repos = await getRepositories(
-                        ctx.userId,
-                        ctx.role === 'admin',
-                        ctx.organizationId,
-                    );
+                    const repos = await getRepositories(ctx.userId, ctx.role === 'admin', ctx.organizationId);
                     const data = repos.map((repo) => ({
                         id: repo.id,
                         name: repo.name,
@@ -192,9 +171,7 @@ export const repositoriesGroup: ToolGroup = {
                         creates,
                         deleteIds: [],
                     });
-                    return ok(
-                        `Set ${vars.length} variable(s) (${creates.length} created, ${updates.length} updated)`,
-                    );
+                    return ok(`Set ${vars.length} variable(s) (${creates.length} created, ${updates.length} updated)`);
                 } catch (e: any) {
                     return fail(e.message);
                 }
@@ -242,8 +219,7 @@ export const repositoriesGroup: ToolGroup = {
         server.registerTool(
             'deleteRepository',
             {
-                description:
-                    'Delete a repository. confirmName must exactly match the repository name.',
+                description: 'Delete a repository. confirmName must exactly match the repository name.',
                 inputSchema: deleteRepositorySchema.shape,
             },
             async (params) => {

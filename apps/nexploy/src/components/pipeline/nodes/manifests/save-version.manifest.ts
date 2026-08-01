@@ -24,6 +24,11 @@ export const saveVersionManifest: NodeManifest = {
     },
     configPanel: SaveVersionConfig,
     inputFields: [
-        { key: 'versionNumber', labelKey: 'pipeline.inputs.versionNumber', descriptionKey: 'pipeline.inputs.desc_versionNumber', type: 'input' },
+        {
+            key: 'versionNumber',
+            labelKey: 'pipeline.inputs.versionNumber',
+            descriptionKey: 'pipeline.inputs.desc_versionNumber',
+            type: 'input',
+        },
     ],
 };

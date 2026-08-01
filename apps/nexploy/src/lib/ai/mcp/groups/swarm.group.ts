@@ -100,7 +100,11 @@ export const swarmGroup: ToolGroup = {
             {
                 description: 'Leave the Docker Swarm.',
                 inputSchema: z.object({
-                    force: z.boolean().optional().default(false).describe('Force leave even if this is the last manager'),
+                    force: z
+                        .boolean()
+                        .optional()
+                        .default(false)
+                        .describe('Force leave even if this is the last manager'),
                 }).shape,
             },
             async ({ force }) => {

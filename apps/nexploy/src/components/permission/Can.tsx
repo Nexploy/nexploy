@@ -18,10 +18,6 @@ type CanProps = {
 export function Can({ children, fallback = null, condition = true, ...props }: CanProps) {
     const { can } = usePermissions();
     const allowed =
-        condition &&
-        can(
-            props.resource as PermissionResource,
-            props.action as PermissionActions[PermissionResource],
-        );
+        condition && can(props.resource as PermissionResource, props.action as PermissionActions[PermissionResource]);
     return allowed ? <>{children}</> : <>{fallback}</>;
 }

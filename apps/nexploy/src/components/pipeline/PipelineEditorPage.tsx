@@ -13,12 +13,7 @@ interface PipelineEditorPageProps {
     initialHasMore: boolean;
 }
 
-export function PipelineEditorPage({
-    stageId,
-    initialGraph,
-    initialBuilds,
-    initialHasMore,
-}: PipelineEditorPageProps) {
+export function PipelineEditorPage({ stageId, initialGraph, initialBuilds, initialHasMore }: PipelineEditorPageProps) {
     return (
         <SSEProvider connections={['swarm']}>
             <ReactFlowProvider>

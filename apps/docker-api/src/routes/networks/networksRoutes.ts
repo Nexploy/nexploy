@@ -42,12 +42,8 @@ app.post(
             ...rest
         } = c.req.valid('json');
 
-        const options = rawOptions.length
-            ? Object.fromEntries(rawOptions.map((o) => [o.key, o.value]))
-            : undefined;
-        const labels = rawLabels.length
-            ? Object.fromEntries(rawLabels.map((l) => [l.key, l.value]))
-            : undefined;
+        const options = rawOptions.length ? Object.fromEntries(rawOptions.map((o) => [o.key, o.value])) : undefined;
+        const labels = rawLabels.length ? Object.fromEntries(rawLabels.map((l) => [l.key, l.value])) : undefined;
         const configFrom = rawConfigFrom?.network ? { Network: rawConfigFrom.network } : undefined;
 
         const operatorFields = rest.configOnly

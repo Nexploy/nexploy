@@ -7,21 +7,14 @@ export function getComposeProjectName(repositoryId: string): string {
     return `nexploy-${repositoryId}`;
 }
 
-export async function resolveComposeEnvVars(
-    ctx: NodeExecutionContext<unknown>,
-): Promise<Record<string, string>> {
+export async function resolveComposeEnvVars(ctx: NodeExecutionContext<unknown>): Promise<Record<string, string>> {
     const { buildConfig, allOutputs, edges, nodeId } = ctx;
 
     const repoEnvs = buildConfig.stageId ? await getAllEnvsBuild(buildConfig.stageId) : [];
     const repoEnvMap = Object.fromEntries(repoEnvs.map((e) => [e.key, e.value]));
 
     const ancestorEnvVarsArray =
-        getFromClosestAncestor<{ key: string; value: string }[]>(
-            allOutputs,
-            edges,
-            nodeId,
-            'envVariables',
-        ) ?? [];
+        getFromClosestAncestor<{ key: string; value: string }[]>(allOutputs, edges, nodeId, 'envVariables') ?? [];
     const ancestorEnvMap = Object.fromEntries(ancestorEnvVarsArray.map((e) => [e.key, e.value]));
 
     return { ...repoEnvMap, ...ancestorEnvMap };
@@ -52,9 +45,7 @@ export function requireComposeFileFromAncestor(ctx: NodeExecutionContext<unknown
     const composeFile = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'composeFile');
 
     if (!composeFile) {
-        throw new Error(
-            'No composeFile found in input nodes — connect this node after a Compose Build node',
-        );
+        throw new Error('No composeFile found in input nodes — connect this node after a Compose Build node');
     }
 
     const projectName =

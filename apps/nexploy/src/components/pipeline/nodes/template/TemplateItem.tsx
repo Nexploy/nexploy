@@ -2,12 +2,7 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
 import { PipelineTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
 import { FileCode2, Plus } from 'lucide-react';
-import {
-    NODE_BG_MUTED,
-    NODE_ICONS,
-    NODE_TEXT,
-    TEMPLATE_ICONS,
-} from '@/components/pipeline/pipelineTheme';
+import { NODE_BG_MUTED, NODE_ICONS, NODE_TEXT, TEMPLATE_ICONS } from '@/components/pipeline/pipelineTheme';
 
 export function TemplateItem({
     template,
@@ -68,9 +63,7 @@ export function TemplateItem({
                             >
                                 <NodeIcon className="size-3" strokeWidth={1.5} />
                             </div>
-                            {i < template.nodes.length - 1 && (
-                                <div className="bg-border h-px w-3" />
-                            )}
+                            {i < template.nodes.length - 1 && <div className="bg-border h-px w-3" />}
                         </div>
                     );
                 })}

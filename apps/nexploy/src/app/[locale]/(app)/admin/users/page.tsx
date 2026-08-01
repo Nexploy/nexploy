@@ -25,12 +25,8 @@ export default async function UsersPage() {
                             <Users className="text-primary size-7" />
                         </div>
                         <div className="mt-3.5 flex flex-col">
-                            <h1 className="text-3xl font-semibold tracking-tight break-all">
-                                {t('users')}
-                            </h1>
-                            <p className="text-muted-foreground text-sm">
-                                {t('manageUsersDescription')}
-                            </p>
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">{t('users')}</h1>
+                            <p className="text-muted-foreground text-sm">{t('manageUsersDescription')}</p>
                         </div>
                     </div>
                     {canCreateUser && <AddUserButton />}

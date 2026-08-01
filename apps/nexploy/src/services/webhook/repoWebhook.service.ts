@@ -57,12 +57,7 @@ export async function setupRepositoryWebhook(
             gitAccountId: repo.gitAccountId,
             requestedUserId: tokenOwnerId,
         });
-        const token = await getValidToken(
-            oldToken,
-            repo.gitProvider,
-            tokenOwnerId,
-            repo.gitAccountId,
-        );
+        const token = await getValidToken(oldToken, repo.gitProvider, tokenOwnerId, repo.gitAccountId);
 
         const webhookId = await adapter.createWebhook({
             token,
@@ -104,12 +99,7 @@ export async function teardownRepositoryWebhook(repositoryId: string): Promise<v
                     gitAccountId: repo.gitAccountId,
                     requestedUserId: tokenOwnerId,
                 });
-                const token = await getValidToken(
-                    oldToken,
-                    repo.gitProvider,
-                    tokenOwnerId,
-                    repo.gitAccountId,
-                );
+                const token = await getValidToken(oldToken, repo.gitProvider, tokenOwnerId, repo.gitAccountId);
 
                 await getGitAdapter(repo.gitProvider).deleteWebhook({
                     token,

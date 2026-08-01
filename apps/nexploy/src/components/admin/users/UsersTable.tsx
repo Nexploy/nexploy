@@ -11,14 +11,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { useState } from 'react';
 import { getColumnsUsers, UserRow } from '@/components/admin/users/ColumnsUsers';
 import { useTranslations } from 'next-intl';
@@ -84,8 +77,7 @@ export function UsersTable({ users, currentUserId, canManageUsers }: UsersTableP
 
     const { execute: executeBan, isPending: isBanning } = useAction(banUser, {
         onSuccess: ({ data }) => {
-            if (data)
-                toast.success(data === 'ban' ? t('userBannedSuccess') : t('userUnbannedSuccess'));
+            if (data) toast.success(data === 'ban' ? t('userBannedSuccess') : t('userUnbannedSuccess'));
         },
     });
 
@@ -112,8 +104,7 @@ export function UsersTable({ users, currentUserId, canManageUsers }: UsersTableP
                 : t('confirmBanUser', { name: user.name }),
             cancelLabel: t('cancel'),
             actionLabel: isBanned ? t('unbanUser') : t('banUser'),
-            onAction: async () =>
-                executeBan({ userId: user.id, action: isBanned ? 'unban' : 'ban' }),
+            onAction: async () => executeBan({ userId: user.id, action: isBanned ? 'unban' : 'ban' }),
         });
     };
 
@@ -173,10 +164,7 @@ export function UsersTable({ users, currentUserId, canManageUsers }: UsersTableP
                                     <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(
-                                                  header.column.columnDef.header,
-                                                  header.getContext(),
-                                              )}
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -195,35 +183,22 @@ export function UsersTable({ users, currentUserId, canManageUsers }: UsersTableP
                             ))}
                         {!isLoading && isEmpty ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
                                     {t('noUsers')}
                                 </TableCell>
                             </TableRow>
                         ) : !isLoading && table.getRowModel().rows.length === 0 ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
                                     {t('noUsersMatchSearch')}
                                 </TableCell>
                             </TableRow>
                         ) : (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    className="h-12"
-                                    data-state={row.getIsSelected() && 'selected'}
-                                >
+                                <TableRow key={row.id} className="h-12" data-state={row.getIsSelected() && 'selected'}>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>

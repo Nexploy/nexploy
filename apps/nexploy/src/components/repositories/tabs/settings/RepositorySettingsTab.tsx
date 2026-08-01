@@ -34,10 +34,7 @@ export async function RepositorySettingsTab({ repositoryId }: RepositorySettings
                 currentGitAccountId={repository.gitAccountId}
                 isOwner={isOwner}
             />
-            <MoveToOrganizationSection
-                repositoryId={repository.id}
-                currentOrganizationId={repository.organizationId}
-            />
+            <MoveToOrganizationSection repositoryId={repository.id} currentOrganizationId={repository.organizationId} />
             <Card className="border-destructive">
                 <CardHeaderWithIcon
                     isDestructive
@@ -47,10 +44,7 @@ export async function RepositorySettingsTab({ repositoryId }: RepositorySettings
                 />
                 <CardContent className="flex flex-col gap-4">
                     <ClearCacheButton repositoryId={repository.id} cacheSize={cacheSize} />
-                    <DeleteRepositoryButton
-                        repositoryId={repository.id}
-                        repositoryName={repository.name}
-                    />
+                    <DeleteRepositoryButton repositoryId={repository.id} repositoryName={repository.name} />
                 </CardContent>
             </Card>
         </div>

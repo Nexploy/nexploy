@@ -1,14 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
@@ -69,9 +62,7 @@ export function CreateOrganizationForm() {
                 />
 
                 {form.formState.errors.root?.message && (
-                    <span className={'text-destructive mb-4 flex text-sm'}>
-                        {form.formState.errors.root?.message}
-                    </span>
+                    <span className={'text-destructive mb-4 flex text-sm'}>{form.formState.errors.root?.message}</span>
                 )}
 
                 <div className="flex justify-end gap-2 pt-4">

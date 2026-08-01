@@ -15,14 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { TlsCertificateField } from './TlsCertificateField';
 import { updateEnvironmentAction } from '@/actions/environment/updateEnvironment.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
@@ -143,9 +136,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>{t('connectionType')}</SelectLabel>
-                                            <SelectItem value="UNIX_SOCKET">
-                                                {t('unixSocket')}
-                                            </SelectItem>
+                                            <SelectItem value="UNIX_SOCKET">{t('unixSocket')}</SelectItem>
                                             <SelectItem value="TCP">{t('tcp')}</SelectItem>
                                             <SelectItem value="TCP_TLS">{t('tcpTls')}</SelectItem>
                                         </SelectGroup>
@@ -171,9 +162,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                         disabled={form.formState.isSubmitting}
                                     />
                                 </FormControl>
-                                <p className="text-muted-foreground text-xs">
-                                    {t('socketPathDescription')}
-                                </p>
+                                <p className="text-muted-foreground text-xs">{t('socketPathDescription')}</p>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -224,9 +213,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                                 type="number"
                                                 placeholder={t('portPlaceholder')}
                                                 {...field}
-                                                onChange={(e) =>
-                                                    field.onChange(e.target.valueAsNumber)
-                                                }
+                                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                                 disabled={form.formState.isSubmitting}
                                             />
                                         </FormControl>
@@ -245,9 +232,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                             <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
                             <DownloadCertScriptButton disabled={!host} host={host} />
                         </div>
-                        <p className="text-muted-foreground text-xs">
-                            {t('tlsCertificatesDescription')}
-                        </p>
+                        <p className="text-muted-foreground text-xs">{t('tlsCertificatesDescription')}</p>
 
                         <TlsCertificateField
                             form={form}

@@ -50,11 +50,7 @@ export function StatusNodeLive({
     return (
         <div className="flex items-center gap-2">
             <StatusNode status={status} />
-            <DurationNode
-                isRunning={status === 'running'}
-                durationMs={durationMs}
-                startedAt={startedAt}
-            />
+            <DurationNode isRunning={status === 'running'} durationMs={durationMs} startedAt={startedAt} />
         </div>
     );
 }

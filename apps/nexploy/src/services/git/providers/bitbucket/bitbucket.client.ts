@@ -90,23 +90,15 @@ export async function bitbucketGetUserWorkspaces(): Promise<string[]> {
     return memberships.map((membership) => membership.workspace.slug);
 }
 
-export async function bitbucketGetWorkspaceRepositories(
-    workspace: string,
-): Promise<BitbucketRepo[]> {
+export async function bitbucketGetWorkspaceRepositories(workspace: string): Promise<BitbucketRepo[]> {
     return fetchAllPages<BitbucketRepo>(`repositories/${workspace}`, { sort: '-updated_on' });
 }
 
-export async function bitbucketGetRepository(
-    workspace: string,
-    repoSlug: string,
-): Promise<BitbucketRepo> {
+export async function bitbucketGetRepository(workspace: string, repoSlug: string): Promise<BitbucketRepo> {
     return kyBitbucket().get(`repositories/${workspace}/${repoSlug}`).json<BitbucketRepo>();
 }
 
-export async function bitbucketGetRepositoryBranches(
-    workspace: string,
-    repoSlug: string,
-): Promise<BitbucketBranch[]> {
+export async function bitbucketGetRepositoryBranches(workspace: string, repoSlug: string): Promise<BitbucketBranch[]> {
     return fetchAllPages<BitbucketBranch>(`repositories/${workspace}/${repoSlug}/refs/branches`);
 }
 
@@ -159,14 +151,8 @@ export async function bitbucketCreateWebhook(
         .json<{ uuid: string }>();
 }
 
-export async function bitbucketDeleteWebhook(
-    workspace: string,
-    repoSlug: string,
-    webhookId: string,
-): Promise<void> {
-    await kyBitbucket().delete(
-        `repositories/${workspace}/${repoSlug}/hooks/${encodeURIComponent(webhookId)}`,
-    );
+export async function bitbucketDeleteWebhook(workspace: string, repoSlug: string, webhookId: string): Promise<void> {
+    await kyBitbucket().delete(`repositories/${workspace}/${repoSlug}/hooks/${encodeURIComponent(webhookId)}`);
 }
 
 export async function bitbucketGetBranchHead(

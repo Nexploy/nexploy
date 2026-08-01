@@ -14,15 +14,7 @@ interface LabelItemProps {
     onCancelDelete?: () => void;
 }
 
-export function LabelItem({
-    label,
-    isEdited,
-    isDeleted,
-    isNew,
-    displayLabel,
-    onEdit,
-    onCancelDelete,
-}: LabelItemProps) {
+export function LabelItem({ label, isEdited, isDeleted, isNew, displayLabel, onEdit, onCancelDelete }: LabelItemProps) {
     const t = useTranslations('docker.labels');
     const statusIndicator = isNew ? (
         <span className="text-green-500">+</span>
@@ -36,9 +28,7 @@ export function LabelItem({
         <div className="bg-muted/60 flex items-center justify-between gap-2 rounded-md p-2">
             <div className="flex min-w-0 flex-1 items-center gap-1">
                 <code className="flex items-center gap-2 text-sm leading-none">
-                    <span className="text-primary shrink-0 truncate text-xs font-semibold">
-                        {displayLabel.key}:
-                    </span>
+                    <span className="text-primary shrink-0 truncate text-xs font-semibold">{displayLabel.key}:</span>
                 </code>
                 <span className="text-xs break-all">
                     {displayLabel.value ? (
@@ -53,12 +43,7 @@ export function LabelItem({
                 {isDeleted && onCancelDelete ? (
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-6 w-6 shrink-0"
-                                onClick={onCancelDelete}
-                            >
+                            <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0" onClick={onCancelDelete}>
                                 <X />
                             </Button>
                         </TooltipTrigger>

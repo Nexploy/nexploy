@@ -1,5 +1,9 @@
 import { getFromAllOutputs } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { updateCommitStatusConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { getGitAdapter } from '@/services/git/core/registry';
 import { getGitProviderToken, getValidToken } from '@/services/git/core/token.service';
@@ -23,22 +27,14 @@ export class UpdateCommitStatusExecutor implements INodeExecutor {
             gitAccountId: buildConfig.gitAccountId,
             requestedUserId: buildConfig.userId,
         });
-        const validToken = await getValidToken(
-            tokenData,
-            provider,
-            buildConfig.userId,
-            buildConfig.gitAccountId,
-        );
+        const validToken = await getValidToken(tokenData, provider, buildConfig.userId, buildConfig.gitAccountId);
         const token = validToken.accessToken;
 
         if (!token) throw new Error('No access token available for Git provider');
 
         const sha = getFromAllOutputs<string>(allOutputs, 'commitHash') ?? '';
 
-        if (!sha)
-            throw new Error(
-                'No commit SHA found — connect a Clone Repository node before this one',
-            );
+        if (!sha) throw new Error('No commit SHA found — connect a Clone Repository node before this one');
 
         const adapter = getGitAdapter(provider);
         const { baseUrl, owner, repo } = adapter.parseRepoUrl(buildConfig.gitUrl);

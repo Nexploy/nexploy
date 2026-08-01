@@ -1,14 +1,6 @@
 import type React from 'react';
 
-export type Provider =
-    | 'OPENAI'
-    | 'ANTHROPIC'
-    | 'GOOGLE'
-    | 'OPENROUTER'
-    | 'MISTRAL'
-    | 'GROQ'
-    | 'PERPLEXITY'
-    | 'GROK';
+export type Provider = 'OPENAI' | 'ANTHROPIC' | 'GOOGLE' | 'OPENROUTER' | 'MISTRAL' | 'GROQ' | 'PERPLEXITY' | 'GROK';
 
 export interface ProviderCardConfig {
     provider: Provider;

@@ -8,9 +8,7 @@ interface PendingInvitationsStoreInitializerProps {
     invitations: PendingInvitation[];
 }
 
-export function PendingInvitationsStoreInitializer({
-    invitations,
-}: PendingInvitationsStoreInitializerProps) {
+export function PendingInvitationsStoreInitializer({ invitations }: PendingInvitationsStoreInitializerProps) {
     useLayoutEffect(() => initializePendingInvitations(invitations), [invitations]);
 
     return null;

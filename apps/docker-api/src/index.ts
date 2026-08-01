@@ -145,15 +145,10 @@ const startServer = async () => {
         logger.info('Initializing Docker client registry...');
         const registeredEnvironmentIds = await dockerClientRegistry.initialize(environments);
 
-        logger.info(
-            { registeredEnvironmentIds },
-            'Initializing state managers for registered environments...',
-        );
+        logger.info({ registeredEnvironmentIds }, 'Initializing state managers for registered environments...');
 
         const initResults = await Promise.allSettled(
-            registeredEnvironmentIds.map((environmentId) =>
-                stateManagerFactory.initializeEnvironment(environmentId),
-            ),
+            registeredEnvironmentIds.map((environmentId) => stateManagerFactory.initializeEnvironment(environmentId)),
         );
 
         const succeeded = initResults.filter((r) => r.status === 'fulfilled').length;

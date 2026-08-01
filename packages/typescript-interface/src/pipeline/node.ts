@@ -3,13 +3,7 @@ import { NodeDefinition } from './nodeDefinition';
 export type MinimalNode = { id: string; data: { disabled?: boolean } };
 export type MinimalEdge = { source: string; target: string };
 
-export type NodeRunStatus =
-    | 'running'
-    | 'completed'
-    | 'skipped'
-    | 'failed'
-    | 'cancelled'
-    | 'not-configured';
+export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed' | 'cancelled' | 'not-configured';
 
 export interface NodeData {
     nodeType: string;

@@ -12,8 +12,7 @@ import { z } from 'zod';
 
 const SKIP_MESSAGES: Record<string, (detail: string) => string> = {
     'event-filter': (detail) => `Webhook event "${detail}" is not enabled on this node — skipping`,
-    'merge-request-action': (detail) =>
-        `Merge request action "${detail}" is not enabled on this node — skipping`,
+    'merge-request-action': (detail) => `Merge request action "${detail}" is not enabled on this node — skipping`,
     'tag-filter': (detail) => `Tag "${detail}" does not match the tag filter — skipping`,
     'branch-filter': (detail) => `Branch "${detail}" does not match the branch filter — skipping`,
 };
@@ -22,17 +21,13 @@ export class WebhookCloneExecutor implements INodeExecutor {
     readonly type = 'webhook-clone';
     readonly configSchema = webhookCloneConfigSchema;
 
-    async execute(
-        ctx: NodeExecutionContext<z.infer<typeof webhookCloneConfigSchema>>,
-    ): Promise<NodeExecutionResult> {
+    async execute(ctx: NodeExecutionContext<z.infer<typeof webhookCloneConfigSchema>>): Promise<NodeExecutionResult> {
         const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter } = ctx;
 
         const branch = buildConfig.gitBranch;
 
         if (!branch) {
-            throw new Error(
-                'No branch found in webhook payload — this node requires a webhook-triggered build',
-            );
+            throw new Error('No branch found in webhook payload — this node requires a webhook-triggered build');
         }
 
         const trigger: WebhookTrigger = buildConfig.webhookTrigger ?? { event: 'push' };
@@ -40,22 +35,15 @@ export class WebhookCloneExecutor implements INodeExecutor {
 
         if (!match.matched) {
             const describe = match.reason ? SKIP_MESSAGES[match.reason] : undefined;
-            await logger.info(
-                nodeId,
-                describe?.(match.detail ?? '') ?? 'Webhook event filtered out — skipping',
-            );
+            await logger.info(nodeId, describe?.(match.detail ?? '') ?? 'Webhook event filtered out — skipping');
             return {
                 output: { skipped: true, reason: match.reason },
             };
         }
 
-        const refLabel =
-            trigger.event === 'tag' ? `tag: ${trigger.tagName ?? branch}` : `branch: ${branch}`;
+        const refLabel = trigger.event === 'tag' ? `tag: ${trigger.tagName ?? branch}` : `branch: ${branch}`;
 
-        await logger.info(
-            nodeId,
-            `Cloning repository ${buildConfig.gitUrl} from webhook payload (${refLabel})`,
-        );
+        await logger.info(nodeId, `Cloning repository ${buildConfig.gitUrl} from webhook payload (${refLabel})`);
 
         const onProgress = async (progress: number, message: string) => {
             await logger.info(nodeId, `${message} (${Math.round(progress)}%)`);

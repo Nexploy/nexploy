@@ -49,14 +49,10 @@ export function getColumnsContainersMetrics(
                             </TooltipTrigger>
                             <TooltipContent>{row.original.state}</TooltipContent>
                         </Tooltip>
-                        <StatusLabel className="truncate font-medium text-current">
-                            {row.original.name}
-                        </StatusLabel>
+                        <StatusLabel className="truncate font-medium text-current">{row.original.name}</StatusLabel>
                     </Status>
                     <span className="text-muted-foreground truncate text-xs">
-                        {row.original.stack
-                            ? `${row.original.stack} • ${row.original.image}`
-                            : row.original.image}
+                        {row.original.stack ? `${row.original.stack} • ${row.original.image}` : row.original.image}
                     </span>
                 </div>
             ),
@@ -85,8 +81,7 @@ export function getColumnsContainersMetrics(
                 <div className="flex flex-col items-end gap-0.5">
                     <span className="tabular-nums">{formatBytes(row.original.memoryUsage)}</span>
                     <span className="text-muted-foreground text-xs tabular-nums">
-                        {formatPercent(row.original.memoryPercent)} ·{' '}
-                        {formatBytes(row.original.memoryLimit)}
+                        {formatPercent(row.original.memoryPercent)} · {formatBytes(row.original.memoryLimit)}
                     </span>
                 </div>
             ),
@@ -98,9 +93,7 @@ export function getColumnsContainersMetrics(
             cell: ({ row }) => (
                 <div className="flex flex-col items-end gap-0.5 text-xs tabular-nums">
                     <span>↓ {formatRate(row.original.networkRxRate)}</span>
-                    <span className="text-muted-foreground">
-                        ↑ {formatRate(row.original.networkTxRate)}
-                    </span>
+                    <span className="text-muted-foreground">↑ {formatRate(row.original.networkTxRate)}</span>
                 </div>
             ),
         },
@@ -125,9 +118,7 @@ export function getColumnsContainersMetrics(
             enableSorting: false,
             cell: ({ row }) => (
                 <Sparkline
-                    values={(history[row.original.containerId] ?? []).map(
-                        (point) => point.cpuPercent,
-                    )}
+                    values={(history[row.original.containerId] ?? []).map((point) => point.cpuPercent)}
                     className="h-8 w-24"
                 />
             ),

@@ -43,15 +43,11 @@ export interface PipelineActionsContextValue {
     ) => void;
     setBuildNodeDurations: (
         buildId: string,
-        updater:
-            | Record<string, number>
-            | ((prev: Record<string, number>) => Record<string, number>),
+        updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>),
     ) => void;
     setBuildNodeStartTimes: (
         buildId: string,
-        updater:
-            | Record<string, number>
-            | ((prev: Record<string, number>) => Record<string, number>),
+        updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>),
     ) => void;
 }
 
@@ -117,15 +113,11 @@ export interface PipelineStoreState {
     ) => void;
     setBuildNodeDurations: (
         buildId: string,
-        updater:
-            | Record<string, number>
-            | ((prev: Record<string, number>) => Record<string, number>),
+        updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>),
     ) => void;
     setBuildNodeStartTimes: (
         buildId: string,
-        updater:
-            | Record<string, number>
-            | ((prev: Record<string, number>) => Record<string, number>),
+        updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>),
     ) => void;
 
     _commit: (snapshot: Snapshot) => void;

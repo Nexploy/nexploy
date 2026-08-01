@@ -73,9 +73,7 @@ export function NodeTemplatePanel() {
                 <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-sm">
                     <LayoutTemplate className="size-3.5" strokeWidth={1.7} />
                 </div>
-                <span className="text-foreground flex-1 truncate text-xs">
-                    {t('templates.title')}
-                </span>
+                <span className="text-foreground flex-1 truncate text-xs">{t('templates.title')}</span>
                 <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
                     {PIPELINE_TEMPLATES.length}
                 </span>

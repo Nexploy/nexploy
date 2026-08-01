@@ -83,10 +83,7 @@ export class ContainerStatsStateManager extends BaseSingleResourceStateManager<C
         };
     }
 
-    private getStatsChanges(
-        oldStats: ContainerStats,
-        newStats: ContainerStats,
-    ): ContainerStatsChanges {
+    private getStatsChanges(oldStats: ContainerStats, newStats: ContainerStats): ContainerStatsChanges {
         return {
             cpuDelta: newStats.cpuPercent - oldStats.cpuPercent,
             memoryDelta: newStats.memoryUsage - oldStats.memoryUsage,
@@ -110,8 +107,7 @@ export class ContainerStatsStateManager extends BaseSingleResourceStateManager<C
             systemDelta = systemCpuUsage - this.currentState.systemCpuUsage;
         }
 
-        const cpuPercent =
-            systemDelta > 0 && cpuDelta > 0 ? (cpuDelta / systemDelta) * cpuCount * 100 : 0;
+        const cpuPercent = systemDelta > 0 && cpuDelta > 0 ? (cpuDelta / systemDelta) * cpuCount * 100 : 0;
 
         const memoryUsage = Math.max(
             0,

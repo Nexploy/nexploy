@@ -58,9 +58,7 @@ export function TraefikNewFileDialog({ baseDir }: { baseDir?: string }) {
             <div className="flex flex-col gap-2">
                 <Label htmlFor="traefik-filename">{t('filename')}</Label>
                 <div className="flex items-center gap-2">
-                    {baseDir && (
-                        <span className="text-muted-foreground shrink-0 text-sm">{baseDir}/</span>
-                    )}
+                    {baseDir && <span className="text-muted-foreground shrink-0 text-sm">{baseDir}/</span>}
                     <Input
                         id="traefik-filename"
                         placeholder={baseDir ? 'my-config' : 'apps/my-config'}

@@ -47,17 +47,13 @@ export const giteaAdapter: GitProviderAdapter = {
     },
 
     async listRepositories({ token, baseUrl }): Promise<GitRepository[]> {
-        const repositories = await tokenGitStorage.run(token, async () =>
-            giteaGetUserRepositories(baseUrl),
-        );
+        const repositories = await tokenGitStorage.run(token, async () => giteaGetUserRepositories(baseUrl));
         return repositories.map(mapRepo);
     },
 
     async getRepository({ token, baseUrl, repositoryUrl }): Promise<GitRepository> {
         const { owner, repo } = this.parseRepoUrl(repositoryUrl);
-        const repoData = await tokenGitStorage.run(token, async () =>
-            giteaGetRepository(baseUrl, owner, repo),
-        );
+        const repoData = await tokenGitStorage.run(token, async () => giteaGetRepository(baseUrl, owner, repo));
         return mapRepo(repoData);
     },
 
@@ -102,9 +98,7 @@ export const giteaAdapter: GitProviderAdapter = {
     async deleteWebhook({ token, baseUrl, repo, webhookId }): Promise<void> {
         const [owner, repoName] = repo.fullName.split('/');
         if (!owner || !repoName) throw new Error(`Invalid repository name: ${repo.fullName}`);
-        await tokenGitStorage.run(token, async () =>
-            giteaDeleteWebhook(baseUrl, owner, repoName, webhookId),
-        );
+        await tokenGitStorage.run(token, async () => giteaDeleteWebhook(baseUrl, owner, repoName, webhookId));
     },
 
     parseWebhookPayload(body: any, event: string | null): WebhookPayload | null {
@@ -186,9 +180,7 @@ export const giteaAdapter: GitProviderAdapter = {
 
         const accessToken = tokenData.access_token;
         const refreshToken = tokenData.refresh_token ?? null;
-        const accessTokenExpiresAt = tokenData.expires_in
-            ? dayjs().add(tokenData.expires_in, 'second').toDate()
-            : null;
+        const accessTokenExpiresAt = tokenData.expires_in ? dayjs().add(tokenData.expires_in, 'second').toDate() : null;
 
         const user = await this.getAuthenticatedUser({
             token: { accessToken, refreshToken, accessTokenExpiresAt },
@@ -216,9 +208,7 @@ export const giteaAdapter: GitProviderAdapter = {
         return {
             accessToken: data.access_token,
             refreshToken: data.refresh_token ?? refreshToken,
-            accessTokenExpiresAt: data.expires_in
-                ? dayjs().add(data.expires_in, 'second').toDate()
-                : null,
+            accessTokenExpiresAt: data.expires_in ? dayjs().add(data.expires_in, 'second').toDate() : null,
         };
     },
 

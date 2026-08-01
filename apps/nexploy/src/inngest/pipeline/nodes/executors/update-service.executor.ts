@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { updateServiceConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -19,12 +23,7 @@ export class UpdateServiceExecutor implements INodeExecutor {
         const image = nodeConfig.image;
         const forceUpdate = nodeConfig.forceUpdate;
 
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(nodeId, `Updating Swarm service "${serviceName}" to image ${image}`);
 
@@ -47,9 +46,7 @@ export class UpdateServiceExecutor implements INodeExecutor {
                 output: { serviceName, image },
             };
         } catch (error) {
-            throw new Error(
-                `Failed to update service: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to update service: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

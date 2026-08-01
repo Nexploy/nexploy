@@ -20,12 +20,7 @@ export class DeleteContainerExecutor implements INodeExecutor {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const { containerId, force } = nodeConfig;
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         const opts = { signal: abortSignal, environmentId } as KyDockerOptions;
 
         await logger.info(nodeId, `Deleting container: ${containerId}`);

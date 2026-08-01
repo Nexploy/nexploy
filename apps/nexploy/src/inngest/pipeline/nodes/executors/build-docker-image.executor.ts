@@ -21,9 +21,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) {
-            throw new Error(
-                'No workDir found in input nodes — connect this node after a Source node',
-            );
+            throw new Error('No workDir found in input nodes — connect this node after a Source node');
         }
 
         const dockerfileName = nodeConfig.dockerfilePath;
@@ -49,12 +47,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
 
         const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
         const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');
-        const commitMessage = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'commitMessage',
-        );
+        const commitMessage = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitMessage');
 
         const labels: Record<string, string> = {
             [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
@@ -64,12 +57,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             ...(commitMessage && { [NEXPLOY_LABELS.commitMessage]: commitMessage }),
         };
 
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         try {
             const result = await dockerService.buildImage(
@@ -95,9 +83,7 @@ export class BuildDockerImageExecutor implements INodeExecutor {
             };
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') throw error;
-            throw new Error(
-                `Docker build failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Docker build failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

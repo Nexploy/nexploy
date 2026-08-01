@@ -156,10 +156,7 @@ app.get('/stream/:eventType/:action', (c) => {
                     id: `${Date.now()}`,
                 });
             } catch (err) {
-                logger.error(
-                    { err, clientId, eventType, action },
-                    'Error sending action-filtered docker-event',
-                );
+                logger.error({ err, clientId, eventType, action }, 'Error sending action-filtered docker-event');
                 cleanup();
             }
         };

@@ -20,10 +20,7 @@ import {
 import { getGitAdapter } from '@/services/git/core/registry';
 import type { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { getCompactCatalog, PIPELINE_NODE_CATALOG } from '@/lib/ai/pipelineNodeCatalog';
-import {
-    analyzeRepositorySchema,
-    savePipelineMcpSchema,
-} from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
+import { analyzeRepositorySchema, savePipelineMcpSchema } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
 
 const KEY_FILES = [
     'Dockerfile',
@@ -114,10 +111,9 @@ async function fetchGitlabFiles(
     for (const fileName of KEY_FILES) {
         try {
             const fileData = await kyGitlab(baseUrl)
-                .get(
-                    `v4/projects/${encodedPath}/repository/files/${encodeURIComponent(fileName)}`,
-                    { searchParams: { ref } },
-                )
+                .get(`v4/projects/${encodedPath}/repository/files/${encodeURIComponent(fileName)}`, {
+                    searchParams: { ref },
+                })
                 .json<GitLabFileContent>();
 
             if (fileData.encoding === 'base64') {
@@ -212,10 +208,8 @@ async function fetchAzureReposFiles(
 
     const defaultBranch = branch
         ? branch
-        : (await azureGetRepository(organization, project, repository)).defaultBranch?.replace(
-              'refs/heads/',
-              '',
-          ) || 'main';
+        : (await azureGetRepository(organization, project, repository)).defaultBranch?.replace('refs/heads/', '') ||
+          'main';
 
     try {
         const listing = await azureGetRootItems(organization, project, repository, defaultBranch);
@@ -231,13 +225,7 @@ async function fetchAzureReposFiles(
 
     for (const fileName of KEY_FILES) {
         try {
-            const content = await azureGetFileContent(
-                organization,
-                project,
-                repository,
-                `/${fileName}`,
-                defaultBranch,
-            );
+            const content = await azureGetFileContent(organization, project, repository, `/${fileName}`, defaultBranch);
             files[fileName] = content.substring(0, 3000);
         } catch {}
     }
@@ -270,10 +258,7 @@ export const pipelineGroup: ToolGroup = {
                 description:
                     'Returns the full detail (all config fields with types, defaults, and descriptions) for one specific pipeline node type.',
                 inputSchema: {
-                    nodeType: z
-                        .string()
-                        .min(1)
-                        .describe('The node type to get detail for (e.g. "build-docker-image")'),
+                    nodeType: z.string().min(1).describe('The node type to get detail for (e.g. "build-docker-image")'),
                 },
             },
             async ({ nodeType }) => {
@@ -281,9 +266,7 @@ export const pipelineGroup: ToolGroup = {
                 if (g) return g;
                 const entry = PIPELINE_NODE_CATALOG.find((n) => n.type === nodeType);
                 if (!entry)
-                    return fail(
-                        `Unknown node type "${nodeType}". Call listPipelineNodes to see available types.`,
-                    );
+                    return fail(`Unknown node type "${nodeType}". Call listPipelineNodes to see available types.`);
                 return ok(JSON.stringify(entry, null, 2));
             },
         );
@@ -305,25 +288,17 @@ export const pipelineGroup: ToolGroup = {
                     });
 
                     if (!repo) return fail(`Repository "${repositoryId}" not found`);
-                    if (!repo.gitAccount)
-                        return fail('Repository has no linked git account — cannot read files');
+                    if (!repo.gitAccount) return fail('Repository has no linked git account — cannot read files');
 
                     const gitAccount = repo.gitAccount;
 
                     const rawToken = {
                         accessToken: decrypt(gitAccount.accessToken),
-                        refreshToken: gitAccount.refreshToken
-                            ? decrypt(gitAccount.refreshToken)
-                            : null,
+                        refreshToken: gitAccount.refreshToken ? decrypt(gitAccount.refreshToken) : null,
                         accessTokenExpiresAt: gitAccount.accessTokenExpiresAt,
                     };
 
-                    const token = await getValidToken(
-                        rawToken,
-                        repo.gitProvider,
-                        ctx.userId,
-                        gitAccount.id,
-                    );
+                    const token = await getValidToken(rawToken, repo.gitProvider, ctx.userId, gitAccount.id);
 
                     const ref = branch ?? 'HEAD';
 
@@ -331,20 +306,14 @@ export const pipelineGroup: ToolGroup = {
                     let files: Record<string, string> = {};
 
                     if (repo.gitProvider === 'GITHUB') {
-                        const { owner, repo: repoName } = getGitAdapter('GITHUB').parseRepoUrl(
-                            repo.repositoryUrl,
-                        );
+                        const { owner, repo: repoName } = getGitAdapter('GITHUB').parseRepoUrl(repo.repositoryUrl);
                         ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
                             fetchGithubFiles(owner, repoName, ref),
                         ));
                     } else if (repo.gitProvider === 'GITLAB') {
-                        const { baseUrl } = getGitAdapter('GITLAB').parseRepoUrl(
-                            repo.repositoryUrl,
-                        );
+                        const { baseUrl } = getGitAdapter('GITLAB').parseRepoUrl(repo.repositoryUrl);
                         const url = new URL(repo.repositoryUrl);
-                        const pathWithNamespace = url.pathname
-                            .replace(/^\//, '')
-                            .replace(/\.git$/, '');
+                        const pathWithNamespace = url.pathname.replace(/^\//, '').replace(/\.git$/, '');
                         const encodedPath = encodeURIComponent(pathWithNamespace);
 
                         ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
@@ -360,16 +329,12 @@ export const pipelineGroup: ToolGroup = {
                             fetchGiteaFiles(baseUrl, owner, repoName, ref),
                         ));
                     } else if (repo.gitProvider === 'BITBUCKET') {
-                        const { owner, repo: repoName } = getGitAdapter('BITBUCKET').parseRepoUrl(
-                            repo.repositoryUrl,
-                        );
+                        const { owner, repo: repoName } = getGitAdapter('BITBUCKET').parseRepoUrl(repo.repositoryUrl);
                         ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
                             fetchBitbucketFiles(owner, repoName, ref),
                         ));
                     } else if (repo.gitProvider === 'AZURE_REPOS') {
-                        const { owner, repo: repoName } = getGitAdapter(
-                            'AZURE_REPOS',
-                        ).parseRepoUrl(repo.repositoryUrl);
+                        const { owner, repo: repoName } = getGitAdapter('AZURE_REPOS').parseRepoUrl(repo.repositoryUrl);
                         const [organization, project] = owner.split('/');
                         ({ rootFiles, files } = await tokenGitStorage.run(token, () =>
                             fetchAzureReposFiles(organization!, project!, repoName, ref),

@@ -1,11 +1,8 @@
 import { docker } from '@/utils/dockerClient';
 import { imagesStateManager } from '@/managers/list/imagesStateManager';
-import { ImageDeleteResponse, ImageDeleteResult, } from '@workspace/typescript-interface/docker/docker.image';
+import { ImageDeleteResponse, ImageDeleteResult } from '@workspace/typescript-interface/docker/docker.image';
 
-export async function deleteImages(
-    imageIds: string[],
-    force: boolean,
-): Promise<ImageDeleteResponse> {
+export async function deleteImages(imageIds: string[], force: boolean): Promise<ImageDeleteResponse> {
     const results = await Promise.all(
         imageIds.map(async (id): Promise<ImageDeleteResult> => {
             const image = imagesStateManager.getById(id);

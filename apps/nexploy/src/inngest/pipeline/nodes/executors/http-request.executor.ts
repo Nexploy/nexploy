@@ -1,6 +1,10 @@
 import { lookup } from 'dns/promises';
 import ky from 'ky';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { httpRequestConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
@@ -49,14 +53,7 @@ export class HttpRequestExecutor implements INodeExecutor {
     ): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 
-        const {
-            url,
-            method,
-            headers: headersArr,
-            body,
-            expectedStatus,
-            continueOnError,
-        } = nodeConfig;
+        const { url, method, headers: headersArr, body, expectedStatus, continueOnError } = nodeConfig;
 
         const headers: Record<string, string> = {};
         for (const header of headersArr) {
@@ -96,10 +93,7 @@ export class HttpRequestExecutor implements INodeExecutor {
             if ((error as Error).name === 'AbortError') throw new Error('Aborted');
             const msg = error instanceof Error ? error.message : 'Unknown error';
             if (continueOnError) {
-                await logger.warn(
-                    nodeId,
-                    `Request failed: ${msg} (continuing due to continueOnError)`,
-                );
+                await logger.warn(nodeId, `Request failed: ${msg} (continuing due to continueOnError)`);
                 return { output: { failed: true, error: msg }, skipped: false };
             }
             throw new Error(`HTTP request failed: ${msg}`);

@@ -41,9 +41,7 @@ export function ConditionConfig() {
                                     )}
                                 >
                                     <span className="font-bold">AND</span>
-                                    <span className="text-[10px] opacity-80">
-                                        {t('config.conditionModeAndDesc')}
-                                    </span>
+                                    <span className="text-[10px] opacity-80">{t('config.conditionModeAndDesc')}</span>
                                 </button>
                                 <div className="border-border w-px self-stretch border-l" />
                                 <button
@@ -57,9 +55,7 @@ export function ConditionConfig() {
                                     )}
                                 >
                                     <span className="font-bold">OR</span>
-                                    <span className="text-[10px] opacity-80">
-                                        {t('config.conditionModeOrDesc')}
-                                    </span>
+                                    <span className="text-[10px] opacity-80">{t('config.conditionModeOrDesc')}</span>
                                 </button>
                             </div>
                         </FormControl>
@@ -70,9 +66,7 @@ export function ConditionConfig() {
             <div className="space-y-1.5">
                 <p className="text-xs font-medium">{t('config.conditionInputNodes')}</p>
                 {inputNodes.length === 0 ? (
-                    <p className="text-muted-foreground text-xs italic">
-                        {t('config.conditionNoInputs')}
-                    </p>
+                    <p className="text-muted-foreground text-xs italic">{t('config.conditionNoInputs')}</p>
                 ) : (
                     inputNodes.map((node) => {
                         const data = node.data as unknown as NodeData;

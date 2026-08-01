@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { gitTagConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { z } from 'zod';
@@ -19,10 +23,7 @@ export class GitTagExecutor implements INodeExecutor {
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) throw new Error('No workDir found — run a clone node first');
 
-        await logger.info(
-            nodeId,
-            `Creating git tag "${tagName}"${message ? ` with message: ${message}` : ''}`,
-        );
+        await logger.info(nodeId, `Creating git tag "${tagName}"${message ? ` with message: ${message}` : ''}`);
 
         const { alreadyExists } = await gitService.createTag(workDir, tagName, message);
         if (alreadyExists) {

@@ -1,48 +1,37 @@
 {
-    "$schema": "https://v2-8-3.turborepo.dev/schema.json",
-    "ui": "tui",
-    "globalEnv": [
-        "NODE_ENV",
-        "DATABASE_URL",
-        "BETTER_AUTH_SECRET",
-        "BETTER_AUTH_URL",
-        "DOCKER_API_URL",
-        "ENCRYPTION_KEY",
-        "DEPLOYER_WORK_DIR",
-        "INNGEST_EVENT_KEY",
-        "INNGEST_SIGNING_KEY",
-        "NEXPLOY_API_KEY",
-        "NEXPLOY_API_URL",
-        "TRAEFIK_CONTAINER_NAME",
-        "TRAEFIK_NETWORK_NAME",
-        "DOCKER_SOCKET",
-        "LOG_LEVEL",
-        "PORT",
-        "AI_KEY"
-    ],
-    "tasks": {
-        "build": {
-            "dependsOn": [
-                "^build"
-            ],
-            "inputs": [
-                "$TURBO_DEFAULT$",
-                ".env*"
-            ],
-            "outputs": [
-                ".next/**",
-                "!.next/cache/**",
-                "dist/**"
-            ]
-        },
-        "dev": {
-            "cache": false,
-            "persistent": true
-        },
-        "typecheck": {
-            "dependsOn": [
-                "^typecheck"
-            ]
-        }
+  "$schema": "https://v2-8-3.turborepo.dev/schema.json",
+  "ui": "tui",
+  "globalEnv": [
+    "NODE_ENV",
+    "DATABASE_URL",
+    "BETTER_AUTH_SECRET",
+    "BETTER_AUTH_URL",
+    "DOCKER_API_URL",
+    "ENCRYPTION_KEY",
+    "DEPLOYER_WORK_DIR",
+    "INNGEST_EVENT_KEY",
+    "INNGEST_SIGNING_KEY",
+    "NEXPLOY_API_KEY",
+    "NEXPLOY_API_URL",
+    "TRAEFIK_CONTAINER_NAME",
+    "TRAEFIK_NETWORK_NAME",
+    "DOCKER_SOCKET",
+    "LOG_LEVEL",
+    "PORT",
+    "AI_KEY"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
     }
+  }
 }

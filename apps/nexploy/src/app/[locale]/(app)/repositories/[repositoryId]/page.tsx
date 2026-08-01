@@ -16,9 +16,7 @@ import { getRepositoryWebUrl } from '@/services/git/core/repoUrl';
 import Link from 'next/link';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 import { Separator } from '@workspace/ui/components/separator';
-import {
-    ReassociateGitAccountDialog
-} from '@/components/repositories/reassociateGitAccount/ReassociateGitAccountDialog';
+import { ReassociateGitAccountDialog } from '@/components/repositories/reassociateGitAccount/ReassociateGitAccountDialog';
 import { PROVIDER_ICONS } from '@/components/git/providerIcons.tsx';
 
 interface RepositoryIdPageProps {
@@ -66,23 +64,14 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
                                         {repository.name}
                                     </h1>
                                     <ExternalLink
-                                        className={
-                                            'size-4 opacity-0 transition-opacity group-hover:opacity-100'
-                                        }
+                                        className={'size-4 opacity-0 transition-opacity group-hover:opacity-100'}
                                     />
                                 </Link>
-                                <div
-                                    className={
-                                        'text-muted-foreground flex items-center gap-2 text-sm'
-                                    }
-                                >
+                                <div className={'text-muted-foreground flex items-center gap-2 text-sm'}>
                                     <span>{capitalizeFirstLetter(repository.gitProvider)}</span>
                                     {hostname && (
                                         <>
-                                            <Separator
-                                                orientation={'vertical'}
-                                                className={'h-3! w-1'}
-                                            />
+                                            <Separator orientation={'vertical'} className={'h-3! w-1'} />
                                             <span>{hostname}</span>
                                         </>
                                     )}
@@ -97,22 +86,10 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
 
                     <RepositoryTabs>
                         {{
-                            pipeline: (
-                                <RepositoryPipelineTab
-                                    repositoryId={repository.id}
-                                    stageId={stageId}
-                                />
-                            ),
-                            builds: (
-                                <RepositoryBuildsTab
-                                    repositoryId={repository.id}
-                                    stageId={stageId}
-                                />
-                            ),
+                            pipeline: <RepositoryPipelineTab repositoryId={repository.id} stageId={stageId} />,
+                            builds: <RepositoryBuildsTab repositoryId={repository.id} stageId={stageId} />,
                             versions: <RepositoryVersionsTab repositoryId={repository.id} />,
-                            env: (
-                                <RepositoryEnvTab repositoryId={repository.id} stageId={stageId} />
-                            ),
+                            env: <RepositoryEnvTab repositoryId={repository.id} stageId={stageId} />,
                             setting: <RepositorySettingsTab repositoryId={repository.id} />,
                         }}
                     </RepositoryTabs>

@@ -1,6 +1,10 @@
 import ky from 'ky';
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { sonarqubeScanConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -20,12 +24,7 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             throw new Error('No workDir found — connect this node after a Clone Repository node');
         }
 
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         const {
             mode,
             projectKey,
@@ -159,13 +158,7 @@ export class SonarqubeScanExecutor implements INodeExecutor {
         let qualityGatePassed = true;
         if (qualityGate) {
             await logger.info(nodeId, 'Checking quality gate status...');
-            qualityGatePassed = await this.checkQualityGate(
-                serverUrl,
-                projectKey,
-                token,
-                logger,
-                nodeId,
-            );
+            qualityGatePassed = await this.checkQualityGate(serverUrl, projectKey, token, logger, nodeId);
             if (!qualityGatePassed) {
                 throw new Error(`Quality gate failed for project ${projectKey}`);
             }
@@ -173,15 +166,7 @@ export class SonarqubeScanExecutor implements INodeExecutor {
         }
 
         const scoreResult = enforceMinScore
-            ? await this.enforceMinScore(
-                  serverUrl,
-                  projectKey,
-                  token,
-                  scoreMetric,
-                  minScore,
-                  logger,
-                  nodeId,
-              )
+            ? await this.enforceMinScore(serverUrl, projectKey, token, scoreMetric, minScore, logger, nodeId)
             : undefined;
 
         return {
@@ -241,15 +226,9 @@ export class SonarqubeScanExecutor implements INodeExecutor {
                 .json<ContainerInspectInfo>();
 
             if (info.State.Running) {
-                await logger.info(
-                    nodeId,
-                    'Local SonarQube container is already running, reusing it.',
-                );
+                await logger.info(nodeId, 'Local SonarQube container is already running, reusing it.');
             } else {
-                await logger.info(
-                    nodeId,
-                    'Local SonarQube container exists but is stopped, starting it...',
-                );
+                await logger.info(nodeId, 'Local SonarQube container exists but is stopped, starting it...');
                 await kyDocker.post('container/start', {
                     signal: abortSignal,
                     environmentId,
@@ -263,10 +242,7 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             const message = (err as { message?: string })?.message ?? '';
             if (status !== 404 && !message.includes('404')) throw err;
 
-            await logger.info(
-                nodeId,
-                `Creating local SonarQube container (${sonarqubeVersion})...`,
-            );
+            await logger.info(nodeId, `Creating local SonarQube container (${sonarqubeVersion})...`);
             await kyDocker
                 .post('container/create', {
                     json: {
@@ -357,13 +333,7 @@ export class SonarqubeScanExecutor implements INodeExecutor {
         let qualityGatePassed = true;
         if (qualityGate) {
             await logger.info(nodeId, 'Checking quality gate status...');
-            qualityGatePassed = await this.checkQualityGate(
-                localServerUrl,
-                projectKey,
-                scanToken,
-                logger,
-                nodeId,
-            );
+            qualityGatePassed = await this.checkQualityGate(localServerUrl, projectKey, scanToken, logger, nodeId);
             if (!qualityGatePassed) {
                 throw new Error(`Quality gate failed for project ${projectKey}`);
             }
@@ -371,15 +341,7 @@ export class SonarqubeScanExecutor implements INodeExecutor {
         }
 
         const scoreResult = enforceMinScore
-            ? await this.enforceMinScore(
-                  localServerUrl,
-                  projectKey,
-                  scanToken,
-                  scoreMetric,
-                  minScore,
-                  logger,
-                  nodeId,
-              )
+            ? await this.enforceMinScore(localServerUrl, projectKey, scanToken, scoreMetric, minScore, logger, nodeId)
             : undefined;
 
         return {
@@ -443,10 +405,7 @@ export class SonarqubeScanExecutor implements INodeExecutor {
             await logger.info(nodeId, `Quality gate status: ${status}`);
             return status === 'OK' || status === 'NONE';
         } catch (err) {
-            await logger.info(
-                nodeId,
-                `Could not check quality gate: ${err instanceof Error ? err.message : err}`,
-            );
+            await logger.info(nodeId, `Could not check quality gate: ${err instanceof Error ? err.message : err}`);
             return true;
         }
     }
@@ -489,9 +448,7 @@ export class SonarqubeScanExecutor implements INodeExecutor {
         await logger.info(nodeId, `${metric} = ${value} (required >= ${minScore})`);
 
         if (Number.isNaN(value) || value < minScore) {
-            throw new Error(
-                `Score check failed: ${metric} = ${rawValue} is below the required minimum of ${minScore}`,
-            );
+            throw new Error(`Score check failed: ${metric} = ${rawValue} is below the required minimum of ${minScore}`);
         }
 
         await logger.info(nodeId, 'Minimum score requirement met');

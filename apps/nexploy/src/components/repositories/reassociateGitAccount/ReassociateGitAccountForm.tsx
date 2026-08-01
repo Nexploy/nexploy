@@ -52,11 +52,7 @@ export function ReassociateGitAccountForm({
             props: { showCloseButton: false },
             closeOnBackground: false,
             content: (
-                <DeleteRepositoryForm
-                    repositoryId={repositoryId}
-                    repositoryName={repositoryName}
-                    onCancel={onReopen}
-                />
+                <DeleteRepositoryForm repositoryId={repositoryId} repositoryName={repositoryName} onCancel={onReopen} />
             ),
         });
     };
@@ -69,19 +65,13 @@ export function ReassociateGitAccountForm({
                         <div className="text-muted-foreground flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-6 text-center text-sm">
                             <span>{tSource('noAccounts')}</span>
                             <Button asChild size="sm" onClick={onClose}>
-                                <Link href="/account#integrations">
-                                    {tSource('connectAccount')}
-                                </Link>
+                                <Link href="/account#integrations">{tSource('connectAccount')}</Link>
                             </Button>
                         </div>
                     }
                 />
 
-                <Button
-                    type="submit"
-                    isLoading={form.formState.isSubmitting}
-                    disabled={form.formState.isSubmitting}
-                >
+                <Button type="submit" isLoading={form.formState.isSubmitting} disabled={form.formState.isSubmitting}>
                     {t('save')}
                 </Button>
 
@@ -91,12 +81,7 @@ export function ReassociateGitAccountForm({
                     <div className="bg-border h-px flex-1" />
                 </div>
 
-                <Button
-                    type="button"
-                    variant="destructive"
-                    icon={Trash2}
-                    onClick={handleOpenDelete}
-                >
+                <Button type="button" variant="destructive" icon={Trash2} onClick={handleOpenDelete}>
                     {tDanger('deleteButton')}
                 </Button>
             </form>

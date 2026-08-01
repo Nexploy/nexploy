@@ -18,17 +18,9 @@ export const GET = route
                 return NextResponse.json({ error: 'No organization found for user' }, { status: 400 });
             }
 
-            const repositories = await getRepositories(
-                provider,
-                gitAccountId,
-                ctx.session.user.id,
-                organizationId,
-            );
+            const repositories = await getRepositories(provider, gitAccountId, ctx.session.user.id, organizationId);
             return NextResponse.json(repositories);
         } catch (error: any) {
-            return NextResponse.json(
-                { error: error.message || 'Failed to fetch repositories' },
-                { status: 500 },
-            );
+            return NextResponse.json({ error: error.message || 'Failed to fetch repositories' }, { status: 500 });
         }
     });

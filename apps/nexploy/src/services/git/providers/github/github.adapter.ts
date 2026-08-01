@@ -76,9 +76,7 @@ export const githubAdapter: GitProviderAdapter = {
     },
 
     async listBranches({ token, owner, repoName }): Promise<GitBranch[]> {
-        const branches = await tokenGitStorage.run(token, async () =>
-            githubGetRepositoryBranches(owner!, repoName!),
-        );
+        const branches = await tokenGitStorage.run(token, async () => githubGetRepositoryBranches(owner!, repoName!));
         return branches.map((branch: GithubBranch) => ({
             name: branch.name,
             protected: branch.protected,
@@ -118,9 +116,7 @@ export const githubAdapter: GitProviderAdapter = {
     async deleteWebhook({ token, repo, webhookId }): Promise<void> {
         const [owner, repoName] = repo.fullName.split('/');
         if (!owner || !repoName) throw new Error(`Invalid repository name: ${repo.fullName}`);
-        await tokenGitStorage.run(token, async () =>
-            githubDeleteWebhook(owner, repoName, webhookId),
-        );
+        await tokenGitStorage.run(token, async () => githubDeleteWebhook(owner, repoName, webhookId));
     },
 
     parseWebhookPayload(body: any, event: string | null): WebhookPayload | null {
@@ -174,8 +170,7 @@ export const githubAdapter: GitProviderAdapter = {
     verifyWebhookSignature({ headers, rawBody, secret }): boolean {
         const signature = headers.get('x-hub-signature-256');
         if (!signature) return false;
-        const expected =
-            'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+        const expected = 'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
         return timingSafeEqual(signature, expected);
     },
 
@@ -195,9 +190,7 @@ export const githubAdapter: GitProviderAdapter = {
 
         const accessToken = tokenData.access_token;
         const refreshToken = tokenData.refresh_token ?? null;
-        const accessTokenExpiresAt = tokenData.expires_in
-            ? dayjs().add(tokenData.expires_in, 'second').toDate()
-            : null;
+        const accessTokenExpiresAt = tokenData.expires_in ? dayjs().add(tokenData.expires_in, 'second').toDate() : null;
 
         const user = await this.getAuthenticatedUser({
             token: { accessToken, refreshToken, accessTokenExpiresAt },
@@ -214,20 +207,14 @@ export const githubAdapter: GitProviderAdapter = {
     },
 
     async refreshToken({ refreshToken, credentials }): Promise<GitProviderToken> {
-        const data = await githubRefreshAccessToken(
-            refreshToken,
-            credentials.clientId,
-            credentials.clientSecret,
-        );
+        const data = await githubRefreshAccessToken(refreshToken, credentials.clientId, credentials.clientSecret);
         if (data.error) {
             throw new Error(data.error_description || data.error);
         }
         return {
             accessToken: data.access_token,
             refreshToken: data.refresh_token ?? refreshToken,
-            accessTokenExpiresAt: data.expires_in
-                ? dayjs().add(data.expires_in, 'second').toDate()
-                : null,
+            accessTokenExpiresAt: data.expires_in ? dayjs().add(data.expires_in, 'second').toDate() : null,
         };
     },
 

@@ -86,8 +86,7 @@ export async function listCloudflareZones(credentialId: string): Promise<Cloudfl
         const apiToken = decrypt(credential.apiToken);
 
         return await tokenCloudflareStorage.run({ apiToken }, async () => {
-            return (await kyCloudflare.get('zones').json<CloudflareApiResponse<CloudflareZone[]>>())
-                .result;
+            return (await kyCloudflare.get('zones').json<CloudflareApiResponse<CloudflareZone[]>>()).result;
         });
     } catch (error: unknown) {
         throw new Error(t('cloudflare.listZonesFailed'));

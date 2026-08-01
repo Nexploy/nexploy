@@ -17,18 +17,7 @@ import { Button } from '@workspace/ui/components/button';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 
 export function GradientEdge(props: EdgeProps) {
-    const {
-        id,
-        source,
-        target,
-        sourceX,
-        sourceY,
-        targetX,
-        targetY,
-        sourcePosition,
-        targetPosition,
-        style,
-    } = props;
+    const { id, source, target, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style } = props;
 
     const nodes = useNodes();
     const { deleteElements, getEdges } = useReactFlow();

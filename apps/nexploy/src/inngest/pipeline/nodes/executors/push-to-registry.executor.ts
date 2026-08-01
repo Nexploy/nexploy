@@ -1,4 +1,8 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { getRegistryWithPassword } from '@/services/registry.service';
 import { pushToRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -27,9 +31,9 @@ export class PushToRegistryExecutor implements INodeExecutor {
             password: registry.password || '',
         };
 
-        const commitHash = [...allOutputs.values()]
-            .map((o) => o['commitHash'])
-            .find((v) => typeof v === 'string') as string | undefined;
+        const commitHash = [...allOutputs.values()].map((o) => o['commitHash']).find((v) => typeof v === 'string') as
+            | string
+            | undefined;
 
         const customTag = commitHash ?? 'latest';
         const environmentId = [...allOutputs.values()]
@@ -39,9 +43,7 @@ export class PushToRegistryExecutor implements INodeExecutor {
         const configImageName = nodeConfig.imageName?.trim();
         const imageNames: string[] = configImageName
             ? [configImageName]
-            : [...allOutputs.values()]
-                  .map((o) => o['imageName'])
-                  .filter((v): v is string => typeof v === 'string');
+            : [...allOutputs.values()].map((o) => o['imageName']).filter((v): v is string => typeof v === 'string');
 
         if (imageNames.length === 0) {
             await logger.warn(

@@ -120,15 +120,7 @@ export const buildFunction = inngest.createFunction(
                 throw new Error(`No pipeline configuration found for stage: ${config.stageId}`);
             }
 
-            return await pipelineOrchestrator.execute(
-                buildId,
-                config,
-                graph,
-                step,
-                logger,
-                reporter,
-                setStatusBuild,
-            );
+            return await pipelineOrchestrator.execute(buildId, config, graph, step, logger, reporter, setStatusBuild);
         }
     },
 );

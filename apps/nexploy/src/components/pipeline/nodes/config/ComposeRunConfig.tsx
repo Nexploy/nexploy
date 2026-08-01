@@ -31,9 +31,7 @@ export function ComposeRunConfig() {
                                 <Input {...field} placeholder={t('composeServicePlaceholder')} />
                             </RefAware>
                         </FormControl>
-                        <FormDescription className="text-xs">
-                            {t('composeServiceDescription')}
-                        </FormDescription>
+                        <FormDescription className="text-xs">{t('composeServiceDescription')}</FormDescription>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
@@ -49,9 +47,7 @@ export function ComposeRunConfig() {
                                 <Input {...field} placeholder={t('composeRunCommandPlaceholder')} />
                             </RefAware>
                         </FormControl>
-                        <FormDescription className="text-xs">
-                            {t('composeRunCommandDescription')}
-                        </FormDescription>
+                        <FormDescription className="text-xs">{t('composeRunCommandDescription')}</FormDescription>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
@@ -93,9 +89,7 @@ export function ComposeRunConfig() {
                     <FormItem className="border-border flex items-center rounded-md border p-3">
                         <FormLabel className="flex cursor-pointer flex-col items-start justify-between gap-1">
                             <span>{t('composeRunNoDeps')}</span>
-                            <FormDescription className="text-xs">
-                                {t('composeRunNoDepsDescription')}
-                            </FormDescription>
+                            <FormDescription className="text-xs">{t('composeRunNoDepsDescription')}</FormDescription>
                         </FormLabel>
                         <FormControl>
                             <Switch checked={field.value} onCheckedChange={field.onChange} />

@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -55,30 +49,20 @@ export function DeleteVolumeConfig() {
                                             {t('volumesLoading')}
                                         </p>
                                     ) : (
-                                        <Select
-                                            {...field}
-                                            onValueChange={field.onChange}
-                                            disabled={isLoading}
-                                        >
+                                        <Select {...field} onValueChange={field.onChange} disabled={isLoading}>
                                             <SelectTrigger className="w-full min-w-40 data-[placeholder]:pl-3!">
                                                 {isStale ? (
                                                     <span className="flex min-w-0 items-center gap-1.5">
                                                         <AlertTriangle className="h-3 w-3 shrink-0" />
-                                                        <span className="truncate">
-                                                            {t('volumeUnavailable')}
-                                                        </span>
+                                                        <span className="truncate">{t('volumeUnavailable')}</span>
                                                     </span>
                                                 ) : (
-                                                    <SelectValue
-                                                        placeholder={t('volumeNamePlaceholder')}
-                                                    />
+                                                    <SelectValue placeholder={t('volumeNamePlaceholder')} />
                                                 )}
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
-                                                    <SelectLabel>
-                                                        {t('volumesSelectLabel')}
-                                                    </SelectLabel>
+                                                    <SelectLabel>{t('volumesSelectLabel')}</SelectLabel>
                                                     {volumes.length === 0 ? (
                                                         <div className="text-muted-foreground px-2 py-1.5 text-xs">
                                                             {t('noVolumesFound')}

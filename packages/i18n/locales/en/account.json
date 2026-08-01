@@ -1,117 +1,117 @@
 {
-    "title": "Account",
-    "description": "Manage your user profile and preferences",
-    "profile": "Profile",
-    "security": "Security",
-    "profileInfo": {
-        "title": "Profile Information",
-        "description": "Manage your personal information and account details",
-        "name": "Name",
-        "username": "Username",
-        "namePlaceholder": "Your name",
-        "email": "Email",
-        "emailPlaceholder": "your@email.com",
-        "updateProfile": "Update profile",
-        "updating": "Updating...",
-        "profileUpdated": "Username updated successfully"
-    },
-    "errors": {
-        "failedToCreateApiKey": "Failed to create API key"
-    },
-    "securitySettings": {
-        "title": "Security Settings",
-        "description": "Manage your account security and authentication preferences",
-        "password": "Password",
-        "passwordDescription": "Change your password to keep your account secure",
-        "change": "Change"
-    },
-    "integrations": {
-        "title": "Integrations",
-        "description": "Connect your account with external services and tools"
-    },
-    "notifications": {
-        "title": "Notification Preferences",
-        "description": "Control when you receive notifications",
-        "badges": {
-            "title": "UI badges",
-            "description": "Show a counter on the interface where an item needs your attention",
-            "invitations": "Organization invitations",
-            "invitationsDescription": "Display a badge on the account menu when you have pending invitations"
-        }
-    },
-    "regional": {
-        "title": "Regional Settings",
-        "description": "Configure your language and timezone preferences",
-        "language": "Language"
-    },
-    "password": {
-        "title": "Change Password",
-        "description": "Enter your current password and choose a new password",
-        "currentPassword": "Current Password",
-        "newPassword": "New Password",
-        "confirmPassword": "Confirm Password",
-        "changePassword": "Change Password",
-        "passwordChanged": "Password changed successfully",
-        "changeFailed": "Failed to change password"
-    },
-    "twoFactor": {
-        "title": "Two-Factor Authentication",
-        "description": "Add an extra layer of security to your account",
-        "enabled": "Enabled",
-        "disabled": "Disabled",
-        "enable": "Enable 2FA",
-        "disable": "Disable 2FA",
-        "settings": "Setting 2FA",
-        "settingsTitle": "Two-Factor Authentication Settings",
-        "settingsDescription": "Manage your two-factor authentication settings.",
-        "enableTitle": "Enable 2FA",
-        "enableDescription": "Secure your account by enabling two-factor authentication.",
-        "disableTitle": "Disable Two-Factor Authentication",
-        "disableDescription": "Are you sure you want to disable two-factor authentication? This will make your account less secure.",
-        "disableButton": "Disable Two-Factor Auth",
-        "cantScan": "Can't scan? You can manually enter the secret key in your authenticator app",
-        "verifTotp": "Verif TOTP",
-        "verifTotpDescription": "Scan the QR code with your authenticator app to complete two-factor authentication setup.",
-        "enterVerificationCode": "Enter Verification Code:",
-        "backupCodes": "Backup Codes",
-        "backupCodesDescription": "Keep these backup codes in a safe place. Each code can only be used once.",
-        "downloadCodes": "Download codes",
-        "close": "Close",
-        "useBackupCode": "Use a backup code",
-        "password": "Password",
-        "passwordPlaceholder": "Enter your password"
-    },
-    "alerts": {
-        "containerAlerts": "Container Alerts",
-        "containerStatusChanges": "Get notified when containers start, stop, or crash",
-        "imageAlerts": "Image Alerts",
-        "imageStatusChanges": "Get notified when images are pulled, built, or removed",
-        "volumeAlerts": "Volume Alerts",
-        "volumeStatusChanges": "Get notified when volumes are created or deleted",
-        "networkAlerts": "Network Alerts",
-        "networkStatusChanges": "Get notified when networks are created or deleted",
-        "swarmAlerts": "Swarm Alerts",
-        "swarmStatusChanges": "Get notified about swarm nodes, services, and tasks"
-    },
-    "language": {
-        "title": "Language",
-        "selectLanguage": "Select a language",
-        "en": "English (US)",
-        "fr": "Français"
-    },
-    "theme": {
-        "title": "Theme",
-        "light": "Light",
-        "dark": "Dark",
-        "system": "System"
-    },
-    "dangerZone": {
-        "title": "Danger Zone",
-        "description": "Irreversible and destructive actions",
-        "signOut": "Sign Out",
-        "confirmSignOut": "Are you sure you want to sign out? You will need to log in again to access your account.",
-        "logOut": "Log Out",
-        "clear": "Clear",
-        "confirmDelete": "Are you sure you want to delete your account? This action cannot be undone."
+  "title": "Account",
+  "description": "Manage your user profile and preferences",
+  "profile": "Profile",
+  "security": "Security",
+  "profileInfo": {
+    "title": "Profile Information",
+    "description": "Manage your personal information and account details",
+    "name": "Name",
+    "username": "Username",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "updateProfile": "Update profile",
+    "updating": "Updating...",
+    "profileUpdated": "Username updated successfully"
+  },
+  "errors": {
+    "failedToCreateApiKey": "Failed to create API key"
+  },
+  "securitySettings": {
+    "title": "Security Settings",
+    "description": "Manage your account security and authentication preferences",
+    "password": "Password",
+    "passwordDescription": "Change your password to keep your account secure",
+    "change": "Change"
+  },
+  "integrations": {
+    "title": "Integrations",
+    "description": "Connect your account with external services and tools"
+  },
+  "notifications": {
+    "title": "Notification Preferences",
+    "description": "Control when you receive notifications",
+    "badges": {
+      "title": "UI badges",
+      "description": "Show a counter on the interface where an item needs your attention",
+      "invitations": "Organization invitations",
+      "invitationsDescription": "Display a badge on the account menu when you have pending invitations"
     }
+  },
+  "regional": {
+    "title": "Regional Settings",
+    "description": "Configure your language and timezone preferences",
+    "language": "Language"
+  },
+  "password": {
+    "title": "Change Password",
+    "description": "Enter your current password and choose a new password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "changePassword": "Change Password",
+    "passwordChanged": "Password changed successfully",
+    "changeFailed": "Failed to change password"
+  },
+  "twoFactor": {
+    "title": "Two-Factor Authentication",
+    "description": "Add an extra layer of security to your account",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "enable": "Enable 2FA",
+    "disable": "Disable 2FA",
+    "settings": "Setting 2FA",
+    "settingsTitle": "Two-Factor Authentication Settings",
+    "settingsDescription": "Manage your two-factor authentication settings.",
+    "enableTitle": "Enable 2FA",
+    "enableDescription": "Secure your account by enabling two-factor authentication.",
+    "disableTitle": "Disable Two-Factor Authentication",
+    "disableDescription": "Are you sure you want to disable two-factor authentication? This will make your account less secure.",
+    "disableButton": "Disable Two-Factor Auth",
+    "cantScan": "Can't scan? You can manually enter the secret key in your authenticator app",
+    "verifTotp": "Verif TOTP",
+    "verifTotpDescription": "Scan the QR code with your authenticator app to complete two-factor authentication setup.",
+    "enterVerificationCode": "Enter Verification Code:",
+    "backupCodes": "Backup Codes",
+    "backupCodesDescription": "Keep these backup codes in a safe place. Each code can only be used once.",
+    "downloadCodes": "Download codes",
+    "close": "Close",
+    "useBackupCode": "Use a backup code",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password"
+  },
+  "alerts": {
+    "containerAlerts": "Container Alerts",
+    "containerStatusChanges": "Get notified when containers start, stop, or crash",
+    "imageAlerts": "Image Alerts",
+    "imageStatusChanges": "Get notified when images are pulled, built, or removed",
+    "volumeAlerts": "Volume Alerts",
+    "volumeStatusChanges": "Get notified when volumes are created or deleted",
+    "networkAlerts": "Network Alerts",
+    "networkStatusChanges": "Get notified when networks are created or deleted",
+    "swarmAlerts": "Swarm Alerts",
+    "swarmStatusChanges": "Get notified about swarm nodes, services, and tasks"
+  },
+  "language": {
+    "title": "Language",
+    "selectLanguage": "Select a language",
+    "en": "English (US)",
+    "fr": "Français"
+  },
+  "theme": {
+    "title": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "dangerZone": {
+    "title": "Danger Zone",
+    "description": "Irreversible and destructive actions",
+    "signOut": "Sign Out",
+    "confirmSignOut": "Are you sure you want to sign out? You will need to log in again to access your account.",
+    "logOut": "Log Out",
+    "clear": "Clear",
+    "confirmDelete": "Are you sure you want to delete your account? This action cannot be undone."
+  }
 }

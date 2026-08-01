@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -34,9 +34,7 @@ export function CreateContainerConfig() {
     const { networks, isLoading: networksLoading } = useEnvironmentNetworks(environmentId);
 
     const networkOptions = useMemo(() => {
-        return networks
-            .map((n) => ({ value: n.name, label: n.name }))
-            .sort((a, b) => a.label.localeCompare(b.label));
+        return networks.map((n) => ({ value: n.name, label: n.name })).sort((a, b) => a.label.localeCompare(b.label));
     }, [networks]);
 
     const imageOptions = useMemo(() => {
@@ -79,10 +77,7 @@ export function CreateContainerConfig() {
                         <FormLabel>{t('createContainerName')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input
-                                    {...field}
-                                    placeholder={t('createContainerNamePlaceholder')}
-                                />
+                                <Input {...field} placeholder={t('createContainerNamePlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -126,12 +121,8 @@ export function CreateContainerConfig() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectLabel>
-                                            {t('createContainerRestartPolicy')}
-                                        </SelectLabel>
-                                        <SelectItem value="unless-stopped">
-                                            unless-stopped
-                                        </SelectItem>
+                                        <SelectLabel>{t('createContainerRestartPolicy')}</SelectLabel>
+                                        <SelectItem value="unless-stopped">unless-stopped</SelectItem>
                                         <SelectItem value="always">always</SelectItem>
                                         <SelectItem value="on-failure">on-failure</SelectItem>
                                         <SelectItem value="no">no</SelectItem>
@@ -175,9 +166,7 @@ export function CreateContainerConfig() {
                         variant="outline"
                         size="sm"
                         className="h-7 text-xs"
-                        onClick={() =>
-                            appendPort({ hostPort: '', containerPort: '', protocol: 'tcp' })
-                        }
+                        onClick={() => appendPort({ hostPort: '', containerPort: '', protocol: 'tcp' })}
                     >
                         <Plus className="size-3" />
                         {tDocker('addPort')}
@@ -209,10 +198,7 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('hostPort')}
-                                                />
+                                                <Input {...field} placeholder={tDocker('hostPort')} />
                                             </FormControl>
                                             <FormMessage className="text-xs" />
                                         </FormItem>
@@ -225,10 +211,7 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('containerPort')}
-                                                />
+                                                <Input {...field} placeholder={tDocker('containerPort')} />
                                             </FormControl>
                                             <FormMessage className="text-xs" />
                                         </FormItem>
@@ -240,18 +223,13 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <Select
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
-                                                >
+                                                <Select value={field.value} onValueChange={field.onChange}>
                                                     <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectGroup>
-                                                            <SelectLabel>
-                                                                {tDocker('protocol')}
-                                                            </SelectLabel>
+                                                            <SelectLabel>{tDocker('protocol')}</SelectLabel>
                                                             <SelectItem value="tcp">TCP</SelectItem>
                                                             <SelectItem value="udp">UDP</SelectItem>
                                                         </SelectGroup>
@@ -405,10 +383,7 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('hostPath')}
-                                                />
+                                                <Input {...field} placeholder={tDocker('hostPath')} />
                                             </FormControl>
                                             <FormMessage className="text-xs" />
                                         </FormItem>
@@ -421,10 +396,7 @@ export function CreateContainerConfig() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={tDocker('containerPath')}
-                                                />
+                                                <Input {...field} placeholder={tDocker('containerPath')} />
                                             </FormControl>
                                             <FormMessage className="text-xs" />
                                         </FormItem>
@@ -437,13 +409,8 @@ export function CreateContainerConfig() {
                                         <FormItem>
                                             <FormControl>
                                                 <div className="flex items-center gap-1">
-                                                    <Switch
-                                                        checked={field.value}
-                                                        onCheckedChange={field.onChange}
-                                                    />
-                                                    <Label className="text-xs">
-                                                        {tDocker('readOnly')}
-                                                    </Label>
+                                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                                    <Label className="text-xs">{tDocker('readOnly')}</Label>
                                                 </div>
                                             </FormControl>
                                             <FormMessage className="text-xs" />

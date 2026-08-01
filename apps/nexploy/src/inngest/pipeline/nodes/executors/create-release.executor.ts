@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { createReleaseConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { getGitAdapter } from '@/services/git/core/registry';
@@ -16,9 +20,7 @@ export class CreateReleaseExecutor implements INodeExecutor {
         const { nodeId, nodeConfig, buildConfig, allOutputs, logger, abortSignal, edges } = ctx;
 
         const tagName =
-            nodeConfig.tagName ||
-            getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'tagName') ||
-            '';
+            nodeConfig.tagName || getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'tagName') || '';
 
         if (!tagName) throw new Error('No tag name — provide one or connect a Git Tag node');
 
@@ -34,20 +36,12 @@ export class CreateReleaseExecutor implements INodeExecutor {
             gitAccountId: buildConfig.gitAccountId,
             requestedUserId: buildConfig.userId,
         });
-        const validToken = await getValidToken(
-            tokenData,
-            provider,
-            buildConfig.userId,
-            buildConfig.gitAccountId,
-        );
+        const validToken = await getValidToken(tokenData, provider, buildConfig.userId, buildConfig.gitAccountId);
         const token = validToken.accessToken;
 
         if (!token) throw new Error('No access token available for Git provider');
 
-        await logger.info(
-            nodeId,
-            `Creating ${provider} release "${releaseTitle}" for tag "${tagName}"`,
-        );
+        await logger.info(nodeId, `Creating ${provider} release "${releaseTitle}" for tag "${tagName}"`);
 
         if (abortSignal.aborted) throw new Error('Build cancelled');
 

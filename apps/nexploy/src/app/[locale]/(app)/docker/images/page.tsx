@@ -33,9 +33,7 @@ export default function ImagesPage() {
                     <Button asChild className={'mt-5'} disabled>
                         <Link
                             href={'/docker/images/pull'}
-                            className={cn(
-                                statusDocker !== 'connected' && 'pointer-events-none opacity-50',
-                            )}
+                            className={cn(statusDocker !== 'connected' && 'pointer-events-none opacity-50')}
                         >
                             <Plus />
                             {tDocker('pullImage')}

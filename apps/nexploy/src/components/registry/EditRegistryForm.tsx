@@ -7,14 +7,7 @@ import { updateRegistryAction } from '@/actions/registry/updateRegistry.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { useTranslations } from 'next-intl';
 import type { RegistryInfo } from '@/services/registry.service';
@@ -61,11 +54,7 @@ export function EditRegistryForm({ registry }: EditRegistryFormProps) {
                         <FormItem>
                             <FormLabel>{t('nameLabel')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    placeholder={t('namePlaceholder')}
-                                    disabled={isSubmitting}
-                                    {...field}
-                                />
+                                <Input placeholder={t('namePlaceholder')} disabled={isSubmitting} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -79,11 +68,7 @@ export function EditRegistryForm({ registry }: EditRegistryFormProps) {
                         <FormItem>
                             <FormLabel>{t('urlLabel')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    placeholder={t('urlPlaceholder')}
-                                    disabled={isSubmitting}
-                                    {...field}
-                                />
+                                <Input placeholder={t('urlPlaceholder')} disabled={isSubmitting} {...field} />
                             </FormControl>
                             <p className="text-muted-foreground text-xs">{t('urlDescription')}</p>
                             <FormMessage />
@@ -98,16 +83,10 @@ export function EditRegistryForm({ registry }: EditRegistryFormProps) {
                         <FormItem>
                             <FormLabel>
                                 {t('usernameLabel')}
-                                <span className="text-muted-foreground text-xs">
-                                    {tCommon('optional')}
-                                </span>
+                                <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
                             </FormLabel>
                             <FormControl>
-                                <Input
-                                    placeholder={t('usernamePlaceholder')}
-                                    disabled={isSubmitting}
-                                    {...field}
-                                />
+                                <Input placeholder={t('usernamePlaceholder')} disabled={isSubmitting} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -121,9 +100,7 @@ export function EditRegistryForm({ registry }: EditRegistryFormProps) {
                         <FormItem>
                             <FormLabel>
                                 {t('passwordLabel')}
-                                <span className="text-muted-foreground text-xs">
-                                    {tCommon('optional')}
-                                </span>
+                                <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
                             </FormLabel>
                             <FormControl>
                                 <Input
@@ -140,12 +117,7 @@ export function EditRegistryForm({ registry }: EditRegistryFormProps) {
                 />
 
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        disabled={isSubmitting}
-                        isLoading={isSubmitting}
-                        className="w-full"
-                    >
+                    <Button type="submit" disabled={isSubmitting} isLoading={isSubmitting} className="w-full">
                         {t('save')}
                     </Button>
                 </DialogFooter>

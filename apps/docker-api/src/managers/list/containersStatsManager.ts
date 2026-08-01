@@ -12,14 +12,7 @@ import {
 } from '@workspace/typescript-interface/docker/docker.containers.stats';
 
 const MAX_CONCURRENT_STATS_CALLS = 8;
-const CONTAINER_STATES: ContainerState[] = [
-    'created',
-    'running',
-    'restarting',
-    'paused',
-    'exited',
-    'dead',
-];
+const CONTAINER_STATES: ContainerState[] = ['created', 'running', 'restarting', 'paused', 'exited', 'dead'];
 
 interface CounterSample {
     timestamp: number;
@@ -107,10 +100,7 @@ export class ContainersStatsManager extends EventEmitter {
     }
 
     private isDockerConnected(): boolean {
-        return (
-            stateManagerFactory.getManagersSafe(this.environmentId)?.dockerStatus.isConnected() ??
-            false
-        );
+        return stateManagerFactory.getManagersSafe(this.environmentId)?.dockerStatus.isConnected() ?? false;
     }
 
     private async poll(type: ContainersStatsEvent['type']): Promise<void> {
@@ -132,10 +122,8 @@ export class ContainersStatsManager extends EventEmitter {
         try {
             const containers = await this.docker.listContainers({ all: true });
 
-            const stats = await mapWithConcurrency(
-                containers,
-                MAX_CONCURRENT_STATS_CALLS,
-                (container) => this.buildSample(container),
+            const stats = await mapWithConcurrency(containers, MAX_CONCURRENT_STATS_CALLS, (container) =>
+                this.buildSample(container),
             );
 
             const liveIds = new Set(containers.map((container) => container.Id));
@@ -159,10 +147,7 @@ export class ContainersStatsManager extends EventEmitter {
                 timestamp: Date.now(),
             } satisfies ContainersStatsEvent);
         } catch (err) {
-            logger.error(
-                { err, environmentId: this.environmentId },
-                'Error collecting containers stats',
-            );
+            logger.error({ err, environmentId: this.environmentId }, 'Error collecting containers stats');
 
             if (!this.monitoring) return;
 
@@ -232,8 +217,7 @@ export class ContainersStatsManager extends EventEmitter {
 
         const cpuUsage = raw.cpu_stats?.cpu_usage?.total_usage ?? 0;
         const systemCpuUsage = raw.cpu_stats?.system_cpu_usage ?? 0;
-        const onlineCpus =
-            raw.cpu_stats?.online_cpus || raw.cpu_stats?.cpu_usage?.percpu_usage?.length || 1;
+        const onlineCpus = raw.cpu_stats?.online_cpus || raw.cpu_stats?.cpu_usage?.percpu_usage?.length || 1;
 
         let cpuDelta = cpuUsage - (raw.precpu_stats?.cpu_usage?.total_usage ?? 0);
         let systemDelta = systemCpuUsage - (raw.precpu_stats?.system_cpu_usage ?? 0);
@@ -243,13 +227,9 @@ export class ContainersStatsManager extends EventEmitter {
             systemDelta = systemCpuUsage - previous.systemCpuUsage;
         }
 
-        const cpuPercent =
-            systemDelta > 0 && cpuDelta > 0 ? (cpuDelta / systemDelta) * onlineCpus * 100 : 0;
+        const cpuPercent = systemDelta > 0 && cpuDelta > 0 ? (cpuDelta / systemDelta) * onlineCpus * 100 : 0;
 
-        const memoryUsage = Math.max(
-            0,
-            (raw.memory_stats?.usage ?? 0) - (raw.memory_stats?.stats?.inactive_file ?? 0),
-        );
+        const memoryUsage = Math.max(0, (raw.memory_stats?.usage ?? 0) - (raw.memory_stats?.stats?.inactive_file ?? 0));
         const memoryLimit = raw.memory_stats?.limit || 0;
 
         let networkRx = 0;
@@ -339,8 +319,7 @@ export class ContainersStatsManager extends EventEmitter {
             ...totals,
             containerCount: stats.length,
             runningCount: stats.filter((stat) => stat.state === 'running').length,
-            memoryPercent:
-                totals.memoryLimit > 0 ? (totals.memoryUsage / totals.memoryLimit) * 100 : 0,
+            memoryPercent: totals.memoryLimit > 0 ? (totals.memoryUsage / totals.memoryLimit) * 100 : 0,
         };
     }
 

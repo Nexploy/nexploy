@@ -6,10 +6,7 @@ import { safeResolvePath } from '@workspace/shared/pathSafety';
 
 const CACHE_IMAGE = 'alpine';
 
-async function runAlpineCmd(
-    cmd: string[],
-    binds: string[],
-): Promise<{ exitCode: number; stdout: string }> {
+async function runAlpineCmd(cmd: string[], binds: string[]): Promise<{ exitCode: number; stdout: string }> {
     const container = await docker.createContainer({
         Image: CACHE_IMAGE,
         Cmd: cmd,

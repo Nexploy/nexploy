@@ -36,9 +36,7 @@ export function EnvVarItem({
     return (
         <div className="bg-muted/60 flex items-center justify-between gap-2 rounded-md p-2">
             <code className="flex gap-2 text-sm leading-none">
-                <span className="text-primary shrink-0 text-xs font-semibold">
-                    {displayEnvVar.key}:
-                </span>
+                <span className="text-primary shrink-0 text-xs font-semibold">{displayEnvVar.key}:</span>
                 <span className="text-xs break-all">
                     {displayEnvVar.value ? (
                         displayEnvVar.value
@@ -52,12 +50,7 @@ export function EnvVarItem({
                 {isDeleted && onCancelDelete ? (
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-6 w-6"
-                                onClick={onCancelDelete}
-                            >
+                            <Button size="icon" variant="ghost" className="h-6 w-6" onClick={onCancelDelete}>
                                 <X />
                             </Button>
                         </TooltipTrigger>

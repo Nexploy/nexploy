@@ -43,9 +43,7 @@ export function parseRepositoryUrl(
     }
 
     const repo = parts[parts.length - 1]!;
-    const owner = options.nestedNamespace
-        ? parts.slice(0, -1).join('/')
-        : parts[parts.length - 2]!;
+    const owner = options.nestedNamespace ? parts.slice(0, -1).join('/') : parts[parts.length - 2]!;
 
     return {
         baseUrl: `${parsed.protocol}//${parsed.host}`,

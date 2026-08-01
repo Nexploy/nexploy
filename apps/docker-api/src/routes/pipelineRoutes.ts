@@ -3,16 +3,9 @@ import { containersStateManager } from '@/managers/list/containersStateManager';
 import { route } from '@/utils/route';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
-import {
-    buildDockerHostEnv,
-    getComposeContainerIds,
-    runDockerCompose,
-} from '@/utils/compose/dockerComposeRunner';
+import { buildDockerHostEnv, getComposeContainerIds, runDockerCompose } from '@/utils/compose/dockerComposeRunner';
 import { substituteEnvVars } from '@/utils/compose/composePreprocessor';
-import {
-    deployComposeSchema,
-    deploySchema,
-} from '@workspace/schemas-zod/docker/pipeline/pipelineAction.schema';
+import { deployComposeSchema, deploySchema } from '@workspace/schemas-zod/docker/pipeline/pipelineAction.schema';
 import yaml from 'yaml';
 import fs from 'fs';
 import path from 'path';
@@ -39,9 +32,7 @@ app.post(
 
         const environmentId = getCurrentEnvironmentId();
 
-        const envConfig = environmentId
-            ? dockerClientRegistry.getEnvironmentConfig(environmentId)
-            : null;
+        const envConfig = environmentId ? dockerClientRegistry.getEnvironmentConfig(environmentId) : null;
         const dockerEnvResult = buildDockerHostEnv(envConfig);
         const dockerEnv = dockerEnvResult.env;
 
@@ -157,12 +148,7 @@ app.post(
                 throw new Error(`docker compose up failed with exit code ${upCode}`);
             }
 
-            const containerIds = await getComposeContainerIds(
-                projectName,
-                composeFilePath,
-                tmpDir,
-                dockerEnv,
-            );
+            const containerIds = await getComposeContainerIds(projectName, composeFilePath, tmpDir, dockerEnv);
 
             await networksStateManager.createNetworkIfMissing(TRAEFIK_NETWORK_NAME);
             const traefikNetwork = docker.getNetwork(TRAEFIK_NETWORK_NAME);
@@ -171,10 +157,7 @@ app.post(
                     try {
                         await traefikNetwork.connect({ Container: containerId });
                     } catch {
-                        logger.warn(
-                            { containerId },
-                            'Could not connect container to Traefik network',
-                        );
+                        logger.warn({ containerId }, 'Could not connect container to Traefik network');
                     }
                 }),
             );

@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { runCommandInContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -19,12 +23,7 @@ export class RunCommandInContainerExecutor implements INodeExecutor {
         const continueOnError = nodeConfig.continueOnError;
         const workdir = nodeConfig.workdir;
         const user = nodeConfig.user;
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(nodeId, `Executing command in container "${containerId}": ${command}`);
 
@@ -58,9 +57,7 @@ export class RunCommandInContainerExecutor implements INodeExecutor {
             return { output: { exitCode: result.exitCode } };
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') throw error;
-            throw new Error(
-                `Failed to exec in container: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to exec in container: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

@@ -43,10 +43,7 @@ export function RepositorySearchGroup() {
         { preventDefault: true, capture: true },
     );
 
-    const { data } = useSWR<RepositoryResult[]>(
-        open ? { url: '/api/repositories' } : null,
-        fetcherApi,
-    );
+    const { data } = useSWR<RepositoryResult[]>(open ? { url: '/api/repositories' } : null, fetcherApi);
 
     const repos = filterRepositories(data ?? [], inputValue);
 
@@ -68,9 +65,7 @@ export function RepositorySearchGroup() {
                             {repo.repositoryUrl.replace(/^https?:\/\//, '')}
                         </span>
                     </div>
-                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">
-                        {t('types.repository')}
-                    </span>
+                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">{t('types.repository')}</span>
                 </CommandItem>
             ))}
         </CommandGroup>

@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { waitForHealthConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -18,17 +22,9 @@ export class WaitForHealthExecutor implements INodeExecutor {
         const containerId = nodeConfig.containerId;
         const timeout = nodeConfig.timeout;
         const interval = nodeConfig.interval;
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
-        await logger.info(
-            nodeId,
-            `Waiting for container "${containerId}" to be healthy (timeout: ${timeout}s)`,
-        );
+        await logger.info(nodeId, `Waiting for container "${containerId}" to be healthy (timeout: ${timeout}s)`);
 
         const deadline = Date.now() + timeout * 1000;
 
@@ -47,10 +43,7 @@ export class WaitForHealthExecutor implements INodeExecutor {
                 const runningStatus = result?.State?.Status;
 
                 if (!healthStatus && runningStatus === 'running') {
-                    await logger.info(
-                        nodeId,
-                        `Container "${containerId}" is running (no healthcheck configured)`,
-                    );
+                    await logger.info(nodeId, `Container "${containerId}" is running (no healthcheck configured)`);
                     return { output: { containerId, healthy: true } };
                 }
 
@@ -65,10 +58,7 @@ export class WaitForHealthExecutor implements INodeExecutor {
                 );
             } catch (err) {
                 if (abortSignal.aborted) throw new Error('Aborted');
-                await logger.debug(
-                    nodeId,
-                    `Inspect failed: ${err instanceof Error ? err.message : 'unknown error'}`,
-                );
+                await logger.debug(nodeId, `Inspect failed: ${err instanceof Error ? err.message : 'unknown error'}`);
             }
 
             await new Promise<void>((resolve) => setTimeout(resolve, interval * 1000));

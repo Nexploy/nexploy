@@ -17,8 +17,7 @@ export function AttachmentHandle({ attach, handleColor, position }: AttachmentHa
     const connections = useNodeConnections({ handleType: 'source', handleId: attach.id });
 
     const isSourceConnecting = connection.inProgress && connection.fromHandle?.id === attach.id;
-    const active =
-        connections.length > 0 || isSourceConnecting || (connection.inProgress && isHovered);
+    const active = connections.length > 0 || isSourceConnecting || (connection.inProgress && isHovered);
 
     return (
         <div className={'relative'}>

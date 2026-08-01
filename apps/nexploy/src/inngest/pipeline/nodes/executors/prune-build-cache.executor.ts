@@ -38,16 +38,9 @@ export class PruneBuildCacheExecutor implements INodeExecutor {
 
         const all = nodeConfig.all ?? false;
         const filter = nodeConfig.filter;
-        const keepStorage = nodeConfig.keepStorage
-            ? parseKeepStorage(nodeConfig.keepStorage)
-            : undefined;
+        const keepStorage = nodeConfig.keepStorage ? parseKeepStorage(nodeConfig.keepStorage) : undefined;
 
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(
             nodeId,
@@ -68,10 +61,7 @@ export class PruneBuildCacheExecutor implements INodeExecutor {
                 .json<{ deletedCaches: number; reclaimedSpace: number }>();
 
             const mb = (result.reclaimedSpace / 1024 / 1024).toFixed(2);
-            await logger.info(
-                nodeId,
-                `Pruned ${result.deletedCaches} build cache entries, reclaimed ${mb} MB`,
-            );
+            await logger.info(nodeId, `Pruned ${result.deletedCaches} build cache entries, reclaimed ${mb} MB`);
 
             return {
                 output: {
@@ -80,9 +70,7 @@ export class PruneBuildCacheExecutor implements INodeExecutor {
                 },
             };
         } catch (error) {
-            throw new Error(
-                `Failed to prune build cache: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to prune build cache: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

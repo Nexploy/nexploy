@@ -22,11 +22,9 @@ export function ProviderGroup({ provider, label, onSettled }: ProviderGroupProps
     const setSelectedModel = useAIPanelStore((s) => s.setSelectedModel);
     const closeModelSelector = useAIPanelStore((s) => s.closeModelSelector);
 
-    const { data, isLoading } = useSWR<{ models: ModelOption[] }>(
-        { url: `/api/ai/models/${provider}` },
-        fetcherApi,
-        { errorRetryCount: 0 },
-    );
+    const { data, isLoading } = useSWR<{ models: ModelOption[] }>({ url: `/api/ai/models/${provider}` }, fetcherApi, {
+        errorRetryCount: 0,
+    });
 
     useEffect(() => {
         if (!isLoading) onSettled?.(provider);
@@ -47,8 +45,7 @@ export function ProviderGroup({ provider, label, onSettled }: ProviderGroupProps
                       </div>
                   ))
                 : models.map((m) => {
-                      const isSelected =
-                          selected?.provider === provider && selected.modelId === m.value;
+                      const isSelected = selected?.provider === provider && selected.modelId === m.value;
 
                       return (
                           <CommandItem
@@ -61,10 +58,7 @@ export function ProviderGroup({ provider, label, onSettled }: ProviderGroupProps
                               className="gap-3 py-2.5"
                           >
                               <span
-                                  className={cn(
-                                      'flex size-7 shrink-0 items-center justify-center rounded-md',
-                                      color,
-                                  )}
+                                  className={cn('flex size-7 shrink-0 items-center justify-center rounded-md', color)}
                               >
                                   <Icon className="size-4 shrink-0" />
                               </span>

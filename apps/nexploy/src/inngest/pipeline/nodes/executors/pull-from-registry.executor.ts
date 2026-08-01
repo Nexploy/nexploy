@@ -58,9 +58,7 @@ export class PullFromRegistryExecutor implements INodeExecutor {
                 await logger.info(nodeId, `Image already exists locally: ${fullImageName}`);
                 return { output: { imageName: fullImageName }, skipped: true };
             }
-            throw new Error(
-                `Failed to pull image: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to pull image: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
 
         await logger.info(nodeId, `Image pulled successfully: ${fullImageName}`);

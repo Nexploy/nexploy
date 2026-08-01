@@ -14,8 +14,16 @@ export const scaleServiceFormSchema = z.object({
 });
 
 const servicePortSchema = z.object({
-    published: z.coerce.number().int().min(1, 'Port must be between 1 and 65535').max(65535, 'Port must be between 1 and 65535'),
-    target: z.coerce.number().int().min(1, 'Port must be between 1 and 65535').max(65535, 'Port must be between 1 and 65535'),
+    published: z.coerce
+        .number()
+        .int()
+        .min(1, 'Port must be between 1 and 65535')
+        .max(65535, 'Port must be between 1 and 65535'),
+    target: z.coerce
+        .number()
+        .int()
+        .min(1, 'Port must be between 1 and 65535')
+        .max(65535, 'Port must be between 1 and 65535'),
     protocol: z.enum(['tcp', 'udp']).default('tcp'),
     publishMode: z.enum(['ingress', 'host']).default('ingress'),
 });

@@ -21,9 +21,7 @@ export function substituteEnvVars(content: string, envVars: Record<string, strin
 
             case '?':
                 if (isEmpty) {
-                    throw new Error(
-                        `Required variable "${varName}" is not set${operand ? `: ${operand}` : ''}`,
-                    );
+                    throw new Error(`Required variable "${varName}" is not set${operand ? `: ${operand}` : ''}`);
                 }
                 return value!;
 

@@ -10,13 +10,7 @@ import { formatBytes } from '@/utils/formatBytes';
 
 const defaultValue: Omit<
     ContainerStatsState,
-    | 'connect'
-    | 'disconnect'
-    | 'reconnect'
-    | 'setError'
-    | 'clearStats'
-    | 'exportStats'
-    | 'reconnectPreservingData'
+    'connect' | 'disconnect' | 'reconnect' | 'setError' | 'clearStats' | 'exportStats' | 'reconnectPreservingData'
 > = {
     containerId: null,
     stats: null,

@@ -26,10 +26,7 @@ export class CacheRestoreExecutor implements INodeExecutor {
         const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         if (!workDir) {
-            await logger.warn(
-                nodeId,
-                'No workDir found in pipeline outputs — skipping cache restore',
-            );
+            await logger.warn(nodeId, 'No workDir found in pipeline outputs — skipping cache restore');
             return { output: {}, skipped: true };
         }
 

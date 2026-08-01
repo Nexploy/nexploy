@@ -17,13 +17,7 @@ interface RefAwareProps {
     className?: string;
 }
 
-export function RefAware({
-    value,
-    onChange,
-    emptyValue = '',
-    className,
-    children,
-}: PropsWithChildren<RefAwareProps>) {
+export function RefAware({ value, onChange, emptyValue = '', className, children }: PropsWithChildren<RefAwareProps>) {
     const tPipeline = useTranslations('repository.pipeline');
     const tRepository = useTranslations('repository');
     const validAncestorIds = useValidAncestorNodeIds();

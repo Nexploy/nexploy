@@ -52,12 +52,7 @@ export async function guardRepository(
     resource: PermissionResource,
     action: string,
 ) {
-    return guardOrganization(
-        ctx,
-        resource,
-        action,
-        await resolveOrganizationIdForRepository(repositoryId),
-    );
+    return guardOrganization(ctx, resource, action, await resolveOrganizationIdForRepository(repositoryId));
 }
 
 export async function guardContainer(
@@ -66,12 +61,7 @@ export async function guardContainer(
     resource: PermissionResource,
     action: string,
 ) {
-    return guardOrganization(
-        ctx,
-        resource,
-        action,
-        await resolveOrganizationIdForContainer(containerId),
-    );
+    return guardOrganization(ctx, resource, action, await resolveOrganizationIdForContainer(containerId));
 }
 
 export async function guardDestructiveContainer(
@@ -87,12 +77,7 @@ export async function guardDestructiveContainer(
     return requireConfirmation(ctx, target);
 }
 
-export async function guardBuild(
-    ctx: ToolContext,
-    buildId: string,
-    resource: PermissionResource,
-    action: string,
-) {
+export async function guardBuild(ctx: ToolContext, buildId: string, resource: PermissionResource, action: string) {
     return guardOrganization(ctx, resource, action, await resolveOrganizationIdForBuild(buildId));
 }
 
@@ -108,12 +93,7 @@ function requireConfirmation(ctx: ToolContext, target: string) {
     return null;
 }
 
-export function guardDestructive(
-    ctx: ToolContext,
-    resource: PermissionResource,
-    action: string,
-    target: string,
-) {
+export function guardDestructive(ctx: ToolContext, resource: PermissionResource, action: string, target: string) {
     const permissionError = guard(ctx, resource, action);
     if (permissionError) return permissionError;
 

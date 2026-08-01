@@ -17,18 +17,10 @@ export function NotificationBadge({ node, variant = 'count', className }: Notifi
     if (count === 0) return null;
 
     if (variant === 'dot')
-        return (
-            <span
-                className={cn('bg-destructive size-2 shrink-0 rounded-full', className)}
-                aria-hidden
-            />
-        );
+        return <span className={cn('bg-destructive size-2 shrink-0 rounded-full', className)} aria-hidden />;
 
     return (
-        <Badge
-            variant="destructive"
-            className={cn('h-5 min-w-5 shrink-0 rounded-full px-1.5', className)}
-        >
+        <Badge variant="destructive" className={cn('h-5 min-w-5 shrink-0 rounded-full px-1.5', className)}>
             {count > 99 ? '99+' : count}
         </Badge>
     );

@@ -33,17 +33,13 @@ export function CardImageConfig() {
                 <Table>
                     <TableBody>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('cmd')}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('cmd')}</TableCell>
                             <TableCell className={'max-w-0 truncate'}>
                                 <code>{config.cmd?.join(' ') || t('noCmd')}</code>
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('entrypoint')}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('entrypoint')}</TableCell>
                             <TableCell className={'max-w-0 truncate'}>
                                 <code>{config.entrypoint?.join(' ') || t('noEntrypoint')}</code>
                             </TableCell>
@@ -57,9 +53,7 @@ export function CardImageConfig() {
                                     <div className="flex flex-col gap-1">
                                         {envVars.map(({ key, value }) => (
                                             <div key={key} className="flex gap-2 font-mono text-sm">
-                                                <span className="text-muted-foreground shrink-0">
-                                                    {key}
-                                                </span>
+                                                <span className="text-muted-foreground shrink-0">{key}</span>
                                                 <span className="truncate">{value}</span>
                                             </div>
                                         ))}

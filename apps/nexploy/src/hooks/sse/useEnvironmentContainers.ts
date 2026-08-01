@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
-import {
-    Containers,
-    ContainersEvent,
-} from '@workspace/typescript-interface/docker/docker.containers';
+import { Containers, ContainersEvent } from '@workspace/typescript-interface/docker/docker.containers';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
 
 export function useEnvironmentContainers(environmentId?: string): {
@@ -57,9 +54,7 @@ export function useEnvironmentContainers(environmentId?: string): {
                 (e) => {
                     const data: ContainersEvent = JSON.parse(e.data);
                     if (!data.container) return;
-                    setContainers((prev) =>
-                        prev.map((c) => (c.id === data.container!.id ? data.container! : c)),
-                    );
+                    setContainers((prev) => prev.map((c) => (c.id === data.container!.id ? data.container! : c)));
                 },
                 params,
             ),

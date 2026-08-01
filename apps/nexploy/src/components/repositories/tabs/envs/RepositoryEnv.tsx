@@ -39,10 +39,7 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
     const { openDialog, closeDialog } = useConfirmationDialogStore();
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
 
-    const rowIds = useMemo(
-        () => envVariables.map((variable, index) => variable.id ?? `idx-${index}`),
-        [envVariables],
-    );
+    const rowIds = useMemo(() => envVariables.map((variable, index) => variable.id ?? `idx-${index}`), [envVariables]);
     const areAllVisible = rowIds.length > 0 && rowIds.every((rowId) => showValues[rowId]);
 
     const { execute: importVariables } = useAction(onEnvVariableAction, {
@@ -67,13 +64,7 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
         openDialog({
             title: t('editTitle'),
             description: t('editDescription', { key: variable.key }),
-            content: (
-                <EnvVariableForm
-                    repositoryId={repositoryId}
-                    stageId={stageId}
-                    variable={variable}
-                />
-            ),
+            content: <EnvVariableForm repositoryId={repositoryId} stageId={stageId} variable={variable} />,
             onSuccess: () => {
                 closeDialog();
                 router.refresh();
@@ -106,9 +97,7 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
     };
 
     const toggleShowAll = () => {
-        setShowValues(
-            areAllVisible ? {} : Object.fromEntries(rowIds.map((rowId) => [rowId, true])),
-        );
+        setShowValues(areAllVisible ? {} : Object.fromEntries(rowIds.map((rowId) => [rowId, true])));
     };
 
     return (
@@ -124,12 +113,7 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                 </div>
                 <div className="flex items-center gap-2">
                     {envVariables.length > 0 && (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            icon={areAllVisible ? EyeOff : Eye}
-                            onClick={toggleShowAll}
-                        >
+                        <Button variant="outline" size="sm" icon={areAllVisible ? EyeOff : Eye} onClick={toggleShowAll}>
                             {areAllVisible ? t('hideAll') : t('showAll')}
                         </Button>
                     )}
@@ -183,13 +167,9 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                                 </code>
                                 <code className="text-muted-foreground min-w-0 flex-1 break-all font-mono text-sm">
                                     {isVisible ? (
-                                        variable.value || (
-                                            <span className="italic">{t('emptyValue')}</span>
-                                        )
+                                        variable.value || <span className="italic">{t('emptyValue')}</span>
                                     ) : (
-                                        <span className="tracking-[0.2em]">
-                                            •••••••••••••••••••
-                                        </span>
+                                        <span className="tracking-[0.2em]">•••••••••••••••••••</span>
                                     )}
                                 </code>
                                 <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100 has-[[data-state=open]]:opacity-100">
@@ -204,17 +184,11 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                                                 {isVisible ? <EyeOff /> : <Eye />}
                                             </Button>
                                         </TooltipTrigger>
-                                        <TooltipContent>
-                                            {isVisible ? t('hide') : t('show')}
-                                        </TooltipContent>
+                                        <TooltipContent>{isVisible ? t('hide') : t('show')}</TooltipContent>
                                     </Tooltip>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <CopyButton
-                                                size="icon-sm"
-                                                variant="ghost"
-                                                text={variable.value}
-                                            />
+                                            <CopyButton size="icon-sm" variant="ghost" text={variable.value} />
                                         </TooltipTrigger>
                                         <TooltipContent>{t('copy')}</TooltipContent>
                                     </Tooltip>

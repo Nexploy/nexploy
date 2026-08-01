@@ -35,9 +35,7 @@ export default function NetworksPage() {
                     <Button asChild className={'mt-5'}>
                         <Link
                             href={'/docker/networks/create'}
-                            className={cn(
-                                statusDocker !== 'connected' && 'pointer-events-none opacity-50',
-                            )}
+                            className={cn(statusDocker !== 'connected' && 'pointer-events-none opacity-50')}
                         >
                             <Plus />
                             {tDocker('createNetwork')}

@@ -65,10 +65,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
                 return;
             }
 
-            setTimeout(
-                () => this.setupDockerStatusListeners(attempt + 1),
-                STATUS_LISTENER_SETUP_RETRY_MS,
-            );
+            setTimeout(() => this.setupDockerStatusListeners(attempt + 1), STATUS_LISTENER_SETUP_RETRY_MS);
             return;
         }
 
@@ -102,10 +99,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
 
     async start(): Promise<void> {
         if (this.monitoring) {
-            logger.warn(
-                { resourceId: this.resourceId },
-                `${this.resourceType} monitor already running`,
-            );
+            logger.warn({ resourceId: this.resourceId }, `${this.resourceType} monitor already running`);
             return;
         }
 
@@ -134,10 +128,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
                 );
             }
         } else {
-            logger.warn(
-                { resourceId: this.resourceId, status },
-                `Docker unavailable — using polling only`,
-            );
+            logger.warn({ resourceId: this.resourceId, status }, `Docker unavailable — using polling only`);
         }
 
         this.startPolling();
@@ -178,10 +169,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
 
     private async loadInitialState(): Promise<void> {
         if (!this.isDockerConnected()) {
-            logger.warn(
-                { resourceId: this.resourceId },
-                `Cannot load initial state: Docker not connected`,
-            );
+            logger.warn({ resourceId: this.resourceId }, `Cannot load initial state: Docker not connected`);
             return;
         }
 
@@ -189,24 +177,15 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
             const state = await this.fetchResourceState();
             this.currentState = state;
 
-            logger.info(
-                { resourceId: this.resourceId },
-                `Initial ${this.resourceType} state loaded`,
-            );
+            logger.info({ resourceId: this.resourceId }, `Initial ${this.resourceType} state loaded`);
 
             this.emitInitialState(state);
         } catch (err: any) {
             if (err.statusCode === 404) {
-                logger.warn(
-                    { resourceId: this.resourceId },
-                    `${this.resourceType} not found during initialization`,
-                );
+                logger.warn({ resourceId: this.resourceId }, `${this.resourceType} not found during initialization`);
                 this.emit('not-found', { resourceId: this.resourceId, timestamp: Date.now() });
             } else {
-                logger.error(
-                    { err, resourceId: this.resourceId },
-                    `Error loading initial ${this.resourceType} state`,
-                );
+                logger.error({ err, resourceId: this.resourceId }, `Error loading initial ${this.resourceType} state`);
                 throw err;
             }
         }
@@ -214,10 +193,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
 
     private async startDockerEventsListener(): Promise<void> {
         if (!this.isDockerConnected()) {
-            logger.warn(
-                { resourceId: this.resourceId },
-                `Cannot start events listener: Docker not connected`,
-            );
+            logger.warn({ resourceId: this.resourceId }, `Cannot start events listener: Docker not connected`);
             return;
         }
 
@@ -246,25 +222,16 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
             });
 
             lineStream.on('error', (err: Error) => {
-                logger.error(
-                    { err, resourceId: this.resourceId },
-                    `Docker ${this.resourceType} events stream error`,
-                );
+                logger.error({ err, resourceId: this.resourceId }, `Docker ${this.resourceType} events stream error`);
                 this.handleStreamError();
             });
 
             lineStream.on('end', () => {
-                logger.warn(
-                    { resourceId: this.resourceId },
-                    `Docker ${this.resourceType} events stream ended`,
-                );
+                logger.warn({ resourceId: this.resourceId }, `Docker ${this.resourceType} events stream ended`);
                 this.handleStreamError();
             });
 
-            logger.info(
-                { resourceId: this.resourceId },
-                `Docker ${this.resourceType} events listener started`,
-            );
+            logger.info({ resourceId: this.resourceId }, `Docker ${this.resourceType} events listener started`);
         } catch (err) {
             logger.error(
                 { err, resourceId: this.resourceId },
@@ -325,10 +292,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
             try {
                 await this.pollResourceState();
             } catch (err) {
-                logger.error(
-                    { err, resourceId: this.resourceId },
-                    `Error in ${this.resourceType} polling`,
-                );
+                logger.error({ err, resourceId: this.resourceId }, `Error in ${this.resourceType} polling`);
             }
         }, this.POLL_INTERVAL_MS);
 
@@ -340,10 +304,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
 
     private async pollResourceState(): Promise<void> {
         if (!this.isDockerConnected()) {
-            logger.debug(
-                { resourceId: this.resourceId },
-                `Skipping ${this.resourceType} poll: Docker not connected`,
-            );
+            logger.debug({ resourceId: this.resourceId }, `Skipping ${this.resourceType} poll: Docker not connected`);
             return;
         }
 
@@ -371,10 +332,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
 
     async handleDockerEvent(event: any): Promise<void> {
         if (!this.isDockerConnected()) {
-            logger.debug(
-                { resourceId: this.resourceId },
-                `Ignoring Docker event: Docker not connected`,
-            );
+            logger.debug({ resourceId: this.resourceId }, `Ignoring Docker event: Docker not connected`);
             return;
         }
 
@@ -422,10 +380,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
                     this.emitRemoved(oldState);
                 }
             } else {
-                logger.error(
-                    { err, resourceId: this.resourceId },
-                    `Error updating ${this.resourceType} state`,
-                );
+                logger.error({ err, resourceId: this.resourceId }, `Error updating ${this.resourceType} state`);
             }
         }
     }
@@ -456,10 +411,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
 
     async refresh(): Promise<void> {
         if (!this.isDockerConnected()) {
-            logger.warn(
-                { resourceId: this.resourceId },
-                `Cannot refresh ${this.resourceType}: Docker not connected`,
-            );
+            logger.warn({ resourceId: this.resourceId }, `Cannot refresh ${this.resourceType}: Docker not connected`);
             throw new Error('Docker is not connected');
         }
 
@@ -484,10 +436,7 @@ export abstract class BaseSingleResourceStateManager<TState> extends EventEmitte
                     this.emitRemoved(oldState);
                 }
             } else {
-                logger.error(
-                    { err, resourceId: this.resourceId },
-                    `Error during ${this.resourceType} refresh`,
-                );
+                logger.error({ err, resourceId: this.resourceId }, `Error during ${this.resourceType} refresh`);
                 throw err;
             }
         }

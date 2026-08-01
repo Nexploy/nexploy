@@ -25,15 +25,8 @@ export function TraefikEditorPanel() {
     const { resolvedTheme } = useTheme();
     const monacoTheme = resolvedTheme === 'dark' ? 'vs-dark' : 'vs-light';
 
-    const {
-        savedContent,
-        fileContent,
-        isDiffMode,
-        yamlError,
-        contentLoading,
-        selectedFile,
-        setFileContent,
-    } = useTraefikConfigStore();
+    const { savedContent, fileContent, isDiffMode, yamlError, contentLoading, selectedFile, setFileContent } =
+        useTraefikConfigStore();
 
     const language = selectedFile?.endsWith('.html') ? 'html' : 'yaml';
 
@@ -44,9 +37,7 @@ export function TraefikEditorPanel() {
                 <div className="border-destructive/20 bg-destructive/10 flex items-center gap-2 border-b px-4 py-2">
                     <AlertTriangle className="text-destructive size-3.5 shrink-0" />
                     <div className="min-w-0">
-                        <span className="text-destructive text-xs font-semibold">
-                            {t('yamlError')}:{' '}
-                        </span>
+                        <span className="text-destructive text-xs font-semibold">{t('yamlError')}: </span>
                         <span className="text-destructive/80 text-xs break-all">{yamlError}</span>
                     </div>
                 </div>

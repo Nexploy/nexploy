@@ -12,16 +12,8 @@ import { Separator } from '@workspace/ui/components/separator.tsx';
 export function TraefikEditorToolbar() {
     const t = useTranslations('admin.traefik');
 
-    const {
-        selectedFile,
-        fileContent,
-        isSaving,
-        isDiffMode,
-        yamlError,
-        formatContent,
-        toggleDiffMode,
-        deleteFile,
-    } = useTraefikConfigStore();
+    const { selectedFile, fileContent, isSaving, isDiffMode, yamlError, formatContent, toggleDiffMode, deleteFile } =
+        useTraefikConfigStore();
 
     const isYaml = !!selectedFile && selectedFile.endsWith('.yml');
 

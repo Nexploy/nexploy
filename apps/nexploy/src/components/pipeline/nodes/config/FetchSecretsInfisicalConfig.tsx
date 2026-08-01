@@ -12,13 +12,7 @@ import {
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
 
 export function FetchSecretsInfisicalConfig() {
@@ -39,9 +33,7 @@ export function FetchSecretsInfisicalConfig() {
                                 <Input {...field} placeholder={t('infisicalSiteUrlPlaceholder')} />
                             </RefAware>
                         </FormControl>
-                        <FormDescription className="text-xs">
-                            {t('infisicalSiteUrlDescription')}
-                        </FormDescription>
+                        <FormDescription className="text-xs">{t('infisicalSiteUrlDescription')}</FormDescription>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
@@ -59,12 +51,8 @@ export function FetchSecretsInfisicalConfig() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="universal-auth">
-                                    {t('infisicalAuthMethodUniversal')}
-                                </SelectItem>
-                                <SelectItem value="access-token">
-                                    {t('infisicalAuthMethodToken')}
-                                </SelectItem>
+                                <SelectItem value="universal-auth">{t('infisicalAuthMethodUniversal')}</SelectItem>
+                                <SelectItem value="access-token">{t('infisicalAuthMethodToken')}</SelectItem>
                             </SelectContent>
                         </Select>
                         <FormMessage className="text-xs" />
@@ -80,11 +68,7 @@ export function FetchSecretsInfisicalConfig() {
                             <FormLabel>{t('infisicalAccessToken')}</FormLabel>
                             <FormControl>
                                 <RefAware value={field.value} onChange={field.onChange}>
-                                    <Input
-                                        {...field}
-                                        type="password"
-                                        placeholder={t('passwordPlaceholder')}
-                                    />
+                                    <Input {...field} type="password" placeholder={t('passwordPlaceholder')} />
                                 </RefAware>
                             </FormControl>
                             <FormMessage className="text-xs" />
@@ -101,10 +85,7 @@ export function FetchSecretsInfisicalConfig() {
                                 <FormLabel>{t('infisicalClientId')}</FormLabel>
                                 <FormControl>
                                     <RefAware value={field.value} onChange={field.onChange}>
-                                        <Input
-                                            {...field}
-                                            placeholder={t('infisicalClientIdPlaceholder')}
-                                        />
+                                        <Input {...field} placeholder={t('infisicalClientIdPlaceholder')} />
                                     </RefAware>
                                 </FormControl>
                                 <FormMessage className="text-xs" />
@@ -119,11 +100,7 @@ export function FetchSecretsInfisicalConfig() {
                                 <FormLabel>{t('infisicalClientSecret')}</FormLabel>
                                 <FormControl>
                                     <RefAware value={field.value} onChange={field.onChange}>
-                                        <Input
-                                            {...field}
-                                            type="password"
-                                            placeholder={t('passwordPlaceholder')}
-                                        />
+                                        <Input {...field} type="password" placeholder={t('passwordPlaceholder')} />
                                     </RefAware>
                                 </FormControl>
                                 <FormMessage className="text-xs" />
@@ -140,10 +117,7 @@ export function FetchSecretsInfisicalConfig() {
                         <FormLabel>{t('infisicalProjectId')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input
-                                    {...field}
-                                    placeholder={t('infisicalProjectIdPlaceholder')}
-                                />
+                                <Input {...field} placeholder={t('infisicalProjectIdPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -158,10 +132,7 @@ export function FetchSecretsInfisicalConfig() {
                         <FormLabel>{t('infisicalEnvironment')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input
-                                    {...field}
-                                    placeholder={t('infisicalEnvironmentPlaceholder')}
-                                />
+                                <Input {...field} placeholder={t('infisicalEnvironmentPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />

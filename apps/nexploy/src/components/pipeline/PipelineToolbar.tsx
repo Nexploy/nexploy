@@ -1,16 +1,6 @@
 'use client';
 
-import {
-    Check,
-    Copy,
-    Loader2,
-    Power,
-    Redo2,
-    Settings,
-    SquareDashed,
-    Trash2,
-    Undo2,
-} from 'lucide-react';
+import { Check, Copy, Loader2, Power, Redo2, Settings, SquareDashed, Trash2, Undo2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
     useIsViewingBuild,
@@ -67,9 +57,7 @@ export function PipelineToolbar() {
         const allDisabled = selected.every((n) => n.data.disabled);
         const selectedIds = new Set(selected.map((n) => n.id));
         setNodes((prev) =>
-            prev.map((n) =>
-                selectedIds.has(n.id) ? { ...n, data: { ...n.data, disabled: !allDisabled } } : n,
-            ),
+            prev.map((n) => (selectedIds.has(n.id) ? { ...n, data: { ...n.data, disabled: !allDisabled } } : n)),
         );
         triggerAutoSave();
     };
@@ -78,9 +66,7 @@ export function PipelineToolbar() {
         <div className="mx-5 flex items-center justify-between gap-2 rounded-t-lg border border-b-0 px-2 py-1">
             <div className={'flex items-center gap-1'}>
                 <div className={'flex items-center gap-1 pr-1'}>
-                    <span className="text-muted-foreground text-xs">
-                        {t('nodeCount', { count: nodes.length })}
-                    </span>
+                    <span className="text-muted-foreground text-xs">{t('nodeCount', { count: nodes.length })}</span>
                     {disabledCount > 0 && (
                         <>
                             <span className={'text-muted-foreground text-base'}>·</span>
@@ -159,8 +145,7 @@ export function PipelineToolbar() {
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent className="flex items-center gap-1.5">
-                                {t('shortcutsList.duplicate')}{' '}
-                                <Kbd suppressHydrationWarning>{mod} + D</Kbd>
+                                {t('shortcutsList.duplicate')} <Kbd suppressHydrationWarning>{mod} + D</Kbd>
                             </TooltipContent>
                         </Tooltip>
 
@@ -205,9 +190,7 @@ export function PipelineToolbar() {
                                             variant="ghost"
                                             size="icon"
                                             className="size-6"
-                                            onClick={() =>
-                                                openDialogSettingNode(selectedNodeIds[0]!)
-                                            }
+                                            onClick={() => openDialogSettingNode(selectedNodeIds[0]!)}
                                         >
                                             <Settings className="size-3" />
                                         </Button>
@@ -223,11 +206,7 @@ export function PipelineToolbar() {
                         <Separator orientation="vertical" className="h-4!" />
                         <div key={activeBuild.id} className="flex items-center gap-1.5">
                             <StatusView status={activeBuild.status} />
-                            <StopBuild
-                                buildId={activeBuild.id}
-                                status={activeBuild.status}
-                                variant="outline"
-                            />
+                            <StopBuild buildId={activeBuild.id} status={activeBuild.status} variant="outline" />
                         </div>
                     </div>
                 )}

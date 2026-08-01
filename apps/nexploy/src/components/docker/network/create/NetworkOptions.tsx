@@ -34,9 +34,7 @@ export function NetworkOptions() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noOptionsConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noOptionsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -47,10 +45,7 @@ export function NetworkOptions() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={t('optionKeyPlaceholder')}
-                                                />
+                                                <Input {...field} placeholder={t('optionKeyPlaceholder')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -63,10 +58,7 @@ export function NetworkOptions() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={t('optionValuePlaceholder')}
-                                                />
+                                                <Input {...field} placeholder={t('optionValuePlaceholder')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

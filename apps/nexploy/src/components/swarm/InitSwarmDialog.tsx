@@ -4,14 +4,7 @@ import { useEffect } from 'react';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { toast } from 'sonner';
 import { onInitSwarmAction } from '@/actions/docker/swarm/init.action';
@@ -28,26 +21,22 @@ export function InitSwarmForm() {
 
     const { ip, isLoading: isDetecting } = usePublicIp();
 
-    const { form, handleSubmitWithAction } = useHookFormAction(
-        onInitSwarmAction,
-        zodResolver(initActionSchema),
-        {
-            formProps: {
-                defaultValues: {
-                    advertiseAddr: '',
-                    listenAddr: '0.0.0.0:2377',
-                    forceNewCluster: false,
-                },
-            },
-            actionProps: {
-                onSuccess: async () => {
-                    toast.success(t('swarmInitializedSuccess'));
-                    await onSwarmRefreshAction();
-                    if (onSuccess) onSuccess();
-                },
+    const { form, handleSubmitWithAction } = useHookFormAction(onInitSwarmAction, zodResolver(initActionSchema), {
+        formProps: {
+            defaultValues: {
+                advertiseAddr: '',
+                listenAddr: '0.0.0.0:2377',
+                forceNewCluster: false,
             },
         },
-    );
+        actionProps: {
+            onSuccess: async () => {
+                toast.success(t('swarmInitializedSuccess'));
+                await onSwarmRefreshAction();
+                if (onSuccess) onSuccess();
+            },
+        },
+    });
 
     useEffect(() => {
         if (ip) {
@@ -65,25 +54,17 @@ export function InitSwarmForm() {
                         <FormItem>
                             <FormLabel>
                                 {t('advertiseAddress')}{' '}
-                                <span className="text-muted-foreground text-xs">
-                                    {t('optional')}
-                                </span>
+                                <span className="text-muted-foreground text-xs">{t('optional')}</span>
                             </FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
-                                    placeholder={
-                                        isDetecting
-                                            ? t('detectingIp')
-                                            : t('advertiseAddressPlaceholder')
-                                    }
+                                    placeholder={isDetecting ? t('detectingIp') : t('advertiseAddressPlaceholder')}
                                     className="font-mono"
                                     disabled={isDetecting || form.formState.isSubmitting}
                                 />
                             </FormControl>
-                            <p className="text-muted-foreground text-xs">
-                                {t('advertiseAddressAutoDetect')}
-                            </p>
+                            <p className="text-muted-foreground text-xs">{t('advertiseAddressAutoDetect')}</p>
                             <FormMessage />
                         </FormItem>
                     )}

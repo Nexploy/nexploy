@@ -8,26 +8,26 @@ export const GET = route
     .use(authRouteServer)
     .use(requirePermission('environment', 'read'))
     .handler(async () => {
-    try {
-        const environments = await prisma.environment.findMany({
-            where: {
-                isActive: true,
-            },
-            orderBy: {
-                isDefault: 'desc',
-            },
-        });
+        try {
+            const environments = await prisma.environment.findMany({
+                where: {
+                    isActive: true,
+                },
+                orderBy: {
+                    isDefault: 'desc',
+                },
+            });
 
-        const decryptedEnvironments = environments.map((env) => ({
-            ...env,
-            tlsCert: env.tlsCert ? decrypt(env.tlsCert) : null,
-            tlsKey: env.tlsKey ? decrypt(env.tlsKey) : null,
-            tlsCa: env.tlsCa ? decrypt(env.tlsCa) : null,
-        }));
+            const decryptedEnvironments = environments.map((env) => ({
+                ...env,
+                tlsCert: env.tlsCert ? decrypt(env.tlsCert) : null,
+                tlsKey: env.tlsKey ? decrypt(env.tlsKey) : null,
+                tlsCa: env.tlsCa ? decrypt(env.tlsCa) : null,
+            }));
 
-        return NextResponse.json(decryptedEnvironments);
-    } catch {
-        const t = await getErrorTranslator();
-        return NextResponse.json({ error: t('api.environmentsFetchFailed') }, { status: 500 });
-    }
-});
+            return NextResponse.json(decryptedEnvironments);
+        } catch {
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.environmentsFetchFailed') }, { status: 500 });
+        }
+    });

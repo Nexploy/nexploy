@@ -42,9 +42,7 @@ export function useEnvironmentImages(environmentId?: string): {
                     const data: ImageEvent = JSON.parse(e.data);
                     if (!data.image) return;
                     setImages((prev) =>
-                        prev.some((img) => img.id === data.image!.id)
-                            ? prev
-                            : [...prev, data.image!],
+                        prev.some((img) => img.id === data.image!.id) ? prev : [...prev, data.image!],
                     );
                 },
                 params,
@@ -58,9 +56,7 @@ export function useEnvironmentImages(environmentId?: string): {
                 (e) => {
                     const data: ImageEvent = JSON.parse(e.data);
                     if (!data.image) return;
-                    setImages((prev) =>
-                        prev.map((img) => (img.id === data.image!.id ? data.image! : img)),
-                    );
+                    setImages((prev) => prev.map((img) => (img.id === data.image!.id ? data.image! : img)));
                 },
                 params,
             ),

@@ -61,10 +61,7 @@ export const auth = betterAuth({
                             },
                         });
                     } catch (error) {
-                        console.error(
-                            `[AUTH] Failed to create personal organization for user ${user.id}`,
-                            error,
-                        );
+                        console.error(`[AUTH] Failed to create personal organization for user ${user.id}`, error);
                     }
                 },
             },
@@ -85,10 +82,7 @@ export const auth = betterAuth({
                             where: { slug: personalOrganizationSlug(user.id) },
                         });
                     } catch (error) {
-                        console.error(
-                            `[AUTH] Failed to delete personal organization for user ${user.id}`,
-                            error,
-                        );
+                        console.error(`[AUTH] Failed to delete personal organization for user ${user.id}`, error);
                     }
                 },
             },
@@ -119,8 +113,7 @@ export const auth = betterAuth({
             ac: orgAc,
             roles: { owner: orgOwner, admin: orgAdmin, member: orgMember },
             creatorRole: 'owner',
-            allowUserToCreateOrganization: (user) =>
-                user.role === 'developer' || user.role === 'admin',
+            allowUserToCreateOrganization: (user) => user.role === 'developer' || user.role === 'admin',
             membershipLimit: 100,
             invitationExpiresIn: 60 * 60 * 24 * 7,
             requireEmailVerificationOnInvitation: false,

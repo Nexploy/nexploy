@@ -24,9 +24,6 @@ export const GET = route
 
             return NextResponse.json(detail);
         } catch {
-            return NextResponse.json(
-                { error: t('api.organizationMembersFetchFailed') },
-                { status: 500 },
-            );
+            return NextResponse.json({ error: t('api.organizationMembersFetchFailed') }, { status: 500 });
         }
     });

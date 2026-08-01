@@ -26,9 +26,7 @@ export default function VolumesPage() {
                             <HardDrive className="text-primary size-7" />
                         </div>
                         <div className="mt-3.5 flex flex-col">
-                            <h1 className="text-3xl font-semibold tracking-tight break-all">
-                                {t('title')}
-                            </h1>
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">{t('title')}</h1>
                             <p className="text-muted-foreground text-sm">{t('description')}</p>
                         </div>
                     </div>
@@ -36,10 +34,7 @@ export default function VolumesPage() {
                         <Button asChild className={'mt-5'}>
                             <Link
                                 href={'/docker/volumes/create'}
-                                className={cn(
-                                    statusDocker !== 'connected' &&
-                                        'pointer-events-none opacity-50',
-                                )}
+                                className={cn(statusDocker !== 'connected' && 'pointer-events-none opacity-50')}
                             >
                                 <Plus />
                                 {tDocker('createVolume')}

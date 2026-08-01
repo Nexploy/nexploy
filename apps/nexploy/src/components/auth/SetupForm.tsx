@@ -4,21 +4,8 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { onSetupAction } from '@/actions/auth/setup.action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { setupFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { Alert, AlertDescription } from '@workspace/ui/components/alert';
@@ -32,20 +19,16 @@ export function SetupForm() {
     const tAuth = useTranslations('auth');
     const [, setOnboarding] = useLocalStorage<OnboardingStatus>(ONBOARDING_STORAGE_KEY, null);
 
-    const { form, action, handleSubmitWithAction } = useHookFormAction(
-        onSetupAction,
-        zodResolver(setupFormSchema),
-        {
-            formProps: {
-                defaultValues: {
-                    name: '',
-                    email: '',
-                    password: '',
-                    confirmPassword: '',
-                },
+    const { form, action, handleSubmitWithAction } = useHookFormAction(onSetupAction, zodResolver(setupFormSchema), {
+        formProps: {
+            defaultValues: {
+                name: '',
+                email: '',
+                password: '',
+                confirmPassword: '',
             },
         },
-    );
+    });
 
     const isSubmitting = action.status === 'executing';
 
@@ -69,9 +52,7 @@ export function SetupForm() {
                             className="space-y-6"
                         >
                             <div className="space-y-4">
-                                <h3 className="text-lg font-semibold">
-                                    {tAuth('setup.personalInfo')}
-                                </h3>
+                                <h3 className="text-lg font-semibold">{tAuth('setup.personalInfo')}</h3>
                                 <FormField
                                     control={form.control}
                                     name="name"
@@ -148,21 +129,12 @@ export function SetupForm() {
 
                             {form.formState.errors.root?.message && (
                                 <Alert variant="destructive">
-                                    <AlertDescription>
-                                        {form.formState.errors.root?.message}
-                                    </AlertDescription>
+                                    <AlertDescription>{form.formState.errors.root?.message}</AlertDescription>
                                 </Alert>
                             )}
 
-                            <Button
-                                type="submit"
-                                className="w-full"
-                                isLoading={isSubmitting}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting
-                                    ? tAuth('setup.submitLoading')
-                                    : tAuth('setup.submit')}
+                            <Button type="submit" className="w-full" isLoading={isSubmitting} disabled={isSubmitting}>
+                                {isSubmitting ? tAuth('setup.submitLoading') : tAuth('setup.submit')}
                             </Button>
                         </form>
                     </Form>

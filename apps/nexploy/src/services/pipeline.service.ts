@@ -57,11 +57,7 @@ export async function getPipelineConfig(stageId: string): Promise<PipelineGraph 
     }
 }
 
-export async function savePipelineConfig({
-    repositoryId,
-    stageId,
-    graph,
-}: SavePipelineInput): Promise<void> {
+export async function savePipelineConfig({ repositoryId, stageId, graph }: SavePipelineInput): Promise<void> {
     const t = await getErrorTranslator();
     try {
         const encryptedNodes = encryptPipelineNodes(graph.nodes);

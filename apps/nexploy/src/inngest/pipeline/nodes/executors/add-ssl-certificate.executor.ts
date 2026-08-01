@@ -4,10 +4,7 @@ import {
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { addSslCertificateConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import {
-    createCustomCertificate,
-    createLetsEncryptCertificate,
-} from '@/services/sslCertificate.service';
+import { createCustomCertificate, createLetsEncryptCertificate } from '@/services/sslCertificate.service';
 import { z } from 'zod';
 
 export class AddSslCertificateExecutor implements INodeExecutor {
@@ -36,8 +33,7 @@ export class AddSslCertificateExecutor implements INodeExecutor {
                 `Let's Encrypt certificate created — Traefik will obtain the cert when the domain is routed`,
             );
         } else {
-            if (!certificate)
-                throw new Error('Certificate PEM is required for custom certificates');
+            if (!certificate) throw new Error('Certificate PEM is required for custom certificates');
             if (!privateKey) throw new Error('Private key is required for custom certificates');
 
             const cert = await createCustomCertificate(name, domain, certificate, privateKey);

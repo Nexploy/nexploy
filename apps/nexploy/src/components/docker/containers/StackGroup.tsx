@@ -6,12 +6,7 @@ import { ContainerCard } from '@/components/docker/containers/ContainerCard';
 import { Layers, Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@workspace/ui/components/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Switch } from '@workspace/ui/components/switch';
 import { onComposesAction } from '@/actions/docker/composes/composeAction';
@@ -62,9 +57,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                         }
                     >
                         <div className={'space-y-0.5'}>
-                            <p className={'text-destructive text-sm font-medium'}>
-                                {tDocker('stack.forceRemove')}
-                            </p>
+                            <p className={'text-destructive text-sm font-medium'}>{tDocker('stack.forceRemove')}</p>
                             <p className={'text-xs'}>{tDocker('stack.forceRemoveDescription')}</p>
                         </div>
                         <Switch
@@ -156,9 +149,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                             <Layers className="text-primary h-5 w-5" />
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="line-clamp-1 text-base leading-snug font-semibold break-all">
-                                {stackName}
-                            </h1>
+                            <h1 className="line-clamp-1 text-base leading-snug font-semibold break-all">{stackName}</h1>
                             <div className="text-muted-foreground flex items-center gap-1 text-xs">
                                 <span>
                                     {containers.length} {t('container')}

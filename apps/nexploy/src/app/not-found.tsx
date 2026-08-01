@@ -13,9 +13,7 @@ export default function NotFound() {
                 <h1 className="cursor-help self-center text-5xl font-bold tracking-tighter transition-transform hover:scale-110">
                     404
                 </h1>
-                <span className="text-muted-foreground">
-                    Oops! Wrong turn. Head back to where you came from.
-                </span>
+                <span className="text-muted-foreground">Oops! Wrong turn. Head back to where you came from.</span>
             </div>
             <Button icon={ArrowLeft} onClick={() => router.back()} variant="default">
                 Back

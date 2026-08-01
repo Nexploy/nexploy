@@ -1,13 +1,6 @@
 'use client';
 
-import {
-    Activity,
-    Container as IconContainer,
-    FileText,
-    PencilLine,
-    Replace,
-    Terminal,
-} from 'lucide-react';
+import { Activity, Container as IconContainer, FileText, PencilLine, Replace, Terminal } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { CardInfoDetail } from '@/components/docker/container/cards/CardInfoDetail';
@@ -49,18 +42,14 @@ export function ContainerDetailPage() {
 
     const t = useTranslations('docker.containerDetail');
     const { openDialog } = useConfirmationDialogStore();
-    const isSwarmContainer = useContainerStore(
-        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
-    );
+    const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
 
     const handleRename = () => {
         if (!container) return;
         openDialog({
             title: t('renameTitle'),
             description: t('renameDescription'),
-            content: (
-                <RenameContainerForm containerId={container.id} currentName={container.name} />
-            ),
+            content: <RenameContainerForm containerId={container.id} currentName={container.name} />,
         });
     };
 
@@ -69,9 +58,7 @@ export function ContainerDetailPage() {
         openDialog({
             title: t('changeImageTitle'),
             description: t('changeImageDescription'),
-            content: (
-                <ChangeImageForm containerId={container.id} currentImage={container.image ?? ''} />
-            ),
+            content: <ChangeImageForm containerId={container.id} currentImage={container.image ?? ''} />,
         });
     };
 
@@ -96,16 +83,12 @@ export function ContainerDetailPage() {
                         {isConnecting ? (
                             <Skeleton className="h-9 w-40" />
                         ) : isSwarmContainer ? (
-                            <h1 className="text-3xl font-semibold tracking-tight break-all">
-                                {container?.name}
-                            </h1>
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">{container?.name}</h1>
                         ) : (
                             <button
                                 type="button"
                                 onClick={handleRename}
-                                className={
-                                    'group flex cursor-pointer items-center gap-2 self-start'
-                                }
+                                className={'group flex cursor-pointer items-center gap-2 self-start'}
                             >
                                 <h1 className="text-3xl font-semibold tracking-tight break-all group-hover:underline">
                                     {container?.name}
@@ -134,26 +117,16 @@ export function ContainerDetailPage() {
                             {isConnecting ? (
                                 <Skeleton className="h-9 flex-1" />
                             ) : (
-                                <div
-                                    className={'flex flex-col gap-2 sm:flex-row sm:justify-between'}
-                                >
+                                <div className={'flex flex-col gap-2 sm:flex-row sm:justify-between'}>
                                     <ButtonGroup>
                                         <ContainerLogs>
                                             {({ openLogs }) => (
-                                                <ToolbarButton
-                                                    icon={FileText}
-                                                    label={t('logs')}
-                                                    onClick={openLogs}
-                                                />
+                                                <ToolbarButton icon={FileText} label={t('logs')} onClick={openLogs} />
                                             )}
                                         </ContainerLogs>
                                         <ContainerStats>
                                             {({ openStats }) => (
-                                                <ToolbarButton
-                                                    icon={Activity}
-                                                    label={t('stats')}
-                                                    onClick={openStats}
-                                                />
+                                                <ToolbarButton icon={Activity} label={t('stats')} onClick={openStats} />
                                             )}
                                         </ContainerStats>
                                         <ContainerTerminal>

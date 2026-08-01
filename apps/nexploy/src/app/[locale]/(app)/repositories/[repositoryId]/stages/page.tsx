@@ -31,12 +31,8 @@ export default async function RepositoryStagesPage({ params }: StagesPageProps) 
                             <Layers className="text-primary size-7" />
                         </div>
                         <div className="mt-3.5 flex flex-col">
-                            <h1 className="text-3xl font-semibold tracking-tight break-all">
-                                {t('manageTitle')}
-                            </h1>
-                            <p className="text-muted-foreground text-sm">
-                                {t('manageDescription')}
-                            </p>
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">{t('manageTitle')}</h1>
+                            <p className="text-muted-foreground text-sm">{t('manageDescription')}</p>
                         </div>
                     </div>
                     <div className="mt-5 flex gap-3">

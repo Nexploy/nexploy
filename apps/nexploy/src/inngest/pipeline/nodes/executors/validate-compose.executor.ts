@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -17,9 +21,7 @@ export class ValidateComposeExecutor implements INodeExecutor {
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
         if (!workDir) {
-            throw new Error(
-                'No workDir found in input nodes — connect this node after a Clone Repository node',
-            );
+            throw new Error('No workDir found in input nodes — connect this node after a Clone Repository node');
         }
 
         const composeFileName = nodeConfig.composeFileName;

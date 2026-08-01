@@ -1,8 +1,5 @@
 import { create } from 'zustand';
-import {
-    Containers,
-    ContainersEvent,
-} from '@workspace/typescript-interface/docker/docker.containers';
+import { Containers, ContainersEvent } from '@workspace/typescript-interface/docker/docker.containers';
 import { ContainerState } from '@workspace/typescript-interface/stores/docker/containersStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { clientT } from '@/lib/i18n/clientTranslations';
@@ -142,11 +139,7 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
 
                     if (!data.container?.image?.startsWith('sha256:')) {
                         if (action === 'die') {
-                            notifyDocker(
-                                'containers',
-                                'error',
-                                clientT('toasts.containerDied', { name }),
-                            );
+                            notifyDocker('containers', 'error', clientT('toasts.containerDied', { name }));
                         } else {
                             notifyDocker(
                                 'containers',

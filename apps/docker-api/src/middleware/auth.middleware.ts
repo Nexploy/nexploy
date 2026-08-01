@@ -32,10 +32,7 @@ async function verifyApiKey(token: string): Promise<VerifyOutcome> {
         ttl = outcome === 'valid' ? VERIFY_CACHE_TTL_MS : VERIFY_INVALID_CACHE_TTL_MS;
     } catch (error) {
         if (error instanceof HTTPError) {
-            logger.warn(
-                { status: error.response.status },
-                'Nexploy rejected the API key verification request',
-            );
+            logger.warn({ status: error.response.status }, 'Nexploy rejected the API key verification request');
             outcome = 'invalid';
             ttl = VERIFY_INVALID_CACHE_TTL_MS;
         } else {
@@ -65,10 +62,7 @@ export async function authMiddleware(c: Context, next: Next) {
 
     if (scheme !== 'Bearer' || !token) {
         logger.warn('Invalid Authorization header format');
-        return c.json(
-            { error: 'Invalid Authorization header format. Expected: Bearer <token>.' },
-            401,
-        );
+        return c.json({ error: 'Invalid Authorization header format. Expected: Bearer <token>.' }, 401);
     }
 
     const outcome = await verifyApiKey(token);

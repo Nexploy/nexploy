@@ -57,9 +57,7 @@ export function NodeOutputsPanel({ node }: NodeOutputsPanelProps) {
                     <div className="flex size-6 items-center justify-center rounded-md bg-emerald-400/10">
                         <ArrowRightFromLine className="size-3.5 text-emerald-400" />
                     </div>
-                    <span className="text-foreground text-sm font-semibold">
-                        {t('nodeOutputs')}
-                    </span>
+                    <span className="text-foreground text-sm font-semibold">{t('nodeOutputs')}</span>
                 </div>
                 <p className="text-muted-foreground mt-1.5 text-[11px]">{t('nodeOutputsHint')}</p>
             </div>

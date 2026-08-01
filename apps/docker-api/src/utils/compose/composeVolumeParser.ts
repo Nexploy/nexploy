@@ -77,9 +77,7 @@ const DATA_DIRECTORY_PATTERNS = [
 export function isBindMount(volumeSpec: string | ComposeVolumeConfig): boolean {
     if (typeof volumeSpec === 'object') {
         return (
-            volumeSpec.type === 'bind' ||
-            volumeSpec.source?.startsWith('./') ||
-            volumeSpec.source?.startsWith('../')
+            volumeSpec.type === 'bind' || volumeSpec.source?.startsWith('./') || volumeSpec.source?.startsWith('../')
         );
     }
     return volumeSpec.startsWith('./') || volumeSpec.startsWith('../');
@@ -91,11 +89,7 @@ export function parseVolumeSpec(volumeSpec: string | ComposeVolumeConfig): {
     readOnly: boolean;
 } | null {
     if (typeof volumeSpec === 'object') {
-        if (
-            volumeSpec.type === 'bind' ||
-            volumeSpec.source?.startsWith('./') ||
-            volumeSpec.source?.startsWith('../')
-        ) {
+        if (volumeSpec.type === 'bind' || volumeSpec.source?.startsWith('./') || volumeSpec.source?.startsWith('../')) {
             return {
                 hostPath: volumeSpec.source,
                 containerPath: volumeSpec.target,
@@ -180,10 +174,7 @@ export function classifyBindMount(
     return { classification: 'data', reason: 'Unable to determine, defaulting to data' };
 }
 
-export function parseComposeBindMounts(
-    composeContent: ComposeContent,
-    workDir: string,
-): ParsedBindMount[] {
+export function parseComposeBindMounts(composeContent: ComposeContent, workDir: string): ParsedBindMount[] {
     const bindMounts: ParsedBindMount[] = [];
 
     for (const [serviceName, service] of Object.entries(composeContent.services || {})) {
@@ -219,9 +210,7 @@ export function parseComposeBindMounts(
     return bindMounts;
 }
 
-export function getBindMountsByService(
-    bindMounts: ParsedBindMount[],
-): Map<string, ParsedBindMount[]> {
+export function getBindMountsByService(bindMounts: ParsedBindMount[]): Map<string, ParsedBindMount[]> {
     const result = new Map<string, ParsedBindMount[]>();
 
     for (const mount of bindMounts) {

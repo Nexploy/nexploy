@@ -19,12 +19,7 @@ export const LargeNode = memo(({ id, data, selected }: LargeNodeProps) => {
     return (
         <NodeWrapper id={id} data={data}>
             <NodeAnimation data={data} selected={selected} square>
-                <span
-                    className={cn(
-                        'text-xs font-medium',
-                        selected ? 'text-foreground' : 'text-muted-foreground',
-                    )}
-                >
+                <span className={cn('text-xs font-medium', selected ? 'text-foreground' : 'text-muted-foreground')}>
                     {t(`nodes.${data.nodeType}.name`)}
                 </span>
             </NodeAnimation>

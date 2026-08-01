@@ -34,10 +34,7 @@ export function StopBuild({
                 <Button
                     {...props}
                     size="icon"
-                    className={cn(
-                        'hover:border-destructive hover:text-destructive size-6',
-                        props.className,
-                    )}
+                    className={cn('hover:border-destructive hover:text-destructive size-6', props.className)}
                     onClick={(e) => {
                         e.stopPropagation();
                         buildId && onCancelBuild({ buildId });

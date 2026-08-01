@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -32,10 +26,7 @@ export function PushToRegistryConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
 
-    const { data: registries, isLoading } = useSWR<RegistryInfo[]>(
-        { url: '/api/registries' },
-        fetcherApi,
-    );
+    const { data: registries, isLoading } = useSWR<RegistryInfo[]>({ url: '/api/registries' }, fetcherApi);
     const registryList = registries ?? [];
 
     const environmentId = usePipelineEnvironmentId();
@@ -101,11 +92,7 @@ export function PushToRegistryConfig() {
                                     }}
                                     disabled={isLoading}
                                 >
-                                    <SelectTrigger
-                                        className={
-                                            'min-w-40 overflow-hidden data-[placeholder]:pl-3!'
-                                        }
-                                    >
+                                    <SelectTrigger className={'min-w-40 overflow-hidden data-[placeholder]:pl-3!'}>
                                         {isLoading ? (
                                             <span className="text-muted-foreground flex items-center gap-2">
                                                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -129,10 +116,7 @@ export function PushToRegistryConfig() {
                                                 </span>
                                             ) : (
                                                 registryList.map((registry) => (
-                                                    <SelectItem
-                                                        key={registry.id}
-                                                        value={registry.id}
-                                                    >
+                                                    <SelectItem key={registry.id} value={registry.id}>
                                                         {registry.name} ({registry.url})
                                                     </SelectItem>
                                                 ))

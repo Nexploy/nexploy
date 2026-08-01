@@ -21,12 +21,9 @@ export function MCPKeyCard({ k, onRevoke }: MCPKeyCardProps) {
                     <Key className="text-primary size-4" />
                 </div>
                 <div className="flex flex-col">
-                    <span className="font-mono text-sm font-medium">
-                        {k.name ?? k.start ?? '••••••'}
-                    </span>
+                    <span className="font-mono text-sm font-medium">{k.name ?? k.start ?? '••••••'}</span>
                     <span className="text-muted-foreground text-xs">
-                        {k.start ?? '••••••'}… · {t('createdAt')}{' '}
-                        {dayjs(k.createdAt).format('DD/MM/YYYY')}
+                        {k.start ?? '••••••'}… · {t('createdAt')} {dayjs(k.createdAt).format('DD/MM/YYYY')}
                         {k.expiresAt && (
                             <>
                                 {' · '}

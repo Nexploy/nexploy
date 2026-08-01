@@ -59,11 +59,7 @@ export function FetchSecretsVaultConfig() {
                         <FormLabel>{t('vaultSecretPath')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input
-                                    {...field}
-                                    placeholder={t('vaultSecretPathPlaceholder')}
-                                    className="font-mono"
-                                />
+                                <Input {...field} placeholder={t('vaultSecretPathPlaceholder')} className="font-mono" />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />

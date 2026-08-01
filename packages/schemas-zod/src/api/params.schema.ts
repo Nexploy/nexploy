@@ -39,14 +39,5 @@ export const organizationIdParamSchema = z.object({
 });
 
 export const providerParamSchema = z.object({
-    provider: z.enum([
-        'OPENAI',
-        'ANTHROPIC',
-        'GOOGLE',
-        'OPENROUTER',
-        'MISTRAL',
-        'GROQ',
-        'PERPLEXITY',
-        'GROK',
-    ]),
+    provider: z.enum(['OPENAI', 'ANTHROPIC', 'GOOGLE', 'OPENROUTER', 'MISTRAL', 'GROQ', 'PERPLEXITY', 'GROK']),
 });

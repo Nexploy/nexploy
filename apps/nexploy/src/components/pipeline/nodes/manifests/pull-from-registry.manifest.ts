@@ -26,6 +26,11 @@ export const pullFromRegistryManifest: NodeManifest = {
     configSchema: pullFromRegistryConfigSchema,
     configPanel: PullFromRegistryConfig,
     inputFields: [
-        { key: 'imageName', labelKey: 'pipeline.inputs.imageName', descriptionKey: 'pipeline.inputs.desc_imageName', type: 'input' },
+        {
+            key: 'imageName',
+            labelKey: 'pipeline.inputs.imageName',
+            descriptionKey: 'pipeline.inputs.desc_imageName',
+            type: 'input',
+        },
     ],
 };

@@ -46,11 +46,7 @@ export function MonitoringTabs() {
             <ScrollAreaWithShadow bottomShadow className="h-full overflow-hidden">
                 <div className="px-5 pb-5">
                     <TabsContent value="overview">
-                        <HostMetricsPanel
-                            metrics={metrics}
-                            history={hostHistory}
-                            isLoading={isHostLoading}
-                        />
+                        <HostMetricsPanel metrics={metrics} history={hostHistory} isLoading={isHostLoading} />
                     </TabsContent>
                     <TabsContent value="containers">
                         <DockerEnvironmentGuard>

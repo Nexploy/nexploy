@@ -38,9 +38,7 @@ type SSEParams = {
     node?: ExtractConnectParams<ReturnType<typeof useSwarmNodeStore.getState>['connect']>;
     logs?: ExtractConnectParams<ReturnType<typeof useContainerLogsStore.getState>['connect']>;
     stats?: ExtractConnectParams<ReturnType<typeof useContainerStatsStore.getState>['connect']>;
-    containersStats?: ExtractConnectParams<
-        ReturnType<typeof useContainersStatsStore.getState>['connect']
-    >;
+    containersStats?: ExtractConnectParams<ReturnType<typeof useContainersStatsStore.getState>['connect']>;
     swarm?: ExtractConnectParams<ReturnType<typeof useSwarmStore.getState>['connect']>;
     traefik?: ExtractConnectParams<ReturnType<typeof useRequestsStore.getState>['connect']>;
     monitoring?: ExtractConnectParams<ReturnType<typeof useMonitoringStore.getState>['connect']>;
@@ -51,14 +49,7 @@ interface SSEProviderProps extends PropsWithChildren {
     params?: SSEParams;
 }
 
-const DEFAULT_SSE_CONNECTIONS: SSEChannel[] = [
-    'docker',
-    'containers',
-    'images',
-    'volumes',
-    'networks',
-    'events',
-];
+const DEFAULT_SSE_CONNECTIONS: SSEChannel[] = ['docker', 'containers', 'images', 'volumes', 'networks', 'events'];
 const DEFAULT_SSE_PARAMS: SSEParams = {};
 
 export function SSEProvider({

@@ -13,13 +13,7 @@ import {
     FormLabel,
     FormMessage,
 } from '@workspace/ui/components/form';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
 import { useNetworksStore } from '@/stores/docker/useNetworksStore.ts';
 
 export function NetworkConfigFromExisting() {

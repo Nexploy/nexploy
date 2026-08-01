@@ -24,14 +24,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import { deleteDomain } from '@/actions/domains/deleteDomain.action';
 import { DomainForm } from '@/components/domains/DomainForm';
@@ -61,9 +54,7 @@ export function TableDomains({ domains }: DomainsTableProps) {
             title: t('editTitle'),
             description: t('editDescription', { host: domain.host }),
             props: { className: 'md:max-w-[700px]' },
-            content: (
-                <DomainForm domain={domain} />
-            ),
+            content: <DomainForm domain={domain} />,
             onSuccess: () => {
                 closeDialog();
                 router.refresh();
@@ -92,8 +83,7 @@ export function TableDomains({ domains }: DomainsTableProps) {
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
         onGlobalFilterChange: setGlobalFilter,
-        globalFilterFn: (row, _, value) =>
-            row.original.host.toLowerCase().includes(String(value).toLowerCase()),
+        globalFilterFn: (row, _, value) => row.original.host.toLowerCase().includes(String(value).toLowerCase()),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -125,10 +115,7 @@ export function TableDomains({ domains }: DomainsTableProps) {
                                     <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(
-                                                  header.column.columnDef.header,
-                                                  header.getContext(),
-                                              )}
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -137,14 +124,9 @@ export function TableDomains({ domains }: DomainsTableProps) {
                     <TableBody>
                         {table.getRowModel().rows.length === 0 ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-8 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-8 text-center">
                                     <span className="text-muted-foreground text-sm">
-                                        {domains.length === 0
-                                            ? t('noDomains')
-                                            : t('noMatchingDomains')}
+                                        {domains.length === 0 ? t('noDomains') : t('noMatchingDomains')}
                                     </span>
                                 </TableCell>
                             </TableRow>
@@ -153,10 +135,7 @@ export function TableDomains({ domains }: DomainsTableProps) {
                                 <TableRow key={row.id} className="h-12">
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>

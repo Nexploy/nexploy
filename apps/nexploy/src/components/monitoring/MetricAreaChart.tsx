@@ -4,13 +4,7 @@ import * as React from 'react';
 import { useId, useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import {
     ChartConfig,
     ChartContainer,
@@ -76,10 +70,7 @@ export function MetricAreaChart({
             </CardHeader>
             <CardContent className="p-0 pt-2">
                 {hasData ? (
-                    <ChartContainer
-                        config={config}
-                        className={cn('h-[220px] w-full', chartClassName)}
-                    >
+                    <ChartContainer config={config} className={cn('h-[220px] w-full', chartClassName)}>
                         <AreaChart data={data} margin={{ left: 4, right: 12, top: 8 }}>
                             <CartesianGrid vertical={false} />
                             <XAxis
@@ -101,13 +92,9 @@ export function MetricAreaChart({
                             <ChartTooltip
                                 content={(props) => (
                                     <ChartTooltipContent
-                                        {...(props as React.ComponentProps<
-                                            typeof ChartTooltipContent
-                                        >)}
+                                        {...(props as React.ComponentProps<typeof ChartTooltipContent>)}
                                         labelFormatter={(_, payload) =>
-                                            dayjs(payload?.[0]?.payload?.timestamp).format(
-                                                'HH:mm:ss',
-                                            )
+                                            dayjs(payload?.[0]?.payload?.timestamp).format('HH:mm:ss')
                                         }
                                         formatter={(value) => formatValue(Number(value))}
                                     />
@@ -123,16 +110,8 @@ export function MetricAreaChart({
                                         x2="0"
                                         y2="1"
                                     >
-                                        <stop
-                                            offset="5%"
-                                            stopColor={entry.color}
-                                            stopOpacity={0.7}
-                                        />
-                                        <stop
-                                            offset="95%"
-                                            stopColor={entry.color}
-                                            stopOpacity={0.05}
-                                        />
+                                        <stop offset="5%" stopColor={entry.color} stopOpacity={0.7} />
+                                        <stop offset="95%" stopColor={entry.color} stopOpacity={0.05} />
                                     </linearGradient>
                                 ))}
                             </defs>
@@ -150,9 +129,7 @@ export function MetricAreaChart({
                                     dot={false}
                                 />
                             ))}
-                            {showLegend && series.length > 1 ? (
-                                <ChartLegend content={<ChartLegendContent />} />
-                            ) : null}
+                            {showLegend && series.length > 1 ? <ChartLegend content={<ChartLegendContent />} /> : null}
                         </AreaChart>
                     </ChartContainer>
                 ) : (

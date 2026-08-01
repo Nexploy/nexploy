@@ -70,22 +70,12 @@ export function TraefikFileList() {
         <div className="flex h-full flex-1 flex-col overflow-hidden">
             <div className="border-border flex h-9 items-center justify-between border-b pr-1.5 pl-3">
                 <span className="text-muted-foreground text-xs">{t('files')}</span>
-                <Button
-                    variant="outline"
-                    size={'icon'}
-                    className={'size-6'}
-                    onClick={handleNewFile}
-                >
+                <Button variant="outline" size={'icon'} className={'size-6'} onClick={handleNewFile}>
                     <FilePlus2 className="size-3" />
                 </Button>
             </div>
-            <TraefikDndProvider
-                value={{ activePath, dropTarget, setActivePath, setDropTarget, moveInto }}
-            >
-                <ScrollAreaWithShadow
-                    orientation="both"
-                    className={'h-full'}
-                >
+            <TraefikDndProvider value={{ activePath, dropTarget, setActivePath, setDropTarget, moveInto }}>
+                <ScrollAreaWithShadow orientation="both" className={'h-full'}>
                     <div
                         className={cn(
                             'my-1 min-h-full min-w-max rounded-md',
@@ -96,9 +86,7 @@ export function TraefikFileList() {
                         onDrop={handleRootDrop}
                     >
                         {tree.length === 0 ? (
-                            <p className="text-muted-foreground px-2 py-4 text-center text-xs">
-                                {t('noFiles')}
-                            </p>
+                            <p className="text-muted-foreground px-2 py-4 text-center text-xs">{t('noFiles')}</p>
                         ) : (
                             <TreeProvider
                                 animateExpand={false}

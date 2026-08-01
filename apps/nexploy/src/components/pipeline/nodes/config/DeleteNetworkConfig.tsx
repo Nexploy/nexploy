@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -59,11 +53,7 @@ export function DeleteNetworkConfig() {
                                     </p>
                                 ) : (
                                     <RefAware value={field.value} onChange={field.onChange}>
-                                        <Select
-                                            {...field}
-                                            onValueChange={field.onChange}
-                                            disabled={isLoading}
-                                        >
+                                        <Select {...field} onValueChange={field.onChange} disabled={isLoading}>
                                             <SelectTrigger className="w-full overflow-hidden pl-0! data-[placeholder]:pl-3!">
                                                 {isStale ? (
                                                     <span className="flex items-center gap-1.5 pl-3">
@@ -71,27 +61,19 @@ export function DeleteNetworkConfig() {
                                                         {t('networkUnavailable')}
                                                     </span>
                                                 ) : (
-                                                    <SelectValue
-                                                        placeholder={t('networkIdPlaceholder')}
-                                                    />
+                                                    <SelectValue placeholder={t('networkIdPlaceholder')} />
                                                 )}
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
-                                                    <SelectLabel>
-                                                        {t('networksSelectLabel')}
-                                                    </SelectLabel>
+                                                    <SelectLabel>{t('networksSelectLabel')}</SelectLabel>
                                                     {networks.length === 0 ? (
                                                         <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                             {t('noNetworksFound')}
                                                         </span>
                                                     ) : (
                                                         networks.map((n) => (
-                                                            <SelectItem
-                                                                key={n.id}
-                                                                value={n.id}
-                                                                className="pl-0"
-                                                            >
+                                                            <SelectItem key={n.id} value={n.id} className="pl-0">
                                                                 <Status
                                                                     className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
                                                                     status={
@@ -106,20 +88,12 @@ export function DeleteNetworkConfig() {
                                                                             <StatusIndicator className="pl-2" />
                                                                         </TooltipTrigger>
                                                                         <TooltipContent>
-                                                                            {isBuiltinNetwork(
-                                                                                n.name,
-                                                                            )
-                                                                                ? tDocker(
-                                                                                      'systemNetwork',
-                                                                                  )
-                                                                                : tDocker(
-                                                                                      'customNetwork',
-                                                                                  )}
+                                                                            {isBuiltinNetwork(n.name)
+                                                                                ? tDocker('systemNetwork')
+                                                                                : tDocker('customNetwork')}
                                                                         </TooltipContent>
                                                                     </Tooltip>
-                                                                    <span className="truncate">
-                                                                        {n.name}
-                                                                    </span>
+                                                                    <span className="truncate">{n.name}</span>
                                                                 </Status>
                                                             </SelectItem>
                                                         ))

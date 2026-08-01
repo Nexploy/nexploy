@@ -5,13 +5,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
-import {
-    ENV_FILE_MAX_SIZE,
-    isBinaryContent,
-    isEnvFileName,
-    parseEnv,
-    validateEnvVariables,
-} from '@/utils/parseEnv';
+import { ENV_FILE_MAX_SIZE, isBinaryContent, isEnvFileName, parseEnv, validateEnvVariables } from '@/utils/parseEnv';
 
 const SKIPPED_KEYS_PREVIEW = 3;
 
@@ -87,12 +81,7 @@ export function ImportEnv({ onImport }: ImportEnvProps) {
 
     return (
         <>
-            <Button
-                variant="outline"
-                size="sm"
-                icon={Upload}
-                onClick={() => fileInputRef.current?.click()}
-            >
+            <Button variant="outline" size="sm" icon={Upload} onClick={() => fileInputRef.current?.click()}>
                 {t('importEnv')}
             </Button>
             <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />

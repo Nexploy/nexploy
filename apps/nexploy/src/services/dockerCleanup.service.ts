@@ -3,10 +3,7 @@ import type { CleanupTarget } from '@workspace/schemas-zod/docker/system/systemC
 import type { CleanupResult } from '@workspace/typescript-interface/docker/docker.system';
 import { LOCAL_ENVIRONMENT_KEY } from '@/services/cleanupSettings.service';
 
-export async function runCleanupTarget(
-    target: CleanupTarget,
-    environmentId?: string,
-): Promise<number> {
+export async function runCleanupTarget(target: CleanupTarget, environmentId?: string): Promise<number> {
     const result = await kyDocker
         .post(`system/prune/${target}`, { environmentId } as KyDockerOptions)
         .json<CleanupResult>();
@@ -14,12 +11,8 @@ export async function runCleanupTarget(
     return result.reclaimedSpace ?? 0;
 }
 
-export async function runScheduledCleanup(
-    targets: CleanupTarget[],
-    environmentId?: string,
-): Promise<number> {
-    const targetEnvironment =
-        environmentId && environmentId !== LOCAL_ENVIRONMENT_KEY ? environmentId : undefined;
+export async function runScheduledCleanup(targets: CleanupTarget[], environmentId?: string): Promise<number> {
+    const targetEnvironment = environmentId && environmentId !== LOCAL_ENVIRONMENT_KEY ? environmentId : undefined;
 
     let reclaimed = 0;
     for (const target of targets) {

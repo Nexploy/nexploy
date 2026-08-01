@@ -4,13 +4,7 @@ import { useCallback, useState } from 'react';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { ShieldCheck, Upload } from 'lucide-react';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 import { DragAndDrop } from '@workspace/ui/components/drag-and-drop';

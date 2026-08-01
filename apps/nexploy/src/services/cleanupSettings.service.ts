@@ -43,10 +43,7 @@ export async function updateCleanupSettings(
     }
 }
 
-export async function markCleanupRan(
-    reclaimed: number,
-    environmentId: string = LOCAL_ENVIRONMENT_KEY,
-) {
+export async function markCleanupRan(reclaimed: number, environmentId: string = LOCAL_ENVIRONMENT_KEY) {
     const t = await getErrorTranslator();
     try {
         return await prisma.cleanupSettings.update({

@@ -17,9 +17,7 @@ export function CardNetworks() {
 
     const { openDialog } = useConfirmationDialogStore();
     const networkChanges = useContainerChangesStore((state) => state.networkChanges);
-    const isSwarmContainer = useContainerStore(
-        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
-    );
+    const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
     const t = useTranslations('docker.containerNetworks');
 
     const handleOpenDialog = () => {
@@ -38,16 +36,11 @@ export function CardNetworks() {
     }
 
     const addedNetworks = networkChanges.filter((change) => change.typeAction === 'add');
-    const networkCount =
-        (Object.keys(container?.network.networks ?? {}).length ?? 0) + addedNetworks.length;
+    const networkCount = (Object.keys(container?.network.networks ?? {}).length ?? 0) + addedNetworks.length;
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={EthernetPort}
-                title={t('title')}
-                className={'justify-between'}
-            >
+            <CardHeaderWithIcon icon={EthernetPort} title={t('title')} className={'justify-between'}>
                 {!isSwarmContainer && (
                     <Button className="size-9 md:size-fit" icon={Plus} onClick={handleOpenDialog}>
                         <span className="hidden md:flex">{t('add')}</span>
@@ -60,20 +53,11 @@ export function CardNetworks() {
                         {t('noNetworks')}
                     </div>
                 ) : (
-                    <ScrollAreaWithShadow
-                        bottomShadow
-                        className="h-90 overflow-hidden px-6"
-                    >
+                    <ScrollAreaWithShadow bottomShadow className="h-90 overflow-hidden px-6">
                         <div className="space-y-4">
-                            {Object.entries(container?.network.networks ?? {}).map(
-                                ([networkName, networkInfo]) => (
-                                    <NetworkItem
-                                        key={networkName}
-                                        networkName={networkName}
-                                        networkInfo={networkInfo}
-                                    />
-                                ),
-                            )}
+                            {Object.entries(container?.network.networks ?? {}).map(([networkName, networkInfo]) => (
+                                <NetworkItem key={networkName} networkName={networkName} networkInfo={networkInfo} />
+                            ))}
 
                             {addedNetworks.map(({ name }, idx) => (
                                 <NetworkItem

@@ -58,13 +58,10 @@ async function mcpRouteHandler(request: Request): Promise<Response> {
                 mcpSessions.delete(disabledSessionId);
             }
         }
-        return new Response(
-            JSON.stringify({ error: 'MCP server is disabled by the administrator.' }),
-            {
-                status: 403,
-                headers: { 'Content-Type': 'application/json' },
-            },
-        );
+        return new Response(JSON.stringify({ error: 'MCP server is disabled by the administrator.' }), {
+            status: 403,
+            headers: { 'Content-Type': 'application/json' },
+        });
     }
 
     const sessionId = request.headers.get('mcp-session-id');

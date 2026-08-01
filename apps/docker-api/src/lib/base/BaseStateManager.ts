@@ -70,10 +70,7 @@ export abstract class BaseStateManager extends EventEmitter {
                         await this.startDockerEventsListener();
                         this.reconnectAttempts = 0;
                     } catch (err) {
-                        logger.error(
-                            { err },
-                            `Failed to reinitialize ${this.managerName} after Docker reconnection`,
-                        );
+                        logger.error({ err }, `Failed to reinitialize ${this.managerName} after Docker reconnection`);
                     }
                 } else if (this.polling && event.status === 'disconnected') {
                     logger.warn(`Docker disconnected, stopping ${this.managerName} event stream`);
@@ -113,10 +110,7 @@ export abstract class BaseStateManager extends EventEmitter {
                 await this.loadInitialState();
                 await this.startDockerEventsListener();
             } catch (err) {
-                logger.error(
-                    { err },
-                    `Failed to initialize ${this.managerName}, falling back to polling`,
-                );
+                logger.error({ err }, `Failed to initialize ${this.managerName}, falling back to polling`);
             }
         } else {
             logger.warn(`Docker unavailable (status: ${status}) — using polling only`);
@@ -174,9 +168,7 @@ export abstract class BaseStateManager extends EventEmitter {
         try {
             const filters = this.getEventFilters();
             const since = this.getReplaySince();
-            const stream = await this.docker.getEvents(
-                since !== null ? { filters, since } : { filters },
-            );
+            const stream = await this.docker.getEvents(since !== null ? { filters, since } : { filters });
 
             this.dockerEventStream = stream;
             this.reconnectAttempts = 0;
@@ -213,10 +205,7 @@ export abstract class BaseStateManager extends EventEmitter {
 
             if (isReconnection) {
                 this.fullStateSync().catch((err) => {
-                    logger.error(
-                        { err },
-                        `Error during ${this.managerName} resync after event stream reconnection`,
-                    );
+                    logger.error({ err }, `Error during ${this.managerName} resync after event stream reconnection`);
                 });
             }
         } catch (err) {
@@ -240,10 +229,7 @@ export abstract class BaseStateManager extends EventEmitter {
         this.dockerEventStream = null;
         this.reconnectAttempts++;
 
-        const backoffDelay = Math.min(
-            1000 * Math.pow(2, this.reconnectAttempts),
-            MAX_RECONNECT_DELAY_MS,
-        );
+        const backoffDelay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), MAX_RECONNECT_DELAY_MS);
 
         if (this.reconnectAttempts === this.MAX_RECONNECT_ATTEMPTS) {
             logger.error(
@@ -267,9 +253,7 @@ export abstract class BaseStateManager extends EventEmitter {
                 if (dockerStatusManager.isConnected()) {
                     this.startDockerEventsListener();
                 } else {
-                    logger.warn(
-                        `Skipping ${this.managerName} event listener reconnection: Docker not connected`,
-                    );
+                    logger.warn(`Skipping ${this.managerName} event listener reconnection: Docker not connected`);
                     this.handleStreamError();
                 }
             } catch (err) {
@@ -300,10 +284,7 @@ export abstract class BaseStateManager extends EventEmitter {
             }
         }, this.POLL_INTERVAL_MS);
 
-        logger.info(
-            { interval: this.POLL_INTERVAL_MS },
-            `${this.managerName} fallback polling started`,
-        );
+        logger.info({ interval: this.POLL_INTERVAL_MS }, `${this.managerName} fallback polling started`);
     }
 
     getStats() {

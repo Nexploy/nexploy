@@ -64,19 +64,14 @@ export default function CreateNetworkPage() {
     return (
         <div className="flex h-full flex-1 flex-col gap-4">
             <Form {...form}>
-                <form
-                    className="flex flex-1 flex-col overflow-hidden"
-                    onSubmit={handleSubmitWithAction}
-                >
+                <form className="flex flex-1 flex-col overflow-hidden" onSubmit={handleSubmitWithAction}>
                     <div className="mb-5 flex justify-between gap-4 px-5">
                         <div className="flex gap-3">
                             <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
                                 <Network className="text-primary size-7" />
                             </div>
                             <div className="mt-3.5 flex flex-col">
-                                <h1 className="text-3xl font-semibold tracking-tight">
-                                    {t('title')}
-                                </h1>
+                                <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
                                 <p className="text-muted-foreground text-sm">{t('description')}</p>
                             </div>
                         </div>

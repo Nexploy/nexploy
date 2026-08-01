@@ -4,7 +4,7 @@ import { Session } from '@/lib/auth/auth';
 import { redirect } from 'next/navigation';
 import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
-import { hasPermission, type PermissionActions, type PermissionResource, } from '@/lib/auth/permissions';
+import { hasPermission, type PermissionActions, type PermissionResource } from '@/lib/auth/permissions';
 import { hasOrgPermission, type OrgPermissionResource } from '@/lib/auth/orgPermissions';
 import { isOrgScopedResource, type OrgScopedResource } from '@/lib/auth/orgScopedResources';
 import { getCallerOrgRole, HOST_SCOPED, type OrgScopeResolver } from '@/lib/auth/resolveOrgContext';
@@ -69,10 +69,7 @@ export const requirePermission = <R extends PermissionResource>(
 
                 for (const organizationId of organizationIds) {
                     const orgRole = await getCallerOrgRole(ctx.session.user.id, organizationId);
-                    if (
-                        !orgRole ||
-                        !hasOrgPermission(orgRole, resource as OrgPermissionResource, action as string)
-                    ) {
+                    if (!orgRole || !hasOrgPermission(orgRole, resource as OrgPermissionResource, action as string)) {
                         throw await deny();
                     }
                 }
@@ -86,22 +83,20 @@ export const requirePermission = <R extends PermissionResource>(
         },
     );
 
-export const preventInfrastructureNetworkAction = createMiddleware().define(
-    async ({ clientInput, next }) => {
-        const input = clientInput as { action?: string; networkIds?: string[] };
+export const preventInfrastructureNetworkAction = createMiddleware().define(async ({ clientInput, next }) => {
+    const input = clientInput as { action?: string; networkIds?: string[] };
 
-        if (input.networkIds?.length) {
-            for (const networkId of input.networkIds) {
-                const info = await kyDocker.get(`networks/${networkId}`).json<{ Name: string }>();
-                if (isNexployInfrastructureNetworkName(info.Name)) {
-                    throw new Error(`Cannot ${input.action} infrastructure network "${info.Name}"`);
-                }
+    if (input.networkIds?.length) {
+        for (const networkId of input.networkIds) {
+            const info = await kyDocker.get(`networks/${networkId}`).json<{ Name: string }>();
+            if (isNexployInfrastructureNetworkName(info.Name)) {
+                throw new Error(`Cannot ${input.action} infrastructure network "${info.Name}"`);
             }
         }
+    }
 
-        return next();
-    },
-);
+    return next();
+});
 
 export const preventSelfAction = createMiddleware<{
     ctx: { session: Session };

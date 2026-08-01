@@ -33,18 +33,11 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from '@workspace/ui/components/sidebar';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@workspace/ui/components/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@workspace/ui/components/collapsible';
 import Link from 'next/link';
 import { RefreshDocker } from '@/components/sidebar/RefreshDocker';
 import { NavPermission, usePermissions } from '@/contexts/PermissionContext';
-import type {
-    SidebarItem,
-    SidebarNavGroup,
-} from '@workspace/typescript-interface/sidebar/sidebarNav';
+import type { SidebarItem, SidebarNavGroup } from '@workspace/typescript-interface/sidebar/sidebarNav';
 import { useTranslations } from 'next-intl';
 
 interface PermissionedSidebarItem extends SidebarItem {

@@ -16,12 +16,7 @@ interface NodeAnimationProps {
     square?: boolean;
 }
 
-export function NodeAnimation({
-    data,
-    selected,
-    square = false,
-    children,
-}: PropsWithChildren<NodeAnimationProps>) {
+export function NodeAnimation({ data, selected, square = false, children }: PropsWithChildren<NodeAnimationProps>) {
     const Icon = data.definition.metadata.icon;
     const isStartNode = data.definition.isStartNode;
     const isEndNode = data.definition.isEndNode;
@@ -63,10 +58,7 @@ export function NodeAnimation({
 
     if (data.status === 'running') {
         return (
-            <div
-                className={cn('relative p-[2px]', rounded)}
-                style={{ boxShadow: `0 0 20px 2px ${categoryHex}50` }}
-            >
+            <div className={cn('relative p-[2px]', rounded)} style={{ boxShadow: `0 0 20px 2px ${categoryHex}50` }}>
                 <div className={cn('absolute inset-0 overflow-hidden', rounded)}>
                     <div
                         className="absolute top-1/2 left-1/2 aspect-square w-[300%] -translate-x-1/2 -translate-y-1/2 animate-spin"
@@ -101,11 +93,7 @@ export function NodeAnimation({
 
     return (
         <div
-            style={
-                data.status === 'completed'
-                    ? { boxShadow: `0 0 20px 2px ${categoryHex}50` }
-                    : undefined
-            }
+            style={data.status === 'completed' ? { boxShadow: `0 0 20px 2px ${categoryHex}50` } : undefined}
             className={cn(
                 'bg-card relative flex items-center overflow-hidden border-2 p-4 shadow-lg transition-[border-color,box-shadow] duration-300',
                 children ? 'gap-3' : 'justify-center',
@@ -117,9 +105,7 @@ export function NodeAnimation({
                       : selected
                         ? CATEGORY_BORDER[data.definition.category]
                         : 'border-border hover:border-accent',
-                (data.status === 'failed' ||
-                    data.status === 'skipped' ||
-                    data.status === 'cancelled') &&
+                (data.status === 'failed' || data.status === 'skipped' || data.status === 'cancelled') &&
                     'border-border',
             )}
         >

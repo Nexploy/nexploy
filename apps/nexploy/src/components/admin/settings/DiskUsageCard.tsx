@@ -11,10 +11,7 @@ import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { formatBytes } from '@/utils/formatBytes';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { runCleanupAction } from '@/actions/admin/cleanup/runCleanup.action';
-import type {
-    CleanupResult,
-    DiskUsage,
-} from '@workspace/typescript-interface/docker/docker.system';
+import type { CleanupResult, DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 import type { CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
 import { fetcherApi } from '@/lib/api/fetcherApi.ts';
 import useSWR from 'swr';
@@ -57,10 +54,7 @@ export function DiskUsageCard() {
     const handleClean = (target: CleanupTarget) => {
         openAlertDialog({
             title: target === 'all' ? t('cleanAll') : t('clean'),
-            description:
-                target === 'all'
-                    ? t('confirmCleanAll')
-                    : t('confirmClean', { target: t(`target.${target}`) }),
+            description: target === 'all' ? t('confirmCleanAll') : t('confirmClean', { target: t(`target.${target}`) }),
             cancelLabel: tCommon('cancel'),
             actionLabel: t('clean'),
             props: { className: 'sm:max-w-md' },
@@ -87,18 +81,8 @@ export function DiskUsageCard() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={HardDrive}
-                title={t('diskUsageTitle')}
-                description={t('diskUsageDescription')}
-            >
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={refresh}
-                    disabled={refreshing}
-                    className="ml-auto"
-                >
+            <CardHeaderWithIcon icon={HardDrive} title={t('diskUsageTitle')} description={t('diskUsageDescription')}>
+                <Button variant="outline" size="sm" onClick={refresh} disabled={refreshing} className="ml-auto">
                     <RefreshCw className={refreshing ? 'animate-spin' : ''} />
                     {t('refresh')}
                 </Button>
@@ -136,19 +120,13 @@ export function DiskUsageCard() {
                         </div>
                     </>
                 ) : !usage ? (
-                    <p className="text-muted-foreground py-6 text-center text-sm">
-                        {t('diskUsageUnavailable')}
-                    </p>
+                    <p className="text-muted-foreground py-6 text-center text-sm">{t('diskUsageUnavailable')}</p>
                 ) : (
                     <>
                         <div className="bg-muted/40 flex items-center justify-between rounded-lg border p-4">
                             <div className="flex flex-col">
-                                <span className="text-muted-foreground text-xs">
-                                    {t('totalReclaimable')}
-                                </span>
-                                <span className="text-2xl font-semibold">
-                                    {formatBytes(usage.totalReclaimable)}
-                                </span>
+                                <span className="text-muted-foreground text-xs">{t('totalReclaimable')}</span>
+                                <span className="text-2xl font-semibold">{formatBytes(usage.totalReclaimable)}</span>
                                 <span className="text-muted-foreground text-xs">
                                     {t('ofTotal', { total: formatBytes(usage.totalSize) })}
                                 </span>
@@ -174,9 +152,7 @@ export function DiskUsageCard() {
                                                 <Icon className="text-primary size-4" />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-medium">
-                                                    {t(`target.${row.key}`)}
-                                                </span>
+                                                <span className="text-sm font-medium">{t(`target.${row.key}`)}</span>
                                                 <span className="text-muted-foreground text-xs">
                                                     {t('reclaimableOf', {
                                                         reclaimable: formatBytes(row.reclaimable),
@@ -185,11 +161,7 @@ export function DiskUsageCard() {
                                                 </span>
                                             </div>
                                         </div>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => handleClean(row.key)}
-                                        >
+                                        <Button variant="outline" size="sm" onClick={() => handleClean(row.key)}>
                                             <Trash2 />
                                             {t('clean')}
                                         </Button>

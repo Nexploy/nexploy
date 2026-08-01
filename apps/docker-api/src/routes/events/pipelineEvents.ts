@@ -10,15 +10,8 @@ import path from 'path';
 import fs from 'fs';
 import yaml from 'yaml';
 import { findUnresolvedVariables, substituteEnvVars } from '@/utils/compose/composePreprocessor';
-import {
-    cleanupEnvFile,
-    ensureEnvIgnoredInBuildContext,
-    writeEnvFile,
-} from '@/utils/compose/composePhases';
-import {
-    getTransformationSummary,
-    transformBindMountsForRemote,
-} from '@/utils/compose/composeVolumeTransformer';
+import { cleanupEnvFile, ensureEnvIgnoredInBuildContext, writeEnvFile } from '@/utils/compose/composePhases';
+import { getTransformationSummary, transformBindMountsForRemote } from '@/utils/compose/composeVolumeTransformer';
 import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
@@ -49,9 +42,7 @@ app.post('/stream/compose', async (c) => {
         let composeDir: string = workDir;
         const abortController = new AbortController();
 
-        const envConfig = environmentId
-            ? dockerClientRegistry.getEnvironmentConfig(environmentId)
-            : null;
+        const envConfig = environmentId ? dockerClientRegistry.getEnvironmentConfig(environmentId) : null;
         const dockerEnvResult = buildDockerHostEnv(envConfig);
         const dockerEnv = dockerEnvResult.env;
 
@@ -103,17 +94,12 @@ app.post('/stream/compose', async (c) => {
             let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
             let composeModified = false;
 
-            const isRemoteEnvironment =
-                envConfig?.connectionType === 'TCP' || envConfig?.connectionType === 'TCP_TLS';
+            const isRemoteEnvironment = envConfig?.connectionType === 'TCP' || envConfig?.connectionType === 'TCP_TLS';
 
             if (isRemoteEnvironment) {
                 sendLog('Remote Docker environment detected - transforming bind mounts...');
 
-                volumeTransformResult = transformBindMountsForRemote(
-                    composeContent,
-                    workDir,
-                    projectName,
-                );
+                volumeTransformResult = transformBindMountsForRemote(composeContent, workDir, projectName);
 
                 for (const warning of volumeTransformResult.warnings) {
                     sendLog(`WARNING: ${warning}`);
@@ -126,19 +112,14 @@ app.post('/stream/compose', async (c) => {
 
                 composeContent = volumeTransformResult.modifiedComposeContent as ComposeContent;
 
-                for (const [
-                    serviceName,
-                    dockerfileContent,
-                ] of volumeTransformResult.generatedDockerfiles) {
+                for (const [serviceName, dockerfileContent] of volumeTransformResult.generatedDockerfiles) {
                     const dockerfilePath = path.join(composeDir, `.nexploy-${serviceName}.Dockerfile`);
                     fs.writeFileSync(dockerfilePath, dockerfileContent, 'utf8');
                     sendLog(`Generated Dockerfile for service: ${serviceName}`);
                 }
 
                 if (volumeTransformResult.volumesToCreate.length > 0) {
-                    sendLog(
-                        `Creating ${volumeTransformResult.volumesToCreate.length} named volume(s)...`,
-                    );
+                    sendLog(`Creating ${volumeTransformResult.volumesToCreate.length} named volume(s)...`);
                     for (const volumeName of volumeTransformResult.volumesToCreate) {
                         try {
                             await docker.createVolume({ Name: volumeName });
@@ -221,17 +202,14 @@ app.post('/stream/compose', async (c) => {
                             throw new Error(`docker compose pull exited with code ${exitCode}`);
                         }
                     } catch (pullError) {
-                        const errorMsg =
-                            pullError instanceof Error ? pullError.message : 'Unknown error';
+                        const errorMsg = pullError instanceof Error ? pullError.message : 'Unknown error';
                         sendLog(`Failed to pull image for service "${serviceName}": ${errorMsg}`);
                         failedPulls.push({ serviceName, error: errorMsg });
                     }
                 }
 
                 if (failedPulls.length > 0) {
-                    const failedList = failedPulls
-                        .map((f) => `${f.serviceName}: ${f.error}`)
-                        .join(', ');
+                    const failedList = failedPulls.map((f) => `${f.serviceName}: ${f.error}`).join(', ');
                     throw new Error(
                         `Failed to pull required images: ${failedList}. Check that the image names and tags are correct.`,
                     );
@@ -241,18 +219,9 @@ app.post('/stream/compose', async (c) => {
             }
 
             if (servicesToBuild.length > 0) {
-                sendLog(
-                    `Building ${servicesToBuild.length} service(s): ${servicesToBuild.join(', ')}`,
-                );
+                sendLog(`Building ${servicesToBuild.length} service(s): ${servicesToBuild.join(', ')}`);
                 const buildCode = await runDockerCompose(
-                    [
-                        '-p',
-                        projectName,
-                        '-f',
-                        activeComposeFile,
-                        'build',
-                        ...(noCache ? ['--no-cache'] : []),
-                    ],
+                    ['-p', projectName, '-f', activeComposeFile, 'build', ...(noCache ? ['--no-cache'] : [])],
                     workDir,
                     dockerEnv,
                     sendLog,
@@ -269,15 +238,10 @@ app.post('/stream/compose', async (c) => {
                     });
                     const reclaimed = pruneResult.SpaceReclaimed || 0;
                     if (reclaimed > 0) {
-                        sendLog(
-                            `Pruned dangling images (reclaimed ${(reclaimed / 1024 / 1024).toFixed(1)} MB)`,
-                        );
+                        sendLog(`Pruned dangling images (reclaimed ${(reclaimed / 1024 / 1024).toFixed(1)} MB)`);
                     }
                 } catch (pruneErr) {
-                    logger.warn(
-                        { error: pruneErr },
-                        'Failed to prune dangling images after compose build',
-                    );
+                    logger.warn({ error: pruneErr }, 'Failed to prune dangling images after compose build');
                 }
 
                 sendLog('Resolving built image references...');
@@ -304,18 +268,14 @@ app.post('/stream/compose', async (c) => {
             if (isRemoteEnvironment) {
                 let portsAdded = false;
                 sendLog('Ensuring container ports are published on remote host...');
-                for (const [serviceName, service] of Object.entries(
-                    composeContent.services || {},
-                )) {
+                for (const [serviceName, service] of Object.entries(composeContent.services || {})) {
                     const servicePorts = service.ports as string[] | undefined;
                     if (!servicePorts || servicePorts.length === 0) {
                         const imageName = service.image;
                         if (imageName) {
                             try {
                                 const imageInfo = await docker.getImage(imageName).inspect();
-                                const exposedPorts = Object.keys(
-                                    imageInfo.Config?.ExposedPorts || {},
-                                );
+                                const exposedPorts = Object.keys(imageInfo.Config?.ExposedPorts || {});
                                 if (exposedPorts.length > 0) {
                                     const portMappings = exposedPorts.map((p) => {
                                         const port = p.split('/')[0];
@@ -338,8 +298,7 @@ app.post('/stream/compose', async (c) => {
 
                 if (portsAdded) {
                     modifiedComposeFile =
-                        modifiedComposeFile ||
-                        path.join(composeDir, '.nexploy-compose-processed.yml');
+                        modifiedComposeFile || path.join(composeDir, '.nexploy-compose-processed.yml');
                     fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
                     sendLog('Updated compose file with port mappings for remote environment');
                 }
@@ -363,9 +322,7 @@ app.post('/stream/compose', async (c) => {
             }
 
             if (Object.keys(effectiveEnvVars).length > 0) {
-                sendLog(
-                    `Writing ${Object.keys(effectiveEnvVars).length} environment variable(s) to .env file...`,
-                );
+                sendLog(`Writing ${Object.keys(effectiveEnvVars).length} environment variable(s) to .env file...`);
                 writeEnvFile(workDir, effectiveEnvVars);
                 envFileWritten = true;
                 sendLog('Environment variables written successfully');
@@ -391,9 +348,7 @@ app.post('/stream/compose', async (c) => {
             const containerIds = runningContainers.map((c) => c.Id);
 
             if (isRemoteEnvironment) {
-                sendLog(
-                    'Remote environment: routing via published host ports (skipping Traefik network attach)',
-                );
+                sendLog('Remote environment: routing via published host ports (skipping Traefik network attach)');
             } else {
                 try {
                     await networksStateManager.createNetworkIfMissing(TRAEFIK_NETWORK_NAME);
@@ -413,9 +368,7 @@ app.post('/stream/compose', async (c) => {
                     } catch (e) {
                         const reason = e instanceof Error ? e.message : String(e);
                         if (/already exists|already connected/i.test(reason)) {
-                            sendLog(
-                                `Container ${containerId} already connected to Traefik network`,
-                            );
+                            sendLog(`Container ${containerId} already connected to Traefik network`);
                         } else {
                             sendLog(
                                 `Warning: Could not connect container ${containerId} to Traefik network: ${reason}`,
@@ -473,10 +426,7 @@ app.post('/stream/compose', async (c) => {
                     fs.unlinkSync(modifiedComposeFile);
                     logger.info({ path: modifiedComposeFile }, 'Cleaned up temporary compose file');
                 } catch (e) {
-                    logger.warn(
-                        { path: modifiedComposeFile, error: e },
-                        'Failed to cleanup temporary compose file',
-                    );
+                    logger.warn({ path: modifiedComposeFile, error: e }, 'Failed to cleanup temporary compose file');
                 }
             }
 
@@ -486,16 +436,10 @@ app.post('/stream/compose', async (c) => {
                     try {
                         if (fs.existsSync(dockerfilePath)) {
                             fs.unlinkSync(dockerfilePath);
-                            logger.info(
-                                { path: dockerfilePath },
-                                'Cleaned up generated Dockerfile',
-                            );
+                            logger.info({ path: dockerfilePath }, 'Cleaned up generated Dockerfile');
                         }
                     } catch (e) {
-                        logger.warn(
-                            { path: dockerfilePath, error: e },
-                            'Failed to cleanup generated Dockerfile',
-                        );
+                        logger.warn({ path: dockerfilePath, error: e }, 'Failed to cleanup generated Dockerfile');
                     }
                 }
             }
@@ -555,15 +499,10 @@ app.post('/stream/build', async (c) => {
                 });
                 const reclaimed = pruneResult.SpaceReclaimed || 0;
                 if (reclaimed > 0) {
-                    onLog(
-                        `Pruned dangling images (reclaimed ${(reclaimed / 1024 / 1024).toFixed(1)} MB)`,
-                    );
+                    onLog(`Pruned dangling images (reclaimed ${(reclaimed / 1024 / 1024).toFixed(1)} MB)`);
                 }
             } catch (pruneErr) {
-                logger.warn(
-                    { error: pruneErr },
-                    'Failed to prune dangling images after dockerfile build',
-                );
+                logger.warn({ error: pruneErr }, 'Failed to prune dangling images after dockerfile build');
             }
 
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {
@@ -636,13 +575,7 @@ app.post('/stream/push', async (c) => {
                 } catch (e) {}
             };
 
-            const result = await manager.pushImage(
-                imageName,
-                targetName,
-                auth,
-                onLog,
-                abortController.signal,
-            );
+            const result = await manager.pushImage(imageName, targetName, auth, onLog, abortController.signal);
 
             if (!isClientDisconnected && !c.req.raw.signal.aborted) {
                 await stream.writeSSE({

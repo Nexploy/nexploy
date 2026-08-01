@@ -4,13 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
@@ -64,10 +58,7 @@ export function CherryPickCommitConfig() {
                         <FormLabel>{t('cherryPickCommitHash')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input
-                                    {...field}
-                                    placeholder={t('cherryPickCommitHashPlaceholder')}
-                                />
+                                <Input {...field} placeholder={t('cherryPickCommitHashPlaceholder')} />
                             </RefAware>
                         </FormControl>
                         <FormMessage className="text-xs" />
@@ -88,13 +79,9 @@ export function CherryPickCommitConfig() {
                             <FormControl>
                                 <SelectTrigger>
                                     {isLoadingRepo ? (
-                                        <span className="text-muted-foreground">
-                                            {t('repoLoading')}
-                                        </span>
+                                        <span className="text-muted-foreground">{t('repoLoading')}</span>
                                     ) : isLoadingBranches ? (
-                                        <span className="text-muted-foreground">
-                                            {t('branchLoading')}
-                                        </span>
+                                        <span className="text-muted-foreground">{t('branchLoading')}</span>
                                     ) : (
                                         <SelectValue placeholder={t('branchSelect')} />
                                     )}

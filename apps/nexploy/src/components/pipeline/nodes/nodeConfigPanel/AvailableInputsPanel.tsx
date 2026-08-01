@@ -72,9 +72,7 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
                     <div className="flex size-6 items-center justify-center rounded-md bg-amber-400/10">
                         <Variable className="size-3.5 text-amber-400" />
                     </div>
-                    <span className="text-foreground text-sm font-semibold">
-                        {t('availableInputs')}
-                    </span>
+                    <span className="text-foreground text-sm font-semibold">{t('availableInputs')}</span>
                 </div>
                 <p className="text-muted-foreground text-[11px]">{t('dragHint')}</p>
             </div>
@@ -101,12 +99,7 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
                                 </div>
                                 <div className="flex flex-col gap-1.5">
                                     {inputFields.map((field) => (
-                                        <InputChip
-                                            key={field.key}
-                                            nodeId={nodeId}
-                                            nodeType={nodeType}
-                                            field={field}
-                                        />
+                                        <InputChip key={field.key} nodeId={nodeId} nodeType={nodeType} field={field} />
                                     ))}
                                 </div>
                             </div>

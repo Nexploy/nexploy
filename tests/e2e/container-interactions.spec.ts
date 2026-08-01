@@ -12,8 +12,7 @@ test('container interactions through the UI', async ({ page }) => {
     const pause = page.getByRole('button', { name: 'Pause', exact: true });
     const restart = page.getByRole('button', { name: 'Restart', exact: true });
     const resume = page.getByRole('button', { name: 'Resume', exact: true });
-    const toolbarBtn = (name: string) =>
-        page.getByRole('button', { name }).filter({ visible: true }).first();
+    const toolbarBtn = (name: string) => page.getByRole('button', { name }).filter({ visible: true }).first();
 
     await test.step('open the container detail page', async () => {
         await page.goto('/docker/containers');

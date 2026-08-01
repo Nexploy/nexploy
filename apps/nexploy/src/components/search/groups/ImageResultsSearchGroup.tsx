@@ -44,18 +44,10 @@ export function ImageResultsSearchGroup() {
                         <LayoutList className="text-muted-foreground h-4 w-4 shrink-0" />
                         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                             <span className="truncate text-sm font-medium">{displayName}</span>
-                            {extra && (
-                                <span className="text-muted-foreground truncate text-xs">
-                                    {extra}
-                                </span>
-                            )}
+                            {extra && <span className="text-muted-foreground truncate text-xs">{extra}</span>}
                         </div>
-                        <span className="text-muted-foreground ml-3 shrink-0 text-xs">
-                            {formatBytes(image.size)}
-                        </span>
-                        <span className="text-muted-foreground ml-3 shrink-0 text-xs">
-                            {t('types.image')}
-                        </span>
+                        <span className="text-muted-foreground ml-3 shrink-0 text-xs">{formatBytes(image.size)}</span>
+                        <span className="text-muted-foreground ml-3 shrink-0 text-xs">{t('types.image')}</span>
                     </CommandItem>
                 );
             })}

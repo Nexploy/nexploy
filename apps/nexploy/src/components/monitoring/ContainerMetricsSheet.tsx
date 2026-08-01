@@ -4,13 +4,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Container, ExternalLink } from 'lucide-react';
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-} from '@workspace/ui/components/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@workspace/ui/components/sheet';
 import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -20,11 +14,7 @@ import { ContainersStatsHistoryPoint } from '@workspace/typescript-interface/sto
 import { containerDisplayState } from '@/utils/containerDisplayState';
 import { formatBytes } from '@/utils/formatBytes';
 import { MetricAreaChart } from '@/components/monitoring/MetricAreaChart';
-import {
-    formatPercent,
-    formatRate,
-    MONITORING_CHART_COLORS,
-} from '@/components/monitoring/monitoringUtils';
+import { formatPercent, formatRate, MONITORING_CHART_COLORS } from '@/components/monitoring/monitoringUtils';
 
 interface ContainerMetricsSheetProps {
     container: ContainerStatsSample | null;
@@ -32,11 +22,7 @@ interface ContainerMetricsSheetProps {
     onOpenChange: (open: boolean) => void;
 }
 
-export function ContainerMetricsSheet({
-    container,
-    history,
-    onOpenChange,
-}: ContainerMetricsSheetProps) {
+export function ContainerMetricsSheet({ container, history, onOpenChange }: ContainerMetricsSheetProps) {
     const t = useTranslations('monitoring');
     const tDocker = useTranslations('docker');
 
@@ -93,13 +79,9 @@ export function ContainerMetricsSheet({
                                         <StatusIndicator />
                                         <StatusLabel>{container.state}</StatusLabel>
                                     </Status>
-                                    {container.stack ? (
-                                        <Badge variant="secondary">{container.stack}</Badge>
-                                    ) : null}
+                                    {container.stack ? <Badge variant="secondary">{container.stack}</Badge> : null}
                                 </SheetTitle>
-                                <SheetDescription className="truncate">
-                                    {container.image}
-                                </SheetDescription>
+                                <SheetDescription className="truncate">{container.image}</SheetDescription>
                             </div>
                             <Button asChild size="sm" variant="outline" className="shrink-0">
                                 <Link href={`/docker/containers/${container.containerId}`}>
@@ -113,13 +95,8 @@ export function ContainerMetricsSheet({
                             <div className="space-y-4 px-4 pb-6">
                                 <div className="grid grid-cols-2 gap-2">
                                     {details.map((detail) => (
-                                        <div
-                                            key={detail.label}
-                                            className="bg-muted/40 rounded-md px-3 py-2"
-                                        >
-                                            <p className="text-muted-foreground text-xs">
-                                                {detail.label}
-                                            </p>
+                                        <div key={detail.label} className="bg-muted/40 rounded-md px-3 py-2">
+                                            <p className="text-muted-foreground text-xs">{detail.label}</p>
                                             <p
                                                 className="truncate text-sm font-medium tabular-nums"
                                                 title={detail.value}

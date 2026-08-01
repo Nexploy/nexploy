@@ -28,9 +28,7 @@ export function pruneTurbopackCache(): void {
     try {
         const sizeGb = dirSizeBytes(TURBOPACK_CACHE_DIR) / 1024 ** 3;
         if (sizeGb > MAX_TURBOPACK_CACHE_GB) {
-            console.warn(
-                `🧹 Turbopack cache is ${sizeGb.toFixed(1)}GB (> ${MAX_TURBOPACK_CACHE_GB}GB), clearing it…`,
-            );
+            console.warn(`🧹 Turbopack cache is ${sizeGb.toFixed(1)}GB (> ${MAX_TURBOPACK_CACHE_GB}GB), clearing it…`);
             rmSync(TURBOPACK_CACHE_DIR, { recursive: true, force: true });
         }
     } catch (err) {

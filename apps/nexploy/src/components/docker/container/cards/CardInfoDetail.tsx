@@ -37,16 +37,12 @@ export function CardInfoDetail() {
         { label: t('isRestarting'), value: container?.restarting ? t('yes') : t('no') },
         { label: t('isDead'), value: container?.dead ? t('yes') : t('no') },
         ...(container?.health ? [{ label: t('health'), value: container?.health.status }] : []),
-        ...(container?.exitCode !== undefined
-            ? [{ label: t('exitCode'), value: container?.exitCode }]
-            : []),
+        ...(container?.exitCode !== undefined ? [{ label: t('exitCode'), value: container?.exitCode }] : []),
         { label: t('restartCount'), value: container?.restartCount },
         { label: t('createdAt'), value: dayjs(container?.createdAt).format('DD/MM/YYYY HH:mm:ss') },
         {
             label: t('startedAt'),
-            value: container?.startedAt
-                ? dayjs(container?.startedAt).format('DD/MM/YYYY HH:mm:ss')
-                : '—',
+            value: container?.startedAt ? dayjs(container?.startedAt).format('DD/MM/YYYY HH:mm:ss') : '—',
         },
         ...(container?.finishedAt
             ? [
@@ -66,43 +62,28 @@ export function CardInfoDetail() {
         <Card className="flex-2">
             <CardHeaderWithIcon icon={Box} title={t('detailedInfo')} />
             <CardContent className="px-0">
-                <ScrollAreaWithShadow
-                    bottomShadow
-                    className="h-60 overflow-hidden px-6"
-                >
+                <ScrollAreaWithShadow bottomShadow className="h-60 overflow-hidden px-6">
                     <div className="space-y-3">
                         {fields.map((field, index) => (
                             <div
                                 key={index}
                                 className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < fields.length - 1 ? 'border-b pb-2' : ''}`}
                             >
-                                <span className="text-muted-foreground text-sm whitespace-nowrap">
-                                    {field.label}
-                                </span>
+                                <span className="text-muted-foreground text-sm whitespace-nowrap">{field.label}</span>
                                 <div className="flex min-w-0 items-center gap-1">
                                     <div className="flex min-w-0 flex-1 justify-end overflow-hidden">
                                         {field.href ? (
-                                            <Link
-                                                href={field.href}
-                                                className="max-w-full min-w-0 overflow-hidden"
-                                            >
+                                            <Link href={field.href} className="max-w-full min-w-0 overflow-hidden">
                                                 <Badge
                                                     variant="secondary"
                                                     className="w-auto max-w-full shrink hover:underline"
                                                 >
-                                                    <span className="block truncate">
-                                                        {field.value}
-                                                    </span>
+                                                    <span className="block truncate">{field.value}</span>
                                                 </Badge>
                                             </Link>
                                         ) : (
-                                            <Badge
-                                                variant="secondary"
-                                                className="w-auto max-w-full shrink"
-                                            >
-                                                <span className="block truncate">
-                                                    {field.value}
-                                                </span>
+                                            <Badge variant="secondary" className="w-auto max-w-full shrink">
+                                                <span className="block truncate">{field.value}</span>
                                             </Badge>
                                         )}
                                     </div>

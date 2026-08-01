@@ -33,12 +33,7 @@ export class AddDomainExecutor implements INodeExecutor {
             cloudflareZoneName,
         } = nodeConfig;
 
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(nodeId, `Adding domain: ${host}`);
         if (abortSignal.aborted) throw new Error('Build cancelled');
@@ -78,8 +73,7 @@ export class AddDomainExecutor implements INodeExecutor {
 
         await logger.info(
             nodeId,
-            `Domain configured: ${host}:${containerPort}` +
-                (environmentId ? ` (environment: ${environmentId})` : ''),
+            `Domain configured: ${host}:${containerPort}` + (environmentId ? ` (environment: ${environmentId})` : ''),
         );
 
         return { output: { host, containerPort, domainId, environmentId } };

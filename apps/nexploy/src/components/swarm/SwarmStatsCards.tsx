@@ -43,9 +43,7 @@ export function SwarmStatsCards() {
             {stats.map((stat) => (
                 <Card key={stat.title} className="flex flex-col justify-between gap-0 py-6">
                     <CardHeader className="flex flex-row justify-between space-y-0">
-                        <CardTitle className="flex h-14 text-sm font-medium">
-                            {stat.title}
-                        </CardTitle>
+                        <CardTitle className="flex h-14 text-sm font-medium">{stat.title}</CardTitle>
                         <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                             <stat.icon className="text-primary size-4" />
                         </div>

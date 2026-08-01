@@ -1,10 +1,4 @@
-import {
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-} from '@workspace/ui/components/form';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel } from '@workspace/ui/components/form';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 
 interface CheckboxFieldProps {

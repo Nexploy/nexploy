@@ -54,9 +54,7 @@ export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
                                     <div className="rounded-lg border bg-white p-4 shadow-sm">
                                         <QRCode value={totpURI} size={200} level="H" />
                                     </div>
-                                    <p className="text-muted-foreground text-center text-xs">
-                                        {t('cantScan')}
-                                    </p>
+                                    <p className="text-muted-foreground text-center text-xs">{t('cantScan')}</p>
                                     <ButtonGroup className={'flex w-full'}>
                                         <Input
                                             value={secretKey}
@@ -72,20 +70,14 @@ export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
                                     </ButtonGroup>
                                 </div>
                                 <div className={'flex flex-col gap-4'}>
-                                    <DialogTitle className={'text-base!'}>
-                                        {t('enterVerificationCode')}
-                                    </DialogTitle>
+                                    <DialogTitle className={'text-base!'}>{t('enterVerificationCode')}</DialogTitle>
                                     <TwoFactorVerifCodeForm
                                         onSuccess={() =>
                                             openDialog({
                                                 title: t('backupCodes'),
                                                 description: t('backupCodesDescription'),
                                                 closeOnBackground: false,
-                                                content: (
-                                                    <TwoFactorAuthBackupCodes
-                                                        backupCodes={backupCodes}
-                                                    />
-                                                ),
+                                                content: <TwoFactorAuthBackupCodes backupCodes={backupCodes} />,
                                             })
                                         }
                                     />

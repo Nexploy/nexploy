@@ -1,9 +1,6 @@
 import { create } from 'zustand';
 import type { OrganizationState } from '@workspace/typescript-interface/stores/organizationStore';
-import type {
-    PendingInvitation,
-    UserOrganization,
-} from '@workspace/typescript-interface/organization/organization';
+import type { PendingInvitation, UserOrganization } from '@workspace/typescript-interface/organization/organization';
 
 export const useOrganizationStore = create<OrganizationState>((set, get) => ({
     organizations: [],
@@ -41,9 +38,7 @@ export const useOrganizationStore = create<OrganizationState>((set, get) => ({
 
     removeOrganization: (organizationId) => {
         set((state) => {
-            const organizations = state.organizations.filter(
-                (organization) => organization.id !== organizationId,
-            );
+            const organizations = state.organizations.filter((organization) => organization.id !== organizationId);
 
             return {
                 organizations,
@@ -55,33 +50,23 @@ export const useOrganizationStore = create<OrganizationState>((set, get) => ({
         });
     },
 
-    setPendingInvitations: (pendingInvitations) =>
-        set({ pendingInvitations, pendingInvitationsInitialized: true }),
+    setPendingInvitations: (pendingInvitations) => set({ pendingInvitations, pendingInvitationsInitialized: true }),
 
     removePendingInvitation: (invitationId) => {
         set((state) => ({
-            pendingInvitations: state.pendingInvitations.filter(
-                (invitation) => invitation.id !== invitationId,
-            ),
+            pendingInvitations: state.pendingInvitations.filter((invitation) => invitation.id !== invitationId),
         }));
     },
 
     getActiveOrganization: () => {
         const { organizations, activeOrganizationId } = get();
-        return (
-            organizations.find((organization) => organization.id === activeOrganizationId) ??
-            organizations[0]
-        );
+        return organizations.find((organization) => organization.id === activeOrganizationId) ?? organizations[0];
     },
 
-    getOrganization: (organizationId) =>
-        get().organizations.find((organization) => organization.id === organizationId),
+    getOrganization: (organizationId) => get().organizations.find((organization) => organization.id === organizationId),
 }));
 
-export const initializeOrganizationStore = (
-    organizations: UserOrganization[],
-    activeOrganizationId: string | null,
-) => {
+export const initializeOrganizationStore = (organizations: UserOrganization[], activeOrganizationId: string | null) => {
     useOrganizationStore.setState({
         organizations,
         activeOrganizationId:

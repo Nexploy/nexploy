@@ -13,10 +13,7 @@ export interface CreateVersionInput {
     composeConfig?: string;
 }
 
-export async function getNextVersionNumber(
-    repositoryId: string,
-    environmentId?: string,
-): Promise<number> {
+export async function getNextVersionNumber(repositoryId: string, environmentId?: string): Promise<number> {
     const t = await getErrorTranslator();
     try {
         const lastVersion = await prisma.version.findFirst({
@@ -48,10 +45,7 @@ export async function upsertVersion(input: CreateVersionInput): Promise<void> {
     }
 }
 
-export async function deleteVersionsByImageTag(
-    repositoryId: string,
-    imageTag: string,
-): Promise<number> {
+export async function deleteVersionsByImageTag(repositoryId: string, imageTag: string): Promise<number> {
     const t = await getErrorTranslator();
     try {
         const result = await prisma.version.deleteMany({

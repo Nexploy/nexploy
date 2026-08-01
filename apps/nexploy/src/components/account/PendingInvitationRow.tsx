@@ -47,9 +47,7 @@ export function PendingInvitationRow({
                     </Badge>
                 </div>
                 <div className="flex min-w-0 items-center gap-2">
-                    <span className="text-muted-foreground text-xs">
-                        {t('invitations.invitedBy')}
-                    </span>
+                    <span className="text-muted-foreground text-xs">{t('invitations.invitedBy')}</span>
                     <Badge variant="outline" className="w-fit shrink-0">
                         {inviterEmail}
                     </Badge>
@@ -65,11 +63,7 @@ export function PendingInvitationRow({
                     <X className="size-4" />
                     {t('invitations.reject')}
                 </Button>
-                <Button
-                    size="sm"
-                    disabled={isAccepting || isRejecting}
-                    onClick={() => executeAccept({ invitationId })}
-                >
+                <Button size="sm" disabled={isAccepting || isRejecting} onClick={() => executeAccept({ invitationId })}>
                     <Check className="size-4" />
                     {t('invitations.accept')}
                 </Button>

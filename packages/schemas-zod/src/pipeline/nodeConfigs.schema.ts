@@ -57,17 +57,13 @@ export const validateDockerfileConfigSchema = z.object({
 });
 
 export const composeFileConfigSchema = z.object({
-    composeFileName: refable(z.string().min(1, 'Compose file name is required')).default(
-        'docker-compose.yml',
-    ),
+    composeFileName: refable(z.string().min(1, 'Compose file name is required')).default('docker-compose.yml'),
     composeFilePath: refable(relativePath('Compose file path')).optional(),
     noCache: z.boolean().default(false),
 });
 
 export const composeBuildConfigSchema = z.object({
-    composeFileName: refable(z.string().min(1, 'Compose file name is required')).default(
-        'docker-compose.yml',
-    ),
+    composeFileName: refable(z.string().min(1, 'Compose file name is required')).default('docker-compose.yml'),
     composeFilePath: refable(relativePath('Compose file path')).optional(),
     noCache: z.boolean().default(false),
 });
@@ -165,9 +161,7 @@ const createContainerVolumeSchema = z.object({
 export const createContainerConfigSchema = z.object({
     containerName: refable(z.string()).default(''),
     imageName: refable(z.string().min(1, 'Image name is required')),
-    restartPolicy: z
-        .enum(['no', 'always', 'on-failure', 'unless-stopped'])
-        .default('unless-stopped'),
+    restartPolicy: z.enum(['no', 'always', 'on-failure', 'unless-stopped']).default('unless-stopped'),
     networkName: refable(z.string()).optional(),
     portsSource: refable(z.array(createContainerPortSchema)).optional(),
     ports: z.array(createContainerPortSchema).default([]),
@@ -395,10 +389,7 @@ export const checkContainerLogsConfigSchema = z.object({
 
 const cacheKeySchema = z
     .string()
-    .regex(
-        /^[a-zA-Z0-9_\-.]+$/,
-        'Cache key must only contain alphanumeric characters, hyphens, underscores or dots',
-    );
+    .regex(/^[a-zA-Z0-9_\-.]+$/, 'Cache key must only contain alphanumeric characters, hyphens, underscores or dots');
 
 export const cacheRestoreConfigSchema = z.object({
     volumeName: refable(z.string().min(1, 'Volume name is required')).default(''),

@@ -3,10 +3,7 @@ import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { ContainersEvent } from '@workspace/typescript-interface/docker/docker.containers';
 import { getContainersStateManager } from '@/managers/list/containersStateManager';
-import {
-    filterNexployContainers,
-    isNexployInfrastructureContainer,
-} from '@workspace/shared/nexployFilter';
+import { filterNexployContainers, isNexployInfrastructureContainer } from '@workspace/shared/nexployFilter';
 import { createInitialStateGate } from '@/utils/initialStateGate';
 import { ContainersStatsManager } from '@/managers/list/containersStatsManager';
 import { ContainersStatsEvent } from '@workspace/typescript-interface/docker/docker.containers.stats';
@@ -16,8 +13,7 @@ import { SingleResourceManagerRegistry } from '@/lib/SingleResourceManagerRegist
 
 const containersStatsRegistry = new SingleResourceManagerRegistry(
     'ContainersStats',
-    (refreshRate, environmentId) =>
-        new ContainersStatsManager(environmentId, parseInt(refreshRate, 10)),
+    (refreshRate, environmentId) => new ContainersStatsManager(environmentId, parseInt(refreshRate, 10)),
 );
 
 const app = new Hono();
@@ -68,10 +64,7 @@ app.get('/stream', (c) => {
 
         const handleContainerAdded = async (containerEvent: ContainersEvent) => {
             try {
-                if (
-                    containerEvent.container &&
-                    isNexployInfrastructureContainer(containerEvent.container)
-                ) {
+                if (containerEvent.container && isNexployInfrastructureContainer(containerEvent.container)) {
                     return;
                 }
                 await stream.writeSSE({
@@ -87,10 +80,7 @@ app.get('/stream', (c) => {
 
         const handleContainerUpdated = async (containerEvent: ContainersEvent) => {
             try {
-                if (
-                    containerEvent.container &&
-                    isNexployInfrastructureContainer(containerEvent.container)
-                ) {
+                if (containerEvent.container && isNexployInfrastructureContainer(containerEvent.container)) {
                     return;
                 }
                 await stream.writeSSE({
@@ -106,10 +96,7 @@ app.get('/stream', (c) => {
 
         const handleContainerRemoved = async (containerEvent: ContainersEvent) => {
             try {
-                if (
-                    containerEvent.container &&
-                    isNexployInfrastructureContainer(containerEvent.container)
-                ) {
+                if (containerEvent.container && isNexployInfrastructureContainer(containerEvent.container)) {
                     return;
                 }
                 await stream.writeSSE({
@@ -176,8 +163,7 @@ app.get('/stream', (c) => {
 
 app.get('/stream/stats/:refreshRate', (c) => {
     const refreshRate = c.req.param('refreshRate');
-    const environmentId =
-        getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
+    const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
 
     return streamSSE(c, async (stream) => {
         const clientId = c.req.header('x-client-id');

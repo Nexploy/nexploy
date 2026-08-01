@@ -39,9 +39,7 @@ export default function EventsPage() {
     const availableNames = useMemo(() => getAvailableNames(), [events, typeFilter]);
 
     const emptyLabel =
-        filteredEvents.length === 0 && eventsReceived === 0
-            ? t('waitingForEvents')
-            : t('noMatchingEvents');
+        filteredEvents.length === 0 && eventsReceived === 0 ? t('waitingForEvents') : t('noMatchingEvents');
 
     return (
         <div className="flex h-full flex-1 flex-col gap-5">
@@ -50,13 +48,9 @@ export default function EventsPage() {
                     <Bug className="text-primary size-7" />
                 </div>
                 <div className="mt-3.5 flex flex-col">
-                    <h1 className="text-3xl font-semibold tracking-tight">
-                        Docker {t('eventsTitle')}
-                    </h1>
+                    <h1 className="text-3xl font-semibold tracking-tight">Docker {t('eventsTitle')}</h1>
                     <p className="text-muted-foreground text-sm">
-                        {eventsReceived > 0
-                            ? t('eventsReceived', { count: eventsReceived })
-                            : t('waitingForEvents')}
+                        {eventsReceived > 0 ? t('eventsReceived', { count: eventsReceived }) : t('waitingForEvents')}
                     </p>
                 </div>
             </div>
@@ -70,11 +64,7 @@ export default function EventsPage() {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         <div className={'flex flex-wrap gap-3'}>
-                            <Select
-                                value={nameFilter}
-                                onValueChange={setNameFilter}
-                                disabled={!availableNames.length}
-                            >
+                            <Select value={nameFilter} onValueChange={setNameFilter} disabled={!availableNames.length}>
                                 <SelectTrigger className={'min-w-40 max-w-56'}>
                                     <SelectValue placeholder={t('nameId')} />
                                 </SelectTrigger>
@@ -84,9 +74,7 @@ export default function EventsPage() {
                                         <SelectItem value="all">{t('allNames')}</SelectItem>
                                         {availableNames.map((name) => (
                                             <SelectItem key={name} value={name}>
-                                                <span className={'truncate font-mono text-sm'}>
-                                                    {name}
-                                                </span>
+                                                <span className={'truncate font-mono text-sm'}>{name}</span>
                                             </SelectItem>
                                         ))}
                                     </SelectGroup>
@@ -110,11 +98,7 @@ export default function EventsPage() {
                         </div>
                     </div>
 
-                    <TableDockerEvents
-                        events={filteredEvents}
-                        isLoading={isLoading}
-                        emptyLabel={emptyLabel}
-                    />
+                    <TableDockerEvents events={filteredEvents} isLoading={isLoading} emptyLabel={emptyLabel} />
                 </div>
             </ScrollAreaWithShadow>
         </div>

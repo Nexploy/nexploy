@@ -7,13 +7,7 @@ export async function Organization() {
     if (!session) return null;
 
     const organizations = await getUserOrganizations(session.user.id);
-    const activeOrganizationId =
-        session.session.activeOrganizationId ?? organizations[0]?.id ?? null;
+    const activeOrganizationId = session.session.activeOrganizationId ?? organizations[0]?.id ?? null;
 
-    return (
-        <DropdownOrganization
-            organizations={organizations}
-            activeOrganizationId={activeOrganizationId}
-        />
-    );
+    return <DropdownOrganization organizations={organizations} activeOrganizationId={activeOrganizationId} />;
 }

@@ -43,9 +43,7 @@ export class DeleteVolumeExecutor implements INodeExecutor {
                 await logger.info(nodeId, `Volume not found, skipping: ${volumeName}`);
                 return { output: { deletedVolume: volumeName }, skipped: true };
             }
-            throw new Error(
-                `Failed to delete volume: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to delete volume: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

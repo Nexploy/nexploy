@@ -54,10 +54,7 @@ export class FetchSecretsInfisicalExecutor implements INodeExecutor {
                   })
                 : accessToken.trim();
 
-        await logger.info(
-            nodeId,
-            `Fetching secrets from Infisical (${environment} @ ${resolvedPath})`,
-        );
+        await logger.info(nodeId, `Fetching secrets from Infisical (${environment} @ ${resolvedPath})`);
 
         const searchParams = {
             projectId: projectId.trim(),
@@ -78,10 +75,7 @@ export class FetchSecretsInfisicalExecutor implements INodeExecutor {
                 .json<InfisicalSecretsResponse>();
         } catch (error) {
             if (!(error instanceof HTTPError) || error.response.status !== 404) throw error;
-            await logger.info(
-                nodeId,
-                'Infisical API v4 unavailable, falling back to v3 raw secrets endpoint',
-            );
+            await logger.info(nodeId, 'Infisical API v4 unavailable, falling back to v3 raw secrets endpoint');
             response = await ky
                 .get(`${baseUrl}/api/v3/secrets/raw`, {
                     headers,
@@ -105,20 +99,12 @@ export class FetchSecretsInfisicalExecutor implements INodeExecutor {
         await logger.info(nodeId, `Fetched ${count} secret(s) from Infisical`);
 
         const ancestorEnvs =
-            getFromClosestAncestor<{ key: string; value: string }[]>(
-                allOutputs,
-                edges,
-                nodeId,
-                'envVariables',
-            ) ?? [];
+            getFromClosestAncestor<{ key: string; value: string }[]>(allOutputs, edges, nodeId, 'envVariables') ?? [];
         const ancestorMap = Object.fromEntries(ancestorEnvs.map((e) => [e.key, e.value]));
         const merged = { ...ancestorMap, ...secrets };
         const envVariables = Object.entries(merged).map(([key, value]) => ({ key, value }));
 
-        await logger.info(
-            nodeId,
-            `Injecting ${envVariables.length} secret(s) as environment variables`,
-        );
+        await logger.info(nodeId, `Injecting ${envVariables.length} secret(s) as environment variables`);
         return { output: { envVariables, secretCount: count } };
     }
 

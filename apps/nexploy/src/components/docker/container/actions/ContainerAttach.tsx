@@ -69,10 +69,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                                     <Terminal />
                                 </div>
                                 {t('title', { name: container?.name ?? 'Unknown Container' })}
-                                <Status
-                                    className="rounded-none bg-transparent"
-                                    status={currentStatus.status}
-                                >
+                                <Status className="rounded-none bg-transparent" status={currentStatus.status}>
                                     <StatusIndicator />
                                     <StatusLabel className={currentStatus.text}>
                                         {tStatus(currentStatus.labelKey)}
@@ -90,12 +87,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                             >
                                 {t('reconnect')}
                             </Button>
-                            <Button
-                                onClick={handleClose}
-                                className="h-7 text-xs"
-                                variant="white"
-                                size="sm"
-                            >
+                            <Button onClick={handleClose} className="h-7 text-xs" variant="white" size="sm">
                                 {t('close')}
                             </Button>
                         </div>

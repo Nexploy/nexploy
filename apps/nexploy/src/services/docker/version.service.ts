@@ -72,17 +72,11 @@ export async function deployComposeVersion(
 
     const composeYaml = Buffer.from(version.composeConfig, 'base64').toString('utf8');
     const composeContent = yaml.parse(composeYaml) as ComposeContent;
-    const builtServices = Object.values(composeContent.services || {}).filter(
-        (s) => s.build && s.image,
-    );
+    const builtServices = Object.values(composeContent.services || {}).filter((s) => s.build && s.image);
 
     if (builtServices.length > 0) {
-        const allImages = await kyDocker
-            .get('images', { environmentId } as KyDockerOptions)
-            .json<Image[]>();
-        const missingImages = builtServices.filter(
-            (s) => !allImages.some((img) => img.repoTags.includes(s.image!)),
-        );
+        const allImages = await kyDocker.get('images', { environmentId } as KyDockerOptions).json<Image[]>();
+        const missingImages = builtServices.filter((s) => !allImages.some((img) => img.repoTags.includes(s.image!)));
 
         if (missingImages.length > 0) {
             throw new Error('image_not_found');
@@ -126,10 +120,7 @@ export async function deleteVersion(repositoryId: string, imageTag: string): Pro
     }
 }
 
-export async function getVersionsByRepository(
-    repositoryId: string,
-    stageId?: string,
-): Promise<Version[]> {
+export async function getVersionsByRepository(repositoryId: string, stageId?: string): Promise<Version[]> {
     try {
         const versions = await prisma.version.findMany({
             where: { repositoryId, ...(stageId ? { stageId } : {}) },

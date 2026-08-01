@@ -12,9 +12,7 @@ export class CleanWorkdirExecutor implements INodeExecutor {
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
         const { inputOutputs, allOutputs, logger, nodeId, edges } = ctx;
 
-        const workDirFromInputs = inputOutputs
-            .map((o) => o.workDir)
-            .find((v): v is string => typeof v === 'string');
+        const workDirFromInputs = inputOutputs.map((o) => o.workDir).find((v): v is string => typeof v === 'string');
 
         const workDir = workDirFromInputs ?? getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
@@ -28,10 +26,7 @@ export class CleanWorkdirExecutor implements INodeExecutor {
             await logger.info(nodeId, `Work directory cleaned: ${workDir}`);
             return { output: { cleaned: workDir } };
         } catch (error) {
-            await logger.warn(
-                nodeId,
-                `Cleanup warning: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            await logger.warn(nodeId, `Cleanup warning: ${error instanceof Error ? error.message : 'Unknown error'}`);
             return { output: { cleaned: workDir } };
         }
     }

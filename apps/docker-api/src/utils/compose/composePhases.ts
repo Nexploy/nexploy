@@ -4,10 +4,7 @@ import yaml from 'yaml';
 import { logger } from '@/utils/logger';
 import { docker } from '@/utils/dockerClient';
 import { findUnresolvedVariables, substituteEnvVars } from '@/utils/compose/composePreprocessor';
-import {
-    getTransformationSummary,
-    transformBindMountsForRemote,
-} from '@/utils/compose/composeVolumeTransformer';
+import { getTransformationSummary, transformBindMountsForRemote } from '@/utils/compose/composeVolumeTransformer';
 import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
 
@@ -63,11 +60,7 @@ export function ensureEnvIgnoredInBuildContext(workDir: string): void {
 
     try {
         const separator = existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
-        fs.writeFileSync(
-            dockerignorePath,
-            `${existing}${separator}${missingEntries.join('\n')}\n`,
-            'utf8',
-        );
+        fs.writeFileSync(dockerignorePath, `${existing}${separator}${missingEntries.join('\n')}\n`, 'utf8');
     } catch (error) {
         logger.warn({ error, dockerignorePath }, 'Failed to update .dockerignore');
     }
@@ -172,9 +165,7 @@ export async function preprocessComposeProject({
 
     const unresolvedVars = findUnresolvedVariables(composeYamlContent);
     if (unresolvedVars.length > 0) {
-        sendLog(
-            `WARNING: Unresolved variables in compose file: ${unresolvedVars.map((v) => `$\{${v}}`).join(', ')}`,
-        );
+        sendLog(`WARNING: Unresolved variables in compose file: ${unresolvedVars.map((v) => `$\{${v}}`).join(', ')}`);
     }
 
     let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
@@ -229,17 +220,13 @@ export async function preprocessComposeProject({
 
         if (labels && Object.keys(labels).length > 0) {
             const existingLabels =
-                service.labels && !Array.isArray(service.labels)
-                    ? (service.labels as Record<string, string>)
-                    : {};
+                service.labels && !Array.isArray(service.labels) ? (service.labels as Record<string, string>) : {};
             service.labels = { ...existingLabels, ...labels };
 
             if (typeof service.build === 'string') {
                 service.build = { context: service.build, labels: { ...labels } };
             } else if (service.build) {
-                const existingBuildLabels = !Array.isArray(service.build.labels)
-                    ? (service.build.labels ?? {})
-                    : {};
+                const existingBuildLabels = !Array.isArray(service.build.labels) ? (service.build.labels ?? {}) : {};
                 service.build.labels = { ...existingBuildLabels, ...labels };
             }
         }
@@ -339,25 +326,18 @@ export async function publishRemoteServicePorts(
             if (exposedPorts.length > 0) {
                 const portMappings = exposedPorts.map((p) => `0:${p.split('/')[0]}`);
                 (service as Record<string, unknown>).ports = portMappings;
-                sendLog(
-                    `  Added port mappings for service ${serviceName}: ${portMappings.join(', ')}`,
-                );
+                sendLog(`  Added port mappings for service ${serviceName}: ${portMappings.join(', ')}`);
                 portsAdded = true;
             }
         } catch {
-            sendLog(
-                `  Warning: Could not inspect image for service ${serviceName} to determine ports`,
-            );
+            sendLog(`  Warning: Could not inspect image for service ${serviceName} to determine ports`);
         }
     }
 
     return portsAdded;
 }
 
-export function cleanupGeneratedDockerfiles(
-    composeDir: string,
-    serviceNames: Iterable<string>,
-): void {
+export function cleanupGeneratedDockerfiles(composeDir: string, serviceNames: Iterable<string>): void {
     for (const serviceName of serviceNames) {
         const dockerfilePath = path.join(composeDir, `.nexploy-${serviceName}.Dockerfile`);
         try {
@@ -372,10 +352,7 @@ export function cleanupGeneratedDockerfiles(
 
 export function cleanupProcessedComposeFile(composeFile: string): void {
     try {
-        if (
-            fs.existsSync(composeFile) &&
-            path.basename(composeFile) === PROCESSED_COMPOSE_FILENAME
-        ) {
+        if (fs.existsSync(composeFile) && path.basename(composeFile) === PROCESSED_COMPOSE_FILENAME) {
             fs.unlinkSync(composeFile);
         }
     } catch (error) {

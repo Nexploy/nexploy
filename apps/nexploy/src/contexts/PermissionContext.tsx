@@ -32,14 +32,7 @@ export function PermissionProvider({ children, role, orgRole }: PermissionProvid
             hasRole: (r: Role) => role === r,
             can: <R extends PermissionResource>(resource: R, action: PermissionActions[R]) => {
                 if (isOrgScopedResource(resource) && role !== 'admin') {
-                    return (
-                        !!orgRole &&
-                        hasOrgPermission(
-                            orgRole,
-                            resource as OrgPermissionResource,
-                            action as string,
-                        )
-                    );
+                    return !!orgRole && hasOrgPermission(orgRole, resource as OrgPermissionResource, action as string);
                 }
                 return hasPermission(role ?? '', resource, action as string);
             },

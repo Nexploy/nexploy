@@ -28,10 +28,7 @@ export class SingleResourceManagerRegistry<TManager extends StartableManager> {
 
         if (entry) {
             entry.refCount++;
-            logger.debug(
-                { resourceId, refCount: entry.refCount },
-                `Reusing existing ${this.resourceType} manager`,
-            );
+            logger.debug({ resourceId, refCount: entry.refCount }, `Reusing existing ${this.resourceType} manager`);
             await entry.startPromise;
             return entry.manager;
         }
@@ -51,18 +48,12 @@ export class SingleResourceManagerRegistry<TManager extends StartableManager> {
         const entry = this.instances.get(key);
 
         if (!entry) {
-            logger.warn(
-                { resourceId, environmentId },
-                `Released an unknown ${this.resourceType} manager reference`,
-            );
+            logger.warn({ resourceId, environmentId }, `Released an unknown ${this.resourceType} manager reference`);
             return;
         }
 
         entry.refCount--;
-        logger.debug(
-            { resourceId, refCount: entry.refCount },
-            `Released ${this.resourceType} manager reference`,
-        );
+        logger.debug({ resourceId, refCount: entry.refCount }, `Released ${this.resourceType} manager reference`);
 
         if (entry.refCount <= 0) {
             entry.manager.stop();

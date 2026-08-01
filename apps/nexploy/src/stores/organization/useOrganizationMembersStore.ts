@@ -10,8 +10,7 @@ export const useOrganizationMembersStore = create<OrganizationMembersState>((set
     members: [],
     invitations: [],
 
-    setMembers: (organizationId, members, invitations) =>
-        set({ organizationId, members, invitations }),
+    setMembers: (organizationId, members, invitations) => set({ organizationId, members, invitations }),
 
     removeMember: (memberId) => {
         set((state) => ({
@@ -21,18 +20,13 @@ export const useOrganizationMembersStore = create<OrganizationMembersState>((set
 
     updateMemberRole: (memberId, role) => {
         set((state) => ({
-            members: state.members.map((member) =>
-                member.id === memberId ? { ...member, role } : member,
-            ),
+            members: state.members.map((member) => (member.id === memberId ? { ...member, role } : member)),
         }));
     },
 
     addInvitation: (invitation) => {
         set((state) => ({
-            invitations: [
-                invitation,
-                ...state.invitations.filter((existing) => existing.id !== invitation.id),
-            ],
+            invitations: [invitation, ...state.invitations.filter((existing) => existing.id !== invitation.id)],
         }));
     },
 

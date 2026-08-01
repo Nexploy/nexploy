@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { dockerService } from '@/inngest/pipeline/services/docker.service';
 import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -19,9 +23,7 @@ export class DeployComposeExecutor implements INodeExecutor {
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
         if (!workDir) {
-            throw new Error(
-                'No workDir found in input nodes — connect this node after a Clone Repository node',
-            );
+            throw new Error('No workDir found in input nodes — connect this node after a Clone Repository node');
         }
 
         const composeFileName = nodeConfig.composeFileName;
@@ -35,26 +37,14 @@ export class DeployComposeExecutor implements INodeExecutor {
         const repoEnvMap = Object.fromEntries(repoEnvs.map((e) => [e.key, e.value]));
 
         const ancestorEnvVarsArray =
-            getFromClosestAncestor<{ key: string; value: string }[]>(
-                allOutputs,
-                edges,
-                nodeId,
-                'envVariables',
-            ) ?? [];
-        const ancestorEnvMap = Object.fromEntries(
-            ancestorEnvVarsArray.map((e) => [e.key, e.value]),
-        );
+            getFromClosestAncestor<{ key: string; value: string }[]>(allOutputs, edges, nodeId, 'envVariables') ?? [];
+        const ancestorEnvMap = Object.fromEntries(ancestorEnvVarsArray.map((e) => [e.key, e.value]));
 
         const envVars: Record<string, string> = { ...repoEnvMap, ...ancestorEnvMap };
 
         const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
         const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');
-        const commitMessage = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'commitMessage',
-        );
+        const commitMessage = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitMessage');
 
         const labels: Record<string, string> = {
             [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
@@ -68,12 +58,7 @@ export class DeployComposeExecutor implements INodeExecutor {
 
         const onLog = async (message: string) => logger.info(nodeId, message);
 
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         try {
             const result = await dockerService.deployCompose(

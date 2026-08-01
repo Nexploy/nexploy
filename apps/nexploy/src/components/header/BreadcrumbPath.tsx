@@ -60,9 +60,7 @@ export function BreadcrumbPath() {
                         <Fragment key={href}>
                             <BreadcrumbItem>
                                 {isLast ? (
-                                    <BreadcrumbPage className="line-clamp-1 break-all">
-                                        {name}
-                                    </BreadcrumbPage>
+                                    <BreadcrumbPage className="line-clamp-1 break-all">{name}</BreadcrumbPage>
                                 ) : (
                                     <BreadcrumbLink asChild>
                                         <Link href={href}>{name}</Link>
@@ -111,9 +109,7 @@ export function BreadcrumbPath() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                    <BreadcrumbPage className="line-clamp-1 break-all">
-                        {lastItem.name}
-                    </BreadcrumbPage>
+                    <BreadcrumbPage className="line-clamp-1 break-all">{lastItem.name}</BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>

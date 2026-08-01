@@ -21,23 +21,12 @@ export function PanelHeader({ hasMessages, onNewChat, onClose }: PanelHeaderProp
                 <span className="text-sm font-semibold">{t('panelTitle')}</span>
             </div>
             {hasMessages && (
-                <Button
-                    size={'sm'}
-                    className={'h-7 text-xs'}
-                    onClick={onNewChat}
-                    title={t('newChat')}
-                >
+                <Button size={'sm'} className={'h-7 text-xs'} onClick={onNewChat} title={t('newChat')}>
                     <MessageSquarePlus className="size-3.5" />
                     {t('newChat')}
                 </Button>
             )}
-            <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7"
-                onClick={onClose}
-                title={t('close')}
-            >
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onClose} title={t('close')}>
                 <X className="h-3.5 w-3.5" />
             </Button>
         </div>

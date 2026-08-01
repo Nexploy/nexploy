@@ -14,27 +14,23 @@ export const registriesGroup: ToolGroup = {
     register(server: McpServer, ctx: ToolContext) {
         if (ctx.allowRegistriesGroup === false) return;
 
-        server.registerTool(
-            'listRegistries',
-            { description: 'List all configured Docker registries.' },
-            async () => {
-                const g = guard(ctx, 'registry', 'read');
-                if (g) return g;
-                try {
-                    const registries = await getRegistries();
-                    const data = registries.map((r) => ({
-                        id: r.id,
-                        name: r.name,
-                        url: r.url,
-                        username: r.username,
-                        createdAt: r.createdAt,
-                    }));
-                    return ok(JSON.stringify({ count: data.length, data }));
-                } catch (e: any) {
-                    return fail(e.message);
-                }
-            },
-        );
+        server.registerTool('listRegistries', { description: 'List all configured Docker registries.' }, async () => {
+            const g = guard(ctx, 'registry', 'read');
+            if (g) return g;
+            try {
+                const registries = await getRegistries();
+                const data = registries.map((r) => ({
+                    id: r.id,
+                    name: r.name,
+                    url: r.url,
+                    username: r.username,
+                    createdAt: r.createdAt,
+                }));
+                return ok(JSON.stringify({ count: data.length, data }));
+            } catch (e: any) {
+                return fail(e.message);
+            }
+        });
 
         server.registerTool(
             'createRegistry',

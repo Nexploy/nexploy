@@ -63,11 +63,7 @@ export function AzureReposAppSetupForm() {
                         <FormItem>
                             <FormLabel>{t('displayName')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="text"
-                                    placeholder={t('displayNamePlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="text" placeholder={t('displayNamePlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -80,11 +76,7 @@ export function AzureReposAppSetupForm() {
                         <FormItem>
                             <FormLabel>{t('guide.azureRepos.clientIdLabel')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="text"
-                                    placeholder={t('clientIdPlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="text" placeholder={t('clientIdPlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -97,11 +89,7 @@ export function AzureReposAppSetupForm() {
                         <FormItem>
                             <FormLabel>{t('guide.azureRepos.secretLabel')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="password"
-                                    placeholder={t('clientSecretPlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="password" placeholder={t('clientSecretPlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -114,11 +102,7 @@ export function AzureReposAppSetupForm() {
                         <FormItem>
                             <FormLabel>{t('guide.azureRepos.tenantIdLabel')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="text"
-                                    placeholder={t('guide.azureRepos.tenantIdPlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="text" placeholder={t('guide.azureRepos.tenantIdPlaceholder')} {...field} />
                             </FormControl>
                             <FormDescription className="text-xs">
                                 {t('guide.azureRepos.tenantIdDescription')}

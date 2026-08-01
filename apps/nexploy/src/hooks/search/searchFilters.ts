@@ -14,10 +14,7 @@ export function matchesQuery(text: string, query: string): boolean {
     return text.toLowerCase().includes(q);
 }
 
-export function filterRepositories(
-    repositories: RepositoryResult[],
-    query: string,
-): RepositoryResult[] {
+export function filterRepositories(repositories: RepositoryResult[], query: string): RepositoryResult[] {
     const q = normalizeQuery(query);
     if (!q) return repositories;
     return repositories.filter(
@@ -32,18 +29,14 @@ export function filterContainers(containers: Containers[], query: string): Conta
     const q = normalizeQuery(query);
     return containers.filter(
         (c) =>
-            c.name.toLowerCase().includes(q) ||
-            c.image.toLowerCase().includes(q) ||
-            c.id.toLowerCase().startsWith(q),
+            c.name.toLowerCase().includes(q) || c.image.toLowerCase().includes(q) || c.id.toLowerCase().startsWith(q),
     );
 }
 
 export function filterImages(images: Image[], query: string): Image[] {
     const q = normalizeQuery(query);
     return images.filter(
-        (img) =>
-            img.repoTags?.some((t) => t.toLowerCase().includes(q)) ||
-            img.id.toLowerCase().startsWith(q),
+        (img) => img.repoTags?.some((t) => t.toLowerCase().includes(q)) || img.id.toLowerCase().startsWith(q),
     );
 }
 
@@ -54,7 +47,5 @@ export function filterVolumes(volumes: Volume[], query: string): Volume[] {
 
 export function filterNetworks(networks: Network[], query: string): Network[] {
     const q = normalizeQuery(query);
-    return networks.filter(
-        (net) => net.name.toLowerCase().includes(q) || net.id.toLowerCase().startsWith(q),
-    );
+    return networks.filter((net) => net.name.toLowerCase().includes(q) || net.id.toLowerCase().startsWith(q));
 }

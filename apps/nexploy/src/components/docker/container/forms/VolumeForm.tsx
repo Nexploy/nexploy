@@ -91,10 +91,7 @@ export function VolumeForm() {
                                     </FormDescription>
                                 </div>
                                 <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
+                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                                 </FormControl>
                             </Label>
                         </FormItem>
@@ -106,11 +103,7 @@ export function VolumeForm() {
                         <DialogClose asChild>
                             <Button variant="outline">{t('cancel')}</Button>
                         </DialogClose>
-                        <Button
-                            className="flex-1 sm:flex-0"
-                            type="submit"
-                            disabled={!form.formState.isDirty}
-                        >
+                        <Button className="flex-1 sm:flex-0" type="submit" disabled={!form.formState.isDirty}>
                             {t('add')}
                         </Button>
                     </div>

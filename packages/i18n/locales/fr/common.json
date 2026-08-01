@@ -1,71 +1,71 @@
 {
-    "optional": "(optionnel)",
-    "loading": "Chargement...",
-    "save": "Enregistrer",
-    "cancel": "Annuler",
-    "close": "Fermer",
-    "delete": "Supprimer",
-    "confirm": "Confirmer",
-    "edit": "Modifier",
-    "back": "Retour",
-    "next": "Suivant",
-    "previous": "Précédent",
-    "success": "Succès",
-    "error": "Erreur",
-    "search": "Rechercher",
-    "searchPlaceholder": "Rechercher...",
-    "actions": "Actions",
-    "remove": "Supprimer",
-    "create": "Créer",
-    "add": "Ajouter",
-    "perPage": "par page",
-    "pageOf": "Page {current} sur {total}",
-    "all": "Tout",
-    "size": "Taille",
-    "noResults": "Aucun résultat",
-    "noMatchSearch": "Aucun résultat ne correspond à votre recherche.",
-    "connect": "Connecter",
-    "disconnect": "Déconnecter",
-    "start": "Démarrer",
-    "stop": "Arrêter",
-    "restart": "Redémarrer",
-    "applyChanges": "Appliquer les changements",
-    "container": "conteneur",
-    "containers": "conteneurs",
-    "active": "actif",
-    "stopped": "arrêté",
-    "empty": "(vide)",
-    "toggleMenu": "Basculer le menu",
-    "up": "Actif",
-    "down": "Inactif",
-    "forbidden": "Vous n'avez pas la permission d'effectuer cette action.",
-    "onboarding": {
-        "welcome": {
-            "title": "Bienvenue sur Nexploy 🎉",
-            "content": "Votre compte administrateur est prêt. Faisons un rapide tour pour bien démarrer en quelques étapes."
-        },
-        "docker": {
-            "title": "Docker",
-            "content": "Voici votre espace Docker — gérez vos conteneurs, images, volumes, réseaux et événements, le tout au même endroit."
-        },
-        "integrations": {
-            "title": "Intégrations",
-            "content": "Commencez ici en ajoutant un fournisseur Git (GitHub, GitLab, Gitea, Bitbucket ou Azure Repos). C'est la connexion que Nexploy utilise pour accéder à vos dépôts."
-        },
-        "account": {
-            "title": "Liez votre compte",
-            "content": "Une fois un fournisseur ajouté, rendez-vous dans votre compte pour y lier votre compte personnel. Cela autorise Nexploy à cloner et déployer vos dépôts."
-        },
-        "repositories": {
-            "title": "Dépôts",
-            "content": "Tout est prêt ! Créez votre premier dépôt ici et déployez-le sur Docker en quelques clics."
-        },
-        "controls": {
-            "back": "Retour",
-            "close": "Fermer",
-            "last": "Terminer",
-            "next": "Suivant",
-            "skip": "Passer le tour"
-        }
+  "optional": "(optionnel)",
+  "loading": "Chargement...",
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "close": "Fermer",
+  "delete": "Supprimer",
+  "confirm": "Confirmer",
+  "edit": "Modifier",
+  "back": "Retour",
+  "next": "Suivant",
+  "previous": "Précédent",
+  "success": "Succès",
+  "error": "Erreur",
+  "search": "Rechercher",
+  "searchPlaceholder": "Rechercher...",
+  "actions": "Actions",
+  "remove": "Supprimer",
+  "create": "Créer",
+  "add": "Ajouter",
+  "perPage": "par page",
+  "pageOf": "Page {current} sur {total}",
+  "all": "Tout",
+  "size": "Taille",
+  "noResults": "Aucun résultat",
+  "noMatchSearch": "Aucun résultat ne correspond à votre recherche.",
+  "connect": "Connecter",
+  "disconnect": "Déconnecter",
+  "start": "Démarrer",
+  "stop": "Arrêter",
+  "restart": "Redémarrer",
+  "applyChanges": "Appliquer les changements",
+  "container": "conteneur",
+  "containers": "conteneurs",
+  "active": "actif",
+  "stopped": "arrêté",
+  "empty": "(vide)",
+  "toggleMenu": "Basculer le menu",
+  "up": "Actif",
+  "down": "Inactif",
+  "forbidden": "Vous n'avez pas la permission d'effectuer cette action.",
+  "onboarding": {
+    "welcome": {
+      "title": "Bienvenue sur Nexploy 🎉",
+      "content": "Votre compte administrateur est prêt. Faisons un rapide tour pour bien démarrer en quelques étapes."
+    },
+    "docker": {
+      "title": "Docker",
+      "content": "Voici votre espace Docker — gérez vos conteneurs, images, volumes, réseaux et événements, le tout au même endroit."
+    },
+    "integrations": {
+      "title": "Intégrations",
+      "content": "Commencez ici en ajoutant un fournisseur Git (GitHub, GitLab, Gitea, Bitbucket ou Azure Repos). C'est la connexion que Nexploy utilise pour accéder à vos dépôts."
+    },
+    "account": {
+      "title": "Liez votre compte",
+      "content": "Une fois un fournisseur ajouté, rendez-vous dans votre compte pour y lier votre compte personnel. Cela autorise Nexploy à cloner et déployer vos dépôts."
+    },
+    "repositories": {
+      "title": "Dépôts",
+      "content": "Tout est prêt ! Créez votre premier dépôt ici et déployez-le sur Docker en quelques clics."
+    },
+    "controls": {
+      "back": "Retour",
+      "close": "Fermer",
+      "last": "Terminer",
+      "next": "Suivant",
+      "skip": "Passer le tour"
     }
+  }
 }

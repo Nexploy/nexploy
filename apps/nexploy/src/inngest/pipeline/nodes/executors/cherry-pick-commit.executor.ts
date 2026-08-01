@@ -22,18 +22,14 @@ export class CherryPickCommitExecutor implements INodeExecutor {
 
         const commitHash =
             nodeConfig.commitHash || getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash') || '';
-        if (!commitHash)
-            throw new Error('No commit hash — provide one or connect an upstream node');
+        if (!commitHash) throw new Error('No commit hash — provide one or connect an upstream node');
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) throw new Error('No workDir found — connect a clone node first');
 
         if (abortSignal.aborted) throw new Error('Build cancelled');
 
-        await logger.info(
-            nodeId,
-            `Cherry-picking commit ${commitHash}${noCommit ? ' (--no-commit)' : ''}`,
-        );
+        await logger.info(nodeId, `Cherry-picking commit ${commitHash}${noCommit ? ' (--no-commit)' : ''}`);
 
         await gitService.cherryPick(workDir, commitHash, { noCommit, remote, targetBranch });
 

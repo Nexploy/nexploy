@@ -113,39 +113,57 @@ export const useRequestsStore = create<RequestsState>((set, get) => ({
 
         try {
             const unsubscribers: (() => void)[] = [];
-            const channelParams = params?.environmentId
-                ? { environment: params.environmentId }
-                : undefined;
+            const channelParams = params?.environmentId ? { environment: params.environmentId } : undefined;
 
             unsubscribers.push(
-                sseMultiplexer.subscribe('traefik', 'initial-state', (e) => {
-                    const data: TraefikRequestEvent = JSON.parse(e.data);
-                    get().setRequests(data.requests || []);
-                    set({ lastUpdate: data.timestamp, error: null });
-                }, channelParams),
+                sseMultiplexer.subscribe(
+                    'traefik',
+                    'initial-state',
+                    (e) => {
+                        const data: TraefikRequestEvent = JSON.parse(e.data);
+                        get().setRequests(data.requests || []);
+                        set({ lastUpdate: data.timestamp, error: null });
+                    },
+                    channelParams,
+                ),
             );
 
             unsubscribers.push(
-                sseMultiplexer.subscribe('traefik', 'request', (e) => {
-                    const data: TraefikRequestEvent = JSON.parse(e.data);
-                    if (data.request) {
-                        get().addRequest(data.request);
-                    }
-                }, channelParams),
+                sseMultiplexer.subscribe(
+                    'traefik',
+                    'request',
+                    (e) => {
+                        const data: TraefikRequestEvent = JSON.parse(e.data);
+                        if (data.request) {
+                            get().addRequest(data.request);
+                        }
+                    },
+                    channelParams,
+                ),
             );
 
             unsubscribers.push(
-                sseMultiplexer.subscribe('traefik', 'clear', (e) => {
-                    const data: TraefikRequestEvent = JSON.parse(e.data);
-                    get().setRequests(data.requests || []);
-                }, channelParams),
+                sseMultiplexer.subscribe(
+                    'traefik',
+                    'clear',
+                    (e) => {
+                        const data: TraefikRequestEvent = JSON.parse(e.data);
+                        get().setRequests(data.requests || []);
+                    },
+                    channelParams,
+                ),
             );
 
             unsubscribers.push(
-                sseMultiplexer.subscribe('traefik', 'heartbeat', (e) => {
-                    const data: TraefikRequestEvent = JSON.parse(e.data);
-                    set({ lastUpdate: data.timestamp });
-                }, channelParams),
+                sseMultiplexer.subscribe(
+                    'traefik',
+                    'heartbeat',
+                    (e) => {
+                        const data: TraefikRequestEvent = JSON.parse(e.data);
+                        set({ lastUpdate: data.timestamp });
+                    },
+                    channelParams,
+                ),
             );
 
             set({

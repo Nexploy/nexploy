@@ -15,11 +15,7 @@ import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
 import { PipelineNode } from '@workspace/typescript-interface/pipeline/node';
 import { matchesWebhookTrigger, WebhookCloneFilters } from '@/services/webhook/webhookTrigger';
 
-function pipelineAcceptsWebhookTrigger(
-    nodes: unknown,
-    trigger: WebhookTrigger,
-    branch?: string,
-): boolean {
+function pipelineAcceptsWebhookTrigger(nodes: unknown, trigger: WebhookTrigger, branch?: string): boolean {
     const webhookNodes = (Array.isArray(nodes) ? (nodes as PipelineNode[]) : []).filter(
         (node) => node?.data?.type === 'webhook-clone' && !node.data.disabled,
     );
@@ -29,12 +25,7 @@ function pipelineAcceptsWebhookTrigger(
     }
 
     return webhookNodes.some(
-        (node) =>
-            matchesWebhookTrigger(
-                (node.data.config ?? {}) as WebhookCloneFilters,
-                trigger,
-                branch ?? '',
-            ).matched,
+        (node) => matchesWebhookTrigger((node.data.config ?? {}) as WebhookCloneFilters, trigger, branch ?? '').matched,
     );
 }
 
@@ -78,10 +69,7 @@ export async function startBuildRepository(
         throw new Error(t('build.noPipelineConfig'));
     }
 
-    if (
-        webhookTrigger &&
-        !pipelineAcceptsWebhookTrigger(pipelineConfig.nodes, webhookTrigger, branch)
-    ) {
+    if (webhookTrigger && !pipelineAcceptsWebhookTrigger(pipelineConfig.nodes, webhookTrigger, branch)) {
         return null;
     }
 
@@ -166,12 +154,7 @@ export async function createBuild({
     }
 }
 
-export async function updateBuildGitInfo(
-    buildId: string,
-    branch: string,
-    commitHash?: string,
-    commitMessage?: string,
-) {
+export async function updateBuildGitInfo(buildId: string, branch: string, commitHash?: string, commitMessage?: string) {
     const t = await getErrorTranslator();
     try {
         await prisma.build.update({
@@ -226,12 +209,8 @@ export async function updateNodeStatus(
             where: { id: buildId },
             data: {
                 nodeStatuses: { ...current, [nodeId]: status },
-                ...(durationMs !== undefined
-                    ? { nodeDurations: { ...currentDurations, [nodeId]: durationMs } }
-                    : {}),
-                ...(startedAt !== undefined
-                    ? { nodeStartTimes: { ...currentStartTimes, [nodeId]: startedAt } }
-                    : {}),
+                ...(durationMs !== undefined ? { nodeDurations: { ...currentDurations, [nodeId]: durationMs } } : {}),
+                ...(startedAt !== undefined ? { nodeStartTimes: { ...currentStartTimes, [nodeId]: startedAt } } : {}),
                 ...(buildStatus ? { status: buildStatus } : {}),
             },
         });
@@ -257,9 +236,7 @@ export async function cancelBuildRepository(buildId: string) {
     const snapshot = build.pipelineSnapshot as { nodes: Array<{ id: string }> } | null;
 
     const updatedNodeStatuses: Record<string, string> = { ...currentNodeStatuses };
-    const runningNodeId = Object.entries(currentNodeStatuses).find(
-        ([, status]) => status === 'running',
-    )?.[0];
+    const runningNodeId = Object.entries(currentNodeStatuses).find(([, status]) => status === 'running')?.[0];
 
     if (snapshot?.nodes) {
         for (const node of snapshot.nodes) {
@@ -321,12 +298,7 @@ export async function cancelBuildRepository(buildId: string) {
     await inngest.send({ name: 'build/cancel', data: { buildId } });
 }
 
-export async function getBuildsPage(
-    repositoryId: string,
-    stageId?: string,
-    cursor?: string,
-    take = 20,
-) {
+export async function getBuildsPage(repositoryId: string, stageId?: string, cursor?: string, take = 20) {
     const t = await getErrorTranslator();
     try {
         return await prisma.build.findMany({

@@ -19,10 +19,7 @@ export function useSearchActions(): SearchHandlers {
         },
     });
 
-    const handleStartBuild = useCallback(
-        (repositoryId: string) => triggerBuild({ repositoryId }),
-        [triggerBuild],
-    );
+    const handleStartBuild = useCallback((repositoryId: string) => triggerBuild({ repositoryId }), [triggerBuild]);
 
     return { handleStartBuild };
 }

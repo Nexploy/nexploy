@@ -16,11 +16,10 @@ export function UpdateBanner() {
     const t = useTranslations('navigation');
     const { isAdmin } = usePermissions();
 
-    const { version, isBannerVisible, isUpgrading, isRestarting, dismiss, openUpgradeDialog } =
-        useUpdate({
-            enabled: isAdmin,
-            refreshInterval: VERSION_REFRESH_INTERVAL,
-        });
+    const { version, isBannerVisible, isUpgrading, isRestarting, dismiss, openUpgradeDialog } = useUpdate({
+        enabled: isAdmin,
+        refreshInterval: VERSION_REFRESH_INTERVAL,
+    });
 
     if (!isAdmin || !version || !isBannerVisible) {
         return null;

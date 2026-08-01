@@ -16,11 +16,7 @@ interface DeleteRepositoryFormProps {
     onCancel?: () => void;
 }
 
-export function DeleteRepositoryForm({
-    repositoryId,
-    repositoryName,
-    onCancel,
-}: DeleteRepositoryFormProps) {
+export function DeleteRepositoryForm({ repositoryId, repositoryName, onCancel }: DeleteRepositoryFormProps) {
     const t = useTranslations('repository.settings.dangerZone');
     const { closeDialog } = useConfirmationDialogStore();
 
@@ -56,18 +52,12 @@ export function DeleteRepositoryForm({
                                 {t.rich('confirmLabel', {
                                     name: repositoryName,
                                     highlight: (chunks) => (
-                                        <span className="bg-secondary rounded p-1 px-2 font-mono">
-                                            {chunks}
-                                        </span>
+                                        <span className="bg-secondary rounded p-1 px-2 font-mono">{chunks}</span>
                                     ),
                                 })}
                             </p>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    placeholder={repositoryName}
-                                    disabled={action.isPending}
-                                />
+                                <Input {...field} placeholder={repositoryName} disabled={action.isPending} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

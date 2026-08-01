@@ -44,11 +44,7 @@ export function JoinTokenCards() {
                             className="size-8"
                             onClick={() => setShowWorkerToken(!showWorkerToken)}
                         >
-                            {showWorkerToken ? (
-                                <EyeOff className="size-4" />
-                            ) : (
-                                <Eye className="size-4" />
-                            )}
+                            {showWorkerToken ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                         </Button>
                         <CopyButton
                             className={'size-8'}
@@ -61,9 +57,7 @@ export function JoinTokenCards() {
                     <code className="bg-muted block rounded p-2 text-xs break-all">
                         {formatToken(swarmInfo.joinTokens.worker, showWorkerToken)}
                     </code>
-                    <p className="text-muted-foreground mt-2 text-xs">
-                        {t('useTokenToJoinWorker')}
-                    </p>
+                    <p className="text-muted-foreground mt-2 text-xs">{t('useTokenToJoinWorker')}</p>
                 </CardContent>
             </Card>
 
@@ -80,11 +74,7 @@ export function JoinTokenCards() {
                             className="size-8"
                             onClick={() => setShowManagerToken(!showManagerToken)}
                         >
-                            {showManagerToken ? (
-                                <EyeOff className="size-4" />
-                            ) : (
-                                <Eye className="size-4" />
-                            )}
+                            {showManagerToken ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                         </Button>
                         <CopyButton
                             className={'size-8'}
@@ -97,9 +87,7 @@ export function JoinTokenCards() {
                     <code className="bg-muted block rounded p-2 text-xs break-all">
                         {formatToken(swarmInfo.joinTokens.manager, showManagerToken)}
                     </code>
-                    <p className="text-muted-foreground mt-2 text-xs">
-                        {t('useTokenToJoinManager')}
-                    </p>
+                    <p className="text-muted-foreground mt-2 text-xs">{t('useTokenToJoinManager')}</p>
                 </CardContent>
             </Card>
         </div>

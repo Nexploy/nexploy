@@ -16,11 +16,7 @@ export function NetworkLabels() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Tags}
-                title={t('labels')}
-                description={t('labelsCardDescription')}
-            >
+            <CardHeaderWithIcon icon={Tags} title={t('labels')} description={t('labelsCardDescription')}>
                 <Button
                     type="button"
                     size="sm"
@@ -34,9 +30,7 @@ export function NetworkLabels() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noLabelsConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noLabelsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -47,10 +41,7 @@ export function NetworkLabels() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={t('labelKeyPlaceholder')}
-                                                />
+                                                <Input {...field} placeholder={t('labelKeyPlaceholder')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -63,10 +54,7 @@ export function NetworkLabels() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={t('labelValuePlaceholder')}
-                                                />
+                                                <Input {...field} placeholder={t('labelValuePlaceholder')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

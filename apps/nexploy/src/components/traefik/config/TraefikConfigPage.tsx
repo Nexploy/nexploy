@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { FileCog } from 'lucide-react';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup, } from '@workspace/ui/components/resizable';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@workspace/ui/components/resizable';
 import { useTraefikConfigStore } from '@/stores/traefik/useTraefikConfigStore';
 import { TraefikFileList } from './TraefikFileList';
 import { TraefikEditorPanel } from './TraefikEditorPanel';
@@ -19,9 +19,7 @@ export function TraefikConfigPage() {
                         <FileCog className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight break-all">
-                            {t('title')}
-                        </h1>
+                        <h1 className="text-3xl font-semibold tracking-tight break-all">{t('title')}</h1>
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>

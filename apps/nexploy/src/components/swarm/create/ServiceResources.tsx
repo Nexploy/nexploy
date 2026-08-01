@@ -21,11 +21,7 @@ export function ServiceResources() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Activity}
-                title={t('resources')}
-                description={t('resourcesDescription')}
-            />
+            <CardHeaderWithIcon icon={Activity} title={t('resources')} description={t('resourcesDescription')} />
             <CardContent className="space-y-6">
                 <div>
                     <p className="mb-3 text-sm font-medium">{t('limits')}</p>
@@ -71,9 +67,7 @@ export function ServiceResources() {
 
                 <div>
                     <p className="mb-3 text-sm font-medium">{t('reservations')}</p>
-                    <p className="text-muted-foreground mb-4 text-xs">
-                        {t('reservationsDescription')}
-                    </p>
+                    <p className="text-muted-foreground mb-4 text-xs">{t('reservationsDescription')}</p>
                     <div className="grid gap-4 md:grid-cols-2">
                         <FormField
                             control={form.control}

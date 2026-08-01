@@ -31,9 +31,7 @@ export async function loadEnvironmentsFromAPI(): Promise<EnvironmentConfig[]> {
     }
 }
 
-export async function loadEnvironmentByIdFromAPI(
-    environmentId: string,
-): Promise<EnvironmentConfig | null> {
+export async function loadEnvironmentByIdFromAPI(environmentId: string): Promise<EnvironmentConfig | null> {
     try {
         if (!process.env.NEXPLOY_API_KEY) {
             throw new Error('INTERNAL_API_KEY environment variable is required');
@@ -41,9 +39,7 @@ export async function loadEnvironmentByIdFromAPI(
 
         logger.info({ environmentId }, 'Loading specific environment from nexploy API');
 
-        const environment = await kyNexploy
-            .get(`environments/${environmentId}`)
-            .json<EnvironmentConfig>();
+        const environment = await kyNexploy.get(`environments/${environmentId}`).json<EnvironmentConfig>();
 
         logger.info({ environmentId, name: environment.name }, 'Loaded environment from API');
 

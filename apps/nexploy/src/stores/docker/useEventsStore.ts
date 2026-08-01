@@ -1,9 +1,6 @@
 import { create } from 'zustand';
 
-import {
-    DockerEventData,
-    EventsStateEvent,
-} from '@workspace/typescript-interface/docker/docker.events';
+import { DockerEventData, EventsStateEvent } from '@workspace/typescript-interface/docker/docker.events';
 import { EventsState } from '@workspace/typescript-interface/stores/docker/eventsStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 
@@ -67,12 +64,9 @@ export const useEventsStore = create<EventsState>((set, get) => ({
     getAvailableNames: () => {
         const { events, typeFilter } = get();
 
-        const scoped =
-            typeFilter === 'all' ? events : events.filter((event) => event.Type === typeFilter);
+        const scoped = typeFilter === 'all' ? events : events.filter((event) => event.Type === typeFilter);
 
-        return Array.from(new Set(scoped.map(getEventDisplayName))).sort((a, b) =>
-            a.localeCompare(b),
-        );
+        return Array.from(new Set(scoped.map(getEventDisplayName))).sort((a, b) => a.localeCompare(b));
     },
 
     setEvents: (events) => {
@@ -138,9 +132,7 @@ export const useEventsStore = create<EventsState>((set, get) => ({
         }
 
         if (filter.names && filter.names.length > 0) {
-            filtered = filtered.filter((event) =>
-                filter.names!.includes(getEventDisplayName(event)),
-            );
+            filtered = filtered.filter((event) => filter.names!.includes(getEventDisplayName(event)));
         }
 
         if (filter.search) {

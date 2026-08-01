@@ -1,12 +1,6 @@
 import Link from 'next/link';
 import { TwoFactorVerifCodeForm } from '@/components/auth/2faVerifCodeForm';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { getTranslations } from 'next-intl/server';
 
 export default async function TwoFactoVerifCodePage() {
@@ -23,10 +17,7 @@ export default async function TwoFactoVerifCodePage() {
                     <TwoFactorVerifCodeForm />
                     <div className="text-center text-sm">
                         <span className="text-muted-foreground">{t('cantAccessAuthApp')} </span>
-                        <Link
-                            href="/2fa/backup-codes"
-                            className="text-primary font-medium hover:underline"
-                        >
+                        <Link href="/2fa/backup-codes" className="text-primary font-medium hover:underline">
                             {t('useBackupCode')}
                         </Link>
                     </div>

@@ -18,9 +18,7 @@ export function CardError() {
                     </div>
                     <CardTitle className="text-destructive">{t('title')}</CardTitle>
                 </div>
-                <code className="bg-destructive/10 block rounded-md p-3 text-sm">
-                    {container.error}
-                </code>
+                <code className="bg-destructive/10 block rounded-md p-3 text-sm">{container.error}</code>
             </CardContent>
         </Card>
     );

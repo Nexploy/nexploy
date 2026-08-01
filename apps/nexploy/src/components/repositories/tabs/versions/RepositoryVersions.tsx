@@ -20,10 +20,7 @@ interface RepositoryVersionsProps {
     versions: Version[];
 }
 
-export function RepositoryVersions({
-    repositoryId,
-    versions: initialVersions,
-}: RepositoryVersionsProps) {
+export function RepositoryVersions({ repositoryId, versions: initialVersions }: RepositoryVersionsProps) {
     const t = useTranslations('repository.versions');
     const tBuilds = useTranslations('repository.builds');
 
@@ -54,20 +51,17 @@ export function RepositoryVersions({
 
     const isCurrentVersion = (version: Version) => deployedBuildIds.has(version.imageTag);
 
-    const groups = versions.reduce<Map<string | undefined, { name: string; versions: Version[] }>>(
-        (acc, version) => {
-            const key = version.environmentId ?? undefined;
-            if (!acc.has(key)) {
-                acc.set(key, {
-                    name: version.environmentName ?? tBuilds('noEnvironment'),
-                    versions: [],
-                });
-            }
-            acc.get(key)!.versions.push(version);
-            return acc;
-        },
-        new Map(),
-    );
+    const groups = versions.reduce<Map<string | undefined, { name: string; versions: Version[] }>>((acc, version) => {
+        const key = version.environmentId ?? undefined;
+        if (!acc.has(key)) {
+            acc.set(key, {
+                name: version.environmentName ?? tBuilds('noEnvironment'),
+                versions: [],
+            });
+        }
+        acc.get(key)!.versions.push(version);
+        return acc;
+    }, new Map());
 
     const renderVersion = (version: Version) => {
         const isCurrent = isCurrentVersion(version);
@@ -79,10 +73,7 @@ export function RepositoryVersions({
             >
                 <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="flex items-center gap-2">
-                        <Badge
-                            variant={isCurrent ? 'default' : 'secondary'}
-                            className="shrink-0 font-mono text-xs"
-                        >
+                        <Badge variant={isCurrent ? 'default' : 'secondary'} className="shrink-0 font-mono text-xs">
                             v{version.versionNumber}
                         </Badge>
                         <span className="line-clamp-1 truncate text-sm font-medium">
@@ -123,10 +114,7 @@ export function RepositoryVersions({
                         ) : (
                             containerName && (
                                 <>
-                                    <Separator
-                                        orientation="vertical"
-                                        className="h-3! w-1 shrink-0"
-                                    />
+                                    <Separator orientation="vertical" className="h-3! w-1 shrink-0" />
                                     <span className="flex min-w-0 items-center gap-1">
                                         <Container className="size-3 shrink-0" />
                                         <span className="truncate">{containerName}</span>
@@ -137,11 +125,7 @@ export function RepositoryVersions({
                     </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
-                    <VersionDeployButton
-                        version={version}
-                        repositoryId={repositoryId}
-                        isCurrent={isCurrent}
-                    />
+                    <VersionDeployButton version={version} repositoryId={repositoryId} isCurrent={isCurrent} />
                     <VersionDropdownActions version={version} repositoryId={repositoryId} />
                 </div>
             </div>
@@ -152,16 +136,12 @@ export function RepositoryVersions({
         <div className="flex flex-col gap-2 px-5">
             <h2 className="text-xl font-semibold">{t('title')}</h2>
             {versions.length === 0 ? (
-                <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">
-                    {t('noVersions')}
-                </div>
+                <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">{t('noVersions')}</div>
             ) : (
                 <div className="flex flex-col gap-4">
                     {Array.from(groups.entries()).map(([key, group]) => (
                         <div key={key} className="flex flex-col gap-1">
-                            <h3 className="text-muted-foreground px-1 text-sm font-medium">
-                                {group.name}
-                            </h3>
+                            <h3 className="text-muted-foreground px-1 text-sm font-medium">{group.name}</h3>
                             <div className="divide-y overflow-hidden rounded-md border">
                                 {group.versions.map(renderVersion)}
                             </div>

@@ -68,19 +68,11 @@ export async function giteaGetUserRepositories(baseUrl: string): Promise<GiteaRe
     return fetchAllPages<GiteaRepo>(baseUrl, 'user/repos');
 }
 
-export async function giteaGetRepository(
-    baseUrl: string,
-    owner: string,
-    repo: string,
-): Promise<GiteaRepo> {
+export async function giteaGetRepository(baseUrl: string, owner: string, repo: string): Promise<GiteaRepo> {
     return kyGitea(baseUrl).get(`repos/${owner}/${repo}`).json<GiteaRepo>();
 }
 
-export async function giteaGetRepositoryBranches(
-    baseUrl: string,
-    owner: string,
-    repo: string,
-): Promise<GiteaBranch[]> {
+export async function giteaGetRepositoryBranches(baseUrl: string, owner: string, repo: string): Promise<GiteaBranch[]> {
     return fetchAllPages<GiteaBranch>(baseUrl, `repos/${owner}/${repo}/branches`);
 }
 
@@ -91,9 +83,7 @@ export async function giteaGetCommits(
     options: { branch?: string; commitHash?: string },
 ): Promise<GiteaCommit | GiteaCommit[]> {
     if (options.commitHash) {
-        return kyGitea(baseUrl)
-            .get(`repos/${owner}/${repo}/git/commits/${options.commitHash}`)
-            .json<GiteaCommit>();
+        return kyGitea(baseUrl).get(`repos/${owner}/${repo}/git/commits/${options.commitHash}`).json<GiteaCommit>();
     }
     return kyGitea(baseUrl)
         .get(`repos/${owner}/${repo}/commits`, {
@@ -102,10 +92,7 @@ export async function giteaGetCommits(
         .json<GiteaCommit[]>();
 }
 
-export async function giteaGetAuthenticatedUser(
-    baseUrl: string,
-    token: string,
-): Promise<GiteaUser> {
+export async function giteaGetAuthenticatedUser(baseUrl: string, token: string): Promise<GiteaUser> {
     return kyGitea(baseUrl, token).get('user').json<GiteaUser>();
 }
 
@@ -132,12 +119,7 @@ export async function giteaCreateWebhook(
         .json<{ id: number }>();
 }
 
-export async function giteaDeleteWebhook(
-    baseUrl: string,
-    owner: string,
-    repo: string,
-    hookId: string,
-): Promise<void> {
+export async function giteaDeleteWebhook(baseUrl: string, owner: string, repo: string, hookId: string): Promise<void> {
     await kyGitea(baseUrl).delete(`repos/${owner}/${repo}/hooks/${hookId}`).json();
 }
 

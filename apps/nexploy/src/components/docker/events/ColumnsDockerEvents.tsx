@@ -52,8 +52,7 @@ const getTypeVariant = (type: string) => {
     }
 };
 
-export const getEventTimestamp = (event: DockerEventData) =>
-    event.time * 1000 || event.timeNano / 1000000;
+export const getEventTimestamp = (event: DockerEventData) => event.time * 1000 || event.timeNano / 1000000;
 
 export function getColumnsDockerEvents(t: TranslationFunction): ColumnDef<DockerEventData>[] {
     const sortableHeader =
@@ -85,9 +84,7 @@ export function getColumnsDockerEvents(t: TranslationFunction): ColumnDef<Docker
             id: 'type',
             accessorFn: (event) => event.Type,
             header: sortableHeader(t('type')),
-            cell: ({ row }) => (
-                <Badge variant={getTypeVariant(row.original.Type)}>{row.original.Type}</Badge>
-            ),
+            cell: ({ row }) => <Badge variant={getTypeVariant(row.original.Type)}>{row.original.Type}</Badge>,
         },
         {
             id: 'action',

@@ -1,12 +1,7 @@
 import { logger } from '@/utils/logger';
 import { kyNexploy } from '@/lib/kyNexploy';
 import { ImageInfo, ImageInspectInfo } from 'dockerode';
-import {
-    Image,
-    ImageAction,
-    ImageEvent,
-    ImageStateChanges,
-} from '@workspace/typescript-interface/docker/docker.image';
+import { Image, ImageAction, ImageEvent, ImageStateChanges } from '@workspace/typescript-interface/docker/docker.image';
 import { BaseStateManager } from '@/lib/base/BaseStateManager';
 import * as tar from 'tar-fs';
 import { Readable } from 'stream';
@@ -203,10 +198,7 @@ export class ImagesStateManager extends BaseStateManager {
             });
             logger.debug({ repositoryId, imageTag }, 'Version sync delete sent to nexploy');
         } catch (err) {
-            logger.warn(
-                { err, repositoryId, imageTag },
-                'Error calling nexploy version sync-delete',
-            );
+            logger.warn({ err, repositoryId, imageTag }, 'Error calling nexploy version sync-delete');
         }
     }
 
@@ -334,9 +326,7 @@ export class ImagesStateManager extends BaseStateManager {
             tag,
             repoTags: image.RepoTags?.length ? image.RepoTags : ['<none>:<none>'],
             repoDigests: image.RepoDigests || [],
-            created: isInspect
-                ? dayjs(image.Created).valueOf()
-                : dayjs.unix(image.Created).valueOf(),
+            created: isInspect ? dayjs(image.Created).valueOf() : dayjs.unix(image.Created).valueOf(),
             size: image.Size,
             virtualSize: image.VirtualSize,
             sharedSize: isInspect ? 0 : (image as ImageInfo).SharedSize || 0,
@@ -383,10 +373,8 @@ export class ImagesStateManager extends BaseStateManager {
         const oldRepoTags = JSON.stringify(oldState.repoTags);
         const newRepoTags = JSON.stringify(newState.repoTags);
 
-        if (oldRepoTags !== newRepoTags)
-            changes.repoTags = { from: oldState.repoTags, to: newState.repoTags };
-        if (oldState.size !== newState.size)
-            changes.size = { from: oldState.size, to: newState.size };
+        if (oldRepoTags !== newRepoTags) changes.repoTags = { from: oldState.repoTags, to: newState.repoTags };
+        if (oldState.size !== newState.size) changes.size = { from: oldState.size, to: newState.size };
         if (oldState.containersUsed !== newState.containersUsed)
             changes.containers = {
                 from: oldState.containersUsed,
@@ -407,9 +395,7 @@ export class ImagesStateManager extends BaseStateManager {
     }
 
     getByNames(fullName: string): Image[] {
-        return Array.from(this.images.values()).filter((image) =>
-            image.name.some((n) => n.includes(fullName)),
-        );
+        return Array.from(this.images.values()).filter((image) => image.name.some((n) => n.includes(fullName)));
     }
 
     getByName(imageName: string): Image | undefined {
@@ -586,8 +572,7 @@ export class ImagesStateManager extends BaseStateManager {
         const nameAndTag = lastSlash >= 0 ? targetName.slice(lastSlash + 1) : targetName;
         const colonIdx = nameAndTag.lastIndexOf(':');
         const targetTag = colonIdx >= 0 ? nameAndTag.slice(colonIdx + 1) : 'latest';
-        const targetRepo =
-            colonIdx >= 0 ? targetName.slice(0, targetName.lastIndexOf(':')) : targetName;
+        const targetRepo = colonIdx >= 0 ? targetName.slice(0, targetName.lastIndexOf(':')) : targetName;
 
         const image = this.docker.getImage(imageName);
         await image.tag({ repo: targetRepo, tag: targetTag });
@@ -611,10 +596,7 @@ export class ImagesStateManager extends BaseStateManager {
                     stream,
                     (progressErr: any) => {
                         if (progressErr) {
-                            if (
-                                progressErr.name === 'AbortError' ||
-                                progressErr.message?.includes('aborted')
-                            ) {
+                            if (progressErr.name === 'AbortError' || progressErr.message?.includes('aborted')) {
                                 reject(new DOMException('Push aborted', 'AbortError'));
                                 return;
                             }

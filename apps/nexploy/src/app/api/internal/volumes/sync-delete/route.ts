@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
 import { internalApiAuth, route } from '@/lib/api/nextRoute';
-import {
-    deleteBackupSchedulesByVolume,
-    getBackupSchedulesForVolume,
-} from '@/services/backupSchedule.service';
+import { deleteBackupSchedulesByVolume, getBackupSchedulesForVolume } from '@/services/backupSchedule.service';
 import { inngest } from '@/inngest/client';
 import { syncVolumeDeleteSchema } from '@workspace/schemas-zod/bucket-storage/backupSchedule.schema';
 
@@ -21,11 +18,7 @@ export const POST = route
 
         await deleteBackupSchedulesByVolume(volumeName);
 
-        await Promise.all(
-            schedules.map((s) =>
-                inngest.send({ name: 'backup/schedule.cancel', data: { id: s.id } }),
-            ),
-        );
+        await Promise.all(schedules.map((s) => inngest.send({ name: 'backup/schedule.cancel', data: { id: s.id } })));
 
         return NextResponse.json({ deleted: schedules.length });
     });

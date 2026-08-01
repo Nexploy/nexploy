@@ -38,27 +38,17 @@ export function CardNetworkConfig() {
                         {t('noData')}
                     </div>
                 ) : (
-                    <ScrollAreaWithShadow
-                        bottomShadow
-                        className="h-50 overflow-hidden px-6"
-                    >
+                    <ScrollAreaWithShadow bottomShadow className="h-50 overflow-hidden px-6">
                         <div className="space-y-3">
                             {visibleFields.map(({ key, label }, index) => (
                                 <div
                                     key={key}
                                     className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < visibleFields.length - 1 ? 'border-b pb-2' : ''}`}
                                 >
-                                    <span className="text-muted-foreground text-sm whitespace-nowrap">
-                                        {t(label)}
-                                    </span>
+                                    <span className="text-muted-foreground text-sm whitespace-nowrap">{t(label)}</span>
                                     <div className="flex min-w-0 items-center justify-end overflow-hidden">
-                                        <Badge
-                                            variant="secondary"
-                                            className="w-auto max-w-full shrink"
-                                        >
-                                            <span className="block truncate">
-                                                {container?.network?.[key]}
-                                            </span>
+                                        <Badge variant="secondary" className="w-auto max-w-full shrink">
+                                            <span className="block truncate">{container?.network?.[key]}</span>
                                         </Badge>
                                     </div>
                                 </div>

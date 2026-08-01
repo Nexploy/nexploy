@@ -12,9 +12,7 @@ export class CacheSaveExecutor implements INodeExecutor {
     readonly type = 'cache-save';
     readonly configSchema = cacheSaveConfigSchema;
 
-    async execute(
-        ctx: NodeExecutionContext<z.infer<typeof cacheSaveConfigSchema>>,
-    ): Promise<NodeExecutionResult> {
+    async execute(ctx: NodeExecutionContext<z.infer<typeof cacheSaveConfigSchema>>): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const volumeName = nodeConfig.volumeName;

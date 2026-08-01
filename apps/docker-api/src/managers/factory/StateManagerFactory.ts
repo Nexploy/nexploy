@@ -83,16 +83,10 @@ class StateManagerFactory {
 
             const failures = results.filter((r) => r.status === 'rejected');
             if (failures.length > 0) {
-                logger.warn(
-                    { environmentId, failureCount: failures.length },
-                    'Some managers failed to start',
-                );
+                logger.warn({ environmentId, failureCount: failures.length }, 'Some managers failed to start');
                 failures.forEach((failure, index) => {
                     if (failure.status === 'rejected') {
-                        logger.error(
-                            { environmentId, error: failure.reason },
-                            `Manager ${index} failed to start`,
-                        );
+                        logger.error({ environmentId, error: failure.reason }, `Manager ${index} failed to start`);
                     }
                 });
             }
@@ -146,10 +140,7 @@ class StateManagerFactory {
 
         const failures = results.filter((r) => r.status === 'rejected');
         if (failures.length > 0) {
-            logger.warn(
-                { environmentId, failureCount: failures.length },
-                'Some managers failed to stop cleanly',
-            );
+            logger.warn({ environmentId, failureCount: failures.length }, 'Some managers failed to stop cleanly');
         }
 
         this.managerSets.delete(environmentId);

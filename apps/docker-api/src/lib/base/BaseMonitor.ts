@@ -76,10 +76,7 @@ export abstract class BaseMonitor extends EventEmitter {
             }
         }, this.CHECK_INTERVAL_MS);
 
-        logger.info(
-            { interval: this.CHECK_INTERVAL_MS },
-            `${this.monitorName} periodic check started`,
-        );
+        logger.info({ interval: this.CHECK_INTERVAL_MS }, `${this.monitorName} periodic check started`);
     }
 
     getLastCheck(): number {

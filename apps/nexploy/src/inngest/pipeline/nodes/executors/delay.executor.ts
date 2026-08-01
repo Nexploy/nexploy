@@ -1,4 +1,8 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { delayConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -6,9 +10,7 @@ export class DelayExecutor implements INodeExecutor {
     readonly type = 'delay';
     readonly configSchema = delayConfigSchema;
 
-    async execute(
-        ctx: NodeExecutionContext<z.infer<typeof delayConfigSchema>>,
-    ): Promise<NodeExecutionResult> {
+    async execute(ctx: NodeExecutionContext<z.infer<typeof delayConfigSchema>>): Promise<NodeExecutionResult> {
         const { nodeConfig, logger, nodeId, abortSignal } = ctx;
 
         const seconds = nodeConfig.seconds;

@@ -25,11 +25,7 @@ export function ContainerPorts() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={ArrowLeftRight}
-                title={t('ports')}
-                description={t('portsDescription')}
-            >
+            <CardHeaderWithIcon icon={ArrowLeftRight} title={t('ports')} description={t('portsDescription')}>
                 <Button
                     type="button"
                     size="sm"
@@ -43,9 +39,7 @@ export function ContainerPorts() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noPortsConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noPortsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -56,11 +50,7 @@ export function ContainerPorts() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    type="number"
-                                                    placeholder={t('hostPort')}
-                                                />
+                                                <Input {...field} type="number" placeholder={t('hostPort')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -73,11 +63,7 @@ export function ContainerPorts() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    type="number"
-                                                    placeholder={t('containerPort')}
-                                                />
+                                                <Input {...field} type="number" placeholder={t('containerPort')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -89,18 +75,13 @@ export function ContainerPorts() {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <Select
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
-                                                >
+                                                <Select value={field.value} onValueChange={field.onChange}>
                                                     <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectGroup>
-                                                            <SelectLabel>
-                                                                {t('protocol')}
-                                                            </SelectLabel>
+                                                            <SelectLabel>{t('protocol')}</SelectLabel>
                                                             <SelectItem value="tcp">TCP</SelectItem>
                                                             <SelectItem value="udp">UDP</SelectItem>
                                                         </SelectGroup>

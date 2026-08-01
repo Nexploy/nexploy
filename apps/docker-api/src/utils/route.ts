@@ -1,12 +1,7 @@
 import { zValidator } from '@hono/zod-validator';
 import type { Context, MiddlewareHandler, ValidationTargets } from 'hono';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
-import type {
-    AnySchema,
-    HandleOpts,
-    SchemaRecord,
-    TypedContext,
-} from '@workspace/typescript-interface/hono';
+import type { AnySchema, HandleOpts, SchemaRecord, TypedContext } from '@workspace/typescript-interface/hono';
 import { HttpError } from '@workspace/shared/http-error';
 import { logger } from '@/utils/logger';
 
@@ -53,10 +48,7 @@ function makeValidator(target: keyof ValidationTargets, schema: AnySchema): Midd
 
 const DEFAULT_TIMEOUT_MS = 120_000;
 
-function makeHandler<C extends Context>(
-    fn: (c: C) => Promise<unknown>,
-    opts?: HandleOpts,
-): MiddlewareHandler {
+function makeHandler<C extends Context>(fn: (c: C) => Promise<unknown>, opts?: HandleOpts): MiddlewareHandler {
     const successStatus = (opts?.status ?? 200) as ContentfulStatusCode;
     const timeoutMs = opts?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 
@@ -75,10 +67,7 @@ function makeHandler<C extends Context>(
             if (resolved.status >= 500) {
                 logger.error({ err, path: c.req.url, method: c.req.method }, 'handler error');
             } else {
-                logger.warn(
-                    { message: resolved.message, status: resolved.status, path: c.req.url },
-                    'client error',
-                );
+                logger.warn({ message: resolved.message, status: resolved.status, path: c.req.url }, 'client error');
             }
 
             return c.json({ message: clientMessage(resolved) }, resolved.status);

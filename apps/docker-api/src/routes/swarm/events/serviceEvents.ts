@@ -43,40 +43,28 @@ app.get('/stream/:serviceId', (c) => {
 
         const handleServiceRemoved = (event: SwarmEvent) => {
             if (event.type !== 'service-removed' || event.serviceId !== serviceId) return;
-            sendEvent(
-                { type: 'service-removed', serviceId, timestamp: event.timestamp },
-                'service-removed',
-            );
+            sendEvent({ type: 'service-removed', serviceId, timestamp: event.timestamp }, 'service-removed');
         };
 
         const handleTaskAdded = (event: SwarmEvent) => {
             if (event.type !== 'task-added' || event.task.serviceId !== serviceId) return;
             const service = manager.getService(serviceId);
             const tasks = manager.getTasksByService(serviceId);
-            sendEvent(
-                { type: 'task-added', serviceId, service, tasks, timestamp: event.timestamp },
-                'task-added',
-            );
+            sendEvent({ type: 'task-added', serviceId, service, tasks, timestamp: event.timestamp }, 'task-added');
         };
 
         const handleTaskUpdated = (event: SwarmEvent) => {
             if (event.type !== 'task-updated' || event.task.serviceId !== serviceId) return;
             const service = manager.getService(serviceId);
             const tasks = manager.getTasksByService(serviceId);
-            sendEvent(
-                { type: 'task-updated', serviceId, service, tasks, timestamp: event.timestamp },
-                'task-updated',
-            );
+            sendEvent({ type: 'task-updated', serviceId, service, tasks, timestamp: event.timestamp }, 'task-updated');
         };
 
         const handleTaskRemoved = (event: SwarmEvent) => {
             if (event.type !== 'task-removed' || event.previousTask.serviceId !== serviceId) return;
             const service = manager.getService(serviceId);
             const tasks = manager.getTasksByService(serviceId);
-            sendEvent(
-                { type: 'task-removed', serviceId, service, tasks, timestamp: event.timestamp },
-                'task-removed',
-            );
+            sendEvent({ type: 'task-removed', serviceId, service, tasks, timestamp: event.timestamp }, 'task-removed');
         };
 
         const heartbeat = setInterval(async () => {

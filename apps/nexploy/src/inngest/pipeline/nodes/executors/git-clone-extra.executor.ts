@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { gitCloneExtraConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { safeResolvePath } from '@workspace/shared/pathSafety';
@@ -9,9 +13,7 @@ export class GitCloneExtraExecutor implements INodeExecutor {
     readonly type = 'git-clone-extra';
     readonly configSchema = gitCloneExtraConfigSchema;
 
-    async execute(
-        ctx: NodeExecutionContext<z.infer<typeof gitCloneExtraConfigSchema>>,
-    ): Promise<NodeExecutionResult> {
+    async execute(ctx: NodeExecutionContext<z.infer<typeof gitCloneExtraConfigSchema>>): Promise<NodeExecutionResult> {
         const { buildConfig, nodeConfig, allOutputs, logger, nodeId, edges } = ctx;
 
         const { repoUrl, branch, targetDir, token } = nodeConfig;
@@ -27,11 +29,10 @@ export class GitCloneExtraExecutor implements INodeExecutor {
             await logger.info(nodeId, `${message} (${Math.round(progress)}%)`);
         };
 
-        await gitService.cloneRepository(
-            { ...buildConfig, gitUrl: repoUrl, gitBranch: branch },
-            onProgress,
-            { destDir: cloneDest, manualToken: token },
-        );
+        await gitService.cloneRepository({ ...buildConfig, gitUrl: repoUrl, gitBranch: branch }, onProgress, {
+            destDir: cloneDest,
+            manualToken: token,
+        });
 
         await logger.info(nodeId, `Repository cloned to ${targetDir}`);
         return { output: { repoUrl, branch, targetDir: cloneDest } };

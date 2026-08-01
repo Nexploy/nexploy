@@ -63,26 +63,22 @@ export function PipelineProvider({
         nodeStatuses: Record<string, NodeRunStatus>;
         nodeDurations: Record<string, number>;
         nodeStartTimes: Record<string, number>;
-    }>(
-        activeBuildId ? { url: `/api/repositories/${repositoryId}/builds/${activeBuildId}` } : null,
-        fetcherApi,
-        {
-            onSuccess: (data) => {
-                store.getState().setBuildNodeStatuses(activeBuildId!, (prev) => ({
-                    ...(data?.nodeStatuses ?? {}),
-                    ...prev,
-                }));
-                store.getState().setBuildNodeDurations(activeBuildId!, (prev) => ({
-                    ...(data?.nodeDurations ?? {}),
-                    ...prev,
-                }));
-                store.getState().setBuildNodeStartTimes(activeBuildId!, (prev) => ({
-                    ...(data?.nodeStartTimes ?? {}),
-                    ...prev,
-                }));
-            },
+    }>(activeBuildId ? { url: `/api/repositories/${repositoryId}/builds/${activeBuildId}` } : null, fetcherApi, {
+        onSuccess: (data) => {
+            store.getState().setBuildNodeStatuses(activeBuildId!, (prev) => ({
+                ...(data?.nodeStatuses ?? {}),
+                ...prev,
+            }));
+            store.getState().setBuildNodeDurations(activeBuildId!, (prev) => ({
+                ...(data?.nodeDurations ?? {}),
+                ...prev,
+            }));
+            store.getState().setBuildNodeStartTimes(activeBuildId!, (prev) => ({
+                ...(data?.nodeStartTimes ?? {}),
+                ...prev,
+            }));
         },
-    );
+    });
 
     useEffect(() => {
         return () => setActiveBuildId(null);
@@ -93,11 +89,7 @@ export function PipelineProvider({
             {builds.map(
                 (build) =>
                     isBuildLive(build.status) && (
-                        <BuildTracker
-                            key={build.id}
-                            buildId={build.id}
-                            initialStatus={build.status}
-                        />
+                        <BuildTracker key={build.id} buildId={build.id} initialStatus={build.status} />
                     ),
             )}
             {children}

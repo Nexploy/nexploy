@@ -10,16 +10,13 @@ export const updateInstanceDomainAction = authActionServer
     .inputSchema(instanceDomainSchema)
     .action(async ({ parsedInput }) => {
         try {
-            await kyDocker
-                .post('system/instance-domain', { json: parsedInput, timeout: 10_000 })
-                .json();
+            await kyDocker.post('system/instance-domain', { json: parsedInput, timeout: 10_000 }).json();
         } catch (error) {
             console.warn('Instance domain update request was interrupted by the redeploy:', error);
         }
 
         await setToastServer({
             type: 'info',
-            message:
-                'Nexploy is restarting with the new domain settings — this takes a few seconds.',
+            message: 'Nexploy is restarting with the new domain settings — this takes a few seconds.',
         });
     });

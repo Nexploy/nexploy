@@ -18,11 +18,7 @@ export interface BuildsPanelItemProps {
     locale: string;
 }
 
-export const BuildsPanelItem = memo(function BuildsPanelItem({
-    build,
-    isSelected,
-    locale,
-}: BuildsPanelItemProps) {
+export const BuildsPanelItem = memo(function BuildsPanelItem({ build, isSelected, locale }: BuildsPanelItemProps) {
     const isLive = isBuildLive(build.status);
     const duration = getBuildDuration(build);
 
@@ -36,27 +32,21 @@ export const BuildsPanelItem = memo(function BuildsPanelItem({
             className={cn(
                 buttonVariants({ variant: isSelected ? 'default' : 'ghost', size: 'sm' }),
                 'relative h-auto cursor-pointer flex-col items-start gap-0.5 border px-2.5 py-1.5 backdrop-blur-md duration-0',
-                isSelected
-                    ? 'border-transparent'
-                    : 'bg-sidebar/85 border-border/70 hover:bg-sidebar',
+                isSelected ? 'border-transparent' : 'bg-sidebar/85 border-border/70 hover:bg-sidebar',
             )}
         >
             <div className="flex w-full items-center gap-1">
                 <StatusView status={build.status} displayType="dot" />
                 <span className="text-xs font-medium">#{build.number}</span>
                 <span className="text-xs font-medium">{build.branch}</span>
-                <span className="ml-auto pl-2 text-xs">
-                    {dayjs(build.createdAt).locale(locale).fromNow(true)}
-                </span>
+                <span className="ml-auto pl-2 text-xs">{dayjs(build.createdAt).locale(locale).fromNow(true)}</span>
             </div>
             <div className={'flex w-[220px] items-center gap-1'}>
                 {isLive && !build.commitMessage ? (
                     <Skeleton className="h-2.5 w-full" />
                 ) : (
                     build.commitMessage && (
-                        <span className={cn('truncate text-left text-xs')}>
-                            {build.commitMessage}
-                        </span>
+                        <span className={cn('truncate text-left text-xs')}>{build.commitMessage}</span>
                     )
                 )}
                 <DurationNode

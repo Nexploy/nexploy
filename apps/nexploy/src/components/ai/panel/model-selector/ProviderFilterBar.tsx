@@ -44,12 +44,7 @@ export function ProviderFilterBar({ providers, labels, value, onChange }: Provid
                         onClick={() => onChange(provider)}
                         className={chipClass(value === provider)}
                     >
-                        <span
-                            className={cn(
-                                'flex size-4 shrink-0 items-center justify-center rounded-full',
-                                color,
-                            )}
-                        >
+                        <span className={cn('flex size-4 shrink-0 items-center justify-center rounded-full', color)}>
                             <Icon className="size-2.5 shrink-0" />
                         </span>
                         <span>{labels[provider]}</span>

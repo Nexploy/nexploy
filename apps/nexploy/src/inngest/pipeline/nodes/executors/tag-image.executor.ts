@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { tagImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -17,12 +21,7 @@ export class TagImageExecutor implements INodeExecutor {
         const sourceImage = nodeConfig.sourceImage.trim();
         const targetTag = nodeConfig.targetTag.trim();
 
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         const colonIndex = sourceImage.lastIndexOf(':');
         const repo = colonIndex !== -1 ? sourceImage.slice(0, colonIndex) : sourceImage;
@@ -47,9 +46,7 @@ export class TagImageExecutor implements INodeExecutor {
                 },
             };
         } catch (error) {
-            throw new Error(
-                `Failed to tag image: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to tag image: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

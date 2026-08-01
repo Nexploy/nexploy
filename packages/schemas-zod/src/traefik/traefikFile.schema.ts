@@ -1,8 +1,6 @@
 import { z } from 'zod';
 
-const traefikYmlPath = z
-    .string()
-    .regex(/^(?!\/)(?!.*(^|\/)\.\.(\/|$))[\w.\-/]+\.yml$/, 'Invalid filename');
+const traefikYmlPath = z.string().regex(/^(?!\/)(?!.*(^|\/)\.\.(\/|$))[\w.\-/]+\.yml$/, 'Invalid filename');
 
 export const deleteTraefikFileSchema = z.object({
     filename: traefikYmlPath,

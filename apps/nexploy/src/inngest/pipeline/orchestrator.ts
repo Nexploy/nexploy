@@ -1,9 +1,6 @@
 import { NonRetriableError } from 'inngest';
 import { type BuildConfig } from '@workspace/typescript-interface/repository/build';
-import {
-    type PipelineGraph,
-    type PipelineNode,
-} from '@workspace/typescript-interface/pipeline/node';
+import { type PipelineGraph, type PipelineNode } from '@workspace/typescript-interface/pipeline/node';
 import {
     type InngestStepRunner,
     type InputNodeInfo,
@@ -60,10 +57,7 @@ export class PipelineOrchestrator {
         let parentsMap: Map<string, string[]>;
         let nodeMap: Map<string, PipelineNode>;
         try {
-            ({ sorted, reachableNodeIds, parentsMap, nodeMap } = analyzeGraph(
-                graph,
-                config.triggerSource,
-            ));
+            ({ sorted, reachableNodeIds, parentsMap, nodeMap } = analyzeGraph(graph, config.triggerSource));
         } catch (err) {
             throw new Error(`Invalid pipeline graph: ${err instanceof Error ? err.message : err}`);
         }
@@ -92,17 +86,9 @@ export class PipelineOrchestrator {
 
                 if (pipelineHasFailed && !executor.runsOnPipelineFailure) {
                     const parentIds = parentsOf(node.id);
-                    const parentExecuted =
-                        executor.isAttachNode && parentIds.some((id) => executedNodeIds.has(id));
+                    const parentExecuted = executor.isAttachNode && parentIds.some((id) => executedNodeIds.has(id));
                     if (!parentExecuted) {
-                        await this.runSkippedNode(
-                            node,
-                            'pipeline failed',
-                            inngestStep,
-                            reporter,
-                            logger,
-                            allOutputs,
-                        );
+                        await this.runSkippedNode(node, 'pipeline failed', inngestStep, reporter, logger, allOutputs);
                         continue;
                     }
                 }
@@ -133,10 +119,7 @@ export class PipelineOrchestrator {
 
                 if (!branchSkippedNodeIds.has(node.id)) {
                     const inputEdges = graph.edges.filter((e) => e.target === node.id);
-                    if (
-                        inputEdges.length > 0 &&
-                        inputEdges.every((e) => branchSkippedNodeIds.has(e.source))
-                    ) {
+                    if (inputEdges.length > 0 && inputEdges.every((e) => branchSkippedNodeIds.has(e.source))) {
                         branchSkippedNodeIds.add(node.id);
                     }
                 }
@@ -214,9 +197,7 @@ export class PipelineOrchestrator {
                             await logger.flush();
                         });
                         pipelineHasFailed = true;
-                        pipelineFailureError = new Error(
-                            `Node ${node.data.type} is not configured`,
-                        );
+                        pipelineFailureError = new Error(`Node ${node.data.type} is not configured`);
                         continue;
                     }
                 }
@@ -276,10 +257,7 @@ export class PipelineOrchestrator {
                                 if (execError instanceof Error && execError.name === 'AbortError') {
                                     throw execError;
                                 }
-                                const message =
-                                    execError instanceof Error
-                                        ? execError.message
-                                        : String(execError);
+                                const message = execError instanceof Error ? execError.message : String(execError);
                                 await logger.error(node.id, message);
                                 await reporter.markFailed(node.id);
                                 return { ok: false, error: message };
@@ -323,8 +301,7 @@ export class PipelineOrchestrator {
                         throw nodeError;
                     }
                     pipelineHasFailed = true;
-                    pipelineFailureError =
-                        nodeError instanceof Error ? nodeError : new Error(String(nodeError));
+                    pipelineFailureError = nodeError instanceof Error ? nodeError : new Error(String(nodeError));
                 }
             }
 

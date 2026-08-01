@@ -1,8 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import {
-    environmentIdSchema,
-    environmentSchema,
-} from '@workspace/schemas-zod/docker/environment/environment.schema';
+import { environmentIdSchema, environmentSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
 import {
     createEnvironment,
     deleteEnvironment,
@@ -59,9 +56,7 @@ export const environmentsGroup: ToolGroup = {
                 description:
                     'Switch the active Docker environment for this MCP session. All subsequent Docker operations (containers, images, volumes, networks, etc.) will target this environment. Use listEnvironments first to get available IDs.',
                 inputSchema: z.object({
-                    environmentId: z
-                        .string()
-                        .describe('ID of the environment to use for this session'),
+                    environmentId: z.string().describe('ID of the environment to use for this session'),
                 }).shape,
             },
             async ({ environmentId }) => {
@@ -76,9 +71,7 @@ export const environmentsGroup: ToolGroup = {
                         );
                     }
                     ctx.environmentId = environmentId;
-                    return ok(
-                        `Now using environment "${target.name}" (${environmentId}) for this session.`,
-                    );
+                    return ok(`Now using environment "${target.name}" (${environmentId}) for this session.`);
                 } catch (e: any) {
                     return fail(e.message);
                 }

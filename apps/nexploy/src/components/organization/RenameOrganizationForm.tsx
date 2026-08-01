@@ -1,14 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
@@ -52,11 +45,7 @@ export function RenameOrganizationForm({ organizationId, name }: RenameOrganizat
                         <FormItem>
                             <FormLabel>{t('name')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    placeholder={t('namePlaceholder')}
-                                    disabled={action.isPending}
-                                />
+                                <Input {...field} placeholder={t('namePlaceholder')} disabled={action.isPending} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -64,9 +53,7 @@ export function RenameOrganizationForm({ organizationId, name }: RenameOrganizat
                 />
 
                 {form.formState.errors.root?.message && (
-                    <span className={'text-destructive mb-4 flex text-sm'}>
-                        {form.formState.errors.root?.message}
-                    </span>
+                    <span className={'text-destructive mb-4 flex text-sm'}>{form.formState.errors.root?.message}</span>
                 )}
 
                 <div className="flex justify-end gap-2 pt-4">

@@ -12,16 +12,12 @@ import Link from 'next/link';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 import { Can } from '@/components/permission/Can';
 
-function getReplicaBadgeVariant(
-    running: number,
-    desired: number,
-): 'default' | 'secondary' | 'destructive' | 'outline' {
+function getReplicaBadgeVariant(running: number, desired: number): 'default' | 'secondary' | 'destructive' | 'outline' {
     if (desired === 0) return 'secondary';
     if (running === desired) return 'default';
     if (running === 0) return 'destructive';
     return 'secondary';
 }
-
 
 export function getColumnsSwarmServices(
     t: TranslationFunction,
@@ -58,10 +54,7 @@ export function getColumnsSwarmServices(
         {
             accessorKey: 'name',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('service')}
                     <ArrowUpDown />
                 </Button>
@@ -75,10 +68,7 @@ export function getColumnsSwarmServices(
         {
             accessorKey: 'image',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('image')}
                     <ArrowUpDown />
                 </Button>
@@ -92,10 +82,7 @@ export function getColumnsSwarmServices(
         {
             accessorKey: 'mode',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('mode')}
                     <ArrowUpDown />
                 </Button>
@@ -131,9 +118,7 @@ export function getColumnsSwarmServices(
             cell: ({ row }) => {
                 const { ports } = row.original;
                 if (!ports.length) {
-                    return (
-                        <span className="text-muted-foreground text-xs">{t('noPortsExposed')}</span>
-                    );
+                    return <span className="text-muted-foreground text-xs">{t('noPortsExposed')}</span>;
                 }
                 return (
                     <div className="flex flex-wrap gap-1">

@@ -59,9 +59,7 @@ export function SonarqubeScanConfig() {
                                 <SelectGroup>
                                     <SelectLabel>{t('sonarqubeMode')}</SelectLabel>
                                     <SelectItem value="local">{t('sonarqubeModeLocal')}</SelectItem>
-                                    <SelectItem value="custom">
-                                        {t('sonarqubeModeCustom')}
-                                    </SelectItem>
+                                    <SelectItem value="custom">{t('sonarqubeModeCustom')}</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
@@ -77,10 +75,7 @@ export function SonarqubeScanConfig() {
                         <FormItem>
                             <FormLabel>{t('sonarqubeServerUrl')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    placeholder={t('sonarqubeServerUrlPlaceholder')}
-                                />
+                                <Input {...field} placeholder={t('sonarqubeServerUrlPlaceholder')} />
                             </FormControl>
                             <FormMessage className="text-xs" />
                         </FormItem>
@@ -115,9 +110,7 @@ export function SonarqubeScanConfig() {
                             <FormControl>
                                 <Input {...field} placeholder={t('sonarqubeVersionPlaceholder')} />
                             </FormControl>
-                            <FormDescription className="text-xs">
-                                {t('sonarqubeVersionDescription')}
-                            </FormDescription>
+                            <FormDescription className="text-xs">{t('sonarqubeVersionDescription')}</FormDescription>
                             <FormMessage className="text-xs" />
                         </FormItem>
                     )}
@@ -161,15 +154,9 @@ export function SonarqubeScanConfig() {
                     <FormItem>
                         <FormLabel>{t('sonarqubeToken')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="password"
-                                placeholder={t('passwordPlaceholder')}
-                            />
+                            <Input {...field} type="password" placeholder={t('passwordPlaceholder')} />
                         </FormControl>
-                        <FormDescription className="text-xs">
-                            {t('sonarqubeTokenDescription')}
-                        </FormDescription>
+                        <FormDescription className="text-xs">{t('sonarqubeTokenDescription')}</FormDescription>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
@@ -196,9 +183,7 @@ export function SonarqubeScanConfig() {
                         <FormControl>
                             <Input {...field} placeholder={t('sonarqubeExclusionsPlaceholder')} />
                         </FormControl>
-                        <FormDescription className="text-xs">
-                            {t('sonarqubeExclusionsDescription')}
-                        </FormDescription>
+                        <FormDescription className="text-xs">{t('sonarqubeExclusionsDescription')}</FormDescription>
                         <FormMessage className="text-xs" />
                     </FormItem>
                 )}
@@ -266,9 +251,7 @@ export function SonarqubeScanConfig() {
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>{t('sonarqubeScoreMetric')}</SelectLabel>
-                                        <SelectItem value="coverage">
-                                            {t('sonarqubeScoreMetricCoverage')}
-                                        </SelectItem>
+                                        <SelectItem value="coverage">{t('sonarqubeScoreMetricCoverage')}</SelectItem>
                                         <SelectItem value="line_coverage">
                                             {t('sonarqubeScoreMetricLineCoverage')}
                                         </SelectItem>
@@ -293,9 +276,7 @@ export function SonarqubeScanConfig() {
                             <FormControl>
                                 <Input {...field} type="number" min={0} max={100} />
                             </FormControl>
-                            <FormDescription className="text-xs">
-                                {t('sonarqubeMinScoreDescription')}
-                            </FormDescription>
+                            <FormDescription className="text-xs">{t('sonarqubeMinScoreDescription')}</FormDescription>
                             <FormMessage className="text-xs" />
                         </FormItem>
                     )}

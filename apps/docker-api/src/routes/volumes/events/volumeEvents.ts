@@ -17,8 +17,7 @@ const app = new Hono();
 app.get('/stream/:volumeName', (c) => {
     const volumeName = decodeURIComponent(c.req.param('volumeName'));
 
-    const environmentId =
-        getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
+    const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
 
     return streamSSE(c, async (stream) => {
         const clientId = c.req.header('x-client-id');

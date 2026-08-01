@@ -80,8 +80,7 @@ export const InputAutoComplete = ({
         return options.filter((opt) => opt.label.toLowerCase().includes(query));
     }, [options, value, alwaysShowOptions]);
 
-    const shouldShowList =
-        alwaysShowOptions || (isOpen && (isLoading || filteredOptions.length > 0));
+    const shouldShowList = alwaysShowOptions || (isOpen && (isLoading || filteredOptions.length > 0));
 
     return (
         <PopoverPrimitive.Root open={shouldShowList} onOpenChange={setOpen}>
@@ -127,9 +126,7 @@ export const InputAutoComplete = ({
                                 </CommandPrimitive.Loading>
                             ) : (
                                 <CommandGroup heading={heading}>
-                                    <ScrollAreaWithShadow
-                                        className="flex max-h-60 flex-col overflow-y-auto"
-                                    >
+                                    <ScrollAreaWithShadow className="flex max-h-60 flex-col overflow-y-auto">
                                         {filteredOptions.map((option) => (
                                             <CommandItem
                                                 key={option.value}

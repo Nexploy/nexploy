@@ -128,12 +128,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                         <FormItem>
                             <FormLabel>{t('path')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    value={field.value as string}
-                                    placeholder="/"
-                                    className="font-mono"
-                                />
+                                <Input {...field} value={field.value as string} placeholder="/" className="font-mono" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -148,12 +143,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                     <FormItem>
                         <FormLabel>{t('internalPath')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                value={field.value}
-                                placeholder="/"
-                                className="font-mono"
-                            />
+                            <Input {...field} value={field.value} placeholder="/" className="font-mono" />
                         </FormControl>
                         <FormDescription>{t('internalPathDescription')}</FormDescription>
                     </FormItem>
@@ -167,14 +157,9 @@ export function DomainFields({ form }: DomainFieldsProps) {
                     render={() => (
                         <FormItem>
                             <FormLabel>{t('container')}</FormLabel>
-                            <Select
-                                value={selectedContainerName ?? ''}
-                                onValueChange={handleContainerChange}
-                            >
+                            <Select value={selectedContainerName ?? ''} onValueChange={handleContainerChange}>
                                 <FormControl>
-                                    <SelectTrigger
-                                        className={'w-full pl-0! data-[placeholder]:pl-3!'}
-                                    >
+                                    <SelectTrigger className={'w-full pl-0! data-[placeholder]:pl-3!'}>
                                         <SelectValue placeholder={t('selectContainer')} />
                                     </SelectTrigger>
                                 </FormControl>
@@ -187,24 +172,14 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                         <SelectGroup>
                                             <SelectLabel>{t('container')}</SelectLabel>
                                             {containers.map((container) => (
-                                                <SelectItem
-                                                    key={container.id}
-                                                    value={container.name}
-                                                    className="pl-0"
-                                                >
+                                                <SelectItem key={container.id} value={container.name} className="pl-0">
                                                     <Status
                                                         className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
-                                                        status={
-                                                            container.state === 'running'
-                                                                ? 'online'
-                                                                : 'offline'
-                                                        }
+                                                        status={container.state === 'running' ? 'online' : 'offline'}
                                                         variant="outline"
                                                     >
                                                         <StatusIndicator />
-                                                        <span className="truncate">
-                                                            {container.name}
-                                                        </span>
+                                                        <span className="truncate">{container.name}</span>
                                                     </Status>
                                                 </SelectItem>
                                             ))}
@@ -307,10 +282,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                     render={({ field, fieldState }) => (
                         <FormItem>
                             <FormLabel>{t('certificate')}</FormLabel>
-                            <Select
-                                value={field.value ?? ''}
-                                onValueChange={(val) => field.onChange(val || undefined)}
-                            >
+                            <Select value={field.value ?? ''} onValueChange={(val) => field.onChange(val || undefined)}>
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('selectCertificate')} />

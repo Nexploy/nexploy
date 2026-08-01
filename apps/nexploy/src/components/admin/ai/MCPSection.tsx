@@ -43,9 +43,7 @@ export function MCPSection({ mcpUrl, keys }: MCPSectionProps) {
             <div className="bg-card rounded-xl border shadow-sm">
                 <div className="flex flex-col gap-1 p-4">
                     <span className="text-sm font-medium">{t('endpoint')}</span>
-                    <span className="text-muted-foreground text-xs">
-                        {t('endpointDescription')}
-                    </span>
+                    <span className="text-muted-foreground text-xs">{t('endpointDescription')}</span>
                 </div>
                 <Separator />
                 <div className="bg-muted/40 flex gap-2 p-4">
@@ -60,9 +58,7 @@ export function MCPSection({ mcpUrl, keys }: MCPSectionProps) {
                     <GenerateMcpKeyButton />
                 </span>
                 {keys.length === 0 ? (
-                    <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">
-                        {t('noKeys')}
-                    </div>
+                    <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">{t('noKeys')}</div>
                 ) : (
                     keys.map((k) => <MCPKeyCard key={k.id} k={k} onRevoke={handleRevoke} />)
                 )}

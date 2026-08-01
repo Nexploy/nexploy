@@ -22,17 +22,14 @@ export interface NetworkItemProps {
 export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProps) {
     const t = useTranslations('docker.containerNetworks');
     const { networkChanges, onNetworkChange } = useContainerChangesStore();
-    const isSwarmContainer = useContainerStore(
-        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
-    );
+    const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
 
     const isDeleted = networkChanges.some(
         (change) => change.typeAction === 'delete' && change.currentName === networkName,
     );
 
     const onDelete = () => onNetworkChange({ typeAction: 'delete', currentName: networkName });
-    const onCancelDelete = () =>
-        onNetworkChange({ typeAction: 'add', name: networkName, currentName: networkName });
+    const onCancelDelete = () => onNetworkChange({ typeAction: 'add', name: networkName, currentName: networkName });
     const statusIndicator = isNew ? (
         <span className="text-green-500">+</span>
     ) : isDeleted ? (
@@ -52,12 +49,7 @@ export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProp
                     (isDeleted ? (
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="h-6 w-6"
-                                    onClick={onCancelDelete}
-                                >
+                                <Button size="icon" variant="ghost" className="h-6 w-6" onClick={onCancelDelete}>
                                     <X />
                                 </Button>
                             </TooltipTrigger>
@@ -66,12 +58,7 @@ export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProp
                     ) : (
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button
-                                    size="icon"
-                                    variant="destructiveGhost"
-                                    className="h-6 w-6"
-                                    onClick={onDelete}
-                                >
+                                <Button size="icon" variant="destructiveGhost" className="h-6 w-6" onClick={onDelete}>
                                     <Trash2 />
                                 </Button>
                             </TooltipTrigger>
@@ -83,15 +70,11 @@ export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProp
                 <div className="grid grid-cols-2 gap-3 text-xs">
                     <div className="space-y-1">
                         <span className="text-muted-foreground">{t('ipAddress')}</span>
-                        <code className="bg-background/50 block rounded px-2 py-1">
-                            {networkInfo.ipAddress || '—'}
-                        </code>
+                        <code className="bg-background/50 block rounded px-2 py-1">{networkInfo.ipAddress || '—'}</code>
                     </div>
                     <div className="space-y-1">
                         <span className="text-muted-foreground">{t('gateway')}</span>
-                        <code className="bg-background/50 block rounded px-2 py-1">
-                            {networkInfo.gateway || '—'}
-                        </code>
+                        <code className="bg-background/50 block rounded px-2 py-1">{networkInfo.gateway || '—'}</code>
                     </div>
                     <div className="space-y-1">
                         <span className="text-muted-foreground">{t('macAddress')}</span>

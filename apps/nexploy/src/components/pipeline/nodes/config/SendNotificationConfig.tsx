@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Label } from '@workspace/ui/components/label';
@@ -63,9 +57,7 @@ export function SendNotificationConfig() {
                 render={({ field }) => {
                     const value: TriggerOption[] = field.value ?? ['always'];
                     const toggle = (option: TriggerOption) => {
-                        const next = value.includes(option)
-                            ? value.filter((v) => v !== option)
-                            : [...value, option];
+                        const next = value.includes(option) ? value.filter((v) => v !== option) : [...value, option];
                         field.onChange(next);
                     };
                     return (
@@ -75,22 +67,16 @@ export function SendNotificationConfig() {
                                 <InfoTooltip>
                                     <ul className="space-y-0.5">
                                         <li>
-                                            <span className="font-medium">
-                                                {t('triggerOnSuccess')}
-                                            </span>{' '}
-                                            — {t('triggerOnSuccessDesc')}
+                                            <span className="font-medium">{t('triggerOnSuccess')}</span> —{' '}
+                                            {t('triggerOnSuccessDesc')}
                                         </li>
                                         <li>
-                                            <span className="font-medium">
-                                                {t('triggerOnFailure')}
-                                            </span>{' '}
-                                            — {t('triggerOnFailureDesc')}
+                                            <span className="font-medium">{t('triggerOnFailure')}</span> —{' '}
+                                            {t('triggerOnFailureDesc')}
                                         </li>
                                         <li>
-                                            <span className="font-medium">
-                                                {t('triggerOnAlways')}
-                                            </span>{' '}
-                                            — {t('triggerOnAlwaysDesc')}
+                                            <span className="font-medium">{t('triggerOnAlways')}</span> —{' '}
+                                            {t('triggerOnAlwaysDesc')}
                                         </li>
                                     </ul>
                                 </InfoTooltip>

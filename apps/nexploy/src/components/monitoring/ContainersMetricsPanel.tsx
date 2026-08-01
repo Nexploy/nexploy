@@ -47,15 +47,9 @@ export function ContainersMetricsPanel({
         [stats, history],
     );
 
-    const cpuChartData = useMemo(
-        () => buildMultiSeriesData(topCpuSeries, 'cpuPercent'),
-        [topCpuSeries],
-    );
+    const cpuChartData = useMemo(() => buildMultiSeriesData(topCpuSeries, 'cpuPercent'), [topCpuSeries]);
 
-    const memoryChartData = useMemo(
-        () => buildMultiSeriesData(topMemorySeries, 'memoryUsage'),
-        [topMemorySeries],
-    );
+    const memoryChartData = useMemo(() => buildMultiSeriesData(topMemorySeries, 'memoryUsage'), [topMemorySeries]);
 
     const aggregatedChartData = useMemo(
         () =>
@@ -71,8 +65,7 @@ export function ContainersMetricsPanel({
         [totalsHistory],
     );
 
-    const selectedContainer =
-        stats.find((stat) => stat.containerId === selectedContainerId) ?? null;
+    const selectedContainer = stats.find((stat) => stat.containerId === selectedContainerId) ?? null;
 
     if (isLoading) {
         return (
@@ -123,9 +116,7 @@ export function ContainersMetricsPanel({
                     description={`↓ ${formatRate(totals?.networkRxRate ?? 0)} · ↑ ${formatRate(
                         totals?.networkTxRate ?? 0,
                     )}`}
-                    sparklineValues={totalsHistory.map(
-                        (point) => point.networkRxRate + point.networkTxRate,
-                    )}
+                    sparklineValues={totalsHistory.map((point) => point.networkRxRate + point.networkTxRate)}
                 />
             </div>
 
@@ -200,9 +191,7 @@ export function ContainersMetricsPanel({
                 <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
                     <HardDrive className="text-primary size-5" />
                 </div>
-                <h2 className="text-lg font-semibold tracking-tight">
-                    {t('containers.tableTitle')}
-                </h2>
+                <h2 className="text-lg font-semibold tracking-tight">{t('containers.tableTitle')}</h2>
             </div>
 
             <ContainersMetricsTable

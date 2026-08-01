@@ -110,12 +110,9 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
     private getStateChanges(oldState: Container, newState: Container): ContainerStateChanges {
         const changes: ContainerStateChanges = {};
 
-        if (oldState.name !== newState.name)
-            changes.name = { from: oldState.name, to: newState.name };
-        if (oldState.state !== newState.state)
-            changes.state = { from: oldState.state, to: newState.state };
-        if (oldState.status !== newState.status)
-            changes.status = { from: oldState.status, to: newState.status };
+        if (oldState.name !== newState.name) changes.name = { from: oldState.name, to: newState.name };
+        if (oldState.state !== newState.state) changes.state = { from: oldState.state, to: newState.state };
+        if (oldState.status !== newState.status) changes.status = { from: oldState.status, to: newState.status };
         if (oldState.health !== newState.health)
             changes.health = { from: oldState.health?.status, to: newState.health?.status };
         if (oldState.exitCode !== newState.exitCode)
@@ -123,14 +120,12 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
                 from: oldState.exitCode,
                 to: newState.exitCode,
             };
-        if (oldState.error !== newState.error)
-            changes.error = { from: oldState.error, to: newState.error };
+        if (oldState.error !== newState.error) changes.error = { from: oldState.error, to: newState.error };
         if (oldState.restartCount !== newState.restartCount)
             changes.restartCount = { from: oldState.restartCount, to: newState.restartCount };
         if (JSON.stringify(oldState.network?.ports) !== JSON.stringify(newState.network?.ports))
             changes.networkPorts = true;
-        if (JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts))
-            changes.mounts = true;
+        if (JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts)) changes.mounts = true;
 
         return changes;
     }
@@ -145,13 +140,9 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
 
             if (bindings && bindings.length > 0) {
                 for (const binding of bindings) {
-                    const publicPort = binding.HostPort
-                        ? parseInt(binding.HostPort, 10)
-                        : undefined;
+                    const publicPort = binding.HostPort ? parseInt(binding.HostPort, 10) : undefined;
 
-                    const exists = portsMap.some(
-                        (p) => p.privatePort === privatePort && p.publicPort === publicPort,
-                    );
+                    const exists = portsMap.some((p) => p.privatePort === privatePort && p.publicPort === publicPort);
 
                     if (!exists) {
                         portsMap.push({

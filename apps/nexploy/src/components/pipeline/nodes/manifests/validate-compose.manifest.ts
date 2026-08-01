@@ -26,7 +26,17 @@ export const validateComposeManifest: NodeManifest = {
     configSchema: composeFileConfigSchema,
     configPanel: ValidateComposeConfig,
     inputFields: [
-        { key: 'workDir', labelKey: 'pipeline.inputs.workDir', descriptionKey: 'pipeline.inputs.desc_workDir', type: 'input' },
-        { key: 'composePath', labelKey: 'pipeline.inputs.composePath', descriptionKey: 'pipeline.inputs.desc_composePath', type: 'input' },
+        {
+            key: 'workDir',
+            labelKey: 'pipeline.inputs.workDir',
+            descriptionKey: 'pipeline.inputs.desc_workDir',
+            type: 'input',
+        },
+        {
+            key: 'composePath',
+            labelKey: 'pipeline.inputs.composePath',
+            descriptionKey: 'pipeline.inputs.desc_composePath',
+            type: 'input',
+        },
     ],
 };

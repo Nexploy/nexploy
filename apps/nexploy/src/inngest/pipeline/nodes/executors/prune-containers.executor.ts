@@ -20,12 +20,7 @@ export class PruneContainersExecutor implements INodeExecutor {
         const filter = nodeConfig.filter;
         const olderThan = nodeConfig.olderThan;
 
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(
             nodeId,
@@ -45,10 +40,7 @@ export class PruneContainersExecutor implements INodeExecutor {
                 .json<{ removedContainers: number; reclaimedSpace: number }>();
 
             const mb = (result.reclaimedSpace / 1024 / 1024).toFixed(2);
-            await logger.info(
-                nodeId,
-                `Pruned ${result.removedContainers} containers, reclaimed ${mb} MB`,
-            );
+            await logger.info(nodeId, `Pruned ${result.removedContainers} containers, reclaimed ${mb} MB`);
 
             return {
                 output: {
@@ -57,9 +49,7 @@ export class PruneContainersExecutor implements INodeExecutor {
                 },
             };
         } catch (error) {
-            throw new Error(
-                `Failed to prune containers: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to prune containers: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

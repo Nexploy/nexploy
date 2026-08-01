@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -60,10 +54,7 @@ export function UpdateServiceConfig() {
                 control={form.control}
                 name="serviceId"
                 render={({ field }) => {
-                    const isStale =
-                        !!field.value &&
-                        services.length > 0 &&
-                        !services.find((s) => s.id === field.value);
+                    const isStale = !!field.value && services.length > 0 && !services.find((s) => s.id === field.value);
 
                     const handleSelect = (serviceId: string) => {
                         field.onChange(serviceId);
@@ -84,26 +75,19 @@ export function UpdateServiceConfig() {
                                                     {t('serviceUnavailable')}
                                                 </span>
                                             ) : (
-                                                <SelectValue
-                                                    placeholder={t('serviceNamePlaceholder')}
-                                                />
+                                                <SelectValue placeholder={t('serviceNamePlaceholder')} />
                                             )}
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>
-                                                    {t('servicesSelectLabel')}
-                                                </SelectLabel>
+                                                <SelectLabel>{t('servicesSelectLabel')}</SelectLabel>
                                                 {services.length === 0 ? (
                                                     <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                         {t('noServicesFound')}
                                                     </span>
                                                 ) : (
                                                     services.map((service) => (
-                                                        <SelectItem
-                                                            key={service.id}
-                                                            value={service.id}
-                                                        >
+                                                        <SelectItem key={service.id} value={service.id}>
                                                             {service.name}
                                                         </SelectItem>
                                                     ))
@@ -128,8 +112,7 @@ export function UpdateServiceConfig() {
                         !isNodeFieldRef(field.value) &&
                         !imageOptions.find(
                             (imageOption) =>
-                                imageOption.value === field.value ||
-                                imageOption.repoTags.includes(field.value),
+                                imageOption.value === field.value || imageOption.repoTags.includes(field.value),
                         );
 
                     return (
@@ -143,11 +126,7 @@ export function UpdateServiceConfig() {
                                     </p>
                                 ) : (
                                     <RefAware value={field.value} onChange={field.onChange}>
-                                        <Select
-                                            {...field}
-                                            onValueChange={field.onChange}
-                                            disabled={isLoading}
-                                        >
+                                        <Select {...field} onValueChange={field.onChange} disabled={isLoading}>
                                             <SelectTrigger className="w-full overflow-hidden pl-0! data-[placeholder]:pl-3!">
                                                 {isStale ? (
                                                     <span className="flex items-center gap-1.5 pl-3">
@@ -155,49 +134,31 @@ export function UpdateServiceConfig() {
                                                         {t('imageUnavailable')}
                                                     </span>
                                                 ) : (
-                                                    <SelectValue
-                                                        placeholder={t('imageIdPlaceholder')}
-                                                    />
+                                                    <SelectValue placeholder={t('imageIdPlaceholder')} />
                                                 )}
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
-                                                    <SelectLabel>
-                                                        {t('imagesSelectLabel')}
-                                                    </SelectLabel>
+                                                    <SelectLabel>{t('imagesSelectLabel')}</SelectLabel>
                                                     {imageOptions.length === 0 ? (
                                                         <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                             {t('noImagesAvailable')}
                                                         </span>
                                                     ) : (
-                                                        imageOptions.map(
-                                                            ({
-                                                                value,
-                                                                repoTags,
-                                                                containersUsed,
-                                                            }) => (
-                                                                <SelectItem
-                                                                    key={value}
-                                                                    value={value}
-                                                                    className="pl-0"
+                                                        imageOptions.map(({ value, repoTags, containersUsed }) => (
+                                                            <SelectItem key={value} value={value} className="pl-0">
+                                                                <Status
+                                                                    className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                                    status={containersUsed ? 'online' : 'offline'}
+                                                                    variant="outline"
                                                                 >
-                                                                    <Status
-                                                                        className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
-                                                                        status={
-                                                                            containersUsed
-                                                                                ? 'online'
-                                                                                : 'offline'
-                                                                        }
-                                                                        variant="outline"
-                                                                    >
-                                                                        <StatusIndicator className="pl-2" />
-                                                                        <span className="truncate">
-                                                                            {repoTags.join(', ')}
-                                                                        </span>
-                                                                    </Status>
-                                                                </SelectItem>
-                                                            ),
-                                                        )
+                                                                    <StatusIndicator className="pl-2" />
+                                                                    <span className="truncate">
+                                                                        {repoTags.join(', ')}
+                                                                    </span>
+                                                                </Status>
+                                                            </SelectItem>
+                                                        ))
                                                     )}
                                                 </SelectGroup>
                                             </SelectContent>

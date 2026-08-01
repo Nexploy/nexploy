@@ -30,10 +30,7 @@ export default function RequestsPage() {
     };
 
     return (
-        <SSEProvider
-            connections={['traefik']}
-            params={{ traefik: { environmentId: defaultLocalEnvironment?.id } }}
-        >
+        <SSEProvider connections={['traefik']} params={{ traefik: { environmentId: defaultLocalEnvironment?.id } }}>
             <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex gap-3 px-5">
                     <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">

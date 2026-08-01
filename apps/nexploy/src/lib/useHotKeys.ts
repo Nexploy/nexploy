@@ -30,11 +30,7 @@ function parseHotkey(hotkey: string) {
     };
 }
 
-export function useHotkeys(
-    hotkey: string | string[],
-    callback: (event: KeyboardEvent) => void,
-    options: Options = {},
-) {
+export function useHotkeys(hotkey: string | string[], callback: (event: KeyboardEvent) => void, options: Options = {}) {
     const {
         keydown = true,
         keyup = false,
@@ -59,8 +55,7 @@ export function useHotkeys(
 
             if (ignoreInputs) {
                 const el = event.target as HTMLElement | null;
-                const isTyping =
-                    el?.tagName === 'INPUT' || el?.tagName === 'TEXTAREA' || el?.isContentEditable;
+                const isTyping = el?.tagName === 'INPUT' || el?.tagName === 'TEXTAREA' || el?.isContentEditable;
                 if (isTyping) return;
             }
 

@@ -10,12 +10,7 @@ interface NotificationSwitchProps {
     onCheckedChange: (enabled: boolean) => void;
 }
 
-export function NotificationSwitch({
-    label,
-    description,
-    checked,
-    onCheckedChange,
-}: NotificationSwitchProps) {
+export function NotificationSwitch({ label, description, checked, onCheckedChange }: NotificationSwitchProps) {
     return (
         <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
             <div className="flex flex-col">

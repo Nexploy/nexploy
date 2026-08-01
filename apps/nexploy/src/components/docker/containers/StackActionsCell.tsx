@@ -50,9 +50,7 @@ export function StackActionsCell({ stackName, runningCount, totalCount }: StackA
                         }
                     >
                         <div className={'space-y-0.5'}>
-                            <p className={'text-destructive text-sm font-medium'}>
-                                {tDocker('stack.forceRemove')}
-                            </p>
+                            <p className={'text-destructive text-sm font-medium'}>{tDocker('stack.forceRemove')}</p>
                             <p className={'text-xs'}>{tDocker('stack.forceRemoveDescription')}</p>
                         </div>
                         <Switch

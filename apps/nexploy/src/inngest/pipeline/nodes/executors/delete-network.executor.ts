@@ -47,8 +47,7 @@ export class DeleteNetworkExecutor implements INodeExecutor {
                 not_found: `Network ${networkId} not found`,
             };
             const msg =
-                reasonMessages[skippedEntry.reason ?? ''] ??
-                `Network ${networkId} error: ${skippedEntry.reason}`;
+                reasonMessages[skippedEntry.reason ?? ''] ?? `Network ${networkId} error: ${skippedEntry.reason}`;
             throw new Error(msg);
         }
 

@@ -16,29 +16,25 @@ export function AddDomainForm() {
     const t = useTranslations('repository.settings.domains');
     const { onSuccess } = useConfirmationDialogStore();
 
-    const { form, handleSubmitWithAction } = useHookFormAction(
-        addDomain,
-        zodResolver(domainFormSchema),
-        {
-            formProps: {
-                defaultValues: {
-                    domain: {
-                        host: '',
-                        path: '/',
-                        internalPath: '/',
-                        stripPath: false,
-                        https: false,
-                    },
-                },
-            },
-            actionProps: {
-                onSuccess: ({ data }) => {
-                    toast.success(t('created'));
-                    if (onSuccess) onSuccess(data);
+    const { form, handleSubmitWithAction } = useHookFormAction(addDomain, zodResolver(domainFormSchema), {
+        formProps: {
+            defaultValues: {
+                domain: {
+                    host: '',
+                    path: '/',
+                    internalPath: '/',
+                    stripPath: false,
+                    https: false,
                 },
             },
         },
-    );
+        actionProps: {
+            onSuccess: ({ data }) => {
+                toast.success(t('created'));
+                if (onSuccess) onSuccess(data);
+            },
+        },
+    });
 
     const selectedContainer = form.watch('domain.containerName');
     const isSubmitting = form.formState.isSubmitting;
@@ -48,11 +44,7 @@ export function AddDomainForm() {
             <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4">
                 <DomainFields form={form} />
                 <DialogFooter>
-                    <Button
-                        type="submit"
-                        disabled={isSubmitting || !selectedContainer}
-                        isLoading={isSubmitting}
-                    >
+                    <Button type="submit" disabled={isSubmitting || !selectedContainer} isLoading={isSubmitting}>
                         {t('addDomain')}
                     </Button>
                 </DialogFooter>

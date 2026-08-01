@@ -19,9 +19,7 @@ export function MonitoringHeader() {
                     <Activity className="text-primary size-7" />
                 </div>
                 <div className="mt-3.5 flex flex-col">
-                    <h1 className="break-all text-3xl font-semibold tracking-tight">
-                        {t('title')}
-                    </h1>
+                    <h1 className="break-all text-3xl font-semibold tracking-tight">{t('title')}</h1>
                     <p className="text-muted-foreground text-sm">
                         {t('description')}
                         {lastUpdate

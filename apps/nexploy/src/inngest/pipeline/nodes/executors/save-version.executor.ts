@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { getNextVersionNumber, upsertVersion } from '@/services/repository/version.service';
 import { getDefaultEnvironment } from '@/services/environment/environment.service';
 
@@ -23,12 +27,7 @@ export class SaveVersionExecutor implements INodeExecutor {
             }
         }
 
-        let environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        let environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         if (!environmentId) {
             const defaultEnv = await getDefaultEnvironment();
             environmentId = defaultEnv?.id;
@@ -36,12 +35,7 @@ export class SaveVersionExecutor implements INodeExecutor {
 
         const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
         const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');
-        const commitMessage = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'commitMessage',
-        );
+        const commitMessage = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitMessage');
 
         const versionNumber = await getNextVersionNumber(buildConfig.repositoryId, environmentId);
 

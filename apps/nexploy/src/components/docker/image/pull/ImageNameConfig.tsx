@@ -26,11 +26,7 @@ export function ImageNameConfig() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Settings}
-                title={t('configuration')}
-                description={t('configDescription')}
-            />
+            <CardHeaderWithIcon icon={Settings} title={t('configuration')} description={t('configDescription')} />
             <CardContent className="space-y-4">
                 <FormField
                     control={form.control}
@@ -46,12 +42,8 @@ export function ImageNameConfig() {
                                         placeholder={t('imageNamePlaceholder')}
                                     />
                                     <DockerHubSearchDialog
-                                        onSelect={(image) =>
-                                            form.setValue('imageName', `${image.slug}:latest`)
-                                        }
-                                        isSelected={(image) =>
-                                            selectedImage === `${image.slug}:latest`
-                                        }
+                                        onSelect={(image) => form.setValue('imageName', `${image.slug}:latest`)}
+                                        isSelected={(image) => selectedImage === `${image.slug}:latest`}
                                         trigger={
                                             <Button className={'rounded-l-none font-semibold'}>
                                                 <Docker className="size-4 [&_path]:fill-current" />

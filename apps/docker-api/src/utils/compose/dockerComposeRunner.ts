@@ -101,11 +101,7 @@ export async function getComposeContainerIds(
 ): Promise<string[]> {
     return new Promise((resolve) => {
         const env = { ...process.env, ...dockerEnv };
-        const proc = spawn(
-            'docker',
-            ['compose', '-p', projectName, '-f', composeFile, 'ps', '-q'],
-            { cwd, env },
-        );
+        const proc = spawn('docker', ['compose', '-p', projectName, '-f', composeFile, 'ps', '-q'], { cwd, env });
         let output = '';
         proc.stdout.on('data', (data: Buffer) => {
             output += data.toString();

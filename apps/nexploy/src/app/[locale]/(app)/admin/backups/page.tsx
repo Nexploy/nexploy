@@ -26,12 +26,8 @@ export default async function BackupsPage() {
                         <Database className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight break-all">
-                            {t('backups')}
-                        </h1>
-                        <p className="text-muted-foreground text-sm">
-                            {t('manageBackupsDescription')}
-                        </p>
+                        <h1 className="text-3xl font-semibold tracking-tight break-all">{t('backups')}</h1>
+                        <p className="text-muted-foreground text-sm">{t('manageBackupsDescription')}</p>
                     </div>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
@@ -56,9 +52,7 @@ export default async function BackupsPage() {
                                                     <HardDrive className="text-primary size-4" />
                                                 </div>
                                                 <div className="flex min-w-0 flex-1 flex-col break-all">
-                                                    <span className="text-sm font-medium">
-                                                        {volume.name}
-                                                    </span>
+                                                    <span className="text-sm font-medium">{volume.name}</span>
                                                     <span className="text-muted-foreground text-xs">
                                                         {volume.driver}
                                                         {volume.usageData?.Size != null &&

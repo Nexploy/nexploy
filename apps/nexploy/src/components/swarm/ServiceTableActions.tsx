@@ -15,10 +15,7 @@ interface ServiceTableActionsProps {
     onResetSelection: () => void;
 }
 
-export function ServiceTableActions({
-    selectedServices,
-    onResetSelection,
-}: ServiceTableActionsProps) {
+export function ServiceTableActions({ selectedServices, onResetSelection }: ServiceTableActionsProps) {
     const t = useTranslations('swarm');
     const tCommon = useTranslations('common');
     const openAlertDialog = useAlertConfirmationDialogStore((s) => s.openAlertDialog);

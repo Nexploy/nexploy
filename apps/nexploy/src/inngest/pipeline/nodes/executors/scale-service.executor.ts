@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { scaleServiceConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -18,17 +22,9 @@ export class ScaleServiceExecutor implements INodeExecutor {
         const serviceName = nodeConfig.serviceName;
         const replicas = nodeConfig.replicas;
 
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
-        await logger.info(
-            nodeId,
-            `Scaling Swarm service "${serviceName}" to ${replicas} replica(s)`,
-        );
+        await logger.info(nodeId, `Scaling Swarm service "${serviceName}" to ${replicas} replica(s)`);
 
         try {
             await kyDocker
@@ -44,9 +40,7 @@ export class ScaleServiceExecutor implements INodeExecutor {
 
             return { output: { serviceName, replicas } };
         } catch (error) {
-            throw new Error(
-                `Failed to scale service: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to scale service: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

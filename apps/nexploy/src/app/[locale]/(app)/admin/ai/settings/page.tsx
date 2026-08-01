@@ -14,10 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AISettingsPage() {
-    const [t, aiSettings] = await Promise.all([
-        getTranslations('ai.admin.settings'),
-        getAISettings(),
-    ]);
+    const [t, aiSettings] = await Promise.all([getTranslations('ai.admin.settings'), getAISettings()]);
 
     return (
         <div className="flex h-full flex-1 flex-col">
@@ -27,23 +24,16 @@ export default async function AISettingsPage() {
                         <Settings className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight break-all">
-                            {t('title')}
-                        </h1>
+                        <h1 className="text-3xl font-semibold tracking-tight break-all">{t('title')}</h1>
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
                     <div className="flex flex-col gap-5 pb-5">
-                        <GeneralSettingsCard
-                            aiEnabled={aiSettings.aiEnabled}
-                            mcpEnabled={aiSettings.mcpEnabled}
-                        />
+                        <GeneralSettingsCard aiEnabled={aiSettings.aiEnabled} mcpEnabled={aiSettings.mcpEnabled} />
                         <ChatBehaviorCard
-                            requireDestructiveConfirmation={
-                                aiSettings.requireDestructiveConfirmation
-                            }
+                            requireDestructiveConfirmation={aiSettings.requireDestructiveConfirmation}
                             maxSteps={aiSettings.maxSteps}
                         />
                         <McpPermissionsCard {...aiSettings} />

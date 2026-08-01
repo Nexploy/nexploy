@@ -13,13 +13,7 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Switch } from '@workspace/ui/components/switch';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select.tsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select.tsx';
 import { AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 
@@ -71,11 +65,7 @@ export function AddSslCertificateConfig() {
                     <FormItem>
                         <FormLabel>{t('sslDomain')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                placeholder={t('domainPlaceholder')}
-                                className="font-mono"
-                            />
+                            <Input {...field} placeholder={t('domainPlaceholder')} className="font-mono" />
                         </FormControl>
                         {certType === 'LETS_ENCRYPT' && (
                             <FormDescription className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
@@ -113,10 +103,7 @@ export function AddSslCertificateConfig() {
                         render={({ field }) => (
                             <FormItem className="flex gap-3">
                                 <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
+                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                                 </FormControl>
                                 <FormLabel className="cursor-pointer">
                                     {t('sslAgreeToTos')}{' '}

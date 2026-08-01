@@ -24,8 +24,6 @@ test('swarm overview, nodes, services and service deletion via the UI', async ({
         await row.getByRole('button').last().click();
         await page.getByRole('menuitem', { name: 'Remove Service' }).click();
         await page.getByRole('button', { name: 'Remove Service', exact: true }).click();
-        await expect(
-            page.getByRole('row').filter({ hasText: 'e2e-sample-service' }),
-        ).toHaveCount(0, SHOW);
+        await expect(page.getByRole('row').filter({ hasText: 'e2e-sample-service' })).toHaveCount(0, SHOW);
     });
 });

@@ -4,21 +4,8 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { onSignInAction } from '@/actions/auth/signIn.action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signInFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
@@ -26,18 +13,14 @@ import { useTranslations } from 'next-intl';
 export function SignInForm() {
     const tAuth = useTranslations('auth.signIn');
 
-    const { form, action, handleSubmitWithAction } = useHookFormAction(
-        onSignInAction,
-        zodResolver(signInFormSchema),
-        {
-            formProps: {
-                defaultValues: {
-                    email: '',
-                    password: '',
-                },
+    const { form, action, handleSubmitWithAction } = useHookFormAction(onSignInAction, zodResolver(signInFormSchema), {
+        formProps: {
+            defaultValues: {
+                email: '',
+                password: '',
             },
         },
-    );
+    });
 
     const isSubmitting = action.status === 'executing';
 
@@ -92,12 +75,7 @@ export function SignInForm() {
                                     {form.formState.errors.root?.message}
                                 </span>
                             )}
-                            <Button
-                                type="submit"
-                                className="w-full"
-                                isLoading={isSubmitting}
-                                disabled={isSubmitting}
-                            >
+                            <Button type="submit" className="w-full" isLoading={isSubmitting} disabled={isSubmitting}>
                                 {isSubmitting ? tAuth('submitLoading') : tAuth('submit')}
                             </Button>
                         </form>

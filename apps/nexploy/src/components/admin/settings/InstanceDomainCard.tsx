@@ -6,14 +6,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Globe } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import { Button } from '@workspace/ui/components/button';
@@ -48,11 +41,7 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Globe}
-                title={t('domainTitle')}
-                description={t('domainDescription')}
-            />
+            <CardHeaderWithIcon icon={Globe} title={t('domainTitle')} description={t('domainDescription')} />
             <CardContent>
                 {isRestarting ? (
                     <p className="text-muted-foreground text-sm">{t('domainRestarting')}</p>
@@ -66,18 +55,13 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                     <FormItem>
                                         <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
                                             <div className="flex flex-col">
-                                                <span className="text-base">
-                                                    {t('domainModeLabel')}
-                                                </span>
+                                                <span className="text-base">{t('domainModeLabel')}</span>
                                                 <span className="text-muted-foreground text-xs">
                                                     {t('domainModeDescription')}
                                                 </span>
                                             </div>
                                             <FormControl>
-                                                <Switch
-                                                    checked={field.value}
-                                                    onCheckedChange={field.onChange}
-                                                />
+                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
                                             </FormControl>
                                         </FormLabel>
                                     </FormItem>
@@ -89,16 +73,10 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                 name="domain"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            {useTls ? t('domainLabel') : t('domainLabelIp')}
-                                        </FormLabel>
+                                        <FormLabel>{useTls ? t('domainLabel') : t('domainLabelIp')}</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={
-                                                    useTls
-                                                        ? t('domainPlaceholder')
-                                                        : t('domainPlaceholderIp')
-                                                }
+                                                placeholder={useTls ? t('domainPlaceholder') : t('domainPlaceholderIp')}
                                                 {...field}
                                             />
                                         </FormControl>

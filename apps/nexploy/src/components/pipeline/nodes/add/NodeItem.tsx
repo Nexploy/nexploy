@@ -35,12 +35,7 @@ export function NodeItem({
                 )}
             />
 
-            <div
-                className={cn(
-                    'flex size-7 shrink-0 items-center justify-center rounded-md',
-                    def.metadata.color,
-                )}
-            >
+            <div className={cn('flex size-7 shrink-0 items-center justify-center rounded-md', def.metadata.color)}>
                 <Icon className="size-3.5" strokeWidth={1.6} />
             </div>
 

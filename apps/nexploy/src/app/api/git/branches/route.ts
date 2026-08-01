@@ -35,10 +35,7 @@ export const GET = route
                 );
                 return NextResponse.json(branches);
             } catch (error: any) {
-                return NextResponse.json(
-                    { error: error.message || 'Failed to fetch branches' },
-                    { status: 500 },
-                );
+                return NextResponse.json({ error: error.message || 'Failed to fetch branches' }, { status: 500 });
             }
         },
     );

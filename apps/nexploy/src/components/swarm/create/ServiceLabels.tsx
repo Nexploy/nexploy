@@ -25,21 +25,14 @@ export function ServiceLabels() {
                 description={t('labelsDescription')}
                 className={'justify-between'}
             >
-                <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => append({ key: '', value: '' })}
-                >
+                <Button type="button" size="sm" variant="outline" onClick={() => append({ key: '', value: '' })}>
                     <Plus />
                     {t('addLabel')}
                 </Button>
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noLabelsConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noLabelsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

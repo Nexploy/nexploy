@@ -1,10 +1,4 @@
-export type BuildStatus =
-    | 'QUEUED'
-    | 'BUILDING'
-    | 'COMPLETED'
-    | 'FAILED'
-    | 'DEPLOYING'
-    | 'CANCELLED';
+export type BuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'DEPLOYING' | 'CANCELLED';
 
 export interface RepositoryResult {
     id: string;

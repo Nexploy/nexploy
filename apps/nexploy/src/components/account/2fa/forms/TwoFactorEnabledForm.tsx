@@ -8,14 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { twoFactorAuthSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
 import { onTwoFactorAuthEnableAction } from '@/actions/auth/twoFactorAuthEnable.action';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
 export function TwoFactorEnabledForm() {

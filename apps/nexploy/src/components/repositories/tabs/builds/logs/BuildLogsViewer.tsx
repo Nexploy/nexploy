@@ -36,21 +36,12 @@ export function BuildLogsViewer({
 }: BuildLogsViewerProps) {
     const t = useTranslations('repository.builds.logs');
 
-    const liveLogs = inngestData.data
-        .filter((evt) => evt.topic === 'log' && evt.data?.log)
-        .map((evt) => evt.data.log);
+    const liveLogs = inngestData.data.filter((evt) => evt.topic === 'log' && evt.data?.log).map((evt) => evt.data.log);
 
     const logs = [...initialLogs, ...liveLogs];
 
-    const {
-        logsContainerRef,
-        logsEndRef,
-        showTimestamp,
-        setShowTimestamp,
-        autoScroll,
-        setAutoScroll,
-        downloadLogs,
-    } = useLogsToolbar({ logs, downloadFileName: `build-${buildId.slice(-6)}-logs.txt` });
+    const { logsContainerRef, logsEndRef, showTimestamp, setShowTimestamp, autoScroll, setAutoScroll, downloadLogs } =
+        useLogsToolbar({ logs, downloadFileName: `build-${buildId.slice(-6)}-logs.txt` });
 
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
@@ -84,10 +75,7 @@ export function BuildLogsViewer({
                     <span>{t('noLogs')}</span>
                 </div>
             ) : (
-                <ScrollAreaWithShadow
-                    ref={logsContainerRef}
-                    className="bg-muted/30 flex h-full font-mono text-sm"
-                >
+                <ScrollAreaWithShadow ref={logsContainerRef} className="bg-muted/30 flex h-full font-mono text-sm">
                     <div className="space-y-0.5 pt-1 pr-2 pl-0">
                         {logs.map((log, logIndex) => (
                             <div

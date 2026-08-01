@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Switch } from '@workspace/ui/components/switch';
 import {
     Select,
@@ -77,45 +71,29 @@ export function ScanImageConfig() {
                                                         {t('imageUnavailable')}
                                                     </span>
                                                 ) : (
-                                                    <SelectValue
-                                                        placeholder={t('scanImagePlaceholder')}
-                                                    />
+                                                    <SelectValue placeholder={t('scanImagePlaceholder')} />
                                                 )}
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
-                                                    <SelectLabel>
-                                                        {t('imagesSelectLabel')}
-                                                    </SelectLabel>
+                                                    <SelectLabel>{t('imagesSelectLabel')}</SelectLabel>
                                                     {imageOptions.length === 0 ? (
                                                         <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                             {t('noImagesAvailable')}
                                                         </span>
                                                     ) : (
-                                                        imageOptions.map(
-                                                            ({ tag, containersUsed }) => (
-                                                                <SelectItem
-                                                                    key={tag}
-                                                                    value={tag}
-                                                                    className="pl-0"
+                                                        imageOptions.map(({ tag, containersUsed }) => (
+                                                            <SelectItem key={tag} value={tag} className="pl-0">
+                                                                <Status
+                                                                    className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                                    status={containersUsed ? 'online' : 'offline'}
+                                                                    variant="outline"
                                                                 >
-                                                                    <Status
-                                                                        className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
-                                                                        status={
-                                                                            containersUsed
-                                                                                ? 'online'
-                                                                                : 'offline'
-                                                                        }
-                                                                        variant="outline"
-                                                                    >
-                                                                        <StatusIndicator className="pl-2" />
-                                                                        <span className="truncate">
-                                                                            {tag}
-                                                                        </span>
-                                                                    </Status>
-                                                                </SelectItem>
-                                                            ),
-                                                        )
+                                                                    <StatusIndicator className="pl-2" />
+                                                                    <span className="truncate">{tag}</span>
+                                                                </Status>
+                                                            </SelectItem>
+                                                        ))
                                                     )}
                                                 </SelectGroup>
                                             </SelectContent>
@@ -173,15 +151,9 @@ export function ScanImageConfig() {
                 name="exitOnVulnerabilities"
                 render={({ field }) => (
                     <FormItem className="flex items-center justify-between">
-                        <FormLabel className="cursor-pointer">
-                            {t('exitOnVulnerabilities')}
-                        </FormLabel>
+                        <FormLabel className="cursor-pointer">{t('exitOnVulnerabilities')}</FormLabel>
                         <FormControl>
-                            <Switch
-                                className="cursor-pointer"
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                            />
+                            <Switch className="cursor-pointer" checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                     </FormItem>
                 )}

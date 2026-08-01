@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
@@ -33,11 +27,7 @@ export function SetEnvVarsConfig() {
                             render={({ field: f }) => (
                                 <FormItem className="flex-1">
                                     <FormControl>
-                                        <Input
-                                            {...f}
-                                            placeholder={t('varKey')}
-                                            className="font-mono"
-                                        />
+                                        <Input {...f} placeholder={t('varKey')} className="font-mono" />
                                     </FormControl>
                                     <FormMessage className="text-xs" />
                                 </FormItem>
@@ -61,9 +51,7 @@ export function SetEnvVarsConfig() {
                                         variant="ghost"
                                         size="sm"
                                         className="absolute top-1/2 right-1 -translate-y-1/2"
-                                        onClick={() =>
-                                            setShowValues((p) => ({ ...p, [index]: !p[index] }))
-                                        }
+                                        onClick={() => setShowValues((p) => ({ ...p, [index]: !p[index] }))}
                                     >
                                         {showValues[index] ? <Eye /> : <EyeOff />}
                                     </Button>
@@ -71,12 +59,7 @@ export function SetEnvVarsConfig() {
                                 </FormItem>
                             )}
                         />
-                        <Button
-                            type="button"
-                            variant="destructiveGhost"
-                            size="icon"
-                            onClick={() => remove(index)}
-                        >
+                        <Button type="button" variant="destructiveGhost" size="icon" onClick={() => remove(index)}>
                             <Trash2 />
                         </Button>
                     </div>

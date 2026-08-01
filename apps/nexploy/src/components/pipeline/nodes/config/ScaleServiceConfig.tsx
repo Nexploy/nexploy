@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -28,10 +28,7 @@ export function ScaleServiceConfig() {
                 control={form.control}
                 name="serviceId"
                 render={({ field }) => {
-                    const isStale =
-                        !!field.value &&
-                        services.length > 0 &&
-                        !services.find((s) => s.id === field.value);
+                    const isStale = !!field.value && services.length > 0 && !services.find((s) => s.id === field.value);
 
                     const handleSelect = (serviceId: string) => {
                         field.onChange(serviceId);
@@ -52,26 +49,19 @@ export function ScaleServiceConfig() {
                                                     {t('serviceUnavailable')}
                                                 </span>
                                             ) : (
-                                                <SelectValue
-                                                    placeholder={t('serviceNamePlaceholder')}
-                                                />
+                                                <SelectValue placeholder={t('serviceNamePlaceholder')} />
                                             )}
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>
-                                                    {t('servicesSelectLabel')}
-                                                </SelectLabel>
+                                                <SelectLabel>{t('servicesSelectLabel')}</SelectLabel>
                                                 {services.length === 0 ? (
                                                     <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                         {t('noServicesFound')}
                                                     </span>
                                                 ) : (
                                                     services.map((service) => (
-                                                        <SelectItem
-                                                            key={service.id}
-                                                            value={service.id}
-                                                        >
+                                                        <SelectItem key={service.id} value={service.id}>
                                                             {service.name}
                                                         </SelectItem>
                                                     ))

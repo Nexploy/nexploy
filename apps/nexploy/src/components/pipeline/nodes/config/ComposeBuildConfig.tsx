@@ -57,9 +57,7 @@ export function ComposeBuildConfig() {
                     <FormItem className="border-border flex items-center rounded-md border p-3">
                         <FormLabel className="flex cursor-pointer flex-col items-start justify-between gap-1">
                             <span>{t('noCache')}</span>
-                            <FormDescription className="text-xs">
-                                {t('noCacheDescription')}
-                            </FormDescription>
+                            <FormDescription className="text-xs">{t('noCacheDescription')}</FormDescription>
                         </FormLabel>
                         <FormControl>
                             <Switch checked={field.value} onCheckedChange={field.onChange} />

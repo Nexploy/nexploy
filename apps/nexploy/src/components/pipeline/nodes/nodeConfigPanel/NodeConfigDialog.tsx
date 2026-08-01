@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { type Node } from '@xyflow/react';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, } from '@workspace/ui/components/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { usePipelineActions, usePipelineDisplay } from '@/stores/pipeline/usePipelineStore';
@@ -21,8 +21,7 @@ export function NodeConfigDialog() {
     const tConfig = useTranslations('repository.pipeline.config');
     const tCommon = useTranslations('common');
 
-    const { nodes, displayNodes, isViewingBuild, nodeStatuses, nodeDurations, nodeStartTimes } =
-        usePipelineDisplay();
+    const { nodes, displayNodes, isViewingBuild, nodeStatuses, nodeDurations, nodeStartTimes } = usePipelineDisplay();
     const { handleResetPanelNode } = usePipelineActions();
     const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
@@ -70,9 +69,7 @@ export function NodeConfigDialog() {
                                         )}
                                     </div>
                                     {nodeDesc && (
-                                        <span
-                                            className={'text-muted-foreground text-xs leading-none'}
-                                        >
+                                        <span className={'text-muted-foreground text-xs leading-none'}>
                                             {tPipeline(`nodes.${nodeType}.description`)}
                                         </span>
                                     )}
@@ -99,11 +96,7 @@ export function NodeConfigDialog() {
                                         />
                                     </div>
                                     <DialogFooter className="bg-muted/40 border-t p-4">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={handleResetPanelNode}
-                                        >
+                                        <Button variant="outline" size="sm" onClick={handleResetPanelNode}>
                                             {tCommon('close')}
                                         </Button>
                                     </DialogFooter>

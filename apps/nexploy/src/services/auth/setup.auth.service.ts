@@ -4,11 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { TypeSetupFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { isAdminExist, signInUser } from '@/services/auth/auth.service';
 
-export async function setupAdminAccount({
-    email,
-    password,
-    name,
-}: TypeSetupFormSchema): Promise<User> {
+export async function setupAdminAccount({ email, password, name }: TypeSetupFormSchema): Promise<User> {
     const t = await getTranslations('auth');
 
     const hasAdmin = await isAdminExist();

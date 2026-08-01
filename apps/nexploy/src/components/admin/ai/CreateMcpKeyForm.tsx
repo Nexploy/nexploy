@@ -9,14 +9,7 @@ import { createMcpApiKeySchema } from '@workspace/schemas-zod/ai/mcpApiKey.schem
 import { createMcpApiKeyAction } from '@/actions/admin/ai/createMcpApiKey.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { DialogFooter } from '@workspace/ui/components/dialog';
@@ -55,9 +48,7 @@ export function CreateMcpKeyForm() {
                                         variant="ghost"
                                     />
                                 </div>
-                                <p className="text-muted-foreground text-xs">
-                                    {t('generatedWarning')}
-                                </p>
+                                <p className="text-muted-foreground text-xs">{t('generatedWarning')}</p>
                             </div>
                         ),
                         cancelLabel: tCommon('close'),

@@ -2,10 +2,7 @@ import type { IncomingMessage } from 'http';
 import { auth } from '@/lib/auth/auth';
 import { hasPermission } from '@/lib/auth/permissions';
 import { hasOrgPermission } from '@/lib/auth/orgPermissions';
-import {
-    getCallerOrgRoleForProxy,
-    resolveOrganizationIdForContainerId,
-} from '@/lib/auth/resolveContainerOrgForProxy';
+import { getCallerOrgRoleForProxy, resolveOrganizationIdForContainerId } from '@/lib/auth/resolveContainerOrgForProxy';
 import { extractContainerId } from '@/server/wsRoutes';
 import type { Actor } from '@workspace/shared/actor';
 
@@ -16,14 +13,9 @@ export interface UpgradeDenial {
     reason: string;
 }
 
-export type UpgradeAuthorization =
-    | { authorized: false; denial: UpgradeDenial }
-    | { authorized: true; actor: Actor };
+export type UpgradeAuthorization = { authorized: false; denial: UpgradeDenial } | { authorized: true; actor: Actor };
 
-export async function authorizeContainerUpgrade(
-    req: IncomingMessage,
-    parsedUrl: URL,
-): Promise<UpgradeAuthorization> {
+export async function authorizeContainerUpgrade(req: IncomingMessage, parsedUrl: URL): Promise<UpgradeAuthorization> {
     const headers = new Headers();
     if (req.headers.cookie) headers.set('cookie', req.headers.cookie);
 
@@ -38,12 +30,8 @@ export async function authorizeContainerUpgrade(
 
     if (role !== 'admin') {
         const containerId = extractContainerId(parsedUrl.pathname);
-        organizationId = containerId
-            ? await resolveOrganizationIdForContainerId(containerId)
-            : null;
-        const orgRole = organizationId
-            ? await getCallerOrgRoleForProxy(session.user.id, organizationId)
-            : null;
+        organizationId = containerId ? await resolveOrganizationIdForContainerId(containerId) : null;
+        const orgRole = organizationId ? await getCallerOrgRoleForProxy(session.user.id, organizationId) : null;
 
         if (!orgRole || !hasOrgPermission(orgRole, 'container', 'manage')) {
             return { authorized: false, denial: { status: 403, reason: 'Forbidden' } };

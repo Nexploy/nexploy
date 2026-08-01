@@ -4,13 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import {
@@ -69,13 +63,9 @@ export function MergeBranchConfig() {
                         >
                             <SelectTrigger>
                                 {isLoadingRepo ? (
-                                    <span className="text-muted-foreground">
-                                        {t('repoLoading')}
-                                    </span>
+                                    <span className="text-muted-foreground">{t('repoLoading')}</span>
                                 ) : isLoadingBranches ? (
-                                    <span className="text-muted-foreground">
-                                        {t('branchLoading')}
-                                    </span>
+                                    <span className="text-muted-foreground">{t('branchLoading')}</span>
                                 ) : (
                                     <SelectValue placeholder={t('branchSelect')} />
                                 )}
@@ -121,9 +111,7 @@ export function MergeBranchConfig() {
                                 <SelectGroup>
                                     <SelectLabel>{t('mergeStrategy')}</SelectLabel>
                                     <SelectItem value="merge">{t('mergeStrategyMerge')}</SelectItem>
-                                    <SelectItem value="squash">
-                                        {t('mergeStrategySquash')}
-                                    </SelectItem>
+                                    <SelectItem value="squash">{t('mergeStrategySquash')}</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>

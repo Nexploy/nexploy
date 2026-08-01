@@ -31,18 +31,12 @@ export class DownloadFileExecutor implements INodeExecutor {
 
         const resolvedDest = safeResolvePath(base, destinationPath);
 
-        const finalFilename =
-            filename ?? (path.basename(new URL(url).pathname) || 'downloaded-file');
+        const finalFilename = filename ?? (path.basename(new URL(url).pathname) || 'downloaded-file');
         const outputFile = path.join(resolvedDest, finalFilename);
 
-        await logger.info(
-            nodeId,
-            `Downloading ${url} → ${path.join(destinationPath, finalFilename)}`,
-        );
+        await logger.info(nodeId, `Downloading ${url} → ${path.join(destinationPath, finalFilename)}`);
 
-        const arrayBuffer = await ky
-            .get(url, { signal: abortSignal, timeout: false })
-            .arrayBuffer();
+        const arrayBuffer = await ky.get(url, { signal: abortSignal, timeout: false }).arrayBuffer();
 
         await fs.mkdir(resolvedDest, { recursive: true });
 
@@ -50,10 +44,7 @@ export class DownloadFileExecutor implements INodeExecutor {
         await fs.writeFile(outputFile, buffer);
 
         const sizeKb = (buffer.byteLength / 1024).toFixed(1);
-        await logger.info(
-            nodeId,
-            `Downloaded ${sizeKb} KB to ${path.join(destinationPath, finalFilename)}`,
-        );
+        await logger.info(nodeId, `Downloaded ${sizeKb} KB to ${path.join(destinationPath, finalFilename)}`);
 
         return {
             output: {

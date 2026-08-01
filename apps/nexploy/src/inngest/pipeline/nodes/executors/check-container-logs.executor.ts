@@ -75,10 +75,7 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
                 }
             } catch (err) {
                 if (abortSignal.aborted) throw new Error('Aborted');
-                await logger.debug(
-                    nodeId,
-                    `Log fetch error: ${err instanceof Error ? err.message : 'unknown'}`,
-                );
+                await logger.debug(nodeId, `Log fetch error: ${err instanceof Error ? err.message : 'unknown'}`);
             }
 
             if (!found) {
@@ -89,9 +86,7 @@ export class CheckContainerLogsExecutor implements INodeExecutor {
         if (found) {
             await logger.info(nodeId, `Pattern found in logs: ${matchedLine.slice(0, 200)}`);
             if (failIfFound) {
-                throw new Error(
-                    `Pattern "${pattern}" was found in container logs (failIfFound = true)`,
-                );
+                throw new Error(`Pattern "${pattern}" was found in container logs (failIfFound = true)`);
             }
             return { output: { found: true, matchedLine, containerId } };
         } else {

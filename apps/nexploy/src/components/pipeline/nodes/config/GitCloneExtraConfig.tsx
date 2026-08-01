@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 
 export function GitCloneExtraConfig() {
@@ -31,11 +31,7 @@ export function GitCloneExtraConfig() {
                     <FormItem>
                         <FormLabel>{t('gitCloneToken')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                type="password"
-                                placeholder={t('gitCloneTokenPlaceholder')}
-                            />
+                            <Input {...field} type="password" placeholder={t('gitCloneTokenPlaceholder')} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                     </FormItem>

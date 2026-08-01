@@ -1,9 +1,6 @@
 'use client';
 
-import {
-    initializeEnvironmentStore,
-    useEnvironmentStore,
-} from '@/stores/docker/useEnvironmentStore';
+import { initializeEnvironmentStore, useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { useEffect } from 'react';
 import {
     DropdownMenu,
@@ -15,12 +12,7 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
-import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
-} from '@workspace/ui/components/sidebar';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@workspace/ui/components/sidebar';
 import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash2 } from 'lucide-react';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
@@ -137,9 +129,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                     removeEnvironment(environment.id);
 
                     if (selectedEnvironmentId === environment.id) {
-                        const remaining = storeEnvironments.filter(
-                            (env) => env.id !== environment.id,
-                        );
+                        const remaining = storeEnvironments.filter((env) => env.id !== environment.id);
                         if (remaining.length) selectEnvironment(remaining[0]!.id);
                     }
 
@@ -191,9 +181,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                             <Star className="text-muted-foreground size-3 fill-current" />
                                         )}
                                     </div>
-                                    {selectedEnvironmentId === environment.id && (
-                                        <Check className="size-4" />
-                                    )}
+                                    {selectedEnvironmentId === environment.id && <Check className="size-4" />}
                                 </DropdownMenuItem>
                                 <Can resource="environment" action="update">
                                     <DropdownMenu>
@@ -208,16 +196,12 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent side={'right'} align="start">
-                                            <DropdownMenuItem
-                                                onClick={() => handleEnvironmentEdit(environment)}
-                                            >
+                                            <DropdownMenuItem onClick={() => handleEnvironmentEdit(environment)}>
                                                 <Pencil />
                                                 {t('edit')}
                                             </DropdownMenuItem>
                                             {!environment.isDefault && (
-                                                <DropdownMenuItem
-                                                    onClick={() => handleSetAsDefault(environment)}
-                                                >
+                                                <DropdownMenuItem onClick={() => handleSetAsDefault(environment)}>
                                                     <Star className={'fill-current'} />
                                                     {t('setAsDefault')}
                                                 </DropdownMenuItem>
@@ -226,9 +210,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuItem
                                                     variant="destructive"
-                                                    onClick={() =>
-                                                        handleEnvironmentDelete(environment)
-                                                    }
+                                                    onClick={() => handleEnvironmentDelete(environment)}
                                                 >
                                                     <Trash2 />
                                                     {t('delete')}

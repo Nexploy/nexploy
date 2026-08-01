@@ -17,11 +17,7 @@ interface UseContainerActionsProps {
     isPaused: boolean;
 }
 
-export function useContainerActions({
-    containerId,
-    containerName,
-    isPaused,
-}: UseContainerActionsProps) {
+export function useContainerActions({ containerId, containerName, isPaused }: UseContainerActionsProps) {
     const t = useTranslations('docker.containerActions');
     const tTables = useTranslations('docker.tables');
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
@@ -91,9 +87,7 @@ export function useContainerActions({
                                         <p className={'text-destructive text-sm font-medium'}>
                                             {tTables('forceRemove')}
                                         </p>
-                                        <p className={'text-xs'}>
-                                            {tTables('forceRemoveDescription')}
-                                        </p>
+                                        <p className={'text-xs'}>{tTables('forceRemoveDescription')}</p>
                                     </div>
                                     <Switch
                                         id={'force-remove'}

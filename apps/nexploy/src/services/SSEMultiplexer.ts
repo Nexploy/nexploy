@@ -15,8 +15,7 @@ const LOCAL_CHANNELS: Record<string, string> = {
 class SSEMultiplexerService {
     private multiplexedEventSource: EventSource | null = null;
     private localEventSources: Map<string, EventSource> = new Map();
-    private subscriptions: Map<string, { config: ChannelConfig; handlers: ChannelHandlers }> =
-        new Map();
+    private subscriptions: Map<string, { config: ChannelConfig; handlers: ChannelHandlers }> = new Map();
     private reconnectTimeout: NodeJS.Timeout | null = null;
     private readonly RECONNECT_DELAY = 5000;
     private readonly SYNC_DEBOUNCE_DELAY = 50;
@@ -237,9 +236,7 @@ class SSEMultiplexerService {
         }
 
         try {
-            const channelsParam = remoteChannelKeys
-                .map((channelKey) => encodeURIComponent(channelKey))
-                .join(',');
+            const channelsParam = remoteChannelKeys.map((channelKey) => encodeURIComponent(channelKey)).join(',');
 
             const url = new URL('/api/events/multiplexed', window.location.origin);
             url.searchParams.set('channels', channelsParam);
@@ -271,10 +268,7 @@ class SSEMultiplexerService {
                 try {
                     const { channel, event, data, params } = JSON.parse(e.data);
 
-                    this.lastChannelMessageAt.set(
-                        this.getChannelKey({ channel, params }),
-                        Date.now(),
-                    );
+                    this.lastChannelMessageAt.set(this.getChannelKey({ channel, params }), Date.now());
 
                     if (event === 'error') {
                         try {
@@ -288,9 +282,7 @@ class SSEMultiplexerService {
                                 this.permanentErrors.add(environmentId);
 
                                 if (!alreadyKnown) {
-                                    console.warn(
-                                        `[SSE] Permanent error for environment ${environmentId}`,
-                                    );
+                                    console.warn(`[SSE] Permanent error for environment ${environmentId}`);
                                 }
 
                                 this.subscriptions.forEach((subscription) => {
@@ -341,12 +333,7 @@ class SSEMultiplexerService {
         this.connectMultiplexed();
     }
 
-    private dispatch(
-        channel: SSEChannel,
-        event: string,
-        data: string,
-        params?: Record<string, string>,
-    ): void {
+    private dispatch(channel: SSEChannel, event: string, data: string, params?: Record<string, string>): void {
         const channelKey = this.getChannelKey({ channel, params });
         const subscription = this.subscriptions.get(channelKey);
 
@@ -381,9 +368,7 @@ class SSEMultiplexerService {
 
         const environmentId = this.currentEnvironmentId || 'default';
         if (this.permanentErrors.has(environmentId)) {
-            console.warn(
-                `[SSE] Not reconnecting due to permanent error for environment ${environmentId}`,
-            );
+            console.warn(`[SSE] Not reconnecting due to permanent error for environment ${environmentId}`);
             return;
         }
 
@@ -401,10 +386,7 @@ class SSEMultiplexerService {
             const now = Date.now();
             const staleChannelKey = Array.from(this.activeChannelKeys).find((channelKey) => {
                 const lastMessageAt = this.lastChannelMessageAt.get(channelKey);
-                return (
-                    lastMessageAt !== undefined &&
-                    now - lastMessageAt > this.CHANNEL_STALE_THRESHOLD
-                );
+                return lastMessageAt !== undefined && now - lastMessageAt > this.CHANNEL_STALE_THRESHOLD;
             });
 
             if (!staleChannelKey) return;

@@ -50,11 +50,7 @@ export function ServiceBasicConfig() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Settings}
-                title={t('basicConfig')}
-                description={t('basicConfigDescription')}
-            />
+            <CardHeaderWithIcon icon={Settings} title={t('basicConfig')} description={t('basicConfigDescription')} />
             <CardContent className="space-y-4">
                 <FormField
                     control={form.control}
@@ -108,12 +104,8 @@ export function ServiceBasicConfig() {
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>{t('deploymentMode')}</SelectLabel>
-                                            <SelectItem value="replicated">
-                                                {t('modeReplicated')}
-                                            </SelectItem>
-                                            <SelectItem value="global">
-                                                {t('modeGlobal')}
-                                            </SelectItem>
+                                            <SelectItem value="replicated">{t('modeReplicated')}</SelectItem>
+                                            <SelectItem value="global">{t('modeGlobal')}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -136,16 +128,12 @@ export function ServiceBasicConfig() {
                                             min={1}
                                             onChange={(e) =>
                                                 field.onChange(
-                                                    isNaN(e.target.valueAsNumber)
-                                                        ? 1
-                                                        : e.target.valueAsNumber,
+                                                    isNaN(e.target.valueAsNumber) ? 1 : e.target.valueAsNumber,
                                                 )
                                             }
                                         />
                                     </FormControl>
-                                    <FormDescription>
-                                        {t('replicaCountDescription')}
-                                    </FormDescription>
+                                    <FormDescription>{t('replicaCountDescription')}</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -161,16 +149,10 @@ export function ServiceBasicConfig() {
                             <FormItem>
                                 <FormLabel>
                                     {t('command')}
-                                    <span className="text-muted-foreground text-xs">
-                                        {tCommon('optional')}
-                                    </span>
+                                    <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
-                                        placeholder={t('commandPlaceholder')}
-                                        className="font-mono"
-                                        {...field}
-                                    />
+                                    <Input placeholder={t('commandPlaceholder')} className="font-mono" {...field} />
                                 </FormControl>
                                 <FormDescription>{t('commandDescription')}</FormDescription>
                                 <FormMessage />
@@ -185,16 +167,10 @@ export function ServiceBasicConfig() {
                             <FormItem>
                                 <FormLabel>
                                     {t('workDir')}
-                                    <span className="text-muted-foreground text-xs">
-                                        {tCommon('optional')}
-                                    </span>
+                                    <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
-                                        placeholder={t('workDirPlaceholder')}
-                                        className="font-mono"
-                                        {...field}
-                                    />
+                                    <Input placeholder={t('workDirPlaceholder')} className="font-mono" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -208,16 +184,10 @@ export function ServiceBasicConfig() {
                             <FormItem>
                                 <FormLabel>
                                     {t('user')}
-                                    <span className="text-muted-foreground text-xs">
-                                        {tCommon('optional')}
-                                    </span>
+                                    <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
-                                        placeholder={t('userPlaceholder')}
-                                        className="font-mono"
-                                        {...field}
-                                    />
+                                    <Input placeholder={t('userPlaceholder')} className="font-mono" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

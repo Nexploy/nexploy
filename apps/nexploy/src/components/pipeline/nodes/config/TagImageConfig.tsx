@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -63,8 +57,7 @@ export function TagImageConfig() {
                         !isNodeFieldRef(field.value) &&
                         !imageOptions.find(
                             (imageOption) =>
-                                imageOption.value === field.value ||
-                                imageOption.repoTags.includes(field.value),
+                                imageOption.value === field.value || imageOption.repoTags.includes(field.value),
                         );
 
                     return (
@@ -78,11 +71,7 @@ export function TagImageConfig() {
                                     </p>
                                 ) : (
                                     <RefAware value={field.value} onChange={field.onChange}>
-                                        <Select
-                                            {...field}
-                                            onValueChange={field.onChange}
-                                            disabled={isLoading}
-                                        >
+                                        <Select {...field} onValueChange={field.onChange} disabled={isLoading}>
                                             <SelectTrigger className="w-full overflow-hidden pl-0! data-[placeholder]:pl-3!">
                                                 {isStale ? (
                                                     <span className="flex items-center gap-1.5 pl-3">
@@ -90,49 +79,31 @@ export function TagImageConfig() {
                                                         {t('imageUnavailable')}
                                                     </span>
                                                 ) : (
-                                                    <SelectValue
-                                                        placeholder={t('imageIdPlaceholder')}
-                                                    />
+                                                    <SelectValue placeholder={t('imageIdPlaceholder')} />
                                                 )}
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
-                                                    <SelectLabel>
-                                                        {t('imagesSelectLabel')}
-                                                    </SelectLabel>
+                                                    <SelectLabel>{t('imagesSelectLabel')}</SelectLabel>
                                                     {imageOptions.length === 0 ? (
                                                         <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                             {t('noImagesAvailable')}
                                                         </span>
                                                     ) : (
-                                                        imageOptions.map(
-                                                            ({
-                                                                value,
-                                                                repoTags,
-                                                                containersUsed,
-                                                            }) => (
-                                                                <SelectItem
-                                                                    key={value}
-                                                                    value={value}
-                                                                    className="pl-0"
+                                                        imageOptions.map(({ value, repoTags, containersUsed }) => (
+                                                            <SelectItem key={value} value={value} className="pl-0">
+                                                                <Status
+                                                                    className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
+                                                                    status={containersUsed ? 'online' : 'offline'}
+                                                                    variant="outline"
                                                                 >
-                                                                    <Status
-                                                                        className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
-                                                                        status={
-                                                                            containersUsed
-                                                                                ? 'online'
-                                                                                : 'offline'
-                                                                        }
-                                                                        variant="outline"
-                                                                    >
-                                                                        <StatusIndicator className="pl-2" />
-                                                                        <span className="truncate">
-                                                                            {repoTags.join(', ')}
-                                                                        </span>
-                                                                    </Status>
-                                                                </SelectItem>
-                                                            ),
-                                                        )
+                                                                    <StatusIndicator className="pl-2" />
+                                                                    <span className="truncate">
+                                                                        {repoTags.join(', ')}
+                                                                    </span>
+                                                                </Status>
+                                                            </SelectItem>
+                                                        ))
                                                     )}
                                                 </SelectGroup>
                                             </SelectContent>

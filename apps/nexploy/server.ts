@@ -5,12 +5,7 @@ import next from 'next';
 import { isDev, nextHostname, port, resolveStandaloneConf } from '@/server/config';
 import { pruneTurbopackCache } from '@/server/turbopackCache';
 import { handleUpgrade } from '@/server/upgradeHandler';
-import {
-    ensureTraefikReady,
-    registerGracefulShutdown,
-    startHeapMonitor,
-    trackOpenSockets,
-} from '@/server/lifecycle';
+import { ensureTraefikReady, registerGracefulShutdown, startHeapMonitor, trackOpenSockets } from '@/server/lifecycle';
 
 const app = next({
     dev: isDev,

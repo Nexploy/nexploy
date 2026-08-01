@@ -1,6 +1,10 @@
 import ky from 'ky';
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { fetchSecretsDopplerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { z } from 'zod';
@@ -36,12 +40,7 @@ export class FetchSecretsDopplerExecutor implements INodeExecutor {
         await logger.info(nodeId, `Fetched ${count} secret(s) from Doppler`);
 
         const ancestorEnvs =
-            getFromClosestAncestor<{ key: string; value: string }[]>(
-                allOutputs,
-                edges,
-                nodeId,
-                'envVariables',
-            ) ?? [];
+            getFromClosestAncestor<{ key: string; value: string }[]>(allOutputs, edges, nodeId, 'envVariables') ?? [];
         const ancestorMap = Object.fromEntries(ancestorEnvs.map((e) => [e.key, e.value]));
         const merged = { ...ancestorMap, ...secrets };
         const envVariables = Object.entries(merged).map(([key, value]) => ({ key, value }));

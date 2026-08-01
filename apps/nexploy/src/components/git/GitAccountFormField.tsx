@@ -14,13 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Badge } from '@workspace/ui/components/badge';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { PROVIDER_ICONS } from '@/components/git/providerIcons';
@@ -33,17 +27,11 @@ interface GitAccountFormFieldProps {
     noAccountsContent?: ReactNode;
 }
 
-export function GitAccountFormField({
-    onValueChange,
-    noAccountsContent,
-}: GitAccountFormFieldProps) {
+export function GitAccountFormField({ onValueChange, noAccountsContent }: GitAccountFormFieldProps) {
     const t = useTranslations('repository.steps.gitSource');
     const { control } = useFormContext();
 
-    const { data: accounts, isLoading } = useSWR<GitAccountSummary[]>(
-        { url: '/api/git/accounts' },
-        fetcherApi,
-    );
+    const { data: accounts, isLoading } = useSWR<GitAccountSummary[]>({ url: '/api/git/accounts' }, fetcherApi);
 
     if (isLoading) return <Skeleton className="h-9 w-52" />;
 
@@ -82,20 +70,12 @@ export function GitAccountFormField({
                                         <SelectItem key={account.id} value={account.id}>
                                             <span className="flex items-center gap-2">
                                                 <ProviderIcon className="size-5" />
-                                                <span>
-                                                    {account.providerUsername ??
-                                                        account.providerAccountId}
-                                                </span>
+                                                <span>{account.providerUsername ?? account.providerAccountId}</span>
                                                 {hostname && (
-                                                    <span className="text-muted-foreground text-xs">
-                                                        {hostname}
-                                                    </span>
+                                                    <span className="text-muted-foreground text-xs">{hostname}</span>
                                                 )}
                                                 {isOrg && (
-                                                    <Badge
-                                                        variant="secondary"
-                                                        className="gap-1 py-0 text-xs"
-                                                    >
+                                                    <Badge variant="secondary" className="gap-1 py-0 text-xs">
                                                         <Building2 className="size-3" />
                                                         {account.gitProvider.ownerName}
                                                     </Badge>

@@ -20,9 +20,7 @@ class GitService {
             throw new Error(`Invalid repository URL: ${gitUrl}`);
         }
         if (!ALLOWED_GIT_PROTOCOLS.includes(parsed.protocol)) {
-            throw new Error(
-                `Unsupported repository URL protocol "${parsed.protocol}". Only http(s) is allowed.`,
-            );
+            throw new Error(`Unsupported repository URL protocol "${parsed.protocol}". Only http(s) is allowed.`);
         }
     }
 
@@ -85,23 +83,13 @@ class GitService {
 
         const workDir =
             options?.destDir ??
-            join(
-                process.env.DEPLOYER_WORK_DIR as string,
-                buildConfig.repositoryId,
-                Date.now().toString(),
-            );
+            join(process.env.DEPLOYER_WORK_DIR as string, buildConfig.repositoryId, Date.now().toString());
         await mkdir(workDir, { recursive: true });
 
         const token = await this.resolveToken(buildConfig, options?.manualToken);
 
         try {
-            await this.execCloneWithRetry(
-                token,
-                buildConfig,
-                workDir,
-                options?.submodules ?? false,
-                onProgress,
-            );
+            await this.execCloneWithRetry(token, buildConfig, workDir, options?.submodules ?? false, onProgress);
         } catch (error: unknown) {
             await rm(workDir, { recursive: true, force: true }).catch(() => {});
             const message = error instanceof Error ? error.message : String(error);
@@ -118,10 +106,7 @@ class GitService {
         return workDir;
     }
 
-    private async resolveToken(
-        buildConfig: BuildConfig,
-        manualToken?: string,
-    ): Promise<GitProviderToken> {
+    private async resolveToken(buildConfig: BuildConfig, manualToken?: string): Promise<GitProviderToken> {
         if (manualToken !== undefined) {
             return {
                 accessToken: manualToken || null,
@@ -133,12 +118,7 @@ class GitService {
             gitAccountId: buildConfig.gitAccountId,
             requestedUserId: buildConfig.userId,
         });
-        return getValidToken(
-            stored,
-            buildConfig.gitProvider,
-            buildConfig.userId,
-            buildConfig.gitAccountId,
-        );
+        return getValidToken(stored, buildConfig.gitProvider, buildConfig.userId, buildConfig.gitAccountId);
     }
 
     private baseGitEnv(): NodeJS.ProcessEnv {
@@ -149,11 +129,7 @@ class GitService {
         return getGitAdapter(provider).cloneCredentialUsername;
     }
 
-    private buildAuthedUrl(
-        gitUrl: string,
-        accessToken: string | null,
-        provider: BuildConfig['gitProvider'],
-    ): string {
+    private buildAuthedUrl(gitUrl: string, accessToken: string | null, provider: BuildConfig['gitProvider']): string {
         if (!accessToken) return gitUrl;
         const url = new URL(gitUrl);
         url.username = this.gitCredentialUsername(provider);
@@ -196,17 +172,8 @@ class GitService {
         const gitEnv = this.baseGitEnv();
 
         const runClone = async (accessToken: string | null) => {
-            const authedUrl = this.buildAuthedUrl(
-                buildConfig.gitUrl,
-                accessToken,
-                buildConfig.gitProvider,
-            );
-            const cloneArgs = this.buildCloneArgs(
-                authedUrl,
-                buildConfig.gitBranch,
-                workDir,
-                submodules,
-            );
+            const authedUrl = this.buildAuthedUrl(buildConfig.gitUrl, accessToken, buildConfig.gitProvider);
+            const cloneArgs = this.buildCloneArgs(authedUrl, buildConfig.gitBranch, workDir, submodules);
             try {
                 await this.exec('git', cloneArgs, { env: gitEnv }, onProgress);
             } catch (err: unknown) {
@@ -263,9 +230,7 @@ class GitService {
                 }
             }
 
-            throw new Error(
-                `Docker Compose file not found. Tried: ${primaryPath}, ${alternativePaths.join(', ')}`,
-            );
+            throw new Error(`Docker Compose file not found. Tried: ${primaryPath}, ${alternativePaths.join(', ')}`);
         }
     }
 
@@ -284,11 +249,7 @@ class GitService {
         }
     }
 
-    async createTag(
-        workDir: string,
-        tagName: string,
-        message?: string,
-    ): Promise<{ alreadyExists: boolean }> {
+    async createTag(workDir: string, tagName: string, message?: string): Promise<{ alreadyExists: boolean }> {
         const args = message ? ['tag', '-a', tagName, '-m', message] : ['tag', tagName];
         try {
             await this.exec('git', args, { cwd: workDir });
@@ -356,9 +317,7 @@ class GitService {
             await this.exec('git', ['checkout', options.targetBranch], { cwd: workDir });
         }
 
-        const currentBranch = (
-            await this.exec('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { cwd: workDir })
-        ).trim();
+        const currentBranch = (await this.exec('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { cwd: workDir })).trim();
 
         const args = ['merge'];
         if (options?.strategy === 'squash') args.push('--squash');
@@ -389,11 +348,9 @@ class GitService {
         to: string,
     ): Promise<{ hash: string; subject: string; author: string; date: string }[]> {
         const range = from ? `${from}..${to}` : to;
-        const output = await this.exec(
-            'git',
-            ['log', range, '--format=%H|%s|%an|%ai', '--no-merges'],
-            { cwd: workDir },
-        );
+        const output = await this.exec('git', ['log', range, '--format=%H|%s|%an|%ai', '--no-merges'], {
+            cwd: workDir,
+        });
         if (!output.trim()) return [];
         return output
             .trim()

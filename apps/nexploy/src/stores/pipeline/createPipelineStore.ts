@@ -47,11 +47,9 @@ export function createPipelineStore({
         buildNodeDurations: {},
         buildNodeStartTimes: {},
 
-        setNodes: (updater) =>
-            set((s) => ({ nodes: typeof updater === 'function' ? updater(s.nodes) : updater })),
+        setNodes: (updater) => set((s) => ({ nodes: typeof updater === 'function' ? updater(s.nodes) : updater })),
 
-        setEdges: (updater) =>
-            set((s) => ({ edges: typeof updater === 'function' ? updater(s.edges) : updater })),
+        setEdges: (updater) => set((s) => ({ edges: typeof updater === 'function' ? updater(s.edges) : updater })),
 
         onNodesChange: (changes) => {
             set((s) => ({ nodes: applyNodeChanges(changes, s.nodes) }));
@@ -90,9 +88,7 @@ export function createPipelineStore({
 
         handleConfigChange: (nodeId, config) => {
             set((s) => ({
-                nodes: s.nodes.map((n) =>
-                    n.id === nodeId ? { ...n, data: { ...n.data, config } } : n,
-                ),
+                nodes: s.nodes.map((n) => (n.id === nodeId ? { ...n, data: { ...n.data, config } } : n)),
             }));
         },
 
@@ -124,10 +120,7 @@ export function createPipelineStore({
                 selected: true,
                 data: { ...n.data },
             }));
-            const newNodes = [
-                ...nodes.map((n) => (n.selected ? { ...n, selected: false } : n)),
-                ...copies,
-            ];
+            const newNodes = [...nodes.map((n) => (n.selected ? { ...n, selected: false } : n)), ...copies];
             const newEdges = [
                 ...edges,
                 ...edges

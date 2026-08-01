@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { kyDocker, KyDockerOptions } from '@/lib/api/kyDocker';
 import { createBucketStorageClient, putBucketStorageObject } from '@/lib/bucket-storage/bucketStorage';
 import { getBucketStorageCredentials } from '@/services/bucketStorage.service';
@@ -19,12 +23,7 @@ export class BackupVolumeBucketStorageExecutor implements INodeExecutor {
         const volumeName = nodeConfig.volumeName;
         const accountId = nodeConfig.accountId;
         const bucket = nodeConfig.bucket;
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(nodeId, `Fetching AWS credentials for account ${accountId}`);
         const creds = await getBucketStorageCredentials(accountId);
@@ -41,10 +40,7 @@ export class BackupVolumeBucketStorageExecutor implements INodeExecutor {
 
         const fileName = `${volumeName}-${Date.now()}.tar.gz`;
 
-        await logger.info(
-            nodeId,
-            `Uploading ${fileName} to ${bucket} (${buffer.byteLength} bytes)`,
-        );
+        await logger.info(nodeId, `Uploading ${fileName} to ${bucket} (${buffer.byteLength} bytes)`);
         if (abortSignal.aborted) throw new Error('Build cancelled');
 
         const client = createBucketStorageClient(creds);

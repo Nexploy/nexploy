@@ -6,8 +6,8 @@ import { route } from '@/utils/route';
 import { wait, waitForContainerHealthy, waitForFile } from '@/utils/wait';
 import { logger } from '@/utils/logger';
 import { HttpError } from '@workspace/shared/http-error';
-import { buildCachePruneSchema, type CleanupTarget, } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
-import { instanceDomainSchema, upgradeSchema, } from '@workspace/schemas-zod/admin/instance.schema';
+import { buildCachePruneSchema, type CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
+import { instanceDomainSchema, upgradeSchema } from '@workspace/schemas-zod/admin/instance.schema';
 import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 import {
     DOCKER_API_CONTAINER_NAME,
@@ -61,16 +61,13 @@ app.get(
         const volumes = df.Volumes ?? [];
         const buildCache = df.BuildCache ?? [];
 
-        const sum = <T>(arr: T[], fn: (item: T) => number) =>
-            arr.reduce((acc, i) => acc + fn(i), 0);
+        const sum = <T>(arr: T[], fn: (item: T) => number) => arr.reduce((acc, i) => acc + fn(i), 0);
 
         const imagesSize = sum(images, (i) => i.Size ?? 0);
         const imagesReclaimable = sum(images, (i) => ((i.Containers ?? 0) > 0 ? 0 : (i.Size ?? 0)));
 
         const containersSize = sum(containers, (c) => c.SizeRw ?? 0);
-        const containersReclaimable = sum(containers, (c) =>
-            c.State === 'running' ? 0 : (c.SizeRw ?? 0),
-        );
+        const containersReclaimable = sum(containers, (c) => (c.State === 'running' ? 0 : (c.SizeRw ?? 0)));
 
         const volumesSize = sum(volumes, (v) => v.UsageData?.Size ?? 0);
         const volumesReclaimable = sum(volumes, (v) =>
@@ -81,8 +78,7 @@ app.get(
         const buildCacheReclaimable = sum(buildCache, (b) => (b.InUse ? 0 : (b.Size ?? 0)));
 
         const totalSize = imagesSize + containersSize + volumesSize + buildCacheSize;
-        const totalReclaimable =
-            imagesReclaimable + containersReclaimable + volumesReclaimable + buildCacheReclaimable;
+        const totalReclaimable = imagesReclaimable + containersReclaimable + volumesReclaimable + buildCacheReclaimable;
 
         return {
             layersSize: df.LayersSize ?? 0,
@@ -146,12 +142,7 @@ async function runCleanup(target: CleanupTarget): Promise<number> {
         case 'build':
             return pruneBuild();
         case 'all': {
-            const results = await Promise.all([
-                pruneContainers(),
-                pruneImages(),
-                pruneVolumes(),
-                pruneBuild(),
-            ]);
+            const results = await Promise.all([pruneContainers(), pruneImages(), pruneVolumes(), pruneBuild()]);
             return results.reduce((acc, n) => acc + n, 0);
         }
     }
@@ -328,9 +319,7 @@ async function pullImage(image: string): Promise<void> {
     await new Promise<void>((resolve, reject) => {
         docker.pull(image, (err: Error | null, stream: NodeJS.ReadableStream) => {
             if (err) return reject(err);
-            docker.modem.followProgress(stream, (pullErr: Error | null) =>
-                pullErr ? reject(pullErr) : resolve(),
-            );
+            docker.modem.followProgress(stream, (pullErr: Error | null) => (pullErr ? reject(pullErr) : resolve()));
         });
     });
 }
@@ -408,10 +397,7 @@ app.post(
             },
             NetworkingConfig: {
                 EndpointsConfig: Object.fromEntries(
-                    Object.keys(currentDockerApiInfo.NetworkSettings.Networks ?? {}).map((name) => [
-                        name,
-                        {},
-                    ]),
+                    Object.keys(currentDockerApiInfo.NetworkSettings.Networks ?? {}).map((name) => [name, {}]),
                 ),
             },
         });

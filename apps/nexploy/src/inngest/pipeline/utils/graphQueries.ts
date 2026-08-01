@@ -1,8 +1,4 @@
-import {
-    NodeData,
-    PipelineGraph,
-    PipelineNode,
-} from '@workspace/typescript-interface/pipeline/node';
+import { NodeData, PipelineGraph, PipelineNode } from '@workspace/typescript-interface/pipeline/node';
 import { Edge, Node } from '@xyflow/react';
 
 export interface GraphAnalysis {
@@ -12,10 +8,7 @@ export interface GraphAnalysis {
     nodeMap: Map<string, PipelineNode>;
 }
 
-export function analyzeGraph(
-    graph: PipelineGraph,
-    triggerSource: 'manual' | 'webhook' = 'manual',
-): GraphAnalysis {
+export function analyzeGraph(graph: PipelineGraph, triggerSource: 'manual' | 'webhook' = 'manual'): GraphAnalysis {
     const nodeMap = new Map(graph.nodes.map((node) => [node.id, node]));
 
     const directed = new Map<string, string[]>(graph.nodes.map((node) => [node.id, []]));
@@ -51,15 +44,10 @@ export function analyzeGraph(
 
     const startNodeIds =
         triggerSource === 'webhook'
-            ? new Set(
-                  graph.nodes.filter((node) => node.data.type === 'webhook-clone').map((n) => n.id),
-              )
+            ? new Set(graph.nodes.filter((node) => node.data.type === 'webhook-clone').map((n) => n.id))
             : new Set(
                   graph.nodes
-                      .filter(
-                          (node) =>
-                              node.data.isStartNode === true && node.data.type !== 'webhook-clone',
-                      )
+                      .filter((node) => node.data.isStartNode === true && node.data.type !== 'webhook-clone')
                       .map((node) => node.id),
               );
     const reachableNodeIds = new Set<string>(startNodeIds);
@@ -79,11 +67,7 @@ export function analyzeGraph(
     return { sorted, reachableNodeIds, parentsMap: reverse, nodeMap };
 }
 
-function bfsAncestors(
-    startNodeId: string,
-    nodes: Node[],
-    edges: Edge[],
-): { node: Node; data: NodeData }[] {
+function bfsAncestors(startNodeId: string, nodes: Node[], edges: Edge[]): { node: Node; data: NodeData }[] {
     const nodeMap = new Map(nodes.map((n) => [n.id, n]));
     const visited = new Set<string>();
     const queue = [startNodeId];

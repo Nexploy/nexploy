@@ -12,9 +12,7 @@ export const onContainerRemoveAction = authActionServer
     .inputSchema(containerRemoveSchema)
     .action(async ({ parsedInput: { containerIds, force } }) => {
         try {
-            return await kyDocker
-                .delete('container/remove', { json: { containerIds, force } })
-                .json();
+            return await kyDocker.delete('container/remove', { json: { containerIds, force } }).json();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

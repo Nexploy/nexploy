@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -62,11 +56,7 @@ export function DeleteImageConfig() {
                                     </p>
                                 ) : (
                                     <RefAware value={field.value} onChange={field.onChange}>
-                                        <Select
-                                            {...field}
-                                            onValueChange={field.onChange}
-                                            disabled={isLoading}
-                                        >
+                                        <Select {...field} onValueChange={field.onChange} disabled={isLoading}>
                                             <SelectTrigger className="w-full overflow-hidden pl-0! data-[placeholder]:pl-3!">
                                                 {isStale ? (
                                                     <span className="flex items-center gap-1.5 pl-3">
@@ -74,34 +64,22 @@ export function DeleteImageConfig() {
                                                         {t('imageUnavailable')}
                                                     </span>
                                                 ) : (
-                                                    <SelectValue
-                                                        placeholder={t('imageIdPlaceholder')}
-                                                    />
+                                                    <SelectValue placeholder={t('imageIdPlaceholder')} />
                                                 )}
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
-                                                    <SelectLabel>
-                                                        {t('imagesSelectLabel')}
-                                                    </SelectLabel>
+                                                    <SelectLabel>{t('imagesSelectLabel')}</SelectLabel>
                                                     {uniqueImages.length === 0 ? (
                                                         <span className="text-muted-foreground px-2 py-1.5 text-sm">
                                                             {t('noImagesAvailable')}
                                                         </span>
                                                     ) : (
                                                         uniqueImages.map((img) => (
-                                                            <SelectItem
-                                                                key={img.id}
-                                                                value={img.id}
-                                                                className="pl-0"
-                                                            >
+                                                            <SelectItem key={img.id} value={img.id} className="pl-0">
                                                                 <Status
                                                                     className="m-0 w-full rounded-none border-0 p-0 pl-2.5 text-sm"
-                                                                    status={
-                                                                        img.containersUsed
-                                                                            ? 'online'
-                                                                            : 'offline'
-                                                                    }
+                                                                    status={img.containersUsed ? 'online' : 'offline'}
                                                                     variant="outline"
                                                                 >
                                                                     <StatusIndicator className="pl-2" />

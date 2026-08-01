@@ -17,7 +17,6 @@ export const usePipelinePanelStore = create<PipelinePanelStore>((set) => ({
 
     setPaletteCategory: (paletteCategory) => set({ paletteCategory }),
     setPaletteSearch: (paletteSearch) => set({ paletteSearch }),
-    openPaletteCategory: (category) =>
-        set({ activePanel: 'palette', paletteCategory: category, paletteSearch: '' }),
+    openPaletteCategory: (category) => set({ activePanel: 'palette', paletteCategory: category, paletteSearch: '' }),
     closePalette: () => set({ activePanel: null, paletteCategory: null, paletteSearch: '' }),
 }));

@@ -29,11 +29,7 @@ export interface OrganizationMembersState {
     members: OrganizationMember[];
     invitations: OrganizationInvitation[];
 
-    setMembers: (
-        organizationId: string,
-        members: OrganizationMember[],
-        invitations: OrganizationInvitation[],
-    ) => void;
+    setMembers: (organizationId: string, members: OrganizationMember[], invitations: OrganizationInvitation[]) => void;
     removeMember: (memberId: string) => void;
     updateMemberRole: (memberId: string, role: string) => void;
     addInvitation: (invitation: OrganizationInvitation) => void;

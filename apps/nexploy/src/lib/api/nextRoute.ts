@@ -3,18 +3,10 @@ import { NextResponse } from 'next/server';
 import { getUserSession } from '@/services/auth/auth.service';
 import { setToastServer } from '@/lib/toastServer';
 import { auth, Session } from '@/lib/auth/auth';
-import {
-    hasPermission,
-    type PermissionActions,
-    type PermissionResource,
-} from '@/lib/auth/permissions';
+import { hasPermission, type PermissionActions, type PermissionResource } from '@/lib/auth/permissions';
 import { hasOrgPermission, type OrgPermissionResource } from '@/lib/auth/orgPermissions';
 import { isOrgScopedResource, type OrgScopedResource } from '@/lib/auth/orgScopedResources';
-import {
-    getCallerOrgRole,
-    HOST_SCOPED,
-    type RequestOrgScopeResolver,
-} from '@/lib/auth/resolveOrgContext';
+import { getCallerOrgRole, HOST_SCOPED, type RequestOrgScopeResolver } from '@/lib/auth/resolveOrgContext';
 import { prisma } from '../../../prisma/prisma.ts';
 
 export const route = createZodRoute({
@@ -24,10 +16,10 @@ export const route = createZodRoute({
     },
 });
 
-export const authRouteServer: MiddlewareFunction<
-    Record<string, unknown>,
-    { session: Session }
-> = async ({ next, request }) => {
+export const authRouteServer: MiddlewareFunction<Record<string, unknown>, { session: Session }> = async ({
+    next,
+    request,
+}) => {
     const session = await getUserSession(request.headers);
 
     if (!session) {
@@ -49,8 +41,7 @@ export function internalApiAuth(
 ): MiddlewareFunction<Record<string, unknown>, { userId: string; role: string }> {
     return async ({ next, request }) => {
         const apiKeyHeader =
-            request.headers.get('x-api-key') ??
-            request.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
+            request.headers.get('x-api-key') ?? request.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
 
         if (!apiKeyHeader) {
             return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });

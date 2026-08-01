@@ -101,11 +101,7 @@ export const useVolumesStore = create<VolumeState>((set, get) => ({
                     if (!data.volume) return;
 
                     get().addVolume(data.volume);
-                    notifyDocker(
-                        'volumes',
-                        'success',
-                        clientT('toasts.volumeAdded', { name: data.volume.name }),
-                    );
+                    notifyDocker('volumes', 'success', clientT('toasts.volumeAdded', { name: data.volume.name }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -127,11 +123,7 @@ export const useVolumesStore = create<VolumeState>((set, get) => ({
                     if (!data.volumeName) return;
 
                     get().removeVolume(data.volumeName);
-                    notifyDocker(
-                        'volumes',
-                        'success',
-                        clientT('toasts.volumeRemoved', { name: data.volumeName }),
-                    );
+                    notifyDocker('volumes', 'success', clientT('toasts.volumeRemoved', { name: data.volumeName }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );

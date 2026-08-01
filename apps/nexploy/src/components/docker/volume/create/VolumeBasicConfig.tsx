@@ -33,11 +33,7 @@ export function VolumeBasicConfig() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Settings}
-                title={t('configuration')}
-                description={t('configureParams')}
-            />
+            <CardHeaderWithIcon icon={Settings} title={t('configuration')} description={t('configureParams')} />
             <CardContent className="space-y-4">
                 <FormField
                     control={form.control}

@@ -1,4 +1,8 @@
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { gitService } from '@/inngest/pipeline/services/git.service';
 import { updateBuildGitInfo } from '@/services/repository/build.service';
 import { cloneRepositoryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
@@ -22,9 +26,7 @@ export class CloneRepositoryExecutor implements INodeExecutor {
             gitCommitHash: effectiveCommitHash,
         };
 
-        const commitSuffix = effectiveCommitHash
-            ? ` (commit: ${effectiveCommitHash.substring(0, 7)})`
-            : '';
+        const commitSuffix = effectiveCommitHash ? ` (commit: ${effectiveCommitHash.substring(0, 7)})` : '';
         await logger.info(
             nodeId,
             `Cloning repository ${buildConfig.gitUrl} (branch: ${effectiveBranch}${commitSuffix})`,
@@ -40,10 +42,7 @@ export class CloneRepositoryExecutor implements INodeExecutor {
             });
 
             if (effectiveCommitHash) {
-                await logger.info(
-                    nodeId,
-                    `Checked out commit ${effectiveCommitHash.substring(0, 7)}`,
-                );
+                await logger.info(nodeId, `Checked out commit ${effectiveCommitHash.substring(0, 7)}`);
             }
 
             const commitInfo = await gitService.getCommitInfo(workDir);

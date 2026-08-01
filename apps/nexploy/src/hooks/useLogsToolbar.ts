@@ -58,10 +58,7 @@ export function useLogsToolbar({
 
     const downloadLogs = () => {
         const logsText = logs
-            .map(
-                (log) =>
-                    `[${dayjs(log.createdAt).toISOString()}] [${log.step}] [${log.level}] ${log.message}`,
-            )
+            .map((log) => `[${dayjs(log.createdAt).toISOString()}] [${log.step}] [${log.level}] ${log.message}`)
             .join('\n');
 
         const blob = new Blob([logsText], { type: 'text/plain' });

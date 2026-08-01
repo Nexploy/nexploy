@@ -3,11 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { type Node } from '@xyflow/react';
-import {
-    useIsViewingBuild,
-    usePipelineActions,
-    usePipelineStageId,
-} from '@/stores/pipeline/usePipelineStore';
+import { useIsViewingBuild, usePipelineActions, usePipelineStageId } from '@/stores/pipeline/usePipelineStore';
 import { Button } from '@workspace/ui/components/button';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Form } from '@workspace/ui/components/form';
@@ -17,11 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { saveNodeConfigAction } from '@/actions/repository/pipeline/saveNodeConfig.action';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
-import {
-    getConfigPanel,
-    getConfigSchema,
-    hasConfigSchema,
-} from '@/components/pipeline/nodeManifestRegistry';
+import { getConfigPanel, getConfigSchema, hasConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
 import { cn } from '@workspace/ui/lib/utils';
 import { usePermissions } from '@/contexts/PermissionContext';
 
@@ -82,17 +74,11 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
     return (
         <Form {...form}>
-            <form
-                onSubmit={handleSubmitWithAction}
-                className="flex min-w-0 flex-1 flex-col overflow-hidden"
-            >
+            <form onSubmit={handleSubmitWithAction} className="flex min-w-0 flex-1 flex-col overflow-hidden">
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <fieldset
                         disabled={isViewingBuild || !canEdit}
-                        className={cn(
-                            'grid grid-cols-1 p-4',
-                            (isViewingBuild || !canEdit) && 'pointer-events-none',
-                        )}
+                        className={cn('grid grid-cols-1 p-4', (isViewingBuild || !canEdit) && 'pointer-events-none')}
                     >
                         {ConfigComponent && <ConfigComponent />}
                     </fieldset>
@@ -100,12 +86,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
 
                 {!isViewingBuild && canEdit && hasSchema && (
                     <DialogFooter className={cn('bg-muted/40 border-t p-4')}>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={handleResetPanelNode}
-                        >
+                        <Button type="button" variant="outline" size="sm" onClick={handleResetPanelNode}>
                             {tCommon('cancel')}
                         </Button>
                         <Button

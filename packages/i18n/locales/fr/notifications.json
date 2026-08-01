@@ -1,11 +1,11 @@
 {
-    "success": "Succès",
-    "error": "Erreur",
-    "warning": "Avertissement",
-    "info": "Information",
-    "saved": "Modifications enregistrées",
-    "deleted": "Supprimé avec succès",
-    "created": "Créé avec succès",
-    "updated": "Mis à jour avec succès",
-    "reconnecting": "Reconnexion..."
+  "success": "Succès",
+  "error": "Erreur",
+  "warning": "Avertissement",
+  "info": "Information",
+  "saved": "Modifications enregistrées",
+  "deleted": "Supprimé avec succès",
+  "created": "Créé avec succès",
+  "updated": "Mis à jour avec succès",
+  "reconnecting": "Reconnexion..."
 }

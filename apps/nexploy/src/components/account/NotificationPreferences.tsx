@@ -4,10 +4,7 @@ import { useTranslations } from 'next-intl';
 import { DockerToastCategory } from '@workspace/typescript-interface/stores/notificationStore';
 import { NotificationSwitch } from '@/components/account/NotificationSwitch';
 import { useNotificationStore } from '@/stores/useNotificationStore';
-import {
-    notificationBadgeCategories,
-    notificationBadgeTargets,
-} from '@/lib/notifications/notificationBadges';
+import { notificationBadgeCategories, notificationBadgeTargets } from '@/lib/notifications/notificationBadges';
 
 const categories: {
     key: DockerToastCategory;
@@ -55,12 +52,8 @@ export function NotificationPreferences() {
 
             <div className={'space-y-2'}>
                 <div className={'flex flex-col'}>
-                    <span className={'text-base font-medium'}>
-                        {t('notifications.badges.title')}
-                    </span>
-                    <span className={'text-muted-foreground text-sm'}>
-                        {t('notifications.badges.description')}
-                    </span>
+                    <span className={'text-base font-medium'}>{t('notifications.badges.title')}</span>
+                    <span className={'text-muted-foreground text-sm'}>{t('notifications.badges.description')}</span>
                 </div>
                 {notificationBadgeCategories.map((category) => (
                     <NotificationSwitch

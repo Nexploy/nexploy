@@ -37,10 +37,7 @@ export function parseEnv(content: string): EnvVariable[] {
             if (eqIndex === -1) return acc;
             const key = line.substring(0, eqIndex).trim();
             let value = line.substring(eqIndex + 1).trim();
-            if (
-                (value.startsWith('"') && value.endsWith('"')) ||
-                (value.startsWith("'") && value.endsWith("'"))
-            ) {
+            if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
                 value = value.slice(1, -1);
             }
             if (key) acc.push({ key, value });

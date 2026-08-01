@@ -6,21 +6,8 @@ import { environmentSchema } from '@workspace/schemas-zod/docker/environment/env
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Alert, AlertDescription } from '@workspace/ui/components/alert';
 import { Info } from 'lucide-react';
 import { TlsCertificateField } from './TlsCertificateField';
@@ -111,9 +98,7 @@ export function CreateEnvironmentForm() {
                         <FormItem>
                             <FormLabel>
                                 {t('description')}
-                                <span className="text-muted-foreground text-xs">
-                                    {tCommon('optional')}
-                                </span>
+                                <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
                             </FormLabel>
                             <FormControl>
                                 <Textarea
@@ -145,9 +130,7 @@ export function CreateEnvironmentForm() {
                                         <SelectValue placeholder={t('selectConnectionType')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="UNIX_SOCKET">
-                                            {t('unixSocket')}
-                                        </SelectItem>
+                                        <SelectItem value="UNIX_SOCKET">{t('unixSocket')}</SelectItem>
                                         <SelectItem value="TCP">{t('tcp')}</SelectItem>
                                         <SelectItem value="TCP_TLS">{t('tcpTls')}</SelectItem>
                                     </SelectContent>
@@ -171,9 +154,7 @@ export function CreateEnvironmentForm() {
                                         disabled={form.formState.isSubmitting}
                                     />
                                 </FormControl>
-                                <p className="text-muted-foreground text-xs">
-                                    {t('socketPathDescription')}
-                                </p>
+                                <p className="text-muted-foreground text-xs">{t('socketPathDescription')}</p>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -210,9 +191,7 @@ export function CreateEnvironmentForm() {
                                                 {...field}
                                                 type="number"
                                                 placeholder={t('portPlaceholder')}
-                                                onChange={(e) =>
-                                                    field.onChange(e.target.valueAsNumber)
-                                                }
+                                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                                 disabled={form.formState.isSubmitting}
                                             />
                                         </FormControl>
@@ -230,9 +209,7 @@ export function CreateEnvironmentForm() {
                             <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
                             <DownloadCertScriptButton disabled={!host} host={host} />
                         </div>
-                        <p className="text-muted-foreground text-xs">
-                            {t('tlsCertificatesDescription')}
-                        </p>
+                        <p className="text-muted-foreground text-xs">{t('tlsCertificatesDescription')}</p>
 
                         <TlsCertificateField
                             form={form}
@@ -267,9 +244,7 @@ export function CreateEnvironmentForm() {
                             <FormLabel className={'cursor-pointer p-3'}>
                                 <div className={'flex flex-col gap-2'}>
                                     {t('isDefault')}
-                                    <p className="text-muted-foreground text-xs">
-                                        {t('isDefaultDescription')}
-                                    </p>
+                                    <p className="text-muted-foreground text-xs">{t('isDefaultDescription')}</p>
                                 </div>
                                 <FormControl>
                                     <Switch

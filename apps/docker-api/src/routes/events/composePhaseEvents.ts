@@ -47,9 +47,7 @@ function runComposePhase(
         let isClientDisconnected = false;
         const abortController = new AbortController();
 
-        const envConfig = environmentId
-            ? dockerClientRegistry.getEnvironmentConfig(environmentId)
-            : null;
+        const envConfig = environmentId ? dockerClientRegistry.getEnvironmentConfig(environmentId) : null;
         const dockerEnvResult = buildDockerHostEnv(envConfig);
 
         c.req.raw.signal.addEventListener('abort', () => {
@@ -78,8 +76,7 @@ function runComposePhase(
                 sendLog,
                 abortController,
                 dockerEnv: dockerEnvResult.env,
-                isRemoteEnvironment:
-                    envConfig?.connectionType === 'TCP' || envConfig?.connectionType === 'TCP_TLS',
+                isRemoteEnvironment: envConfig?.connectionType === 'TCP' || envConfig?.connectionType === 'TCP_TLS',
                 environmentId,
                 isDisconnected,
             });
@@ -168,17 +165,14 @@ app.post('/stream/compose-build', async (c) => {
                             throw new Error(`docker compose pull exited with code ${exitCode}`);
                         }
                     } catch (pullError) {
-                        const errorMsg =
-                            pullError instanceof Error ? pullError.message : 'Unknown error';
+                        const errorMsg = pullError instanceof Error ? pullError.message : 'Unknown error';
                         sendLog(`Failed to pull image for service "${serviceName}": ${errorMsg}`);
                         failedPulls.push({ serviceName, error: errorMsg });
                     }
                 }
 
                 if (failedPulls.length > 0) {
-                    const failedList = failedPulls
-                        .map((f) => `${f.serviceName}: ${f.error}`)
-                        .join(', ');
+                    const failedList = failedPulls.map((f) => `${f.serviceName}: ${f.error}`).join(', ');
                     throw new Error(
                         `Failed to pull required images: ${failedList}. Check that the image names and tags are correct.`,
                     );
@@ -188,19 +182,10 @@ app.post('/stream/compose-build', async (c) => {
             }
 
             if (servicesToBuild.length > 0) {
-                sendLog(
-                    `Building ${servicesToBuild.length} service(s): ${servicesToBuild.join(', ')}`,
-                );
+                sendLog(`Building ${servicesToBuild.length} service(s): ${servicesToBuild.join(', ')}`);
 
                 const buildCode = await runDockerCompose(
-                    [
-                        '-p',
-                        projectName,
-                        '-f',
-                        processedComposeFile,
-                        'build',
-                        ...(noCache ? ['--no-cache'] : []),
-                    ],
+                    ['-p', projectName, '-f', processedComposeFile, 'build', ...(noCache ? ['--no-cache'] : [])],
                     workDir,
                     dockerEnv,
                     sendLog,
@@ -217,15 +202,10 @@ app.post('/stream/compose-build', async (c) => {
                     });
                     const reclaimed = pruneResult.SpaceReclaimed || 0;
                     if (reclaimed > 0) {
-                        sendLog(
-                            `Pruned dangling images (reclaimed ${(reclaimed / 1024 / 1024).toFixed(1)} MB)`,
-                        );
+                        sendLog(`Pruned dangling images (reclaimed ${(reclaimed / 1024 / 1024).toFixed(1)} MB)`);
                     }
                 } catch (pruneErr) {
-                    logger.warn(
-                        { error: pruneErr },
-                        'Failed to prune dangling images after compose build',
-                    );
+                    logger.warn({ error: pruneErr }, 'Failed to prune dangling images after compose build');
                 }
 
                 sendLog('Resolving built image references...');
@@ -242,9 +222,7 @@ app.post('/stream/compose-build', async (c) => {
                 }
 
                 for (const { serviceName, hint } of findUnbuildableServices(composeContent)) {
-                    sendLog(
-                        `Service "${serviceName}" declares neither "build" nor "image"${hint ? ` — ${hint}` : ''}`,
-                    );
+                    sendLog(`Service "${serviceName}" declares neither "build" nor "image"${hint ? ` — ${hint}` : ''}`);
                 }
 
                 throw new Error(
@@ -265,10 +243,7 @@ app.post('/stream/compose-build', async (c) => {
             fs.writeFileSync(processedComposeFile, yaml.stringify(composeContent), 'utf8');
         } finally {
             if (volumeTransformResult) {
-                cleanupGeneratedDockerfiles(
-                    composeDir,
-                    volumeTransformResult.generatedDockerfiles.keys(),
-                );
+                cleanupGeneratedDockerfiles(composeDir, volumeTransformResult.generatedDockerfiles.keys());
             }
         }
 
@@ -301,9 +276,7 @@ app.post('/stream/compose-run', async (c) => {
         const { sendLog, abortController, dockerEnv } = ctx;
 
         if (!fs.existsSync(composeFile)) {
-            throw new Error(
-                `Compose file not found: ${composeFile}. Connect this node after a Compose Build node.`,
-            );
+            throw new Error(`Compose file not found: ${composeFile}. Connect this node after a Compose Build node.`);
         }
 
         const composeContent = yaml.parse(fs.readFileSync(composeFile, 'utf8')) as ComposeContent;
@@ -344,18 +317,10 @@ app.post('/stream/compose-run', async (c) => {
                 }`,
             );
 
-            const exitCode = await runDockerCompose(
-                runArgs,
-                workDir,
-                dockerEnv,
-                sendLog,
-                abortController.signal,
-            );
+            const exitCode = await runDockerCompose(runArgs, workDir, dockerEnv, sendLog, abortController.signal);
 
             if (exitCode !== 0) {
-                throw new Error(
-                    `docker compose run failed with exit code ${exitCode} (service: ${service})`,
-                );
+                throw new Error(`docker compose run failed with exit code ${exitCode} (service: ${service})`);
             }
 
             sendLog('One-off command completed successfully (exit code 0)');
@@ -370,24 +335,21 @@ app.post('/stream/compose-run', async (c) => {
 });
 
 app.post('/stream/compose-up', async (c) => {
-    const { workDir, projectName, composeFile, envVars, recreate, removeOrphans, keepComposeFile } =
-        await c.req.json<{
-            workDir: string;
-            projectName: string;
-            composeFile: string;
-            envVars?: Record<string, string>;
-            recreate?: boolean;
-            removeOrphans?: boolean;
-            keepComposeFile?: boolean;
-        }>();
+    const { workDir, projectName, composeFile, envVars, recreate, removeOrphans, keepComposeFile } = await c.req.json<{
+        workDir: string;
+        projectName: string;
+        composeFile: string;
+        envVars?: Record<string, string>;
+        recreate?: boolean;
+        removeOrphans?: boolean;
+        keepComposeFile?: boolean;
+    }>();
 
     return runComposePhase(c, 'compose-up', async (ctx) => {
         const { sendLog, abortController, dockerEnv, isRemoteEnvironment } = ctx;
 
         if (!fs.existsSync(composeFile)) {
-            throw new Error(
-                `Compose file not found: ${composeFile}. Connect this node after a Compose Build node.`,
-            );
+            throw new Error(`Compose file not found: ${composeFile}. Connect this node after a Compose Build node.`);
         }
 
         const composeContent = yaml.parse(fs.readFileSync(composeFile, 'utf8')) as ComposeContent;
@@ -413,9 +375,7 @@ app.post('/stream/compose-up', async (c) => {
             }
 
             if (envVars && Object.keys(envVars).length > 0) {
-                sendLog(
-                    `Writing ${Object.keys(envVars).length} environment variable(s) to .env file...`,
-                );
+                sendLog(`Writing ${Object.keys(envVars).length} environment variable(s) to .env file...`);
                 writeEnvFile(workDir, envVars);
                 envFileWritten = true;
                 sendLog('Environment variables written successfully');
@@ -441,9 +401,7 @@ app.post('/stream/compose-up', async (c) => {
             const containerIds = runningContainers.map((container) => container.Id);
 
             if (isRemoteEnvironment) {
-                sendLog(
-                    'Remote environment: routing via published host ports (skipping Traefik network attach)',
-                );
+                sendLog('Remote environment: routing via published host ports (skipping Traefik network attach)');
             } else {
                 try {
                     await networksStateManager.createNetworkIfMissing(TRAEFIK_NETWORK_NAME);

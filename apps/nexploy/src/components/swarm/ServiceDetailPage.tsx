@@ -57,9 +57,7 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
                             </>
                         ) : (
                             <div className="flex flex-col">
-                                <h1 className="text-3xl font-semibold tracking-tight">
-                                    {service?.name}
-                                </h1>
+                                <h1 className="text-3xl font-semibold tracking-tight">{service?.name}</h1>
                                 {service && (
                                     <div className="mt-0.5 flex gap-1.5">
                                         <Badge variant="outline" className="py-0 capitalize">
@@ -94,11 +92,7 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
                         <Can resource="swarm" action="manage">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        disabled={isConnecting || !service}
-                                    >
+                                    <Button variant="outline" size="icon" disabled={isConnecting || !service}>
                                         <MoreHorizontal className="size-4" />
                                     </Button>
                                 </DropdownMenuTrigger>

@@ -33,12 +33,8 @@ export function NetworkResultsSearchGroup() {
                 >
                     <EthernetPort className="text-muted-foreground h-4 w-4 shrink-0" />
                     <span className="min-w-0 flex-1 truncate text-sm font-medium">{net.name}</span>
-                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">
-                        {net.driver}
-                    </span>
-                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">
-                        {t('types.network')}
-                    </span>
+                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">{net.driver}</span>
+                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">{t('types.network')}</span>
                 </CommandItem>
             ))}
         </CommandGroup>

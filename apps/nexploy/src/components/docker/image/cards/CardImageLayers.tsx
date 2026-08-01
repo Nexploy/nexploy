@@ -7,14 +7,7 @@ import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import { useImageStore } from '../../../../stores/docker/useImageStore';
 import { formatBytes } from '@/utils/formatBytes';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 
 export function CardImageLayers() {
     const t = useTranslations('docker.imageLayers');

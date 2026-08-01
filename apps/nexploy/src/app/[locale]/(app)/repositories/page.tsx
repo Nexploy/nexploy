@@ -15,10 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RepositoriesPage() {
-    const [t, session] = await Promise.all([
-        getTranslations('repository'),
-        getUserSession(),
-    ]);
+    const [t, session] = await Promise.all([getTranslations('repository'), getUserSession()]);
 
     const organizationId = session ? await resolveActiveOrganizationId(session) : null;
     const repositories = session
@@ -37,9 +34,7 @@ export default async function RepositoriesPage() {
                         </div>
                         <div className="mt-3.5 flex flex-col">
                             <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
-                            <p className="text-muted-foreground text-sm">
-                                {t('manageRepositories')}
-                            </p>
+                            <p className="text-muted-foreground text-sm">{t('manageRepositories')}</p>
                         </div>
                     </div>
                     {canCreateRepository && <AddRepository />}

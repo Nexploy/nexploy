@@ -34,19 +34,13 @@ function makeComponents(blur: Blur): Components {
         strong: ({ children }) => <strong className="font-semibold">{blur(children)}</strong>,
         em: ({ children }) => <em className="italic">{blur(children)}</em>,
         h1: ({ children }) => (
-            <h1 className="wrap-break-word mb-1 mt-2 text-sm font-bold first:mt-0">
-                {blur(children)}
-            </h1>
+            <h1 className="wrap-break-word mb-1 mt-2 text-sm font-bold first:mt-0">{blur(children)}</h1>
         ),
         h2: ({ children }) => (
-            <h2 className="wrap-break-word mb-1 mt-2 text-xs font-bold first:mt-0">
-                {blur(children)}
-            </h2>
+            <h2 className="wrap-break-word mb-1 mt-2 text-xs font-bold first:mt-0">{blur(children)}</h2>
         ),
         h3: ({ children }) => (
-            <h3 className="wrap-break-word mb-1 mt-1.5 text-xs font-semibold first:mt-0">
-                {blur(children)}
-            </h3>
+            <h3 className="wrap-break-word mb-1 mt-1.5 text-xs font-semibold first:mt-0">{blur(children)}</h3>
         ),
         ul: ({ children }) => <ul className="mb-1.5 ml-3 list-disc space-y-0.5">{children}</ul>,
         ol: ({ children }) => <ol className="mb-1.5 ml-3 list-decimal space-y-0.5">{children}</ol>,
@@ -54,17 +48,11 @@ function makeComponents(blur: Blur): Components {
         code: ({ className, children, ...props }) => {
             const isBlock = className?.includes('language-');
             return isBlock ? (
-                <code
-                    className={cn('block whitespace-pre-wrap break-all text-xs', className)}
-                    {...props}
-                >
+                <code className={cn('block whitespace-pre-wrap break-all text-xs', className)} {...props}>
                     {children}
                 </code>
             ) : (
-                <code
-                    className="bg-background/80 text-foreground break-all rounded px-1.5 py-0.5 font-mono"
-                    {...props}
-                >
+                <code className="bg-background/80 text-foreground break-all rounded px-1.5 py-0.5 font-mono" {...props}>
                     {children}
                 </code>
             );
@@ -77,9 +65,7 @@ function makeComponents(blur: Blur): Components {
         table: ({ children }) => <table className="break-all text-[11px]">{children}</table>,
         thead: ({ children }) => <thead className="border-border/50 border-b">{children}</thead>,
         tbody: ({ children }) => <tbody>{children}</tbody>,
-        tr: ({ children }) => (
-            <tr className="border-border/30 border-b last:border-0">{children}</tr>
-        ),
+        tr: ({ children }) => <tr className="border-border/30 border-b last:border-0">{children}</tr>,
         th: ({ children }) => <th className="px-2 py-1 text-left font-semibold">{children}</th>,
         td: ({ children }) => <td className="wrap-break-word px-2 py-1">{blur(children)}</td>,
         hr: () => <hr className="border-border/40 my-2" />,

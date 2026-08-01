@@ -8,7 +8,7 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { connectCloudflareAction } from '@/actions/cloudflare/connect.action';
 import { cloudflareConnectSchema } from '@workspace/schemas-zod/cloudflare/cloudflare.schema';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
@@ -66,11 +66,7 @@ export function CloudflareConnectForm() {
                         <FormItem>
                             <FormLabel>{t('apiTokenLabel')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="password"
-                                    placeholder={t('apiTokenPlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="password" placeholder={t('apiTokenPlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

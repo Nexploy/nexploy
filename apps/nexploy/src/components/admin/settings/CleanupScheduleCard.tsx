@@ -11,13 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@workspace/ui
 import { Switch } from '@workspace/ui/components/switch';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Button } from '@workspace/ui/components/button';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { updateCleanupSettingsSchema } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
 import { updateCleanupSettingsAction } from '@/actions/admin/cleanup/updateCleanupSettings.action';
@@ -89,18 +83,13 @@ export function CleanupScheduleCard({ settings }: { settings: CleanupSettings })
                                 <FormItem>
                                     <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
                                         <div className="flex flex-col">
-                                            <span className="text-base">
-                                                {t('scheduleEnabled')}
-                                            </span>
+                                            <span className="text-base">{t('scheduleEnabled')}</span>
                                             <span className="text-muted-foreground text-xs">
                                                 {t('scheduleEnabledDescription')}
                                             </span>
                                         </div>
                                         <FormControl>
-                                            <Switch
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
+                                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                                         </FormControl>
                                     </FormLabel>
                                 </FormItem>
@@ -113,17 +102,12 @@ export function CleanupScheduleCard({ settings }: { settings: CleanupSettings })
                             render={({ field }) => (
                                 <FormItem className="flex items-center justify-between rounded-lg border p-4">
                                     <div className="flex flex-col">
-                                        <FormLabel className="text-base">
-                                            {t('scheduledHour')}
-                                        </FormLabel>
+                                        <FormLabel className="text-base">{t('scheduledHour')}</FormLabel>
                                         <span className="text-muted-foreground text-xs">
                                             {t('scheduledHourDescription')}
                                         </span>
                                     </div>
-                                    <Select
-                                        value={`${field.value}`}
-                                        onValueChange={(v) => field.onChange(Number(v))}
-                                    >
+                                    <Select value={`${field.value}`} onValueChange={(v) => field.onChange(Number(v))}>
                                         <FormControl>
                                             <SelectTrigger>
                                                 <SelectValue />
@@ -143,9 +127,7 @@ export function CleanupScheduleCard({ settings }: { settings: CleanupSettings })
 
                         <div className="rounded-lg border p-4">
                             <p className="text-base">{t('cleanupTargets')}</p>
-                            <p className="text-muted-foreground mb-3 text-xs">
-                                {t('cleanupTargetsDescription')}
-                            </p>
+                            <p className="text-muted-foreground mb-3 text-xs">{t('cleanupTargetsDescription')}</p>
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 {TARGETS.map((name) => (
                                     <FormField

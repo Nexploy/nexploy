@@ -18,12 +18,7 @@ interface ProviderInstanceCardProps {
     maskedClientId?: string;
 }
 
-export function ProviderInstanceCard({
-    id,
-    displayName,
-    appName,
-    maskedClientId,
-}: ProviderInstanceCardProps) {
+export function ProviderInstanceCard({ id, displayName, appName, maskedClientId }: ProviderInstanceCardProps) {
     const router = useRouter();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
@@ -59,9 +54,7 @@ export function ProviderInstanceCard({
                         <StatusLabel>{statusText}</StatusLabel>
                     </Status>
                 </div>
-                {maskedClientId && (
-                    <p className="text-muted-foreground text-xs">Client ID: {maskedClientId}</p>
-                )}
+                {maskedClientId && <p className="text-muted-foreground text-xs">Client ID: {maskedClientId}</p>}
             </div>
 
             <Button

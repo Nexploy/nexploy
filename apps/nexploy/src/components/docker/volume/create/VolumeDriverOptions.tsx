@@ -19,11 +19,7 @@ export function VolumeDriverOptions() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Cpu}
-                title={t('driverOptions')}
-                description={t('driverOptionsCardDescription')}
-            >
+            <CardHeaderWithIcon icon={Cpu} title={t('driverOptions')} description={t('driverOptionsCardDescription')}>
                 <Button
                     type="button"
                     size="sm"
@@ -37,9 +33,7 @@ export function VolumeDriverOptions() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noDriverOptionsConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noDriverOptionsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -50,10 +44,7 @@ export function VolumeDriverOptions() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={t('keyPlaceholder')}
-                                                />
+                                                <Input {...field} placeholder={t('keyPlaceholder')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -66,10 +57,7 @@ export function VolumeDriverOptions() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    placeholder={t('valuePlaceholder')}
-                                                />
+                                                <Input {...field} placeholder={t('valuePlaceholder')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

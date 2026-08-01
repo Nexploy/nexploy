@@ -49,9 +49,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
         e.stopPropagation();
         setNodes((nodes) =>
             nodes.map((node) =>
-                getTargetIds().includes(node.id)
-                    ? { ...node, data: { ...node.data, disabled: !data.disabled } }
-                    : node,
+                getTargetIds().includes(node.id) ? { ...node, data: { ...node.data, disabled: !data.disabled } } : node,
             ),
         );
         triggerAutoSave();

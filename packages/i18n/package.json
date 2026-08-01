@@ -1,17 +1,17 @@
 {
-    "name": "@workspace/i18n",
-    "version": "1.0.0",
-    "private": true,
-    "type": "module",
-    "main": "index.ts",
-    "exports": {
-        ".": "./index.ts",
-        "./locales/*": "./locales/*"
-    },
-    "dependencies": {
-        "next-intl": "^4.9.1"
-    },
-    "scripts": {
-        "typecheck": "tsc --noEmit"
-    }
+  "name": "@workspace/i18n",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./locales/*": "./locales/*"
+  },
+  "dependencies": {
+    "next-intl": "^4.9.1"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
 }

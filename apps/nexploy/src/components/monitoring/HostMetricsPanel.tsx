@@ -46,9 +46,7 @@ export function HostMetricsPanel({ metrics, history, isLoading }: HostMetricsPan
     const uptime = splitDuration(metrics?.uptime ?? 0);
     const cpuCores = metrics?.cpuCoresPercent ?? [];
     const loadAverage = metrics?.loadAverage ?? [];
-    const normalizedLoad = metrics?.cpuCount
-        ? ((loadAverage[0] ?? 0) / metrics.cpuCount) * 100
-        : undefined;
+    const normalizedLoad = metrics?.cpuCount ? ((loadAverage[0] ?? 0) / metrics.cpuCount) * 100 : undefined;
 
     const hostDetails = [
         { label: t('host.hostname'), value: metrics?.hostname ?? '—' },
@@ -219,12 +217,7 @@ export function HostMetricsPanel({ metrics, history, isLoading }: HostMetricsPan
                                             <span className="text-muted-foreground">
                                                 {t('host.core', { index: index + 1 })}
                                             </span>
-                                            <span
-                                                className={cn(
-                                                    'tabular-nums',
-                                                    usageToneClass(corePercent),
-                                                )}
-                                            >
+                                            <span className={cn('tabular-nums', usageToneClass(corePercent))}>
                                                 {formatPercent(corePercent, 0)}
                                             </span>
                                         </div>
@@ -259,10 +252,7 @@ export function HostMetricsPanel({ metrics, history, isLoading }: HostMetricsPan
                                         {detail.label}
                                     </span>
                                     <div className="flex min-w-0 justify-end overflow-hidden">
-                                        <Badge
-                                            variant="secondary"
-                                            className="w-auto max-w-full shrink"
-                                        >
+                                        <Badge variant="secondary" className="w-auto max-w-full shrink">
                                             <span className="block truncate" title={detail.value}>
                                                 {detail.value}
                                             </span>
@@ -287,8 +277,7 @@ export function HostMetricsPanel({ metrics, history, isLoading }: HostMetricsPan
                     <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">{t('host.diskUsed')}</span>
                         <Badge variant="secondary" className="tabular-nums">
-                            {formatBytes(metrics?.diskUsed ?? 0)} /{' '}
-                            {formatBytes(metrics?.diskTotal ?? 0)}
+                            {formatBytes(metrics?.diskUsed ?? 0)} / {formatBytes(metrics?.diskTotal ?? 0)}
                         </Badge>
                     </div>
                     <div className="bg-primary/15 h-2 w-full overflow-hidden rounded-full">

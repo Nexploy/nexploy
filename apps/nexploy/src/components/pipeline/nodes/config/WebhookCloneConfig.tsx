@@ -23,10 +23,7 @@ import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useAction } from 'next-safe-action/hooks';
 import { setupWebhookAction } from '@/actions/repository/pipeline/setupWebhook.action';
 import { Can } from '@/components/permission/Can';
-import {
-    MERGE_REQUEST_ACTIONS,
-    WEBHOOK_TRIGGER_EVENTS,
-} from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { MERGE_REQUEST_ACTIONS, WEBHOOK_TRIGGER_EVENTS } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 interface WebhookStatus {
     isConfigured: boolean;
@@ -96,13 +93,9 @@ export function WebhookCloneConfig() {
                 webhookStatus && (
                     <Alert className="border-yellow-500/30 bg-yellow-500/10 text-yellow-600 [&>svg]:text-yellow-600">
                         <AlertTriangle />
-                        <AlertTitle className="text-yellow-600">
-                            {t('webhookStatusNotConfigured')}
-                        </AlertTitle>
+                        <AlertTitle className="text-yellow-600">{t('webhookStatusNotConfigured')}</AlertTitle>
                         <AlertDescription className="flex items-center justify-between gap-3">
-                            <span className="text-yellow-600/80">
-                                {t('webhookStatusNotConfiguredDescription')}
-                            </span>
+                            <span className="text-yellow-600/80">{t('webhookStatusNotConfiguredDescription')}</span>
                             <Can resource="repository" action="update">
                                 <Button
                                     type="button"
@@ -129,9 +122,7 @@ export function WebhookCloneConfig() {
                     const value: TriggerEvent[] = field.value ?? ['push'];
                     const toggle = (event: TriggerEvent) => {
                         field.onChange(
-                            value.includes(event)
-                                ? value.filter((selected) => selected !== event)
-                                : [...value, event],
+                            value.includes(event) ? value.filter((selected) => selected !== event) : [...value, event],
                         );
                     };
                     return (
@@ -139,10 +130,7 @@ export function WebhookCloneConfig() {
                             <FormLabel>{t('webhookTriggerEvents')}</FormLabel>
                             <div className="flex flex-wrap gap-4">
                                 {WEBHOOK_TRIGGER_EVENTS.map((event) => (
-                                    <Label
-                                        key={event}
-                                        className="flex cursor-pointer items-center gap-1.5 text-xs"
-                                    >
+                                    <Label key={event} className="flex cursor-pointer items-center gap-1.5 text-xs">
                                         <Checkbox
                                             checked={value.includes(event)}
                                             onCheckedChange={() => toggle(event)}
@@ -167,15 +155,9 @@ export function WebhookCloneConfig() {
                     <FormItem>
                         <FormLabel>{t('webhookBranchFilter')}</FormLabel>
                         <FormControl>
-                            <Input
-                                {...field}
-                                value={field.value}
-                                placeholder={t('webhookBranchFilterPlaceholder')}
-                            />
+                            <Input {...field} value={field.value} placeholder={t('webhookBranchFilterPlaceholder')} />
                         </FormControl>
-                        <FormDescription className={'text-xs'}>
-                            {t('webhookBranchFilterDescription')}
-                        </FormDescription>
+                        <FormDescription className={'text-xs'}>{t('webhookBranchFilterDescription')}</FormDescription>
                         <FormMessage />
                     </FormItem>
                 )}
@@ -186,10 +168,7 @@ export function WebhookCloneConfig() {
                     control={form.control}
                     name="mergeRequestActions"
                     render={({ field }) => {
-                        const value: MergeRequestActionOption[] = field.value ?? [
-                            'opened',
-                            'updated',
-                        ];
+                        const value: MergeRequestActionOption[] = field.value ?? ['opened', 'updated'];
                         const toggle = (action: MergeRequestActionOption) => {
                             field.onChange(
                                 value.includes(action)
@@ -238,9 +217,7 @@ export function WebhookCloneConfig() {
                                     placeholder={t('webhookTagFilterPlaceholder')}
                                 />
                             </FormControl>
-                            <FormDescription className={'text-xs'}>
-                                {t('webhookTagFilterDescription')}
-                            </FormDescription>
+                            <FormDescription className={'text-xs'}>{t('webhookTagFilterDescription')}</FormDescription>
                             <FormMessage className="text-xs" />
                         </FormItem>
                     )}
@@ -254,9 +231,7 @@ export function WebhookCloneConfig() {
                     <FormItem className="flex flex-row items-center justify-between gap-4">
                         <div className={'flex flex-col gap-1'}>
                             <FormLabel>{t('cloneSubmodules')}</FormLabel>
-                            <FormDescription className={'text-xs'}>
-                                {t('cloneSubmodulesDescription')}
-                            </FormDescription>
+                            <FormDescription className={'text-xs'}>{t('cloneSubmodulesDescription')}</FormDescription>
                         </div>
                         <FormControl>
                             <Switch

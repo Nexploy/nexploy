@@ -14,13 +14,7 @@ interface DurationNodeProps extends VariantProps<typeof badgeVariants> {
     className?: string;
 }
 
-export function DurationNode({
-    isRunning,
-    durationMs,
-    startedAt,
-    className,
-    variant = 'outline',
-}: DurationNodeProps) {
+export function DurationNode({ isRunning, durationMs, startedAt, className, variant = 'outline' }: DurationNodeProps) {
     const [now, setNow] = useState<number>(() => Date.now());
 
     useEffect(() => {
@@ -31,11 +25,7 @@ export function DurationNode({
     }, [isRunning, startedAt]);
 
     const elapsedMs =
-        isRunning && startedAt !== undefined
-            ? Math.max(0, now - startedAt)
-            : !isRunning
-              ? durationMs
-              : undefined;
+        isRunning && startedAt !== undefined ? Math.max(0, now - startedAt) : !isRunning ? durationMs : undefined;
 
     if (elapsedMs === undefined) return null;
 

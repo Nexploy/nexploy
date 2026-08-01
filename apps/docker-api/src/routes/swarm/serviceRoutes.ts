@@ -65,29 +65,21 @@ app.post(
         } = c.req.valid('json');
 
         const env = envVars.filter((e) => e.key).map((e) => `${e.key}=${e.value}`);
-        const labelsRecord = labels.length
-            ? Object.fromEntries(labels.map((l) => [l.key, l.value]))
-            : undefined;
+        const labelsRecord = labels.length ? Object.fromEntries(labels.map((l) => [l.key, l.value])) : undefined;
 
         const resourceLimits =
             cpuLimit || memoryLimit
                 ? {
                       nanoCPUs: cpuLimit ? Math.round(parseFloat(cpuLimit) * 1e9) : undefined,
-                      memoryBytes: memoryLimit
-                          ? parseInt(memoryLimit, 10) * 1024 * 1024
-                          : undefined,
+                      memoryBytes: memoryLimit ? parseInt(memoryLimit, 10) * 1024 * 1024 : undefined,
                   }
                 : undefined;
 
         const resourceReservations =
             cpuReservation || memoryReservation
                 ? {
-                      nanoCPUs: cpuReservation
-                          ? Math.round(parseFloat(cpuReservation) * 1e9)
-                          : undefined,
-                      memoryBytes: memoryReservation
-                          ? parseInt(memoryReservation, 10) * 1024 * 1024
-                          : undefined,
+                      nanoCPUs: cpuReservation ? Math.round(parseFloat(cpuReservation) * 1e9) : undefined,
+                      memoryBytes: memoryReservation ? parseInt(memoryReservation, 10) * 1024 * 1024 : undefined,
                   }
                 : undefined;
 
@@ -118,19 +110,13 @@ app.post(
             if (resourceLimits?.nanoCPUs || resourceLimits?.memoryBytes) {
                 resources['Limits'] = {
                     ...(resourceLimits.nanoCPUs ? { NanoCPUs: resourceLimits.nanoCPUs } : {}),
-                    ...(resourceLimits.memoryBytes
-                        ? { MemoryBytes: resourceLimits.memoryBytes }
-                        : {}),
+                    ...(resourceLimits.memoryBytes ? { MemoryBytes: resourceLimits.memoryBytes } : {}),
                 };
             }
             if (resourceReservations?.nanoCPUs || resourceReservations?.memoryBytes) {
                 resources['Reservations'] = {
-                    ...(resourceReservations.nanoCPUs
-                        ? { NanoCPUs: resourceReservations.nanoCPUs }
-                        : {}),
-                    ...(resourceReservations.memoryBytes
-                        ? { MemoryBytes: resourceReservations.memoryBytes }
-                        : {}),
+                    ...(resourceReservations.nanoCPUs ? { NanoCPUs: resourceReservations.nanoCPUs } : {}),
+                    ...(resourceReservations.memoryBytes ? { MemoryBytes: resourceReservations.memoryBytes } : {}),
                 };
             }
             taskTemplate['Resources'] = resources;
@@ -148,8 +134,7 @@ app.post(
             taskTemplate['Placement'] = { Constraints: filteredConstraints };
         }
 
-        const hasUpdateConfig =
-            updateParallelism !== undefined || updateDelay || updateFailureAction || updateOrder;
+        const hasUpdateConfig = updateParallelism !== undefined || updateDelay || updateFailureAction || updateOrder;
 
         const serviceSpec: Record<string, unknown> = {
             Name: name,

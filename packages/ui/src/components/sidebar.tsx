@@ -9,20 +9,9 @@ import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Separator } from '@workspace/ui/components/separator';
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-} from '@workspace/ui/components/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@workspace/ui/components/sheet';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@workspace/ui/components/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useIsMobile } from '@workspace/ui/hooks/use-mobile';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
@@ -166,10 +155,7 @@ function Sidebar({
         return (
             <div
                 data-slot="sidebar"
-                className={cn(
-                    'bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col',
-                    className,
-                )}
+                className={cn('bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col', className)}
                 {...props}
             >
                 {children}
@@ -519,12 +505,7 @@ function SidebarMenuButton({
     return (
         <Tooltip>
             <TooltipTrigger asChild>{button}</TooltipTrigger>
-            <TooltipContent
-                side="right"
-                align="center"
-                hidden={state !== 'collapsed' || isMobile}
-                {...tooltip}
-            />
+            <TooltipContent side="right" align="center" hidden={state !== 'collapsed' || isMobile} {...tooltip} />
         </Tooltip>
     );
 }
@@ -599,9 +580,7 @@ function SidebarMenuSkeleton({
             className={cn('flex h-8 items-center gap-2 rounded-md px-2', className)}
             {...props}
         >
-            {showIcon && (
-                <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />
-            )}
+            {showIcon && <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />}
             <Skeleton
                 className="h-4 max-w-(--skeleton-width) flex-1"
                 data-sidebar="menu-skeleton-text"

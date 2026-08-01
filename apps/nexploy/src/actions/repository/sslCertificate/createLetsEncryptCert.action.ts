@@ -11,11 +11,7 @@ export const createLetsEncryptCert = authActionServer
     .inputSchema(createLetsEncryptCertSchema)
     .action(async ({ parsedInput }) => {
         try {
-            return createLetsEncryptCertificate(
-                parsedInput.name,
-                parsedInput.domain,
-                parsedInput.email,
-            );
+            return createLetsEncryptCertificate(parsedInput.name, parsedInput.domain, parsedInput.email);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 await setToastServer({

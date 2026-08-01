@@ -26,9 +26,7 @@ export function CardInfoVolumes() {
         (a, b) => dayjs(b.createdAt || 0).valueOf() - dayjs(a.createdAt || 0).valueOf(),
     )[0];
 
-    const lastCreatedLabel = lastCreated?.createdAt
-        ? dayjs(lastCreated.createdAt).format('DD/MM/YYYY')
-        : '';
+    const lastCreatedLabel = lastCreated?.createdAt ? dayjs(lastCreated.createdAt).format('DD/MM/YYYY') : '';
 
     const lastCreatedName = lastCreated?.name || '-';
 
@@ -70,18 +68,14 @@ export function CardInfoVolumes() {
                 ) : (
                     <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                         <CardHeader className="flex flex-row justify-between space-y-0">
-                            <CardTitle className="h-14 truncate text-sm font-medium">
-                                {info.title}
-                            </CardTitle>
+                            <CardTitle className="h-14 truncate text-sm font-medium">{info.title}</CardTitle>
                             <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                                 <info.icon className="text-primary size-4" />
                             </div>
                         </CardHeader>
                         <CardContent>
                             <div className="truncate text-2xl font-semibold">{info.content}</div>
-                            <p className="text-muted-foreground truncate text-xs">
-                                {info.description}
-                            </p>
+                            <p className="text-muted-foreground truncate text-xs">{info.description}</p>
                         </CardContent>
                     </Card>
                 ),

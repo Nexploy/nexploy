@@ -12,9 +12,7 @@ setup('authenticate', async ({ page }) => {
         await page.getByLabel('Password', { exact: true }).fill(ADMIN.password);
         await page.getByLabel('Confirm Password').fill(ADMIN.password);
         await createAdminBtn.click();
-        await page
-            .waitForURL((url) => url.pathname !== '/setup', { timeout: 15_000 })
-            .catch(() => {});
+        await page.waitForURL((url) => url.pathname !== '/setup', { timeout: 15_000 }).catch(() => {});
     }
 
     const path = new URL(page.url()).pathname;

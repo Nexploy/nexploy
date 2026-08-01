@@ -1,14 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import {
     Select,
@@ -107,11 +100,7 @@ export function CreateUserForm() {
                         <FormItem>
                             <FormLabel>{t('confirmPassword')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    type="password"
-                                    placeholder={t('confirmPassword')}
-                                />
+                                <Input {...field} type="password" placeholder={t('confirmPassword')} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -161,9 +150,7 @@ export function CreateUserForm() {
                                     <SelectGroup>
                                         <SelectLabel>{t('role')}</SelectLabel>
                                         <SelectItem value="guest">{t('guestRole')}</SelectItem>
-                                        <SelectItem value="developer">
-                                            {t('developerRole')}
-                                        </SelectItem>
+                                        <SelectItem value="developer">{t('developerRole')}</SelectItem>
                                         <SelectItem value="admin">{t('adminRole')}</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
@@ -174,9 +161,7 @@ export function CreateUserForm() {
                 />
 
                 {form.formState.errors.root?.message && (
-                    <span className={'text-destructive mb-4 flex text-sm'}>
-                        {form.formState.errors.root?.message}
-                    </span>
+                    <span className={'text-destructive mb-4 flex text-sm'}>{form.formState.errors.root?.message}</span>
                 )}
 
                 <div className="flex justify-end gap-2 pt-4">

@@ -32,10 +32,7 @@ export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
             await next();
         });
     } catch (err: any) {
-        logger.info(
-            { environmentId },
-            'Environment not in registry, attempting on-demand initialization',
-        );
+        logger.info({ environmentId }, 'Environment not in registry, attempting on-demand initialization');
 
         try {
             const environmentConfig = await loadEnvironmentByIdFromAPI(environmentId);
@@ -52,10 +49,7 @@ export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
                 );
             }
 
-            logger.info(
-                { environmentId, name: environmentConfig.name },
-                'Attempting to register environment',
-            );
+            logger.info({ environmentId, name: environmentConfig.name }, 'Attempting to register environment');
             const client = await dockerClientRegistry.registerEnvironment(environmentConfig);
 
             logger.info({ environmentId }, 'Initializing state managers for environment');
@@ -70,10 +64,7 @@ export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
                 await next();
             });
         } catch (registerErr: any) {
-            logger.error(
-                { err: registerErr, environmentId },
-                'Failed to register environment on-demand',
-            );
+            logger.error({ err: registerErr, environmentId }, 'Failed to register environment on-demand');
             return c.json(
                 {
                     error: `Environment unavailable: ${environmentId}. ${registerErr.message}`,

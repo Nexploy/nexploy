@@ -2,13 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
-import {
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-} from '@workspace/ui/components/form';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel } from '@workspace/ui/components/form';
 import { Switch } from '@workspace/ui/components/switch';
 
 export function ComposeUpConfig() {
@@ -24,9 +18,7 @@ export function ComposeUpConfig() {
                     <FormItem className="border-border flex items-center rounded-md border p-3">
                         <FormLabel className="flex cursor-pointer flex-col items-start justify-between gap-1">
                             <span>{t('composeUpRecreate')}</span>
-                            <FormDescription className="text-xs">
-                                {t('composeUpRecreateDescription')}
-                            </FormDescription>
+                            <FormDescription className="text-xs">{t('composeUpRecreateDescription')}</FormDescription>
                         </FormLabel>
                         <FormControl>
                             <Switch checked={field.value} onCheckedChange={field.onChange} />

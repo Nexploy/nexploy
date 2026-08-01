@@ -28,16 +28,10 @@ export function MonitoringExportMenu() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>{t('export.label')}</DropdownMenuLabel>
-                <DropdownMenuItem
-                    onClick={() => exportMetrics()}
-                    disabled={hostHistory.length === 0}
-                >
+                <DropdownMenuItem onClick={() => exportMetrics()} disabled={hostHistory.length === 0}>
                     {t('export.host')}
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                    onClick={() => exportContainerStats()}
-                    disabled={containerStats.length === 0}
-                >
+                <DropdownMenuItem onClick={() => exportContainerStats()} disabled={containerStats.length === 0}>
                     {t('export.containers')}
                 </DropdownMenuItem>
             </DropdownMenuContent>

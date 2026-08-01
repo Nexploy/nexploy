@@ -35,9 +35,7 @@ export function PendingInvitationsList() {
     }
 
     if (pendingInvitations.length === 0) {
-        return (
-            <p className="text-muted-foreground text-sm">{t('invitations.noPendingInvitations')}</p>
-        );
+        return <p className="text-muted-foreground text-sm">{t('invitations.noPendingInvitations')}</p>;
     }
 
     return (

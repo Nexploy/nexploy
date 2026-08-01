@@ -103,25 +103,17 @@ export const GET = route
         const environment = searchParams.get('environment');
 
         if (!channelsParam) {
-            return NextResponse.json(
-                { error: 'Missing "channels" query parameter' },
-                { status: 400 },
-            );
+            return NextResponse.json({ error: 'Missing "channels" query parameter' }, { status: 400 });
         }
 
         const channelKeys = channelsParam.split(',').map(decodeURIComponent);
         const channelConfigs = channelKeys.map(parseChannelConfig);
 
         if (channelConfigs.length === 0) {
-            return NextResponse.json(
-                { error: 'At least one valid channel is required' },
-                { status: 400 },
-            );
+            return NextResponse.json({ error: 'At least one valid channel is required' }, { status: 400 });
         }
 
-        const invalidChannels = channelConfigs.filter(
-            (config) => !CHANNEL_ENDPOINTS[config.channel],
-        );
+        const invalidChannels = channelConfigs.filter((config) => !CHANNEL_ENDPOINTS[config.channel]);
         if (invalidChannels.length > 0) {
             return NextResponse.json(
                 { error: `Invalid channels: ${invalidChannels.map((c) => c.channel).join(', ')}` },
@@ -187,10 +179,7 @@ export const GET = route
         };
 
         const calculateRetryDelay = (retryCount: number): number => {
-            return Math.min(
-                CONFIG.RETRY_DELAY * Math.pow(CONFIG.BACKOFF_MULTIPLIER, retryCount),
-                20_000,
-            );
+            return Math.min(CONFIG.RETRY_DELAY * Math.pow(CONFIG.BACKOFF_MULTIPLIER, retryCount), 20_000);
         };
 
         const stream = new ReadableStream({
@@ -272,9 +261,7 @@ export const GET = route
                         if (!response.ok) {
                             if (response.status === 404 || response.status === 503) {
                                 let code =
-                                    response.status === 404
-                                        ? 'ENVIRONMENT_NOT_FOUND'
-                                        : 'ENVIRONMENT_UNAVAILABLE';
+                                    response.status === 404 ? 'ENVIRONMENT_NOT_FOUND' : 'ENVIRONMENT_UNAVAILABLE';
                                 let message = `HTTP ${response.status}: ${response.statusText}`;
                                 let environmentId = effectiveEnvironment ?? undefined;
 
@@ -291,8 +278,7 @@ export const GET = route
                                         code = errorData.code;
                                     }
                                     if (errorData?.error) message = errorData.error;
-                                    if (errorData?.environmentId)
-                                        environmentId = errorData.environmentId;
+                                    if (errorData?.environmentId) environmentId = errorData.environmentId;
                                 } catch {
                                     /* empty */
                                 }
@@ -382,10 +368,7 @@ export const GET = route
 
                         try {
                             const parsed = JSON.parse(errorData);
-                            if (
-                                parsed.code === 'ENVIRONMENT_NOT_FOUND' ||
-                                parsed.code === 'ENVIRONMENT_UNAVAILABLE'
-                            ) {
+                            if (parsed.code === 'ENVIRONMENT_NOT_FOUND' || parsed.code === 'ENVIRONMENT_UNAVAILABLE') {
                                 shouldRetry = false;
                                 errorData = JSON.stringify(parsed);
                             }

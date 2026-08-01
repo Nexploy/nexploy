@@ -1,9 +1,5 @@
 import { Fragment } from 'react';
-import {
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-} from '@workspace/ui/components/dropdown-menu';
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@workspace/ui/components/dropdown-menu';
 import { useTranslations } from 'next-intl';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { useServiceActions } from '@/hooks/useServiceActions';

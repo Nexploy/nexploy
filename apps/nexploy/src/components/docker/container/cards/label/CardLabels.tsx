@@ -21,9 +21,7 @@ export function CardLabels() {
     const { openDialog } = useConfirmationDialogStore();
     const labelChanges = useContainerChangesStore((state) => state.labelChanges);
     const onLabelChange = useContainerChangesStore((state) => state.onLabelChange);
-    const isSwarmContainer = useContainerStore(
-        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
-    );
+    const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
 
     const handleOpenDialog = (mode: 'add' | 'edit', label?: Label, originalLabel?: Label) => {
         openDialog({
@@ -39,9 +37,7 @@ export function CardLabels() {
     const getLabelChangeStatus = (label: Label) => {
         const editChange = labelChanges.find(
             (change) =>
-                change.typeAction === 'edit' &&
-                change.currentKey === label.key &&
-                change.currentValue === label.value,
+                change.typeAction === 'edit' && change.currentKey === label.key && change.currentValue === label.value,
         );
 
         const deleteChange = labelChanges.find(
@@ -71,11 +67,7 @@ export function CardLabels() {
                 {!isSwarmContainer && (
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button
-                                className="size-9 md:size-fit"
-                                icon={Plus}
-                                onClick={() => handleOpenDialog('add')}
-                            >
+                            <Button className="size-9 md:size-fit" icon={Plus} onClick={() => handleOpenDialog('add')}>
                                 <span className="hidden md:flex">{t('add')}</span>
                             </Button>
                         </TooltipTrigger>
@@ -91,15 +83,11 @@ export function CardLabels() {
                         {t('noLabels')}
                     </div>
                 ) : (
-                    <ScrollAreaWithShadow
-                        bottomShadow
-                        className="h-50 overflow-hidden px-6"
-                    >
+                    <ScrollAreaWithShadow bottomShadow className="h-50 overflow-hidden px-6">
                         <div className="space-y-2">
                             {Object.entries(container?.labels ?? {}).map(([key, value], idx) => {
                                 const label = { key, value };
-                                const { isEdited, isDeleted, editedLabel } =
-                                    getLabelChangeStatus(label);
+                                const { isEdited, isDeleted, editedLabel } = getLabelChangeStatus(label);
                                 const displayLabel = editedLabel || label;
 
                                 return (
@@ -109,11 +97,7 @@ export function CardLabels() {
                                         isEdited={isEdited}
                                         isDeleted={isDeleted}
                                         displayLabel={displayLabel}
-                                        onEdit={
-                                            isSwarmContainer
-                                                ? undefined
-                                                : handleOpenDialog.bind(null, 'edit')
-                                        }
+                                        onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
                                         onCancelDelete={
                                             isSwarmContainer
                                                 ? undefined
@@ -137,11 +121,7 @@ export function CardLabels() {
                                     isDeleted={false}
                                     isNew
                                     displayLabel={{ key: key!, value: value! }}
-                                    onEdit={
-                                        isSwarmContainer
-                                            ? undefined
-                                            : handleOpenDialog.bind(null, 'edit')
-                                    }
+                                    onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
                                 />
                             ))}
                         </div>

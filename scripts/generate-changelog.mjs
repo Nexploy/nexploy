@@ -115,12 +115,7 @@ if (!output.length) {
 
 const contributorLogins = new Set();
 if (repo && prevTag) {
-    const compare = gh([
-        'api',
-        `/repos/${repo}/compare/${prevTag}...${currentTag}`,
-        '-q',
-        '.commits[].author.login',
-    ]);
+    const compare = gh(['api', `/repos/${repo}/compare/${prevTag}...${currentTag}`, '-q', '.commits[].author.login']);
     if (compare) {
         for (const login of compare
             .split('\n')

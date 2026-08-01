@@ -1,5 +1,9 @@
 import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
-import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/typescript-interface/pipeline/pipeline';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
 import { mergeBranchConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { gitService } from '@/inngest/pipeline/services/git.service';
@@ -17,11 +21,8 @@ export class MergeBranchExecutor implements INodeExecutor {
         const { targetBranch, strategy, message, remote, push } = nodeConfig;
 
         const sourceBranch =
-            nodeConfig.sourceBranch ||
-            getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch') ||
-            '';
-        if (!sourceBranch)
-            throw new Error('No source branch — provide one or connect an upstream node');
+            nodeConfig.sourceBranch || getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch') || '';
+        if (!sourceBranch) throw new Error('No source branch — provide one or connect an upstream node');
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) throw new Error('No workDir found — connect a clone node first');
@@ -41,10 +42,7 @@ export class MergeBranchExecutor implements INodeExecutor {
             targetBranch,
         });
 
-        await logger.info(
-            nodeId,
-            `Merge complete${push ? ` — pushed to ${remote}/${mergedInto}` : ''}`,
-        );
+        await logger.info(nodeId, `Merge complete${push ? ` — pushed to ${remote}/${mergedInto}` : ''}`);
 
         return { output: { workDir, targetBranch: mergedInto, sourceBranch } };
     }

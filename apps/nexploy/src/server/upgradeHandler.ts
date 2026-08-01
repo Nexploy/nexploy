@@ -11,11 +11,7 @@ function denyUpgrade(socket: Socket, status: number, reason: string): void {
     socket.destroy();
 }
 
-export async function handleUpgrade(
-    req: IncomingMessage,
-    socket: Socket,
-    head: Buffer,
-): Promise<void> {
+export async function handleUpgrade(req: IncomingMessage, socket: Socket, head: Buffer): Promise<void> {
     const parsedUrl = new URL(req.url!, `http://${req.headers.host}`);
     const pathname = parsedUrl.pathname;
 

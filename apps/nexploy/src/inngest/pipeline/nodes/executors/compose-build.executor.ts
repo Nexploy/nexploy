@@ -26,9 +26,7 @@ export class ComposeBuildExecutor implements INodeExecutor {
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 
         if (!workDir) {
-            throw new Error(
-                'No workDir found in input nodes — connect this node after a Clone Repository node',
-            );
+            throw new Error('No workDir found in input nodes — connect this node after a Clone Repository node');
         }
 
         const composeFilePath = nodeConfig.composeFilePath;
@@ -39,12 +37,7 @@ export class ComposeBuildExecutor implements INodeExecutor {
         const projectName = getComposeProjectName(buildConfig.repositoryId);
         const envVars = await resolveComposeEnvVars(ctx);
         const labels = resolveComposeLabels(ctx);
-        const environmentId = getFromClosestAncestor<string>(
-            allOutputs,
-            edges,
-            nodeId,
-            'environmentId',
-        );
+        const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
         await logger.info(nodeId, `Building Docker Compose stack: ${projectName}`);
 
@@ -77,9 +70,7 @@ export class ComposeBuildExecutor implements INodeExecutor {
             };
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') throw error;
-            throw new Error(
-                `Docker Compose build failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Docker Compose build failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

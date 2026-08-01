@@ -47,9 +47,7 @@ export function SearchActionBar() {
                         className="flex h-7 cursor-pointer items-center gap-1.5"
                         onClick={() => secondaryAction.handler()}
                     >
-                        <span className="text-xs font-medium transition-colors">
-                            {secondaryAction.label}
-                        </span>
+                        <span className="text-xs font-medium transition-colors">{secondaryAction.label}</span>
                         <KbdGroup>
                             {secondaryAction.hotkeys.map((k) => (
                                 <Kbd key={k}>{k}</Kbd>

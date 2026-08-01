@@ -12,12 +12,7 @@ export const saveGitLabProviderAction = authActionServer
     .action(async ({ parsedInput }) => {
         try {
             const { displayName, clientId, clientSecret, useCustomUrl, baseUrl } = parsedInput;
-            await saveGitLabProvider(
-                displayName,
-                clientId,
-                clientSecret,
-                useCustomUrl && baseUrl ? baseUrl : null,
-            );
+            await saveGitLabProvider(displayName, clientId, clientSecret, useCustomUrl && baseUrl ? baseUrl : null);
             revalidatePath('/admin/integrations');
         } catch (err: unknown) {
             if (err instanceof Error) {

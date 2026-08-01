@@ -1,6 +1,6 @@
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
-import type { CreateRegistryInput, UpdateRegistryInput, } from '@workspace/schemas-zod/registry/registry.schema';
+import type { CreateRegistryInput, UpdateRegistryInput } from '@workspace/schemas-zod/registry/registry.schema';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export interface RegistryInfo {

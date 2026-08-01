@@ -30,16 +30,12 @@ export class TriggerStageBuildExecutor implements INodeExecutor {
         }
 
         if (targetStageId === buildConfig.stageId) {
-            throw new Error(
-                'Trigger Stage Build cannot target the stage it is running in (would loop indefinitely)',
-            );
+            throw new Error('Trigger Stage Build cannot target the stage it is running in (would loop indefinitely)');
         }
 
         const targetStage = await getFirstStage(buildConfig.repositoryId, targetStageId);
         if (!targetStage) {
-            throw new Error(
-                `Target stage ${targetStageId} not found in this repository — it may have been deleted`,
-            );
+            throw new Error(`Target stage ${targetStageId} not found in this repository — it may have been deleted`);
         }
 
         if (abortSignal.aborted) throw new Error('Build cancelled');
@@ -61,10 +57,7 @@ export class TriggerStageBuildExecutor implements INodeExecutor {
             throw new Error(`Build on stage "${targetStage.name}" was not started`);
         }
 
-        await logger.info(
-            nodeId,
-            `Started build #${triggered.numberBuild} on stage "${targetStage.name}"`,
-        );
+        await logger.info(nodeId, `Started build #${triggered.numberBuild} on stage "${targetStage.name}"`);
 
         return {
             output: {

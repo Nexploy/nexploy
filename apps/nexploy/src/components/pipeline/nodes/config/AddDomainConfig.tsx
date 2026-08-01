@@ -12,13 +12,7 @@ import {
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
 import { Alert, AlertDescription } from '@workspace/ui/components/alert';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Info, ShieldCheck } from 'lucide-react';
@@ -55,8 +49,7 @@ export function AddDomainConfig() {
         s.environments.find((environment) => environment.id === environmentId),
     );
 
-    const isRemoteEnvironment =
-        environment?.connectionType === 'TCP' || environment?.connectionType === 'TCP_TLS';
+    const isRemoteEnvironment = environment?.connectionType === 'TCP' || environment?.connectionType === 'TCP_TLS';
 
     const { containers } = useEnvironmentContainers(environmentId);
     const containerOptions = containers.map((c) => ({ value: c.name, label: c.name }));
@@ -104,11 +97,7 @@ export function AddDomainConfig() {
                             <FormLabel>{t('addDomainPath')}</FormLabel>
                             <FormControl>
                                 <RefAware value={field.value} onChange={field.onChange}>
-                                    <Input
-                                        {...field}
-                                        placeholder={t('pathPlaceholder')}
-                                        className="font-mono"
-                                    />
+                                    <Input {...field} placeholder={t('pathPlaceholder')} className="font-mono" />
                                 </RefAware>
                             </FormControl>
                             <FormMessage className="text-xs" />
@@ -124,11 +113,7 @@ export function AddDomainConfig() {
                         <FormLabel>{t('addDomainInternalPath')}</FormLabel>
                         <FormControl>
                             <RefAware value={field.value} onChange={field.onChange}>
-                                <Input
-                                    {...field}
-                                    placeholder={t('pathPlaceholder')}
-                                    className="font-mono"
-                                />
+                                <Input {...field} placeholder={t('pathPlaceholder')} className="font-mono" />
                             </RefAware>
                         </FormControl>
                         <FormDescription>{tDomains('internalPathDescription')}</FormDescription>
@@ -166,11 +151,7 @@ export function AddDomainConfig() {
                             <FormLabel>{t('addDomainContainerPort')}</FormLabel>
                             <FormControl>
                                 <RefAware value={field.value} onChange={field.onChange}>
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        placeholder={t('portNumberPlaceholder')}
-                                    />
+                                    <Input {...field} type="number" placeholder={t('portNumberPlaceholder')} />
                                 </RefAware>
                             </FormControl>
                             <FormMessage className="text-xs" />
@@ -185,24 +166,13 @@ export function AddDomainConfig() {
                     render={({ field }) => (
                         <FormItem className="flex items-center gap-3">
                             <FormControl>
-                                <RefAware
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    emptyValue={false}
-                                >
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
+                                <RefAware value={field.value} onChange={field.onChange} emptyValue={false}>
+                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                                 </RefAware>
                             </FormControl>
                             <div>
-                                <FormLabel className="cursor-pointer">
-                                    {t('addDomainStripPath')}
-                                </FormLabel>
-                                <FormDescription>
-                                    {tDomains('stripPathDescription')}
-                                </FormDescription>
+                                <FormLabel className="cursor-pointer">{t('addDomainStripPath')}</FormLabel>
+                                <FormDescription>{tDomains('stripPathDescription')}</FormDescription>
                             </div>
                         </FormItem>
                     )}
@@ -213,11 +183,7 @@ export function AddDomainConfig() {
                     render={({ field }) => (
                         <FormItem className="flex items-center gap-3">
                             <FormControl>
-                                <RefAware
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    emptyValue={false}
-                                >
+                                <RefAware value={field.value} onChange={field.onChange} emptyValue={false}>
                                     <Switch
                                         checked={field.value}
                                         onCheckedChange={(checked) => {
@@ -230,9 +196,7 @@ export function AddDomainConfig() {
                                 </RefAware>
                             </FormControl>
                             <div>
-                                <FormLabel className="cursor-pointer">
-                                    {t('addDomainHttps')}
-                                </FormLabel>
+                                <FormLabel className="cursor-pointer">{t('addDomainHttps')}</FormLabel>
                                 <FormDescription>{tDomains('httpsDescription')}</FormDescription>
                             </div>
                         </FormItem>
@@ -247,19 +211,13 @@ export function AddDomainConfig() {
                         <FormItem>
                             <FormLabel>{tDomains('certificate')}</FormLabel>
                             <FormControl>
-                                <RefAware
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    emptyValue={undefined}
-                                >
+                                <RefAware value={field.value} onChange={field.onChange} emptyValue={undefined}>
                                     <Select
                                         value={field.value ?? ''}
                                         onValueChange={(val) => field.onChange(val || undefined)}
                                     >
                                         <SelectTrigger className={'w-full'}>
-                                            <SelectValue
-                                                placeholder={tDomains('selectCertificate')}
-                                            />
+                                            <SelectValue placeholder={tDomains('selectCertificate')} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {certificates.length === 0 ? (
@@ -284,9 +242,7 @@ export function AddDomainConfig() {
                                 </RefAware>
                             </FormControl>
                             {fieldState.error && (
-                                <p className="text-destructive text-xs">
-                                    {t(fieldState.error.message as string)}
-                                </p>
+                                <p className="text-destructive text-xs">{t(fieldState.error.message as string)}</p>
                             )}
                             <FormDescription>{t('certificateDescription')}</FormDescription>
                         </FormItem>

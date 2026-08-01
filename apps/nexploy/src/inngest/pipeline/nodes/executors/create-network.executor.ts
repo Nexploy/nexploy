@@ -12,9 +12,7 @@ export class CreateNetworkExecutor implements INodeExecutor {
     readonly type = 'create-network';
     readonly configSchema = createNetworkConfigSchema;
 
-    async execute(
-        ctx: NodeExecutionContext<z.infer<typeof createNetworkConfigSchema>>,
-    ): Promise<NodeExecutionResult> {
+    async execute(ctx: NodeExecutionContext<z.infer<typeof createNetworkConfigSchema>>): Promise<NodeExecutionResult> {
         const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
 
         const name = nodeConfig.name;
@@ -39,9 +37,7 @@ export class CreateNetworkExecutor implements INodeExecutor {
             }
             return { output: { networkId: result.id, networkName: name } };
         } catch (error) {
-            throw new Error(
-                `Failed to create network: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            );
+            throw new Error(`Failed to create network: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 }

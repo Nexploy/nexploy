@@ -71,13 +71,7 @@ export function RegistryCard({ registry }: RegistryCardProps) {
 
                 <div className="flex items-center gap-2">
                     <Can resource="registry" action="update">
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={handleEdit}
-                            icon={Pencil}
-                            title={t('edit')}
-                        />
+                        <Button variant="outline" size="icon" onClick={handleEdit} icon={Pencil} title={t('edit')} />
                     </Can>
                     <Can resource="registry" action="delete">
                         <Button
