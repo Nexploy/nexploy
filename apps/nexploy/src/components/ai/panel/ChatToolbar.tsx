@@ -1,7 +1,7 @@
 import { useAIPanelStore } from '@/stores/useAIPanelStore.ts';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 import { ChevronDown, Maximize2, Minimize2 } from 'lucide-react';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
 
 export function ChatToolbar() {

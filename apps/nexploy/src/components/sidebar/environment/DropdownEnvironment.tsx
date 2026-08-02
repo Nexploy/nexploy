@@ -24,7 +24,7 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
-import { Can } from '@/components/permission/Can.tsx';
+import { Can } from '@/components/permission/Can';
 import { DicebearAvatar } from '@/components/shared/DicebearAvatar.tsx';
 
 interface DropdownEnvironmentProps {

@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { onDeployDockerfileVersion } from '@/actions/repository/versions/deployDockerfileVersion.action';
 import { onDeployComposeVersion } from '@/actions/repository/versions/deployComposeVersion.action';
 import { useTranslations } from 'next-intl';
-import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';
 
 interface VersionDeployButtonProps {

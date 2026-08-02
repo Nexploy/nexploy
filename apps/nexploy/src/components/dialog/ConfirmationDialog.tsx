@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 
 export function ConfirmationDialog() {
     const { isOpen, title, description, closeDialog, content, closeOnBackground, props } = useConfirmationDialogStore();

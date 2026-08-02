@@ -13,7 +13,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { runCleanupAction } from '@/actions/admin/cleanup/runCleanup.action';
 import type { CleanupResult, DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 import type { CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
-import { fetcherApi } from '@/lib/api/fetcherApi.ts';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 import useSWR from 'swr';
 
 const ICONS = {

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
 import { type NodeInputField, type NodeManifest } from './types/nodeManifest';
-import { allBuiltinManifests } from './nodes/manifests';
+import { allBuiltinManifests } from '@/pipeline-nodes/registry/client';
 
 const builtinRegistry = new Map<string, NodeManifest>(
     allBuiltinManifests.map((m) => [m.type, m] as [string, NodeManifest]),

@@ -7,8 +7,8 @@ import { Kbd } from '@workspace/ui/components/kbd';
 import { Button } from '@workspace/ui/components/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useHotkeys } from '@/lib/useHotKeys.ts';
-import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore.ts';
-import { usePipelineDisplay } from '@/stores/pipeline/usePipelineStore.ts';
+import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
+import { usePipelineDisplay } from '@/stores/pipeline/usePipelineStore';
 
 interface BuildPreviewBannerProps {
     buildNumber: number;

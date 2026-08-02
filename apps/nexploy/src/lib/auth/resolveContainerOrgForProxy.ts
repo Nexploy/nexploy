@@ -1,5 +1,5 @@
 import { prisma } from '../../../prisma/prisma';
-import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
+import { NEXPLOY_LABELS } from '@workspace/shared/nexployLabels';
 
 export async function resolveOrganizationIdForContainerId(containerId: string): Promise<string | null> {
     try {

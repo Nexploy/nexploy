@@ -8,7 +8,7 @@ import { Button, buttonVariants } from '@workspace/ui/components/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { usePermissions } from '@/contexts/PermissionContext';
 import * as React from 'react';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 import type { VariantProps } from 'class-variance-authority';
 
 const STOPPABLE_STATUSES: BuildStatus[] = ['QUEUED', 'BUILDING'];

@@ -39,8 +39,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useRouter } from '@/i18n/navigation';
 import { Switch } from '@workspace/ui/components/switch';
-import { Label } from '@workspace/ui/components/label.tsx';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { Label } from '@workspace/ui/components/label';
+import { cn } from '@workspace/ui/lib/utils';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 
 const globalFilterFn: FilterFn<ImageRow> = (row, _, value) => {

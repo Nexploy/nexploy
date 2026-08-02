@@ -2,7 +2,7 @@ import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { getDomains } from '@/services/traefik.service';
 import { getUserSession } from '@/services/auth/auth.service';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
+import { NEXPLOY_LABELS } from '@workspace/shared/nexployLabels';
 import { prisma } from '../../prisma/prisma';
 
 type ContainerSummary = { name: string; labels?: Record<string, string> | null };

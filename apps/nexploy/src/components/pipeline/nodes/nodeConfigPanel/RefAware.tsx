@@ -2,7 +2,7 @@
 
 import { type PropsWithChildren } from 'react';
 import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
-import { isNodeFieldRef } from '@/lib/nodeFieldRef';
+import { isNodeFieldRef } from '@workspace/pipeline-core/nodeFieldRef';
 import { AlertTriangle, Variable, X } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';

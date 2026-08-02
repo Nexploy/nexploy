@@ -5,7 +5,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { SSEProvider } from '@/providers/SSEProviders';
 import { useTranslations } from 'next-intl';
-import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { TableRequests } from '@/components/traefik/table/TableRequests';
 
 export default function RequestsPage() {

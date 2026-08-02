@@ -7,7 +7,7 @@ import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandList } 
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
 import type { Provider } from '@workspace/typescript-interface/ai/aiConfig';
-import { fetcherApi } from '@/lib/api/fetcherApi.ts';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { ProviderGroup } from './ProviderGroup';
 import { ModelSelectorActionBar } from './ModelSelectorActionBar';

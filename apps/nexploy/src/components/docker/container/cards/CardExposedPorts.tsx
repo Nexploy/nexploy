@@ -13,8 +13,8 @@ import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStor
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
-import { Can } from '@/components/permission/Can.tsx';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
+import { Can } from '@/components/permission/Can';
 
 function getPortUrl(port: number) {
     const environment = useEnvironmentStore.getState().getSelectedEnvironment();

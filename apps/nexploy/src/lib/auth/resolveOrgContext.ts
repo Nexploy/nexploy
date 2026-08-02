@@ -1,6 +1,6 @@
 import { prisma } from '../../../prisma/prisma';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
+import { NEXPLOY_LABELS } from '@workspace/shared/nexployLabels';
 import { getDomains } from '@/services/traefik.service';
 import type { Session } from '@/lib/auth/auth';
 

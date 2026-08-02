@@ -14,7 +14,8 @@ import {
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { formatErrorDetails, resolveNodeConfig } from './utils';
 import { analyzeGraph } from '@/inngest/pipeline/utils/graphQueries';
-import { getNodeExecutor } from '@/inngest/pipeline/nodes/registry';
+import { getNodeExecutor } from '@/pipeline-nodes/registry/server';
+import { hostServices } from './hostServices';
 import { getBuildStatus } from '@/services/repository/build.service';
 
 export { createPipelineLogger } from './utils';
@@ -231,6 +232,7 @@ export class PipelineOrchestrator {
                                 edges: graph.edges,
                                 logger,
                                 reporter,
+                                services: hostServices,
                                 abortSignal: abortController.signal,
                                 pipelineHasFailed,
                             };

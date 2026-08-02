@@ -3,7 +3,7 @@
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { cancelBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
-import { cancelBuildRepository } from '@/services/repository/build.service.ts';
+import { cancelBuildRepository } from '@/services/repository/build.service';
 import { getTranslations } from 'next-intl/server';
 import { byBuildId } from '@/lib/auth/resolveOrgContext';
 

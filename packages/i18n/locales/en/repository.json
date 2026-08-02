@@ -406,10 +406,12 @@
     },
     "nodes": {
       "clone-repository": {
-        "name": "Clone Repository"
+        "name": "Clone Repository",
+        "description": "Clone the linked Git repository into the build workspace"
       },
       "webhook-clone": {
-        "name": "Webhook Clone"
+        "name": "Webhook Clone",
+        "description": "Clone the repository when a webhook push event is received"
       },
       "build-docker-image": {
         "name": "Build Docker Image",
@@ -492,10 +494,12 @@
         "description": "Create and start a Docker container from an image"
       },
       "create-network": {
-        "name": "Create Network"
+        "name": "Create Network",
+        "description": "Create a Docker network"
       },
       "create-volume": {
-        "name": "Create Volume"
+        "name": "Create Volume",
+        "description": "Create a Docker volume"
       },
       "wait-for-health": {
         "name": "Wait for Health",
@@ -1165,7 +1169,39 @@
       "webhookEvent": "Webhook event",
       "desc_webhookEvent": "Type of webhook event that triggered the build (push, merge_request or tag)",
       "mergeRequestAction": "Merge request action",
-      "desc_mergeRequestAction": "Merge request action that triggered the build (opened, updated, merged or closed)"
+      "desc_mergeRequestAction": "Merge request action that triggered the build (opened, updated, merged or closed)",
+      "certificateId": "Certificate ID",
+      "desc_certificateId": "Identifier of the issued SSL certificate",
+      "domain": "Domain",
+      "desc_domain": "Domain name the certificate was issued for",
+      "services": "Services",
+      "desc_services": "Services declared in the compose file",
+      "builtServices": "Built services",
+      "desc_builtServices": "Services that were actually rebuilt",
+      "composeConfig": "Compose config",
+      "desc_composeConfig": "Resolved compose configuration used for the deployment",
+      "service": "Service",
+      "desc_service": "Compose service the command ran against",
+      "containers": "Containers",
+      "desc_containers": "Containers created by the deployment",
+      "deletedNetwork": "Deleted network",
+      "desc_deletedNetwork": "Name of the network that was removed",
+      "deletedVolume": "Deleted volume",
+      "desc_deletedVolume": "Name of the volume that was removed",
+      "secretCount": "Secret count",
+      "desc_secretCount": "Number of secrets fetched from the provider",
+      "pushedImages": "Pushed images",
+      "desc_pushedImages": "Image references that were pushed to the registry",
+      "triggered": "Triggered",
+      "desc_triggered": "Whether the downstream stage build was triggered",
+      "triggeredStageId": "Triggered stage ID",
+      "desc_triggeredStageId": "Identifier of the stage that was triggered",
+      "triggeredBuildId": "Triggered build ID",
+      "desc_triggeredBuildId": "Identifier of the build that was triggered",
+      "provider": "Provider",
+      "desc_provider": "Git provider the commit status was sent to",
+      "sha": "Commit SHA",
+      "desc_sha": "Commit the status was attached to"
     },
     "noInputsAvailable": "No inputs available from previous nodes",
     "nodeOutputs": "Node outputs",

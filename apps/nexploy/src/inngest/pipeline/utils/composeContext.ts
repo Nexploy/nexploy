@@ -1,6 +1,6 @@
-import { getFromClosestAncestor } from '@/helpers/pipeline.helpers';
+import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
 import { getAllEnvsBuild } from '@/services/repository/build.service';
-import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
+import { NEXPLOY_LABELS } from '@workspace/shared/nexployLabels';
 import { NodeExecutionContext } from '@workspace/typescript-interface/pipeline/pipeline';
 
 export function getComposeProjectName(repositoryId: string): string {

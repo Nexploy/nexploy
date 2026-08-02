@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 import { Kbd } from '@workspace/ui/components/kbd.tsx';
 
 export function ModelSelectorActionBar() {

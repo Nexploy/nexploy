@@ -17,7 +17,7 @@ import { TraefikNewFileDialog } from './TraefikNewFileDialog';
 import { canDropInto } from './traefikDnd';
 import { useTraefikDnd } from './traefikDndContext';
 import { useTranslations } from 'next-intl';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 
 export function TraefikTreeNodes({
     nodes,

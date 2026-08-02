@@ -5,7 +5,7 @@ import { type UIMessage, useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import useSWR from 'swr';
 import type { Provider } from '@workspace/typescript-interface/ai/aiConfig';
-import { fetcherApi } from '@/lib/api/fetcherApi.ts';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { useAIContext } from '@/hooks/useAIContext';
 import { useHotkeys } from '@/lib/useHotKeys';

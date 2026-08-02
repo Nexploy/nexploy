@@ -205,6 +205,12 @@ importers:
       '@workspace/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@workspace/pipeline-core':
+        specifier: workspace:*
+        version: link:../../packages/pipeline-core
+      '@workspace/pipeline-ui':
+        specifier: workspace:*
+        version: link:../../packages/pipeline-ui
       '@workspace/schemas-zod':
         specifier: workspace:*
         version: link:../../packages/schemas-zod
@@ -365,6 +371,41 @@ importers:
       next-intl:
         specifier: ^4.9.1
         version: 4.9.1(next@16.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@7.0.2)
+
+  packages/pipeline-core:
+    dependencies:
+      '@workspace/typescript-interface':
+        specifier: workspace:*
+        version: link:../typescript-interface
+    devDependencies:
+      '@types/node':
+        specifier: ^24.7.2
+        version: 24.7.2
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
+
+  packages/pipeline-ui:
+    dependencies:
+      '@workspace/typescript-interface':
+        specifier: workspace:*
+        version: link:../typescript-interface
+      react:
+        specifier: ^19.2.3
+        version: 19.2.3
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.2
+        version: 19.2.2
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
 
   packages/schemas-zod:
     dependencies:

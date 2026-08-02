@@ -26,7 +26,7 @@ import {
     DialogTrigger,
 } from '@workspace/ui/components/dialog';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import type { DockerHubImage, DockerHubSort } from '@workspace/typescript-interface/docker/docker.hub';
 import { ImageLogo } from '@/components/docker/image/pull/ImageLogo.tsx';

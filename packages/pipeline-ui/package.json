@@ -1,0 +1,22 @@
+{
+  "name": "@workspace/pipeline-ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts",
+    "./adapter": "./src/adapter.tsx"
+  },
+  "dependencies": {
+    "@workspace/typescript-interface": "workspace:*",
+    "react": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@workspace/typescript-config": "workspace:*",
+    "typescript": "7.0.2"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

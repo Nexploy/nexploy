@@ -1,6 +1,6 @@
 import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
 import { type LogLevel, type NodeOutputStore } from '@workspace/typescript-interface/pipeline/pipeline';
-import { isNodeFieldRef } from '@/lib/nodeFieldRef';
+import { isNodeFieldRef } from '@workspace/pipeline-core/nodeFieldRef';
 
 export function formatErrorDetails(error: unknown): string {
     if (!(error instanceof Error)) {

@@ -6,11 +6,9 @@ import {
     Container,
     Database,
     DatabaseZap,
-    PackageX,
     Download,
     Eraser,
     FileCheck,
-    FileCode,
     FileCode2,
     FileSearch,
     FolderInput,
@@ -31,14 +29,19 @@ import {
     type LucideIcon,
     Milestone,
     Network,
+    PackageCheck,
+    PackagePlus,
+    PackageX,
     Play,
     RefreshCw,
     Rocket,
     RotateCcw,
+    ScanSearch,
     ScrollText,
     Server,
     ShieldCheck,
     SlidersHorizontal,
+    Split,
     Square,
     SquareTerminal,
     Tag,
@@ -49,11 +52,10 @@ import {
     Variable,
     Webhook,
     Workflow,
-    PackagePlus,
-    PackageCheck,
-    ScanSearch,
     Wrench,
 } from 'lucide-react';
+import { type NodeIconName } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
+import { ALL_NODE_DESCRIPTORS } from '@/pipeline-nodes/registry/descriptors';
 
 export const CATEGORY_BG_MUTED: Record<string, string> = {
     source: 'bg-blue-500/10',
@@ -133,171 +135,68 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
     utility: Wrench,
 };
 
-const NODE_CATEGORY: Record<string, string> = {
-    'clone-repository': 'source',
-    'webhook-clone': 'source',
-    'validate-dockerfile': 'build',
-    'validate-compose': 'build',
-    'build-docker-image': 'build',
-    'push-to-registry': 'build',
-    'deploy-compose': 'deploy',
-    'compose-build': 'build',
-    'compose-run': 'script',
-    'compose-up': 'deploy',
-    'set-env-vars': 'config',
-    'clean-workdir': 'utility',
-    'send-notification': 'integration',
-    'save-version': 'utility',
-    'set-environment': 'deploy',
-    'start-container': 'deploy',
-    'stop-container': 'deploy',
-    'restart-container': 'deploy',
-    'remove-container': 'deploy',
-    'delete-container': 'deploy',
-    'create-container': 'deploy',
-    'create-network': 'utility',
-    'create-volume': 'utility',
-    // Flow Control
-    'wait-for-health': 'flow',
-    'wait-for-url': 'flow',
-    'wait-for-port': 'flow',
-    delay: 'flow',
-    condition: 'flow',
-    // Script Execution
-    'run-command-in-container': 'script',
-    // HTTP / Webhooks
-    'http-request': 'integration',
-    'update-commit-status': 'integration',
-    // Image Management
-    'tag-image': 'build',
-    'scan-image': 'build',
-    'prune-images': 'build',
-    'prune-build-cache': 'build',
-    'prune-containers': 'utility',
-    'prune-volumes': 'utility',
-    'delete-image': 'build',
-    'delete-network': 'utility',
-    'delete-volume': 'utility',
-    // Files & Artifacts
-    'download-file': 'files',
-    // Database
-    'backup-volume-bucket-storage': 'database',
-    // Docker Swarm
-    'create-service': 'deploy',
-    'update-service': 'deploy',
-    'scale-service': 'deploy',
-    // Monitoring
-    'check-container-logs': 'utility',
-    // Cache
-    'cache-restore': 'files',
-    'cache-save': 'files',
-    // Git
-    'git-tag': 'source',
-    'git-clone-extra': 'source',
-    // Secrets & Config
-    'fetch-secrets-vault': 'config',
-    'fetch-secrets-doppler': 'config',
-    'fetch-secrets-infisical': 'config',
-    // Code Quality
-    'sonarqube-scan': 'build',
-    // Git CI/CD
-    'create-release': 'integration',
-    'cherry-pick-commit': 'source',
-    'merge-branch': 'source',
-    // Domain & SSL
-    'add-domain': 'deploy',
-    'remove-domain': 'deploy',
-    'add-ssl-certificate': 'deploy',
-    // Stage Orchestration
-    'trigger-stage-build': 'deploy',
+export const ICON_NAME_MAP: Record<NodeIconName, LucideIcon> = {
+    ArrowUpDown,
+    Bell,
+    CircleX,
+    CloudBackup,
+    Container,
+    DatabaseZap,
+    Download,
+    Eraser,
+    FileCheck,
+    FileSearch,
+    FolderInput,
+    FolderOutput,
+    GitBranch,
+    GitCommit,
+    GitFork,
+    GitMerge,
+    Globe,
+    GlobeOff,
+    Hammer,
+    HardDrive,
+    HeartPulse,
+    KeyRound,
+    KeySquare,
+    Layers,
+    Milestone,
+    Network,
+    PackageCheck,
+    PackagePlus,
+    PackageX,
+    Play,
+    RefreshCw,
+    Rocket,
+    RotateCcw,
+    ScanSearch,
+    ScrollText,
+    Server,
+    ShieldCheck,
+    Split,
+    Square,
+    SquareTerminal,
+    Tag,
+    Terminal,
+    Timer,
+    Trash2,
+    Upload,
+    Variable,
+    Webhook,
+    Workflow,
 };
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
-    Object.entries(NODE_CATEGORY).map(([node, cat]) => [node, CATEGORY_BG_MUTED[cat]!]),
+    ALL_NODE_DESCRIPTORS.map((descriptor) => [descriptor.type, CATEGORY_BG_MUTED[descriptor.category]!]),
 );
 
 export const NODE_TEXT: Record<string, string> = Object.fromEntries(
-    Object.entries(NODE_CATEGORY).map(([node, cat]) => [node, CATEGORY_TEXT[cat]!]),
+    ALL_NODE_DESCRIPTORS.map((descriptor) => [descriptor.type, CATEGORY_TEXT[descriptor.category]!]),
 );
 
-export const NODE_ICONS: Record<string, LucideIcon> = {
-    'clone-repository': GitBranch,
-    'webhook-clone': Webhook,
-    'validate-dockerfile': FileCheck,
-    'validate-compose': FileSearch,
-    'build-docker-image': Container,
-    'push-to-registry': Upload,
-    'deploy-compose': Layers,
-    'compose-build': Hammer,
-    'compose-run': Terminal,
-    'compose-up': Rocket,
-    'set-env-vars': Variable,
-    'clean-workdir': Trash2,
-    'send-notification': Bell,
-    'save-version': Tag,
-    'set-environment': Server,
-    'start-container': Play,
-    'stop-container': Square,
-    'restart-container': RotateCcw,
-    'remove-container': CircleX,
-    'delete-container': Trash2,
-    'create-container': PackagePlus,
-    'create-network': Network,
-    'create-volume': HardDrive,
-    // Flow Control
-    'wait-for-health': HeartPulse,
-    'wait-for-url': Globe,
-    'wait-for-port': Network,
-    delay: Timer,
-    condition: GitBranch,
-    // Script Execution
-    'run-command-in-container': SquareTerminal,
-    // HTTP / Webhooks
-    'http-request': Webhook,
-    'update-commit-status': GitCommit,
-    // Image Management
-    'tag-image': Tag,
-    'scan-image': ShieldCheck,
-    'prune-images': Trash2,
-    'prune-build-cache': Eraser,
-    'prune-containers': PackageX,
-    'prune-volumes': DatabaseZap,
-    'delete-image': Trash2,
-    'delete-network': Trash2,
-    'delete-volume': Trash2,
-    // Files & Artifacts
-    'download-file': Download,
-    // Database
-    'backup-volume-bucket-storage': CloudBackup,
-    // Docker Swarm
-    'create-service': Layers,
-    'update-service': RefreshCw,
-    'scale-service': ArrowUpDown,
-    // Monitoring
-    'check-container-logs': ScrollText,
-    // Cache
-    'cache-restore': FolderInput,
-    'cache-save': FolderOutput,
-    // Git
-    'git-tag': Milestone,
-    'git-clone-extra': GitFork,
-    // Secrets
-    'fetch-secrets-vault': ShieldCheck,
-    'fetch-secrets-doppler': KeyRound,
-    'fetch-secrets-infisical': KeySquare,
-    // Code Quality
-    'sonarqube-scan': ScanSearch,
-    // Git CI/CD
-    'create-release': PackageCheck,
-    'cherry-pick-commit': GitCommit,
-    'merge-branch': GitMerge,
-    // Domain & SSL
-    'add-domain': Globe,
-    'remove-domain': GlobeOff,
-    'add-ssl-certificate': ShieldCheck,
-    // Stage Orchestration
-    'trigger-stage-build': Workflow,
-};
+export const NODE_ICONS: Record<string, LucideIcon> = Object.fromEntries(
+    ALL_NODE_DESCRIPTORS.map((descriptor) => [descriptor.type, ICON_NAME_MAP[descriptor.icon]]),
+);
 
 export const TEMPLATE_ICONS: Record<string, LucideIcon> = {
     dockerfile: FileCode2,

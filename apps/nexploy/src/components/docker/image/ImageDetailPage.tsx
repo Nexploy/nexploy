@@ -15,7 +15,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { CardImageConfig } from '@/components/docker/image/cards/CardImageConfig';
 import { CardImageContainers } from '@/components/docker/image/cards/CardImageContainers';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
-import { Tooltip, TooltipContent } from '@workspace/ui/components/tooltip.tsx';
+import { Tooltip, TooltipContent } from '@workspace/ui/components/tooltip';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
 import { Switch } from '@workspace/ui/components/switch';

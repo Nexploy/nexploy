@@ -1,0 +1,60 @@
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
+import * as os from 'node:os';
+import ky from 'ky';
+import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
+import {
+    INodeExecutor,
+    NodeExecutionContext,
+    NodeExecutionResult,
+} from '@workspace/typescript-interface/pipeline/pipeline';
+import { downloadFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+import { safeResolvePath } from '@workspace/shared/pathSafety';
+import { z } from 'zod';
+
+export class DownloadFileExecutor implements INodeExecutor {
+    readonly type = 'download-file';
+    readonly configSchema = downloadFileConfigSchema;
+
+    async execute(
+        ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof downloadFileConfigSchema>>>,
+    ): Promise<NodeExecutionResult> {
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
+
+        const url = nodeConfig.url;
+        const destinationPath = nodeConfig.destinationPath;
+        const filename = nodeConfig.filename;
+
+        const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
+        const base = workDir ?? os.tmpdir();
+
+        const resolvedDest = safeResolvePath(base, destinationPath);
+
+        const finalFilename = filename ?? (path.basename(new URL(url).pathname) || 'downloaded-file');
+        const outputFile = path.join(resolvedDest, finalFilename);
+
+        await logger.info(nodeId, `Downloading ${url} → ${path.join(destinationPath, finalFilename)}`);
+
+        const arrayBuffer = await ky.get(url, { signal: abortSignal, timeout: false }).arrayBuffer();
+
+        await fs.mkdir(resolvedDest, { recursive: true });
+
+        const buffer = Buffer.from(arrayBuffer);
+        await fs.writeFile(outputFile, buffer);
+
+        const sizeKb = (buffer.byteLength / 1024).toFixed(1);
+        await logger.info(nodeId, `Downloaded ${sizeKb} KB to ${path.join(destinationPath, finalFilename)}`);
+
+        return {
+            output: {
+                url,
+                outputFile,
+                filename: finalFilename,
+                sizeBytes: buffer.byteLength,
+            },
+        };
+    }
+}
+
+export const downloadFileExecutor = new DownloadFileExecutor();

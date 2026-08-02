@@ -6,7 +6,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useTraefikConfigStore } from '@/stores/traefik/useTraefikConfigStore';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 import { Separator } from '@workspace/ui/components/separator.tsx';
 
 export function TraefikEditorToolbar() {

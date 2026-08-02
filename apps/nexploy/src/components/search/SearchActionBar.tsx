@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchStore } from '@/stores/useSearchStore';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 import { Kbd, KbdGroup } from '@workspace/ui/components/kbd.tsx';
 import { useSearchActions } from '@/hooks/search/useSearchActions.ts';
 

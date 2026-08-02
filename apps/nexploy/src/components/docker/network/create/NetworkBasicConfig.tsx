@@ -23,8 +23,8 @@ import {
     SelectLabel,
     SelectTrigger,
     SelectValue,
-} from '@workspace/ui/components/select.tsx';
-import { NETWORK_DRIVERS, NETWORK_SCOPES } from '@/lib/constants/docker.ts';
+} from '@workspace/ui/components/select';
+import { NETWORK_DRIVERS, NETWORK_SCOPES } from '@workspace/shared/dockerConstants';
 
 export function NetworkBasicConfig() {
     const t = useTranslations('docker.createNetworkPage');

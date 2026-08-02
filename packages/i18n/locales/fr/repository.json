@@ -406,10 +406,12 @@
     },
     "nodes": {
       "clone-repository": {
-        "name": "Cloner le dépôt"
+        "name": "Cloner le dépôt",
+        "description": "Clone le dépôt Git lié dans l’espace de travail du build"
       },
       "webhook-clone": {
-        "name": "Clonage via Webhook"
+        "name": "Clonage via Webhook",
+        "description": "Clone le dépôt à la réception d’un événement push de webhook"
       },
       "build-docker-image": {
         "name": "Construire l'image Docker",
@@ -492,10 +494,12 @@
         "description": "Créer et démarrer un conteneur Docker à partir d'une image"
       },
       "create-network": {
-        "name": "Créer un réseau"
+        "name": "Créer un réseau",
+        "description": "Crée un réseau Docker"
       },
       "create-volume": {
-        "name": "Créer un volume"
+        "name": "Créer un volume",
+        "description": "Crée un volume Docker"
       },
       "wait-for-health": {
         "name": "Attendre le healthcheck",
@@ -1165,7 +1169,39 @@
       "webhookEvent": "Événement webhook",
       "desc_webhookEvent": "Type d'événement webhook ayant déclenché le build (push, merge_request ou tag)",
       "mergeRequestAction": "Action de la merge request",
-      "desc_mergeRequestAction": "Action de la merge request ayant déclenché le build (opened, updated, merged ou closed)"
+      "desc_mergeRequestAction": "Action de la merge request ayant déclenché le build (opened, updated, merged ou closed)",
+      "certificateId": "ID du certificat",
+      "desc_certificateId": "Identifiant du certificat SSL émis",
+      "domain": "Domaine",
+      "desc_domain": "Nom de domaine pour lequel le certificat a été émis",
+      "services": "Services",
+      "desc_services": "Services déclarés dans le fichier compose",
+      "builtServices": "Services construits",
+      "desc_builtServices": "Services qui ont réellement été reconstruits",
+      "composeConfig": "Config compose",
+      "desc_composeConfig": "Configuration compose résolue utilisée pour le déploiement",
+      "service": "Service",
+      "desc_service": "Service compose sur lequel la commande a été exécutée",
+      "containers": "Conteneurs",
+      "desc_containers": "Conteneurs créés par le déploiement",
+      "deletedNetwork": "Réseau supprimé",
+      "desc_deletedNetwork": "Nom du réseau qui a été supprimé",
+      "deletedVolume": "Volume supprimé",
+      "desc_deletedVolume": "Nom du volume qui a été supprimé",
+      "secretCount": "Nombre de secrets",
+      "desc_secretCount": "Nombre de secrets récupérés depuis le fournisseur",
+      "pushedImages": "Images poussées",
+      "desc_pushedImages": "Références des images poussées vers le registre",
+      "triggered": "Déclenché",
+      "desc_triggered": "Indique si le build de l'étape suivante a été déclenché",
+      "triggeredStageId": "ID de l'étape déclenchée",
+      "desc_triggeredStageId": "Identifiant de l'étape qui a été déclenchée",
+      "triggeredBuildId": "ID du build déclenché",
+      "desc_triggeredBuildId": "Identifiant du build qui a été déclenché",
+      "provider": "Fournisseur",
+      "desc_provider": "Fournisseur Git auquel le statut du commit a été envoyé",
+      "sha": "SHA du commit",
+      "desc_sha": "Commit auquel le statut a été rattaché"
     },
     "noInputsAvailable": "Aucune entrée disponible des noeuds précédents",
     "nodeOutputs": "Sorties du nœud",

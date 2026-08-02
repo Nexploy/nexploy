@@ -29,7 +29,7 @@ import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { useImagesStore } from '@/stores/docker/useImagesStore.ts';
 import { useMemo } from 'react';
 import { DockerHubSearchDialog } from '@/components/docker/image/pull/DockerHubSearchDialog.tsx';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 import { Docker } from '@thesvg/react';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';

@@ -9,7 +9,7 @@ import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { Can } from '@/components/permission/Can';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 
 export default function NetworksPage() {
     const t = useTranslations('docker.pages.networks');

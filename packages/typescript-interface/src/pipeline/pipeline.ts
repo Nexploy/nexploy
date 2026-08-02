@@ -1,5 +1,6 @@
 import { BuildConfig } from '../repository/build';
 import { PipelineEdge, PipelineNode } from './node';
+import { NodeHostServices } from './nodeServices';
 import { z } from 'zod';
 
 export type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
@@ -27,6 +28,7 @@ export interface NodeExecutionContext<TConfig = Record<string, unknown>> {
     edges: PipelineEdge[];
     logger: PipelineLogger;
     reporter: PipelineReporter;
+    services: NodeHostServices;
     abortSignal: AbortSignal;
     pipelineHasFailed: boolean;
 }

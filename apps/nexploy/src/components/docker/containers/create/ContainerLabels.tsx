@@ -7,7 +7,7 @@ import { Card, CardContent } from '@workspace/ui/components/card';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input.tsx';
+import { Input } from '@workspace/ui/components/input';
 
 export function ContainerLabels() {
     const t = useTranslations('docker.createContainer');

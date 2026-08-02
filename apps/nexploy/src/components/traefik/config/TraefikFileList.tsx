@@ -6,7 +6,7 @@ import { FilePlus2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { TreeProvider } from '@workspace/ui/components/kibo-ui/tree';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 import { useTraefikConfigStore } from '@/stores/traefik/useTraefikConfigStore';
 import { buildPathMap, collectFolderPaths } from '@/lib/traefik/treeOps';
 import { TraefikTreeNodes } from './TraefikTreeNodes';

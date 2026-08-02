@@ -15,7 +15,7 @@ import { Input } from '@workspace/ui/components/input';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { Settings } from 'lucide-react';
 import { DockerHubSearchDialog } from '@/components/docker/image/pull/DockerHubSearchDialog.tsx';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 import { Docker } from '@thesvg/react';
 
 export function ImageNameConfig() {

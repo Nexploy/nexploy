@@ -12,7 +12,7 @@ import { ServiceDetailConfig } from './detail/ServiceDetailConfig';
 import { ServiceDetailLabels } from './detail/ServiceDetailLabels';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { Badge } from '@workspace/ui/components/badge.tsx';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
