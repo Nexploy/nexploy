@@ -26,11 +26,7 @@ export function NetworkIpamConfig() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Network}
-                title={t('ipamConfig')}
-                description={t('ipamConfigDescription')}
-            >
+            <CardHeaderWithIcon icon={Network} title={t('ipamConfig')} description={t('ipamConfigDescription')}>
                 <Button
                     type="button"
                     size="sm"
@@ -65,10 +61,7 @@ export function NetworkIpamConfig() {
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
-                            <div
-                                key={field.id}
-                                className="bg-muted/40 space-y-3 rounded-lg border p-4"
-                            >
+                            <div key={field.id} className="bg-muted/40 space-y-3 rounded-lg border p-4">
                                 <div className="flex justify-between">
                                     <span className="text-sm font-semibold">
                                         {t('configuration')} {index + 1}

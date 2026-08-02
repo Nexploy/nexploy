@@ -84,9 +84,7 @@ export function McpPermissionsCard(props: McpPermissionsCardProps) {
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-base">{t(`${name}`)}</span>
-                                <span className="text-muted-foreground text-xs">
-                                    {t(`${name}Description`)}
-                                </span>
+                                <span className="text-muted-foreground text-xs">{t(`${name}Description`)}</span>
                             </div>
                         </div>
                         <FormControl>
@@ -116,20 +114,12 @@ export function McpPermissionsCard(props: McpPermissionsCardProps) {
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction} className="space-y-4">
                         <div className="flex flex-col gap-1">
-                            <p className="text-muted-foreground px-1 text-sm font-medium">
-                                {t('mcpSectionDocker')}
-                            </p>
-                            <div className="flex flex-col gap-2">
-                                {DOCKER_PERMISSIONS.map(renderRow)}
-                            </div>
+                            <p className="text-muted-foreground px-1 text-sm font-medium">{t('mcpSectionDocker')}</p>
+                            <div className="flex flex-col gap-2">{DOCKER_PERMISSIONS.map(renderRow)}</div>
                         </div>
                         <div className="flex flex-col gap-1">
-                            <p className="text-muted-foreground px-1 text-sm font-medium">
-                                {t('mcpSectionNexploy')}
-                            </p>
-                            <div className="flex flex-col gap-2">
-                                {NEXPLOY_PERMISSIONS.map(renderRow)}
-                            </div>
+                            <p className="text-muted-foreground px-1 text-sm font-medium">{t('mcpSectionNexploy')}</p>
+                            <div className="flex flex-col gap-2">{NEXPLOY_PERMISSIONS.map(renderRow)}</div>
                         </div>
                     </form>
                 </Form>

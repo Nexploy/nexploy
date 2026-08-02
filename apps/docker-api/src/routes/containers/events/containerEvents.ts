@@ -21,8 +21,7 @@ const app = new Hono();
 app.get('/stream/:containerId', (c) => {
     const containerId = c.req.param('containerId');
 
-    const environmentId =
-        getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
+    const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
 
     return streamSSE(c, async (stream) => {
         const clientId = c.req.header('x-client-id');
@@ -153,8 +152,7 @@ app.get('/stream/:containerId/logs/:follow/:tail', (c) => {
     const follow = true;
     const tail = parseInt(c.req.param('tail') || '500', 10);
 
-    const environmentId =
-        getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
+    const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
     const logsManager = new ContainerLogsStateManager(containerId, environmentId);
 
     return streamSSE(c, async (stream) => {
@@ -221,8 +219,7 @@ app.get('/stream/:containerId/stats/:refreshRate', (c) => {
     const containerId = c.req.param('containerId');
     const refreshRate = parseInt(c.req.param('refreshRate'), 10);
 
-    const environmentId =
-        getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
+    const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
     const statsManager = new ContainerStatsStateManager(containerId, environmentId, refreshRate);
 
     return streamSSE(c, async (stream) => {

@@ -2,8 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { ArrowRightFromLine } from 'lucide-react';
-import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
-import { getNodeInputFields } from '@/components/pipeline/nodeManifestRegistry';
+import { type NodeData } from '@nexploy/nodes/ui/nodeDefinition';
+import { getNodeOutputFields } from '@nexploy/nodes/registry/descriptors';
 import { type Node } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -48,7 +48,7 @@ interface NodeOutputsPanelProps {
 export function NodeOutputsPanel({ node }: NodeOutputsPanelProps) {
     const t = useTranslations('repository.pipeline');
     const nodeData = node.data as unknown as NodeData;
-    const outputFields = getNodeInputFields(nodeData.nodeType);
+    const outputFields = getNodeOutputFields(nodeData.nodeType);
 
     return (
         <div className="flex w-56 flex-col gap-2 overflow-hidden">
@@ -57,9 +57,7 @@ export function NodeOutputsPanel({ node }: NodeOutputsPanelProps) {
                     <div className="flex size-6 items-center justify-center rounded-md bg-emerald-400/10">
                         <ArrowRightFromLine className="size-3.5 text-emerald-400" />
                     </div>
-                    <span className="text-foreground text-sm font-semibold">
-                        {t('nodeOutputs')}
-                    </span>
+                    <span className="text-foreground text-sm font-semibold">{t('nodeOutputs')}</span>
                 </div>
                 <p className="text-muted-foreground mt-1.5 text-[11px]">{t('nodeOutputsHint')}</p>
             </div>

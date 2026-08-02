@@ -13,14 +13,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import React, { useMemo, useRef, useState } from 'react';
 import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useTranslations } from 'next-intl';
@@ -46,8 +39,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useRouter } from '@/i18n/navigation';
 import { Switch } from '@workspace/ui/components/switch';
-import { Label } from '@workspace/ui/components/label.tsx';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { Label } from '@workspace/ui/components/label';
+import { cn } from '@workspace/ui/lib/utils';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 
 const globalFilterFn: FilterFn<ImageRow> = (row, _, value) => {
@@ -135,9 +128,7 @@ export function TableDockerImages() {
                         }
                     >
                         <div className={'space-y-0.5'}>
-                            <p className={'text-destructive text-sm font-medium'}>
-                                {t('forceDelete')}
-                            </p>
+                            <p className={'text-destructive text-sm font-medium'}>{t('forceDelete')}</p>
                             <p className={'text-xs'}>{t('forceDeleteDescription')}</p>
                         </div>
                         <Switch
@@ -203,9 +194,7 @@ export function TableDockerImages() {
                                 </Button>
                             </div>
                         </TooltipTrigger>
-                        {getUseTooltipContent() && (
-                            <TooltipContent>{getUseTooltipContent()}</TooltipContent>
-                        )}
+                        {getUseTooltipContent() && <TooltipContent>{getUseTooltipContent()}</TooltipContent>}
                     </Tooltip>
                     <Button
                         variant={'destructive'}
@@ -231,10 +220,7 @@ export function TableDockerImages() {
                                     <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(
-                                                  header.column.columnDef.header,
-                                                  header.getContext(),
-                                              )}
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -254,19 +240,13 @@ export function TableDockerImages() {
 
                         {!isLoading && isEmpty ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
                                     {t('noImagesFound')}
                                 </TableCell>
                             </TableRow>
                         ) : !isLoading && table.getRowModel().rows.length === 0 ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
                                     {t('noImagesMatchSearch')}
                                 </TableCell>
                             </TableRow>
@@ -279,10 +259,7 @@ export function TableDockerImages() {
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>

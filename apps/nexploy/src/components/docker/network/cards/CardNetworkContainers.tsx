@@ -46,11 +46,7 @@ export function CardNetworkContainers() {
                                         {displayName}
                                     </Link>
                                     {container?.state && (
-                                        <Status
-                                            status={
-                                                container.state === 'running' ? 'online' : 'offline'
-                                            }
-                                        >
+                                        <Status status={container.state === 'running' ? 'online' : 'offline'}>
                                             <StatusIndicator />
                                             <StatusLabel>{container.state}</StatusLabel>
                                         </Status>

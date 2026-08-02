@@ -1,22 +1,18 @@
 import { decrypt, encrypt } from '@/lib/encryption';
-import type { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import type { PipelineGraph } from '@nexploy/nodes/core/node';
 
 const ENCRYPTED_NODE_FIELDS: Record<string, string[]> = {
     'set-env-vars': ['vars[].value'],
     'send-notification': ['webhookUrl'],
     'update-commit-status': ['token'],
-'run-migration': ['databaseUrl'],
+    'run-migration': ['databaseUrl'],
     'git-clone-extra': ['token'],
     'http-request': ['headers[].value'],
 };
 
 const PREFIX = 'nex:';
 
-function applyToPath(
-    obj: Record<string, unknown>,
-    path: string,
-    fn: (v: string) => string,
-): Record<string, unknown> {
+function applyToPath(obj: Record<string, unknown>, path: string, fn: (v: string) => string): Record<string, unknown> {
     const arrayMatch = /^([^[]+)\[\]\.(.+)$/.exec(path);
     if (arrayMatch) {
         const [, key, subPath] = arrayMatch;
@@ -36,10 +32,7 @@ function applyToPath(
     return { ...obj, [path]: fn(value) };
 }
 
-function transformNodes(
-    nodes: PipelineGraph['nodes'],
-    fn: (v: string) => string,
-): PipelineGraph['nodes'] {
+function transformNodes(nodes: PipelineGraph['nodes'], fn: (v: string) => string): PipelineGraph['nodes'] {
     return nodes.map((node) => {
         const paths = ENCRYPTED_NODE_FIELDS[node.data.type];
         if (!paths) return node;

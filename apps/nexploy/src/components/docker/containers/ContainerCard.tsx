@@ -32,9 +32,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                         <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
                             <IconContainer className="text-primary size-5" />
                         </div>
-                        <CardTitle className="truncate text-lg font-semibold">
-                            {container.name}
-                        </CardTitle>
+                        <CardTitle className="truncate text-lg font-semibold">{container.name}</CardTitle>
                     </div>
                     <Can resource="container" action="manage">
                         <DropdownMenu>
@@ -60,9 +58,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                 <CardContent className="flex flex-col gap-4">
                     <div className="flex items-center justify-between gap-2 truncate">
                         <span className="font-medium">{t('image')}</span>
-                        <code className="bg-muted/50 truncate rounded-md px-3 py-1 text-sm">
-                            {container.image}
-                        </code>
+                        <code className="bg-muted/50 truncate rounded-md px-3 py-1 text-sm">{container.image}</code>
                     </div>
 
                     <div className={'flex flex-col gap-2'}>
@@ -80,11 +76,8 @@ export function ContainerCard({ container }: ContainerCardProps) {
                                     {container.ports.map((p, idx) => (
                                         <CarouselItem key={idx}>
                                             <code className="bg-muted/50 flex shrink-0 gap-2 rounded-md px-3 py-2 text-start text-xs leading-none">
-                                                {p.publicPort !== 0 ? p.publicPort : '—'} →{' '}
-                                                {p.privatePort}
-                                                <span className="text-muted-foreground">
-                                                    ({p.type})
-                                                </span>
+                                                {p.publicPort !== 0 ? p.publicPort : '—'} → {p.privatePort}
+                                                <span className="text-muted-foreground">({p.type})</span>
                                             </code>
                                         </CarouselItem>
                                     ))}

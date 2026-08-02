@@ -28,10 +28,7 @@ const PROVIDER_DEFS: { provider: Provider; label: string; keyUrl: string }[] = [
 ];
 
 export default async function AIModelsPage() {
-    const [t, keyStatus] = await Promise.all([
-        getTranslations('ai.admin.models'),
-        getAllProviderKeyStatus(),
-    ]);
+    const [t, keyStatus] = await Promise.all([getTranslations('ai.admin.models'), getAllProviderKeyStatus()]);
 
     const providers: ProviderCardConfig[] = PROVIDER_DEFS.map(({ provider, label, keyUrl }) => {
         const { icon: Icon, color } = PROVIDER_META[provider];
@@ -53,9 +50,7 @@ export default async function AIModelsPage() {
                         <Cpu className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight break-all">
-                            {t('title')}
-                        </h1>
+                        <h1 className="text-3xl font-semibold tracking-tight break-all">{t('title')}</h1>
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>

@@ -65,16 +65,11 @@ export async function pingRegistry(serveraddress: string): Promise<void> {
     throw new Error(`Registry ${serveraddress} is not reachable: ${lastError}`);
 }
 
-export function validateRegistry(
-    serveraddress: string,
-    username: string,
-    password: string,
-): boolean {
-    const result = spawnSync(
-        'docker',
-        ['login', serveraddress, '--username', username, '--password-stdin'],
-        { input: password, stdio: ['pipe', 'pipe', 'pipe'] },
-    );
+export function validateRegistry(serveraddress: string, username: string, password: string): boolean {
+    const result = spawnSync('docker', ['login', serveraddress, '--username', username, '--password-stdin'], {
+        input: password,
+        stdio: ['pipe', 'pipe', 'pipe'],
+    });
 
     if (result.status === 0) return true;
 

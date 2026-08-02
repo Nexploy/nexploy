@@ -22,6 +22,7 @@ export type SSEChannel =
     | 'networks'
     | 'logs'
     | 'stats'
+    | 'containersStats'
     | 'service'
     | 'node'
     | 'swarm'

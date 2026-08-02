@@ -1,9 +1,5 @@
 import React, { Fragment, useRef } from 'react';
-import {
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-} from '@workspace/ui/components/dropdown-menu';
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@workspace/ui/components/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Play, Trash } from 'lucide-react';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
@@ -63,9 +59,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                                 }
                             >
                                 <div className={'space-y-0.5'}>
-                                    <p className={'text-destructive text-sm font-medium'}>
-                                        {t('image.forceDelete')}
-                                    </p>
+                                    <p className={'text-destructive text-sm font-medium'}>{t('image.forceDelete')}</p>
                                     <p className={'text-xs'}>{t('image.forceDeleteDescription')}</p>
                                 </div>
                                 <Switch
@@ -110,11 +104,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                             )}
                         </Tooltip>
                     ) : (
-                        <DropdownMenuItem
-                            variant={tool.variant}
-                            onClick={tool.onClick}
-                            disabled={tool.disabled}
-                        >
+                        <DropdownMenuItem variant={tool.variant} onClick={tool.onClick} disabled={tool.disabled}>
                             <tool.icon />
                             {tool.label}
                         </DropdownMenuItem>

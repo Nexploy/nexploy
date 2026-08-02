@@ -24,9 +24,7 @@ export function CardEnv() {
     const { openDialog } = useConfirmationDialogStore();
     const envVarChanges = useContainerChangesStore((state) => state.envVarChanges);
     const onEnvVarChange = useContainerChangesStore((state) => state.onEnvVarChange);
-    const isSwarmContainer = useContainerStore(
-        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
-    );
+    const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
     const t = useTranslations('docker.containerEnv');
 
     const handleOpenDialog = (mode: 'add' | 'edit', envVar?: EnvVar, originalEnvVar?: EnvVar) => {
@@ -40,16 +38,12 @@ export function CardEnv() {
     const getEnvChangeStatus = (env: EnvVar) => {
         const editChange = envVarChanges.find(
             (change) =>
-                change.typeAction === 'edit' &&
-                change.currentKey === env.key &&
-                change.currentValue === env.value,
+                change.typeAction === 'edit' && change.currentKey === env.key && change.currentValue === env.value,
         );
 
         const deleteChange = envVarChanges.find(
             (change) =>
-                change.typeAction === 'delete' &&
-                change.currentKey === env.key &&
-                change.currentValue === env.value,
+                change.typeAction === 'delete' && change.currentKey === env.key && change.currentValue === env.value,
         );
 
         return {
@@ -95,15 +89,11 @@ export function CardEnv() {
                         {t('noVariables')}
                     </div>
                 ) : (
-                    <ScrollAreaWithShadow
-                        bottomShadow
-                        className="h-72 overflow-hidden px-6"
-                    >
+                    <ScrollAreaWithShadow bottomShadow className="h-72 overflow-hidden px-6">
                         <div className="space-y-2">
                             {container?.env.map((envString, idx) => {
                                 const env = parseEnvString(envString);
-                                const { isEdited, isDeleted, editedEnvVar } =
-                                    getEnvChangeStatus(env);
+                                const { isEdited, isDeleted, editedEnvVar } = getEnvChangeStatus(env);
                                 const displayEnvVar = editedEnvVar || env;
 
                                 return (
@@ -113,11 +103,7 @@ export function CardEnv() {
                                         isEdited={isEdited}
                                         isDeleted={isDeleted}
                                         displayEnvVar={displayEnvVar}
-                                        onEdit={
-                                            isSwarmContainer
-                                                ? undefined
-                                                : handleOpenDialog.bind(null, 'edit')
-                                        }
+                                        onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
                                         onCancelDelete={
                                             isSwarmContainer
                                                 ? undefined
@@ -141,11 +127,7 @@ export function CardEnv() {
                                     isDeleted={false}
                                     isNew
                                     displayEnvVar={{ key: key!, value: value! }}
-                                    onEdit={
-                                        isSwarmContainer
-                                            ? undefined
-                                            : handleOpenDialog.bind(null, 'edit')
-                                    }
+                                    onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
                                 />
                             ))}
                         </div>

@@ -39,9 +39,7 @@ export async function deleteNetworks(
                 }
             } else {
                 await Promise.all(
-                    info.containers.map((containerId) =>
-                        network.disconnect({ Container: containerId, Force: true }),
-                    ),
+                    info.containers.map((containerId) => network.disconnect({ Container: containerId, Force: true })),
                 );
             }
 

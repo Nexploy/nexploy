@@ -1,10 +1,11 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
+@source "../../../../apps/nexploy/node_modules/@nexploy/nodes/dist/**/*.js";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -21,10 +22,10 @@
     --secondary-foreground: oklch(0.205 0 0);
     --muted: oklch(0.97 0 0);
     --muted-foreground: oklch(0.556 0 0);
-    --online: theme('colors.emerald.500');
-    --offline: theme('colors.red.500');
-    --maintenance: theme('colors.blue.500');
-    --degraded: theme('colors.amber.500');
+    --online: theme("colors.emerald.500");
+    --offline: theme("colors.red.500");
+    --maintenance: theme("colors.blue.500");
+    --degraded: theme("colors.amber.500");
     --accent: oklch(0.97 0 0);
     --accent-foreground: oklch(0.5465 0.2455 262.8657);
     --destructive: oklch(0.577 0.245 27.325);
@@ -87,13 +88,13 @@
     --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
     --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
     --tracking-normal: 0em;
-    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-    monospace;
-    --waiting: theme('colors.yellow.500');
+    --font-sans:
+        ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol", "Noto Color Emoji";
+    --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --waiting: theme("colors.yellow.500");
 }
 
 .dark {
@@ -109,10 +110,10 @@
     --secondary-foreground: oklch(0.985 0 0);
     --muted: oklch(0.269 0 0);
     --muted-foreground: oklch(0.708 0 0);
-    --online: theme('colors.emerald.500');
-    --offline: theme('colors.red.500');
-    --maintenance: theme('colors.blue.500');
-    --degraded: theme('colors.amber.500');
+    --online: theme("colors.emerald.500");
+    --offline: theme("colors.red.500");
+    --maintenance: theme("colors.blue.500");
+    --degraded: theme("colors.amber.500");
     --accent: oklch(0.371 0 0);
     --accent-foreground: oklch(0.5465 0.2455 262.8657);
     --destructive: oklch(0.704 0.191 22.216);
@@ -174,13 +175,13 @@
     --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
     --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
     --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
-    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-    monospace;
-    --waiting: theme('colors.yellow.500');
+    --font-sans:
+        ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol", "Noto Color Emoji";
+    --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --waiting: theme("colors.yellow.500");
 }
 
 @theme inline {
@@ -271,12 +272,12 @@
     --shadow-blur: var(--shadow-blur);
     --shadow-opacity: var(--shadow-opacity);
     --color-shadow-color: var(--shadow-color);
-    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-    monospace;
-    --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    --font-sans:
+        ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     --color-waiting: var(--waiting);
 }
 
@@ -358,19 +359,19 @@
     cursor: default !important;
 }
 
-[data-panning='true'] .react-flow__pane {
+[data-panning="true"] .react-flow__pane {
     cursor: grab !important;
 }
 
-[data-panning='true'] .react-flow__pane:active {
+[data-panning="true"] .react-flow__pane:active {
     cursor: grabbing !important;
 }
 
-[data-viewing='true'] .react-flow__edge {
+[data-viewing="true"] .react-flow__edge {
     cursor: default !important;
 }
 
-[data-viewing='true'] .react-flow__edge path {
+[data-viewing="true"] .react-flow__edge path {
     cursor: default !important;
 }
 
@@ -396,22 +397,10 @@
 }
 
 @utility scroll-fade-xy {
-    --_scroll-fade-size-t: var(
-        --scroll-fade-t-size,
-        var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10)))
-    );
-    --_scroll-fade-size-b: var(
-        --scroll-fade-b-size,
-        var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10)))
-    );
-    --_scroll-fade-size-s: var(
-        --scroll-fade-s-size,
-        var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10)))
-    );
-    --_scroll-fade-size-e: var(
-        --scroll-fade-e-size,
-        var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10)))
-    );
+    --_scroll-fade-size-t: var(--scroll-fade-t-size, var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10))));
+    --_scroll-fade-size-b: var(--scroll-fade-b-size, var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10))));
+    --_scroll-fade-size-s: var(--scroll-fade-s-size, var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10))));
+    --_scroll-fade-size-e: var(--scroll-fade-e-size, var(--scroll-fade-size, min(12%, calc(var(--spacing) * 10))));
     mask-image:
         linear-gradient(
             to bottom,
@@ -458,7 +447,8 @@
         @apply border-border outline-ring/50;
     }
 
-    html, body {
+    html,
+    body {
         @apply size-full;
     }
 

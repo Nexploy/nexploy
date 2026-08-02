@@ -5,14 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { saveBitbucketProviderAction } from '@/actions/git/saveBitbucketProvider.action';
@@ -62,11 +55,7 @@ export function BitbucketAppSetupForm() {
                         <FormItem>
                             <FormLabel>{t('displayName')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="text"
-                                    placeholder={t('displayNamePlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="text" placeholder={t('displayNamePlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -79,11 +68,7 @@ export function BitbucketAppSetupForm() {
                         <FormItem>
                             <FormLabel>{t('guide.bitbucket.keyLabel')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="text"
-                                    placeholder={t('clientIdPlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="text" placeholder={t('clientIdPlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -96,11 +81,7 @@ export function BitbucketAppSetupForm() {
                         <FormItem>
                             <FormLabel>{t('guide.bitbucket.secretLabel')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="password"
-                                    placeholder={t('clientSecretPlaceholder')}
-                                    {...field}
-                                />
+                                <Input type="password" placeholder={t('clientSecretPlaceholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

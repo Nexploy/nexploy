@@ -28,18 +28,10 @@ function sortNodes(nodes: TraefikTreeNode[]): TraefikTreeNode[] {
     });
 }
 
-export function insertNode(
-    tree: TraefikTreeNode[],
-    destDir: string,
-    node: TraefikTreeNode,
-): TraefikTreeNode[] {
+export function insertNode(tree: TraefikTreeNode[], destDir: string, node: TraefikTreeNode): TraefikTreeNode[] {
     const segments = destDir ? destDir.split('/') : [];
 
-    function insertInto(
-        nodes: TraefikTreeNode[],
-        segs: string[],
-        prefix: string,
-    ): TraefikTreeNode[] {
+    function insertInto(nodes: TraefikTreeNode[], segs: string[], prefix: string): TraefikTreeNode[] {
         const [head, ...rest] = segs;
         if (!head) {
             if (nodes.some((n) => n.path === node.path)) return nodes;
@@ -107,11 +99,7 @@ function rebasePaths(node: TraefikTreeNode, newPath: string): TraefikTreeNode {
     };
 }
 
-export function moveNode(
-    tree: TraefikTreeNode[],
-    sourcePath: string,
-    destDir: string,
-): TraefikTreeNode[] {
+export function moveNode(tree: TraefikTreeNode[], sourcePath: string, destDir: string): TraefikTreeNode[] {
     const node = findNode(tree, sourcePath);
     if (!node) return tree;
 

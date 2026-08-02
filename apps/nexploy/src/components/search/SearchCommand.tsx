@@ -67,10 +67,7 @@ export function SearchCommand() {
                     onValueChange={setInputValue}
                 />
                 <CommandList className="bg-card max-h-none overflow-hidden">
-                    <ScrollAreaWithShadow
-                        viewportClassName="max-h-[60vh] [&>div]:!block"
-                        bottomShadow
-                    >
+                    <ScrollAreaWithShadow viewportClassName="max-h-[60vh] [&>div]:!block" bottomShadow>
                         <AskAiGroup />
                         <RepositorySearchGroup />
                         <ContainerSeachGroup />

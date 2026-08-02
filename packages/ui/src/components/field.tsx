@@ -95,10 +95,7 @@ function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
     return (
         <div
             data-slot="field-content"
-            className={cn(
-                'group/field-content flex flex-1 flex-col gap-1.5 leading-snug',
-                className,
-            )}
+            className={cn('group/field-content flex flex-1 flex-col gap-1.5 leading-snug', className)}
             {...props}
         />
     );
@@ -158,10 +155,7 @@ function FieldSeparator({
         <div
             data-slot="field-separator"
             data-content={!!children}
-            className={cn(
-                'relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2',
-                className,
-            )}
+            className={cn('relative -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2', className)}
             {...props}
         >
             <Separator className="absolute inset-0 top-1/2" />
@@ -200,9 +194,7 @@ function FieldError({
 
         return (
             <ul className="ml-4 flex list-disc flex-col gap-1">
-                {errors.map(
-                    (error, index) => error?.message && <li key={index}>{error.message}</li>,
-                )}
+                {errors.map((error, index) => error?.message && <li key={index}>{error.message}</li>)}
             </ul>
         );
     }, [children, errors]);

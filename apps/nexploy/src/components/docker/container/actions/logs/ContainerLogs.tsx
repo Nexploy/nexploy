@@ -27,16 +27,8 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
     const t = useTranslations('docker.containerLogs');
     const tStatus = useTranslations('docker.status');
 
-    const {
-        logs,
-        isLoading,
-        error,
-        autoScroll,
-        setAutoScroll,
-        downloadLogs,
-        connectionState,
-        messageEnd,
-    } = useContainerLogsStore(useShallow((state) => state));
+    const { logs, isLoading, error, autoScroll, setAutoScroll, downloadLogs, connectionState, messageEnd } =
+        useContainerLogsStore(useShallow((state) => state));
 
     const [showTimestamp, setShowTimestamp] = useLocalStorage('timestamp-container-log', true);
 
@@ -121,10 +113,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                     </div>
                                     {t('title', { name: container?.name ?? 'Unknown Container' })}
                                 </DialogTitle>
-                                <Status
-                                    className="rounded-none bg-transparent"
-                                    status={currentStatus.status}
-                                >
+                                <Status className="rounded-none bg-transparent" status={currentStatus.status}>
                                     <StatusIndicator />
                                     <StatusLabel className={currentStatus.text}>
                                         {tStatus(currentStatus.labelKey)}
@@ -134,10 +123,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="flex items-center space-x-2">
-                                    <Label
-                                        htmlFor="log-showTimestamp"
-                                        className={'text-xs text-white'}
-                                    >
+                                    <Label htmlFor="log-showTimestamp" className={'text-xs text-white'}>
                                         {t('showTimestamp')}
                                     </Label>
                                     <Switch
@@ -168,16 +154,8 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                                 >
                                     {t('download')}
                                 </Button>
-                                <Separator
-                                    orientation="vertical"
-                                    className="h-5! border-white bg-white/50"
-                                />
-                                <Button
-                                    onClick={handleClose}
-                                    className="h-7 text-xs"
-                                    variant="white"
-                                    size="sm"
-                                >
+                                <Separator orientation="vertical" className="h-5! border-white bg-white/50" />
+                                <Button onClick={handleClose} className="h-7 text-xs" variant="white" size="sm">
                                     {t('close')}
                                 </Button>
                             </div>

@@ -19,9 +19,7 @@ export class VolumeStateManager extends BaseSingleResourceStateManager<Volume> {
             this.docker.getVolume(this.resourceId).inspect(),
             this.docker.df(),
         ]);
-        const dfVolume = dfResult.Volumes?.find(
-            (v: VolumeInspectInfo) => v.Name === this.resourceId,
-        );
+        const dfVolume = dfResult.Volumes?.find((v: VolumeInspectInfo) => v.Name === this.resourceId);
         return this.parseVolumeInfo(info, dfVolume?.UsageData ?? null);
     }
 
@@ -85,10 +83,7 @@ export class VolumeStateManager extends BaseSingleResourceStateManager<Volume> {
         };
     }
 
-    private parseVolumeInfo(
-        volume: VolumeInspectInfo,
-        usageData?: { Size: number; RefCount: number } | null,
-    ): Volume {
+    private parseVolumeInfo(volume: VolumeInspectInfo, usageData?: { Size: number; RefCount: number } | null): Volume {
         const rawCreatedAt = (volume as any).CreatedAt as string | undefined;
         return {
             name: volume.Name || '<none>',

@@ -3,10 +3,7 @@ import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
 import { swarmStateManager } from '@/managers/list/swarmStateManager';
 import { HttpError } from '@workspace/shared/http-error';
-import {
-    nodeDeleteBodySchema,
-    nodeIdParamSchema,
-} from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
+import { nodeDeleteBodySchema, nodeIdParamSchema } from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
 
 const app = new Hono();
 

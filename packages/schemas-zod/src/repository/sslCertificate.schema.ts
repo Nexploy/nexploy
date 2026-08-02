@@ -6,9 +6,7 @@ export const createLetsEncryptCertSchema = z.object({
     name: z.string().min(1, "Name can't be empty"),
     domain: z.string().min(1, "Domain can't be empty"),
     email: z.email(),
-    agreedToTos: z
-        .boolean()
-        .refine((v) => v, { message: 'You must agree to the Terms of Service' }),
+    agreedToTos: z.boolean().refine((v) => v, { message: 'You must agree to the Terms of Service' }),
 });
 
 export const createCustomCertSchema = z.object({

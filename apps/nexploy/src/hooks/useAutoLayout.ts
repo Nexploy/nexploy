@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Position, useReactFlow } from '@xyflow/react';
 import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
-import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
 import { useFitViewOptions } from '@/components/pipeline/utils/fitView';
 
 const H_GAP = 80;
@@ -30,9 +30,7 @@ function spreadNodes(
     desiredCenterY: Map<string, number>,
     effHeights: Map<string, number>,
 ): Map<string, number> {
-    const sorted = [...ids].sort(
-        (a, b) => (desiredCenterY.get(a) ?? 0) - (desiredCenterY.get(b) ?? 0),
-    );
+    const sorted = [...ids].sort((a, b) => (desiredCenterY.get(a) ?? 0) - (desiredCenterY.get(b) ?? 0));
 
     const topY = new Map<string, number>();
     let lastBottom = -Infinity;
@@ -44,8 +42,7 @@ function spreadNodes(
         lastBottom = y + h;
     }
 
-    const desiredMean =
-        sorted.reduce((s, id) => s + (desiredCenterY.get(id) ?? 0), 0) / sorted.length;
+    const desiredMean = sorted.reduce((s, id) => s + (desiredCenterY.get(id) ?? 0), 0) / sorted.length;
     const actualMean =
         sorted.reduce((s, id) => {
             const h = effHeights.get(id) ?? FALLBACK_SIZE;
@@ -69,9 +66,7 @@ export function useAutoLayout() {
 
         const nodeById = new Map(currentNodes.map((n) => [n.id, n]));
 
-        const attachNodeIds = new Set(
-            currentNodes.filter((n) => n.type === 'attach-node').map((n) => n.id),
-        );
+        const attachNodeIds = new Set(currentNodes.filter((n) => n.type === 'attach-node').map((n) => n.id));
         const mainNodes = currentNodes.filter((n) => !attachNodeIds.has(n.id));
 
         const inDegree = new Map<string, number>();
@@ -86,10 +81,7 @@ export function useAutoLayout() {
         for (const edge of currentEdges) {
             if (attachNodeIds.has(edge.source) || attachNodeIds.has(edge.target)) continue;
             inDegree.set(edge.target, (inDegree.get(edge.target) ?? 0) + 1);
-            const handleIdx = outputHandleIdx(
-                nodeById.get(edge.source),
-                edge.sourceHandle ?? undefined,
-            );
+            const handleIdx = outputHandleIdx(nodeById.get(edge.source), edge.sourceHandle ?? undefined);
             succ.get(edge.source)?.push({ targetId: edge.target, handleIdx });
             pred.get(edge.target)?.push(edge.source);
         }
@@ -146,18 +138,13 @@ export function useAutoLayout() {
         for (let l = 0; l < maxLayerCount; l++) {
             columnX[l] = curX;
             const ids = layerGroups.get(l) ?? [];
-            const maxW = Math.max(
-                ...ids.map((id) => nodeById.get(id)?.measured?.width ?? FALLBACK_SIZE),
-            );
+            const maxW = Math.max(...ids.map((id) => nodeById.get(id)?.measured?.width ?? FALLBACK_SIZE));
             curX += maxW + H_GAP;
         }
 
         const effHeights = new Map<string, number>();
         for (const node of mainNodes) {
-            effHeights.set(
-                node.id,
-                effectiveHeight(node.type, node.measured?.height ?? FALLBACK_SIZE),
-            );
+            effHeights.set(node.id, effectiveHeight(node.type, node.measured?.height ?? FALLBACK_SIZE));
         }
 
         const positionMap = new Map<string, { x: number; y: number }>();
@@ -169,8 +156,7 @@ export function useAutoLayout() {
 
             if (layer === 0) {
                 const totalH =
-                    ids.reduce((s, id) => s + (effHeights.get(id) ?? FALLBACK_SIZE), 0) +
-                    (ids.length - 1) * V_GAP;
+                    ids.reduce((s, id) => s + (effHeights.get(id) ?? FALLBACK_SIZE), 0) + (ids.length - 1) * V_GAP;
                 let y = -totalH / 2;
                 for (const id of ids) {
                     const h = effHeights.get(id) ?? FALLBACK_SIZE;
@@ -207,9 +193,7 @@ export function useAutoLayout() {
             if (!parent || !positionMap.has(parent.id)) continue;
 
             const definition = parent.data?.definition as NodeDefinition | undefined;
-            const attachment = definition?.handles?.attachments?.find(
-                (a) => a.id === edge.sourceHandle,
-            );
+            const attachment = definition?.handles?.attachments?.find((a) => a.id === edge.sourceHandle);
             const attachPos: Position = attachment?.position ?? Position.Bottom;
 
             const parentPos = positionMap.get(parent.id)!;

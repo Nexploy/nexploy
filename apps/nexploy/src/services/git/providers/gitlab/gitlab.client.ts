@@ -77,11 +77,7 @@ export async function gitlabCreateWebhook(
         .json<{ id: number }>();
 }
 
-export async function gitlabDeleteWebhook(
-    baseUrl: string,
-    projectId: string,
-    hookId: string,
-): Promise<void> {
+export async function gitlabDeleteWebhook(baseUrl: string, projectId: string, hookId: string): Promise<void> {
     await kyGitlab(baseUrl)
         .delete(`v4/projects/${encodeURIComponent(projectId)}/hooks/${hookId}`)
         .json();

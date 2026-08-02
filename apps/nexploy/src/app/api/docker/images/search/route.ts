@@ -17,9 +17,6 @@ export const GET = route
             const images = await searchDockerHubImages(query, { sort, from });
             return NextResponse.json(images);
         } catch {
-            return NextResponse.json(
-                { error: 'Failed to search Docker Hub images' },
-                { status: 500 },
-            );
+            return NextResponse.json({ error: 'Failed to search Docker Hub images' }, { status: 500 });
         }
     });

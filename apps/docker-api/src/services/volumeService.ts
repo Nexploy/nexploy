@@ -2,10 +2,7 @@ import { docker } from '@/utils/dockerClient';
 import { volumesStateManager } from '@/managers/list/volumesStateManager';
 import { VolumeDeleteResponse, VolumeDeleteResult } from '@workspace/typescript-interface/docker/docker.volume';
 
-export async function deleteVolumes(
-    volumeNames: string[],
-    force: boolean,
-): Promise<VolumeDeleteResponse> {
+export async function deleteVolumes(volumeNames: string[], force: boolean): Promise<VolumeDeleteResponse> {
     const results = await Promise.all(
         volumeNames.map(async (volumeName): Promise<VolumeDeleteResult> => {
             const volume = volumesStateManager.getState(volumeName);

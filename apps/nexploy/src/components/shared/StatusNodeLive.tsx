@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useRealtime } from 'inngest/react';
 import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
-import type { NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import type { NodeRunStatus } from '@nexploy/nodes/core/pipeline';
 import { StatusNode } from '@/components/shared/StatusNode';
 import { DurationNode } from '@/components/shared/DurationNode';
 
@@ -50,11 +50,7 @@ export function StatusNodeLive({
     return (
         <div className="flex items-center gap-2">
             <StatusNode status={status} />
-            <DurationNode
-                isRunning={status === 'running'}
-                durationMs={durationMs}
-                startedAt={startedAt}
-            />
+            <DurationNode isRunning={status === 'running'} durationMs={durationMs} startedAt={startedAt} />
         </div>
     );
 }

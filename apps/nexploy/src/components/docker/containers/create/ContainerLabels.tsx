@@ -7,7 +7,7 @@ import { Card, CardContent } from '@workspace/ui/components/card';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input.tsx';
+import { Input } from '@workspace/ui/components/input';
 
 export function ContainerLabels() {
     const t = useTranslations('docker.createContainer');
@@ -16,11 +16,7 @@ export function ContainerLabels() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Tags}
-                title={t('labels')}
-                description={t('labelsDescription')}
-            >
+            <CardHeaderWithIcon icon={Tags} title={t('labels')} description={t('labelsDescription')}>
                 <Button
                     type="button"
                     size="sm"
@@ -34,9 +30,7 @@ export function ContainerLabels() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noLabelsConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noLabelsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -47,10 +41,7 @@ export function ContainerLabels() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    placeholder={t('labelKeyPlaceholder')}
-                                                    {...field}
-                                                />
+                                                <Input placeholder={t('labelKeyPlaceholder')} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -63,10 +54,7 @@ export function ContainerLabels() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    placeholder={t('labelValuePlaceholder')}
-                                                    {...field}
-                                                />
+                                                <Input placeholder={t('labelValuePlaceholder')} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

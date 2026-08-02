@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
-import { type NodeRunStatus, type PipelineGraph, } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeRunStatus, type PipelineGraph } from '@nexploy/nodes/core/node';
 import { graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { usePipelineStoreInstance } from '@/contexts/PipelineContext';
@@ -66,10 +66,7 @@ export function usePipelineStageId() {
 export function useIsViewingBuild(): boolean {
     const store = usePipelineStoreInstance();
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
-    return useStore(
-        store,
-        (s) => !!(activeBuildId && s.builds.find((b) => b.id === activeBuildId)?.pipelineSnapshot),
-    );
+    return useStore(store, (s) => !!(activeBuildId && s.builds.find((b) => b.id === activeBuildId)?.pipelineSnapshot));
 }
 
 export function usePipelineSaveState() {
@@ -103,10 +100,7 @@ export function usePipelineBuilds() {
         () => builds.map((b) => (overlays[b.id] ? { ...b, ...overlays[b.id] } : b)),
         [builds, overlays],
     );
-    const activeBuild = useMemo(
-        () => merged.find((b) => b.id === activeBuildId),
-        [merged, activeBuildId],
-    );
+    const activeBuild = useMemo(() => merged.find((b) => b.id === activeBuildId), [merged, activeBuildId]);
 
     return { builds: merged, activeBuild, ...pagination };
 }
@@ -121,27 +115,19 @@ export function usePipelineDisplay() {
     );
 
     const snapshot = useStore(store, (s) =>
-        activeBuildId
-            ? (s.builds.find((b) => b.id === activeBuildId)?.pipelineSnapshot ?? null)
-            : null,
+        activeBuildId ? (s.builds.find((b) => b.id === activeBuildId)?.pipelineSnapshot ?? null) : null,
     );
 
     const nodeStatuses = useStore(store, (s) =>
-        activeBuildId
-            ? (s.buildNodeStatuses[activeBuildId] ?? EMPTY_NODE_STATUSES)
-            : EMPTY_NODE_STATUSES,
+        activeBuildId ? (s.buildNodeStatuses[activeBuildId] ?? EMPTY_NODE_STATUSES) : EMPTY_NODE_STATUSES,
     );
 
     const nodeDurations = useStore(store, (s) =>
-        activeBuildId
-            ? (s.buildNodeDurations[activeBuildId] ?? EMPTY_NODE_DURATIONS)
-            : EMPTY_NODE_DURATIONS,
+        activeBuildId ? (s.buildNodeDurations[activeBuildId] ?? EMPTY_NODE_DURATIONS) : EMPTY_NODE_DURATIONS,
     );
 
     const nodeStartTimes = useStore(store, (s) =>
-        activeBuildId
-            ? (s.buildNodeStartTimes[activeBuildId] ?? EMPTY_NODE_DURATIONS)
-            : EMPTY_NODE_DURATIONS,
+        activeBuildId ? (s.buildNodeStartTimes[activeBuildId] ?? EMPTY_NODE_DURATIONS) : EMPTY_NODE_DURATIONS,
     );
 
     const isViewingBuild = !!snapshot;
@@ -167,8 +153,7 @@ export function usePipelineDisplay() {
                 ...edge,
                 animated:
                     nodeStatuses[edge.source] === 'running' ||
-                    (nodeStatuses[edge.source] === 'completed' &&
-                        nodeStatuses[edge.target] === 'running'),
+                    (nodeStatuses[edge.source] === 'completed' && nodeStatuses[edge.target] === 'running'),
             })),
         };
     }, [snapshotFlow, nodeStatuses, nodeDurations, nodes, edges]);

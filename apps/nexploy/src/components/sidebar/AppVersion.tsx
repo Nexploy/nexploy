@@ -6,9 +6,7 @@ async function getAppVersion(): Promise<string> {
     }
 
     try {
-        const { current } = await kyDocker
-            .get('system/version', { timeout: 10_000 })
-            .json<{ current: string }>();
+        const { current } = await kyDocker.get('system/version', { timeout: 10_000 }).json<{ current: string }>();
         return current;
     } catch {
         return 'unknown';

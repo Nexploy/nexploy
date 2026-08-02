@@ -11,14 +11,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
@@ -34,13 +27,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import {
-    Empty,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
-} from '@workspace/ui/components/empty';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@workspace/ui/components/empty';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
@@ -72,8 +59,7 @@ export function ServicesTable() {
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
     const getRunningTasksCount = useMemo(
-        () => (serviceId: string) =>
-            getTasksByService(serviceId).filter((task) => task.state === 'running').length,
+        () => (serviceId: string) => getTasksByService(serviceId).filter((task) => task.state === 'running').length,
         [getTasksByService],
     );
 
@@ -141,10 +127,7 @@ export function ServicesTable() {
                                     <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(
-                                                  header.column.columnDef.header,
-                                                  header.getContext(),
-                                              )}
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -164,10 +147,7 @@ export function ServicesTable() {
 
                         {noMatch && (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
                                     {tCommon('noMatchSearch')}
                                 </TableCell>
                             </TableRow>
@@ -179,10 +159,7 @@ export function ServicesTable() {
                                 <TableRow key={row.id} className="h-12" data-state={row.getIsSelected() && 'selected'}>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>

@@ -15,13 +15,7 @@ export function BackButton({ label, onClick, children, ...props }: BackButtonPro
     const t = useTranslations('common');
 
     return (
-        <Button
-            type="button"
-            variant="outline"
-            icon={ArrowLeft}
-            onClick={onClick ?? (() => router.back())}
-            {...props}
-        >
+        <Button type="button" variant="outline" icon={ArrowLeft} onClick={onClick ?? (() => router.back())} {...props}>
             {children ?? label ?? t('back')}
         </Button>
     );

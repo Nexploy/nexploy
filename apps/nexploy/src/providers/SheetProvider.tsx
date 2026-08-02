@@ -1,12 +1,6 @@
 'use client';
 
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-} from '@workspace/ui/components/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@workspace/ui/components/sheet';
 import { useSheetStore } from '@/stores/useSheetStore';
 
 export function SheetProvider() {
@@ -19,9 +13,7 @@ export function SheetProvider() {
                     <>
                         <SheetHeader>
                             <SheetTitle>{data.title}</SheetTitle>
-                            {data.description && (
-                                <SheetDescription>{data.description}</SheetDescription>
-                            )}
+                            {data.description && <SheetDescription>{data.description}</SheetDescription>}
                         </SheetHeader>
                         <div className="mt-4">{data.content}</div>
                     </>

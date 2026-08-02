@@ -2,18 +2,21 @@
 
 import { useRef } from 'react';
 import { type Node } from '@xyflow/react';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, } from '@workspace/ui/components/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { usePipelineActions, usePipelineDisplay } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { useTranslations } from 'next-intl';
-import { type NodeData, type NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeId } from '@nexploy/nodes/core/node';
+import { type NodeData } from '@nexploy/nodes/ui/nodeDefinition';
 import { NodeConfigForm } from './NodeConfigForm';
 import { NodeLogsPanel } from './NodeLogsPanel';
 import { AvailableInputsPanel } from '@/components/pipeline/nodes/nodeConfigPanel/AvailableInputsPanel';
 import { NodeOutputsPanel } from '@/components/pipeline/nodes/nodeConfigPanel/NodeOutputsPanel';
-import { RefValidationProvider } from '@/contexts/RefValidationContext';
+import { RefValidationProvider } from '@nexploy/nodes/ui/refValidation';
+import { NodesUIProvider } from '@nexploy/nodes/ui/adapter';
+import { nodesUIAdapter } from '@/components/pipeline/nodesUIAdapter';
 import { cn } from '@workspace/ui/lib/utils';
 
 export function NodeConfigDialog() {
@@ -21,8 +24,7 @@ export function NodeConfigDialog() {
     const tConfig = useTranslations('repository.pipeline.config');
     const tCommon = useTranslations('common');
 
-    const { nodes, displayNodes, isViewingBuild, nodeStatuses, nodeDurations, nodeStartTimes } =
-        usePipelineDisplay();
+    const { nodes, displayNodes, isViewingBuild, nodeStatuses, nodeDurations, nodeStartTimes } = usePipelineDisplay();
     const { handleResetPanelNode } = usePipelineActions();
     const panelNodeId = usePipelineEditorStore((s) => s.panelNodeId);
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
@@ -70,9 +72,7 @@ export function NodeConfigDialog() {
                                         )}
                                     </div>
                                     {nodeDesc && (
-                                        <span
-                                            className={'text-muted-foreground text-xs leading-none'}
-                                        >
+                                        <span className={'text-muted-foreground text-xs leading-none'}>
                                             {tPipeline(`nodes.${nodeType}.description`)}
                                         </span>
                                     )}
@@ -80,44 +80,42 @@ export function NodeConfigDialog() {
                             </DialogTitle>
                         </DialogHeader>
 
-                        <RefValidationProvider nodeId={node.id}>
-                            {isViewing ? (
-                                <>
-                                    <div className="flex min-h-0 flex-1">
-                                        <div className={'hidden md:flex'}>
-                                            <div className="flex w-80 flex-col">
-                                                <NodeConfigForm node={node} />
+                        <NodesUIProvider adapter={nodesUIAdapter}>
+                            <RefValidationProvider nodeId={node.id}>
+                                {isViewing ? (
+                                    <>
+                                        <div className="flex min-h-0 flex-1">
+                                            <div className={'hidden md:flex'}>
+                                                <div className="flex w-80 flex-col">
+                                                    <NodeConfigForm node={node} />
+                                                </div>
+                                                <Separator orientation="vertical" />
                                             </div>
-                                            <Separator orientation="vertical" />
+                                            <NodeLogsPanel
+                                                buildId={activeBuildId!}
+                                                nodeId={node.id}
+                                                nodeStatus={nodeStatuses[node.id]}
+                                                nodeDurationMs={nodeDurations[node.id]}
+                                                nodeStartedAt={nodeStartTimes[node.id]}
+                                            />
                                         </div>
-                                        <NodeLogsPanel
-                                            buildId={activeBuildId!}
-                                            nodeId={node.id}
-                                            nodeStatus={nodeStatuses[node.id]}
-                                            nodeDurationMs={nodeDurations[node.id]}
-                                            nodeStartedAt={nodeStartTimes[node.id]}
-                                        />
+                                        <DialogFooter className="bg-muted/40 border-t p-4">
+                                            <Button variant="outline" size="sm" onClick={handleResetPanelNode}>
+                                                {tCommon('close')}
+                                            </Button>
+                                        </DialogFooter>
+                                    </>
+                                ) : (
+                                    <div className="flex min-h-0 flex-1 overflow-hidden">
+                                        <AvailableInputsPanel nodeId={node.id} />
+                                        <Separator orientation="vertical" />
+                                        <NodeConfigForm node={node} />
+                                        <Separator orientation="vertical" />
+                                        <NodeOutputsPanel node={node} />
                                     </div>
-                                    <DialogFooter className="bg-muted/40 border-t p-4">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={handleResetPanelNode}
-                                        >
-                                            {tCommon('close')}
-                                        </Button>
-                                    </DialogFooter>
-                                </>
-                            ) : (
-                                <div className="flex min-h-0 flex-1 overflow-hidden">
-                                    <AvailableInputsPanel nodeId={node.id} />
-                                    <Separator orientation="vertical" />
-                                    <NodeConfigForm node={node} />
-                                    <Separator orientation="vertical" />
-                                    <NodeOutputsPanel node={node} />
-                                </div>
-                            )}
-                        </RefValidationProvider>
+                                )}
+                            </RefValidationProvider>
+                        </NodesUIProvider>
                     </>
                 )}
             </DialogContent>

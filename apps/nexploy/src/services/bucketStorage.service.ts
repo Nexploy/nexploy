@@ -1,6 +1,9 @@
 import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
-import { BucketStorageAccountInfo, BucketStorageCredentials } from '@workspace/typescript-interface/bucket-storage/bucketStorage';
+import {
+    BucketStorageAccountInfo,
+    BucketStorageCredentials,
+} from '@workspace/typescript-interface/bucket-storage/bucketStorage';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export type { BucketStorageAccountInfo, BucketStorageCredentials };
@@ -14,8 +17,7 @@ export async function getAllBucketStorageAccounts(): Promise<BucketStorageAccoun
 
         return records.map((r) => {
             const decrypted = decrypt(r.accessKeyId);
-            const masked =
-                decrypted.length > 8 ? decrypted.slice(0, 4) + '...' + decrypted.slice(-4) : '****';
+            const masked = decrypted.length > 8 ? decrypted.slice(0, 4) + '...' + decrypted.slice(-4) : '****';
 
             return {
                 id: r.id,
@@ -50,10 +52,7 @@ export async function saveBucketStorageAccount(
             },
         });
 
-        const masked =
-            accessKeyId.length > 8
-                ? accessKeyId.slice(0, 4) + '...' + accessKeyId.slice(-4)
-                : '****';
+        const masked = accessKeyId.length > 8 ? accessKeyId.slice(0, 4) + '...' + accessKeyId.slice(-4) : '****';
 
         return {
             id: record.id,

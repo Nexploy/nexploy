@@ -1,79 +1,6 @@
 import { z } from 'zod';
 
-export const nodeTypeSchema = z.enum([
-    'clone-repository',
-    'webhook-clone',
-    'build-docker-image',
-    'deploy-compose',
-    'push-to-registry',
-    'pull-from-registry',
-    'validate-dockerfile',
-    'validate-compose',
-    'set-env-vars',
-    'clean-workdir',
-    'send-notification',
-    'save-version',
-    'set-environment',
-    'create-container',
-    'start-container',
-    'stop-container',
-    'restart-container',
-    'remove-container',
-    'delete-container',
-    'create-network',
-    'create-volume',
-    // Flow Control
-    'wait-for-health',
-    'wait-for-url',
-    'wait-for-port',
-    'delay',
-    'condition',
-    // Script Execution
-    'run-command-in-container',
-    // HTTP / Webhooks
-    'http-request',
-    'update-commit-status',
-    // Image Management
-    'tag-image',
-    'scan-image',
-    'prune-images',
-    'prune-build-cache',
-    'prune-containers',
-    'prune-volumes',
-    'delete-image',
-    'delete-network',
-    'delete-volume',
-    // Files & Artifacts
-    'download-file',
-    // Database
-    'backup-volume-bucket-storage',
-    // Docker Swarm
-    'create-service',
-    'update-service',
-    'scale-service',
-    // Monitoring
-    'check-container-logs',
-    // Cache
-    'cache-restore',
-    'cache-save',
-    // Git
-    'git-tag',
-    'git-clone-extra',
-    'create-release',
-    'cherry-pick-commit',
-    'merge-branch',
-    // Secrets
-    'fetch-secrets-vault',
-    'fetch-secrets-doppler',
-    // Code Quality
-    'sonarqube-scan',
-    // Domain & SSL
-    'add-domain',
-    'remove-domain',
-    'add-ssl-certificate',
-    // Stage Orchestration
-    'trigger-stage-build',
-]);
+export const nodeTypeSchema = z.string().min(1);
 
 export const pipelineNodeDataSchema = z.object({
     type: nodeTypeSchema,
@@ -123,10 +50,7 @@ export const analyzeRepositorySchema = z.object({
 
 export const savePipelineMcpSchema = z.object({
     repositoryId: z.string().min(1).describe('The ID of the repository'),
-    stageId: z
-        .string()
-        .optional()
-        .describe('Deployment stage ID (defaults to the production stage)'),
+    stageId: z.string().optional().describe('Deployment stage ID (defaults to the production stage)'),
     nodes: z.array(pipelineNodeSchema).describe('Pipeline nodes'),
     edges: z.array(pipelineEdgeSchema).describe('Pipeline edges connecting nodes'),
 });

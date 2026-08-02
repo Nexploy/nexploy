@@ -58,17 +58,28 @@ function authHeaders(explicitToken?: string): Record<string, string> {
     return { Authorization: `Bearer ${accessToken}` };
 }
 
-async function azureGet<T>(
-    url: string,
-    searchParams: Record<string, string> = {},
-    explicitToken?: string,
-): Promise<T> {
+async function azureGet<T>(url: string, searchParams: Record<string, string> = {}, explicitToken?: string): Promise<T> {
     return ky
         .get(url, {
             headers: authHeaders(explicitToken),
             searchParams: { ...searchParams, 'api-version': API_VERSION },
         })
         .json<T>();
+}
+
+async function azureGetPage<T>(
+    url: string,
+    searchParams: Record<string, string> = {},
+    explicitToken?: string,
+): Promise<{ data: T; continuationToken: string | null }> {
+    const response = await ky.get(url, {
+        headers: authHeaders(explicitToken),
+        searchParams: { ...searchParams, 'api-version': API_VERSION },
+    });
+    return {
+        data: await response.json<T>(),
+        continuationToken: response.headers.get('x-ms-continuationtoken'),
+    };
 }
 
 async function azurePost<T>(
@@ -90,11 +101,7 @@ export function azureOrganizationUrl(organization: string): string {
     return `${AZURE_REPOS_WEB_URL}/${encodeURIComponent(organization)}`;
 }
 
-export function azureRepositoryApiUrl(
-    organization: string,
-    project: string,
-    repository: string,
-): string {
+export function azureRepositoryApiUrl(organization: string, project: string, repository: string): string {
     return `${azureOrganizationUrl(organization)}/${encodeURIComponent(project)}/_apis/git/repositories/${encodeURIComponent(repository)}`;
 }
 
@@ -103,24 +110,17 @@ export function azureCloneUrl(organization: string, project: string, repository:
 }
 
 export async function azureGetProfile(explicitToken?: string): Promise<AzureReposProfile> {
-    return azureGet<AzureReposProfile>(
-        `${AZURE_REPOS_VSSPS_URL}/_apis/profile/profiles/me`,
-        {},
-        explicitToken,
-    );
+    return azureGet<AzureReposProfile>(`${AZURE_REPOS_VSSPS_URL}/_apis/profile/profiles/me`, {}, explicitToken);
 }
 
 export async function azureGetAccounts(memberId: string): Promise<AzureReposAccount[]> {
-    const page = await azureGet<AzureReposCollection<AzureReposAccount>>(
-        `${AZURE_REPOS_VSSPS_URL}/_apis/accounts`,
-        { memberId },
-    );
+    const page = await azureGet<AzureReposCollection<AzureReposAccount>>(`${AZURE_REPOS_VSSPS_URL}/_apis/accounts`, {
+        memberId,
+    });
     return page.value ?? [];
 }
 
-export async function azureGetOrganizationRepositories(
-    organization: string,
-): Promise<AzureReposRepo[]> {
+export async function azureGetOrganizationRepositories(organization: string): Promise<AzureReposRepo[]> {
     const page = await azureGet<AzureReposCollection<AzureReposRepo>>(
         `${azureOrganizationUrl(organization)}/_apis/git/repositories`,
     );
@@ -141,10 +141,13 @@ export async function azureGetBranches(
     repository: string,
 ): Promise<AzureReposRef[]> {
     const refs: AzureReposRef[] = [];
-    let continuationToken: string | undefined;
+    let continuationToken: string | null = null;
 
     for (let visited = 0; visited < MAX_PAGES; visited++) {
-        const page = await azureGet<AzureReposCollection<AzureReposRef>>(
+        const page: {
+            data: AzureReposCollection<AzureReposRef>;
+            continuationToken: string | null;
+        } = await azureGetPage<AzureReposCollection<AzureReposRef>>(
             `${azureRepositoryApiUrl(organization, project, repository)}/refs`,
             {
                 filter: 'heads/',
@@ -152,9 +155,8 @@ export async function azureGetBranches(
                 ...(continuationToken && { continuationToken }),
             },
         );
-        refs.push(...(page.value ?? []));
-        if ((page.value?.length ?? 0) < PAGE_LIMIT) break;
-        continuationToken = page.value[page.value.length - 1]?.objectId;
+        refs.push(...(page.data.value ?? []));
+        continuationToken = page.continuationToken;
         if (!continuationToken) break;
     }
 
@@ -173,13 +175,10 @@ export async function azureGetCommit(
         return azureGet<AzureReposCommit>(`${repositoryUrl}/commits/${options.commitHash}`);
     }
 
-    const page = await azureGet<AzureReposCollection<AzureReposCommit>>(
-        `${repositoryUrl}/commits`,
-        {
-            $top: '1',
-            ...(options.branch && { 'searchCriteria.itemVersion.version': options.branch }),
-        },
-    );
+    const page = await azureGet<AzureReposCollection<AzureReposCommit>>(`${repositoryUrl}/commits`, {
+        $top: '1',
+        ...(options.branch && { 'searchCriteria.itemVersion.version': options.branch }),
+    });
     return page.value?.[0] ?? null;
 }
 
@@ -240,41 +239,32 @@ export async function azureCreateSubscriptions(
 ): Promise<string[]> {
     const created = await Promise.all(
         AZURE_REPOS_WEBHOOK_EVENTS.map((eventType) =>
-            azurePost<{ id: string }>(
-                `${azureOrganizationUrl(organization)}/_apis/hooks/subscriptions`,
-                {
-                    publisherId: 'tfs',
-                    eventType,
-                    resourceVersion: '1.0',
-                    consumerId: 'webHooks',
-                    consumerActionId: 'httpRequest',
-                    publisherInputs: {
-                        projectId,
-                        repository: repositoryId,
-                    },
-                    consumerInputs: {
-                        url: webhookUrl,
-                        httpHeaders: buildHeaders(eventType),
-                        resourceDetailsToSend: 'all',
-                    },
+            azurePost<{ id: string }>(`${azureOrganizationUrl(organization)}/_apis/hooks/subscriptions`, {
+                publisherId: 'tfs',
+                eventType,
+                resourceVersion: '1.0',
+                consumerId: 'webHooks',
+                consumerActionId: 'httpRequest',
+                publisherInputs: {
+                    projectId,
+                    repository: repositoryId,
                 },
-            ),
+                consumerInputs: {
+                    url: webhookUrl,
+                    httpHeaders: buildHeaders(eventType),
+                    resourceDetailsToSend: 'all',
+                },
+            }),
         ),
     );
     return created.map((subscription) => subscription.id);
 }
 
-export async function azureDeleteSubscription(
-    organization: string,
-    subscriptionId: string,
-): Promise<void> {
-    await ky.delete(
-        `${azureOrganizationUrl(organization)}/_apis/hooks/subscriptions/${subscriptionId}`,
-        {
-            headers: authHeaders(),
-            searchParams: { 'api-version': API_VERSION },
-        },
-    );
+export async function azureDeleteSubscription(organization: string, subscriptionId: string): Promise<void> {
+    await ky.delete(`${azureOrganizationUrl(organization)}/_apis/hooks/subscriptions/${subscriptionId}`, {
+        headers: authHeaders(),
+        searchParams: { 'api-version': API_VERSION },
+    });
 }
 
 export async function azureGetBranchHead(
@@ -358,10 +348,7 @@ export function entraAuthorizeUrl(tenantId?: string): string {
 
 export const AZURE_REPOS_OAUTH_SCOPE = `${AZURE_REPOS_RESOURCE_ID}/.default offline_access`;
 
-async function requestToken(
-    body: URLSearchParams,
-    tenantId?: string,
-): Promise<AzureReposTokenResponse> {
+async function requestToken(body: URLSearchParams, tenantId?: string): Promise<AzureReposTokenResponse> {
     return ky
         .post(entraTokenUrl(tenantId), {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

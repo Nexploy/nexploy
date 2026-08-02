@@ -18,11 +18,7 @@ export function ContainerVolumes() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={HardDrive}
-                title={t('volumes')}
-                description={t('volumesDescription')}
-            >
+            <CardHeaderWithIcon icon={HardDrive} title={t('volumes')} description={t('volumesDescription')}>
                 <Button
                     type="button"
                     size="sm"
@@ -36,9 +32,7 @@ export function ContainerVolumes() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noVolumesConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noVolumesConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -62,10 +56,7 @@ export function ContainerVolumes() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    placeholder={t('containerPath')}
-                                                    {...field}
-                                                />
+                                                <Input placeholder={t('containerPath')} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -78,13 +69,8 @@ export function ContainerVolumes() {
                                         <FormItem className={'self-start pt-2.5'}>
                                             <FormControl>
                                                 <div className="flex gap-2">
-                                                    <Switch
-                                                        checked={field.value}
-                                                        onCheckedChange={field.onChange}
-                                                    />
-                                                    <Label className="text-xs">
-                                                        {t('readOnly')}
-                                                    </Label>
+                                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                                    <Label className="text-xs">{t('readOnly')}</Label>
                                                 </div>
                                             </FormControl>
                                         </FormItem>

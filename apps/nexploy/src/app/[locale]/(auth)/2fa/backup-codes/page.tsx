@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@workspace/ui/components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { TwoFactorUseBackupCodeForm } from '@/components/auth/2faUseBackupCodeForm';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';

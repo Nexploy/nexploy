@@ -1,21 +1,21 @@
 {
-    "name": "@workspace/schemas-zod",
-    "version": "1.0.0",
-    "private": true,
-    "type": "module",
-    "exports": {
-        "./*": "./src/*.ts",
-        "./pipeline/*": "./src/pipeline/*.ts"
-    },
-    "dependencies": {
-        "@workspace/typescript-interface": "workspace:*",
-        "zod": "^4.3.6"
-    },
-    "devDependencies": {
-        "@workspace/typescript-config": "workspace:*",
-        "typescript": "7.0.2"
-    },
-    "scripts": {
-        "typecheck": "tsc --noEmit"
-    }
+  "name": "@workspace/schemas-zod",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts",
+    "./pipeline/*": "./src/pipeline/*.ts"
+  },
+  "dependencies": {
+    "@workspace/typescript-interface": "workspace:*",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@workspace/typescript-config": "workspace:*",
+    "typescript": "7.0.2"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
 }

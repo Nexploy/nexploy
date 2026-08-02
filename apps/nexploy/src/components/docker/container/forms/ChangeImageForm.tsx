@@ -46,10 +46,7 @@ export function ChangeImageForm({ containerId, currentImage }: ChangeImageFormPr
     const router = useRouter();
     const { closeDialog } = useConfirmationDialogStore();
 
-    const { data: registries = [] } = useSWR<RegistryInfo[]>(
-        { url: '/api/registries' },
-        fetcherApi,
-    );
+    const { data: registries = [] } = useSWR<RegistryInfo[]>({ url: '/api/registries' }, fetcherApi);
 
     const images = useImagesStore((state) => state.images);
 
@@ -124,10 +121,7 @@ export function ChangeImageForm({ containerId, currentImage }: ChangeImageFormPr
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('registryLabel')}</FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    value={field.value ?? 'none'}
-                                >
+                                <Select onValueChange={field.onChange} value={field.value ?? 'none'}>
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder={t('registryNone')} />
@@ -135,9 +129,7 @@ export function ChangeImageForm({ containerId, currentImage }: ChangeImageFormPr
                                     </FormControl>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectItem value="none">
-                                                {t('registryNone')}
-                                            </SelectItem>
+                                            <SelectItem value="none">{t('registryNone')}</SelectItem>
                                             {registries.map((registry) => (
                                                 <SelectItem key={registry.id} value={registry.id}>
                                                     {registry.name} ({registry.url})

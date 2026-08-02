@@ -5,14 +5,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Eye, EyeOff } from 'lucide-react';
 import { onEnvVariableAction } from '@/actions/repository/updateEnvVariables.action';
 import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable.schema';
@@ -38,36 +31,28 @@ export function EnvVariableForm({ repositoryId, stageId, variable }: EnvVariable
     const [showValue, setShowValue] = useState(false);
     const isEdit = !!variable?.id;
 
-    const { form, handleSubmitWithAction } = useHookFormAction(
-        onEnvVariableAction,
-        zodResolver(envVariableSchema),
-        {
-            formProps: {
-                defaultValues: {
-                    repositoryId,
-                    stageId,
-                    envVariables: [variable ?? { key: '', value: '' }],
-                    deleteIds: [],
-                },
-            },
-            actionProps: {
-                onSuccess: ({ data }) => {
-                    toast.success(isEdit ? t('updated') : t('created'));
-                    if (onSuccess) onSuccess(data);
-                },
+    const { form, handleSubmitWithAction } = useHookFormAction(onEnvVariableAction, zodResolver(envVariableSchema), {
+        formProps: {
+            defaultValues: {
+                repositoryId,
+                stageId,
+                envVariables: [variable ?? { key: '', value: '' }],
+                deleteIds: [],
             },
         },
-    );
+        actionProps: {
+            onSuccess: ({ data }) => {
+                toast.success(isEdit ? t('updated') : t('created'));
+                if (onSuccess) onSuccess(data);
+            },
+        },
+    });
 
     const isSubmitting = form.formState.isSubmitting;
 
     return (
         <Form {...form}>
-            <form
-                onSubmit={handleSubmitWithAction}
-                className="flex flex-col gap-4"
-                autoComplete="off"
-            >
+            <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4" autoComplete="off">
                 <FormField
                     control={form.control}
                     name="envVariables.0.key"

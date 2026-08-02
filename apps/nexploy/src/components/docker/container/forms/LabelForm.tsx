@@ -1,13 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
@@ -109,13 +102,7 @@ export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps)
 
                 <DialogFooter className="flex justify-between! pt-4">
                     {mode === 'edit' && (
-                        <Button
-                            size="icon"
-                            type="button"
-                            variant="destructive"
-                            icon={Trash}
-                            onClick={handleDelete}
-                        />
+                        <Button size="icon" type="button" variant="destructive" icon={Trash} onClick={handleDelete} />
                     )}
                     <div className="flex flex-1 flex-row justify-end gap-2">
                         <DialogClose asChild>

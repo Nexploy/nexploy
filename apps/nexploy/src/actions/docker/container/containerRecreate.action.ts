@@ -12,9 +12,7 @@ export const onContainerRecreateAction = authActionServer
     .inputSchema(ContainerRecreateFormSchema)
     .action(async ({ parsedInput }) => {
         try {
-            return await kyDocker
-                .post('container/recreate', { json: parsedInput })
-                .json<{ id: string }>();
+            return await kyDocker.post('container/recreate', { json: parsedInput }).json<{ id: string }>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

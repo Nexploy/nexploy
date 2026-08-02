@@ -6,14 +6,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { DialogFooter } from '@workspace/ui/components/dialog';
@@ -50,10 +43,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
     const isEdit = !!stage;
     const { onSuccess } = useConfirmationDialogStore();
 
-    const { data: environments } = useSWR<EnvironmentOption[]>(
-        { url: '/api/environments' },
-        fetcherApi,
-    );
+    const { data: environments } = useSWR<EnvironmentOption[]>({ url: '/api/environments' }, fetcherApi);
 
     const { stages } = usePipelineStage(repositoryId);
     const protectionStages = stages.filter((s) => s.id !== stage?.id);
@@ -91,11 +81,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                         <FormItem>
                             <FormLabel>{t('nameLabel')}</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    placeholder={t('namePlaceholder')}
-                                    disabled={action.isPending}
-                                />
+                                <Input {...field} placeholder={t('namePlaceholder')} disabled={action.isPending} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -110,9 +96,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                             <FormLabel>{t('environmentLabel')}</FormLabel>
                             <Select
                                 value={field.value ?? ''}
-                                onValueChange={(value) =>
-                                    field.onChange(value === '' ? undefined : value)
-                                }
+                                onValueChange={(value) => field.onChange(value === '' ? undefined : value)}
                             >
                                 <FormControl>
                                     <SelectTrigger>
@@ -143,9 +127,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                             <FormLabel>{t('requiredStageLabel')}</FormLabel>
                             <Select
                                 value={field.value ?? '__NONE__'}
-                                onValueChange={(value) =>
-                                    field.onChange(value === '__NONE__' ? null : value)
-                                }
+                                onValueChange={(value) => field.onChange(value === '__NONE__' ? null : value)}
                             >
                                 <FormControl>
                                     <SelectTrigger>
@@ -155,9 +137,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                                 <SelectContent>
                                     <SelectGroup>
                                         <SelectLabel>{t('requiredStageLabel')}</SelectLabel>
-                                        <SelectItem value={'__NONE__'}>
-                                            {t('requiredStageNone')}
-                                        </SelectItem>
+                                        <SelectItem value={'__NONE__'}>{t('requiredStageNone')}</SelectItem>
                                         <SelectSeparator />
                                         {protectionStages.map((s) => (
                                             <SelectItem key={s.id} value={s.id}>
@@ -167,9 +147,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
-                            <p className="text-muted-foreground text-xs">
-                                {t('requiredStageHint')}
-                            </p>
+                            <p className="text-muted-foreground text-xs">{t('requiredStageHint')}</p>
                             <FormMessage />
                         </FormItem>
                     )}

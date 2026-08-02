@@ -13,10 +13,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
 import { FormDescription, FormItem, FormLabel } from '@workspace/ui/components/form';
-import type {
-    CloudflareAccountInfo,
-    CloudflareZone,
-} from '@workspace/typescript-interface/cloudflare/cloudflare';
+import type { CloudflareAccountInfo, CloudflareZone } from '@workspace/typescript-interface/cloudflare/cloudflare';
 import { Cloud, Loader2 } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import useSWR from 'swr';
@@ -28,10 +25,7 @@ interface CloudflareDomainSelectorProps<T extends FieldValues> {
     basePath?: string;
 }
 
-export function CloudflareDomainSelector<T extends FieldValues>({
-    form,
-    basePath,
-}: CloudflareDomainSelectorProps<T>) {
+export function CloudflareDomainSelector<T extends FieldValues>({ form, basePath }: CloudflareDomainSelectorProps<T>) {
     const t = useTranslations('repository.settings.cloudflare');
 
     const { data: cloudflareAccounts = [] } = useSWR<CloudflareAccountInfo[]>(
@@ -41,17 +35,13 @@ export function CloudflareDomainSelector<T extends FieldValues>({
 
     const fieldPath = (field: string) => (basePath ? `${basePath}.${field}` : field) as Path<T>;
 
-    const selectedCredentialId = form.watch(fieldPath('cloudflareCredentialId')) as
-        | string
-        | undefined;
+    const selectedCredentialId = form.watch(fieldPath('cloudflareCredentialId')) as string | undefined;
     const selectedZoneId = form.watch(fieldPath('cloudflareZoneId')) as string | undefined;
     const selectedZoneName = form.watch(fieldPath('cloudflareZoneName')) as string | undefined;
     const currentHost = form.watch(fieldPath('host')) as string | undefined;
 
     const { data: zones, isLoading: isLoadingZones } = useSWR<CloudflareZone[]>(
-        selectedCredentialId
-            ? { url: `/api/cloudflare/zone?credentialId=${selectedCredentialId}` }
-            : null,
+        selectedCredentialId ? { url: `/api/cloudflare/zone?credentialId=${selectedCredentialId}` } : null,
         fetcherApi,
     );
 
@@ -154,10 +144,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                     <div className="grid gap-4 md:grid-cols-2">
                         <div className="space-y-2">
                             <FormLabel>{t('zone')}</FormLabel>
-                            <Select
-                                onValueChange={handleZoneChange}
-                                value={selectedZoneId || 'manual'}
-                            >
+                            <Select onValueChange={handleZoneChange} value={selectedZoneId || 'manual'}>
                                 <SelectTrigger>
                                     <SelectValue placeholder={t('selectZone')} />
                                 </SelectTrigger>
@@ -165,9 +152,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({
                                     <SelectGroup>
                                         <SelectLabel>{t('zone')}</SelectLabel>
                                         <SelectItem value="manual">
-                                            <span className="text-muted-foreground">
-                                                {t('manualEntry')}
-                                            </span>
+                                            <span className="text-muted-foreground">{t('manualEntry')}</span>
                                         </SelectItem>
                                         <SelectSeparator />
                                         {isOrphanedZone && (

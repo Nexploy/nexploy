@@ -100,18 +100,12 @@ function DragAndDrop({
                 >
                     <Upload className="text-muted-foreground h-6 w-6" />
                     <p className="text-muted-foreground text-center text-xs">{dropText}</p>
-                    {formatsText && (
-                        <p className="text-muted-foreground/60 text-center text-xs">
-                            {formatsText}
-                        </p>
-                    )}
+                    {formatsText && <p className="text-muted-foreground/60 text-center text-xs">{formatsText}</p>}
                 </div>
             ) : (
                 <div className="flex items-center gap-2 p-3">
                     <FileIcon className="text-muted-foreground h-4 w-4 shrink-0" />
-                    <span className="text-muted-foreground flex-1 truncate text-xs">
-                        {fileName}
-                    </span>
+                    <span className="text-muted-foreground flex-1 truncate text-xs">{fileName}</span>
                     <Button
                         type="button"
                         variant="ghost"

@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import { ArrowUpDown, Ban, CheckCircle, Lock, MoreHorizontal, Shield, ShieldOff, Trash2, } from 'lucide-react';
+import { ArrowUpDown, Ban, CheckCircle, Lock, MoreHorizontal, Shield, ShieldOff, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import {
@@ -13,7 +13,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from '@workspace/ui/components/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 import { DicebearAvatar } from '@/components/shared/DicebearAvatar.tsx';
@@ -53,29 +53,14 @@ const isSystemUser = (user: UserRow) => {
     return user.role === 'system';
 };
 
-export const getColumnsUsers = (
-    t: TranslationFunction,
-    options: ColumnsOptions,
-): ColumnDef<UserRow>[] => {
-    const {
-        currentUserId,
-        isAdmin,
-        isUpdatingRole,
-        isDeleting,
-        isBanning,
-        onRoleChange,
-        onDelete,
-        onBan,
-    } = options;
+export const getColumnsUsers = (t: TranslationFunction, options: ColumnsOptions): ColumnDef<UserRow>[] => {
+    const { currentUserId, isAdmin, isUpdatingRole, isDeleting, isBanning, onRoleChange, onDelete, onBan } = options;
 
     const columns: ColumnDef<UserRow>[] = [
         {
             accessorKey: 'name',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('user')}
                     <ArrowUpDown className="ml-2 size-4" />
                 </Button>
@@ -102,9 +87,7 @@ export const getColumnsUsers = (
                                     </Tooltip>
                                 )}
                             </div>
-                            {isCurrentUser && (
-                                <span className="text-muted-foreground text-xs">{t('you')}</span>
-                            )}
+                            {isCurrentUser && <span className="text-muted-foreground text-xs">{t('you')}</span>}
                         </div>
                     </div>
                 );
@@ -113,10 +96,7 @@ export const getColumnsUsers = (
         {
             accessorKey: 'email',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('email')}
                     <ArrowUpDown className="ml-2 size-4" />
                 </Button>
@@ -126,10 +106,7 @@ export const getColumnsUsers = (
         {
             accessorKey: 'role',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('role')}
                     <ArrowUpDown className="ml-2 size-4" />
                 </Button>
@@ -142,10 +119,7 @@ export const getColumnsUsers = (
 
                 if (isSystem) {
                     return (
-                        <Badge
-                            variant="outline"
-                            className="border-amber-500/50 bg-amber-500/10 text-amber-600"
-                        >
+                        <Badge variant="outline" className="border-amber-500/50 bg-amber-500/10 text-amber-600">
                             <Lock className="mr-1 size-3" />
                             {t('systemRole')}
                         </Badge>
@@ -156,9 +130,7 @@ export const getColumnsUsers = (
                     return (
                         <Select
                             value={user.role || 'developer'}
-                            onValueChange={(value: 'guest' | 'developer' | 'admin') =>
-                                onRoleChange(user.id, value)
-                            }
+                            onValueChange={(value: 'guest' | 'developer' | 'admin') => onRoleChange(user.id, value)}
                             disabled={isUpdatingRole}
                         >
                             <SelectTrigger>
@@ -216,10 +188,7 @@ export const getColumnsUsers = (
 
                 if (isSystem) {
                     return (
-                        <Badge
-                            variant="outline"
-                            className="border-amber-500/50 bg-amber-500/10 text-amber-600"
-                        >
+                        <Badge variant="outline" className="border-amber-500/50 bg-amber-500/10 text-amber-600">
                             <Lock className="mr-1 size-3" />
                             {t('protected')}
                         </Badge>
@@ -246,18 +215,13 @@ export const getColumnsUsers = (
         {
             accessorKey: 'createdAt',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('createdAt')}
                     <ArrowUpDown className="ml-2 size-4" />
                 </Button>
             ),
             cell: ({ row }) => (
-                <span className="text-muted-foreground">
-                    {dayjs(row.original.createdAt).format('DD/MM/YYYY')}
-                </span>
+                <span className="text-muted-foreground">{dayjs(row.original.createdAt).format('DD/MM/YYYY')}</span>
             ),
         },
     ];

@@ -208,12 +208,7 @@ export const TreeNode = ({
 
 export type TreeNodeTriggerProps = ComponentProps<typeof motion.div>;
 
-export const TreeNodeTrigger = ({
-    children,
-    className,
-    onClick,
-    ...props
-}: TreeNodeTriggerProps) => {
+export const TreeNodeTrigger = ({ children, className, onClick, ...props }: TreeNodeTriggerProps) => {
     const { selectedIds, toggleExpanded, handleSelection, indent, animateExpand } = useTree();
     const { nodeId, level } = useTreeNode();
     const isSelected = selectedIds.includes(nodeId);
@@ -298,12 +293,7 @@ export type TreeNodeContentProps = ComponentProps<typeof motion.div> & {
     hasChildren?: boolean;
 };
 
-export const TreeNodeContent = ({
-    children,
-    hasChildren = false,
-    className,
-    ...props
-}: TreeNodeContentProps) => {
+export const TreeNodeContent = ({ children, hasChildren = false, className, ...props }: TreeNodeContentProps) => {
     const { animateExpand, expandedIds } = useTree();
     const { nodeId } = useTreeNode();
     const isExpanded = expandedIds.has(nodeId);
@@ -344,12 +334,7 @@ export type TreeExpanderProps = ComponentProps<typeof motion.div> & {
     hasChildren?: boolean;
 };
 
-export const TreeExpander = ({
-    hasChildren = false,
-    className,
-    onClick,
-    ...props
-}: TreeExpanderProps) => {
+export const TreeExpander = ({ hasChildren = false, className, onClick, ...props }: TreeExpanderProps) => {
     const { expandedIds, toggleExpanded, animateExpand } = useTree();
     const { nodeId } = useTreeNode();
     const isExpanded = expandedIds.has(nodeId);
@@ -361,10 +346,7 @@ export const TreeExpander = ({
     return (
         <motion.div
             animate={{ rotate: isExpanded ? 90 : 0 }}
-            className={cn(
-                'mr-1 flex h-4 w-4 cursor-pointer items-center justify-center',
-                className,
-            )}
+            className={cn('mr-1 flex h-4 w-4 cursor-pointer items-center justify-center', className)}
             onClick={(e) => {
                 e.stopPropagation();
                 toggleExpanded(nodeId);
@@ -405,10 +387,7 @@ export const TreeIcon = ({ icon, hasChildren = false, className, ...props }: Tre
 
     return (
         <motion.div
-            className={cn(
-                'text-muted-foreground mr-2 flex h-4 w-4 items-center justify-center',
-                className,
-            )}
+            className={cn('text-muted-foreground mr-2 flex h-4 w-4 items-center justify-center', className)}
             transition={{ duration: animateExpand ? 0.15 : 0 }}
             whileHover={animateExpand ? { scale: 1.1 } : undefined}
             {...props}

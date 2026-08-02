@@ -5,7 +5,7 @@ import { type UIMessage, useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import useSWR from 'swr';
 import type { Provider } from '@workspace/typescript-interface/ai/aiConfig';
-import { fetcherApi } from '@/lib/api/fetcherApi.ts';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { useAIContext } from '@/hooks/useAIContext';
 import { useHotkeys } from '@/lib/useHotKeys';
@@ -24,11 +24,13 @@ import {
     MessageScrollerProvider,
     MessageScrollerViewport,
 } from '@workspace/ui/components/message-scroller';
-import { SelectModel } from '@/components/ai/panel/SelectModel.tsx';
 import { StreamAutoScroll } from '@/components/ai/panel/StreamAutoScroll';
 import { useTranslations } from 'next-intl';
-import { BotOff, Settings2 } from 'lucide-react';
+import { BotOff, Minimize2, Settings2 } from 'lucide-react';
 import { useLocalStorage } from 'usehooks-ts';
+import { Button } from '@workspace/ui/components/button';
+import { Dialog, DialogContent, DialogTitle } from '@workspace/ui/components/dialog';
+import { ChatToolbar } from '@/components/ai/panel/ChatToolbar.tsx';
 
 export function ChatAIPanel() {
     const t = useTranslations('ai.chat');
@@ -41,14 +43,17 @@ export function ChatAIPanel() {
 
     const selectedModel = useAIPanelStore((s) => s.selectedModel);
     const openModelSelector = useAIPanelStore((s) => s.openModelSelector);
+    const isFullscreen = useAIPanelStore((s) => s.isFullscreen);
+    const setFullscreen = useAIPanelStore((s) => s.setFullscreen);
 
     const [input, setInput] = useState('');
     const selectedModelRef = useRef(selectedModel);
     selectedModelRef.current = selectedModel;
 
-    const [persistedMessages, setPersistedMessages, clearPersistedMessages] = useLocalStorage<
-        UIMessage[]
-    >('ai-chat-messages', []);
+    const [persistedMessages, setPersistedMessages, clearPersistedMessages] = useLocalStorage<UIMessage[]>(
+        'ai-chat-messages',
+        [],
+    );
 
     const { messages, sendMessage, stop, status, setMessages, error } = useChat({
         transport: new DefaultChatTransport({
@@ -126,6 +131,35 @@ export function ChatAIPanel() {
         clearPersistedMessages();
     }, [stop, setMessages, clearPersistedMessages]);
 
+    const chatBody = (
+        <>
+            <MessageScrollerProvider autoScroll defaultScrollPosition={messages.length === 0 ? 'start' : 'end'}>
+                <MessageScroller className="min-h-0 flex-1">
+                    <MessageScrollerViewport className="px-3">
+                        <MessageScrollerContent className="gap-4 pb-2">
+                            {messages.length === 0 && (
+                                <MessageScrollerItem>
+                                    <Suggestions categories={categories} onSelect={trySendMessage} />
+                                </MessageScrollerItem>
+                            )}
+                            <ChatMessages messages={messages} isLoading={isLoading} error={error} />
+                        </MessageScrollerContent>
+                    </MessageScrollerViewport>
+                    <StreamAutoScroll turnId={streamingTurnId} isStreaming={isLoading} />
+                    <MessageScrollerButton className="rounded-full shadow-sm" />
+                </MessageScroller>
+            </MessageScrollerProvider>
+            <ChatToolbar />
+            <ChatInput
+                input={input}
+                onChange={setInput}
+                onSubmit={() => trySendMessage(input)}
+                onStop={stop}
+                isLoading={isLoading}
+            />
+        </>
+    );
+
     return (
         <div
             className={cn(
@@ -148,9 +182,7 @@ export function ChatAIPanel() {
                             </div>
                             <div className="flex flex-col gap-1">
                                 <p className="text-sm font-medium">{t('disabled')}</p>
-                                <p className="text-muted-foreground text-xs">
-                                    {t('disabledDescription')}
-                                </p>
+                                <p className="text-muted-foreground text-xs">{t('disabledDescription')}</p>
                             </div>
                         </div>
                     ) : !providersLoading && !hasConfiguredProvider ? (
@@ -160,50 +192,44 @@ export function ChatAIPanel() {
                             </div>
                             <div className="flex flex-col gap-1">
                                 <p className="text-sm font-medium">{t('noProvider')}</p>
-                                <p className="text-muted-foreground text-xs">
-                                    {t('noProviderDescription')}
-                                </p>
+                                <p className="text-muted-foreground text-xs">{t('noProviderDescription')}</p>
                             </div>
                         </div>
                     ) : (
                         <>
-                            <MessageScrollerProvider
-                                autoScroll
-                                defaultScrollPosition={messages.length === 0 ? 'start' : 'end'}
-                            >
-                                <MessageScroller className="min-h-0 flex-1">
-                                    <MessageScrollerViewport className="px-3">
-                                        <MessageScrollerContent className="gap-4 pb-2">
-                                            {messages.length === 0 && (
-                                                <MessageScrollerItem>
-                                                    <Suggestions
-                                                        categories={categories}
-                                                        onSelect={trySendMessage}
-                                                    />
-                                                </MessageScrollerItem>
-                                            )}
-                                            <ChatMessages
-                                                messages={messages}
-                                                isLoading={isLoading}
-                                                error={error}
-                                            />
-                                        </MessageScrollerContent>
-                                    </MessageScrollerViewport>
-                                    <StreamAutoScroll
-                                        turnId={streamingTurnId}
-                                        isStreaming={isLoading}
+                            {isFullscreen ? (
+                                <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
+                                    <p className="text-muted-foreground text-xs">{t('fullscreenActive')}</p>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-7 text-xs"
+                                        onClick={() => setFullscreen(false)}
+                                    >
+                                        <Minimize2 className="size-3.5" />
+                                        {t('exitFullscreen')}
+                                    </Button>
+                                </div>
+                            ) : (
+                                chatBody
+                            )}
+                            <Dialog open={isFullscreen} onOpenChange={setFullscreen}>
+                                <DialogContent
+                                    showCloseButton={false}
+                                    className="flex h-dvh w-screen max-w-none flex-col gap-0 rounded-none border-0 p-0 sm:max-w-none"
+                                >
+                                    <DialogTitle className="sr-only">{t('panelTitle')}</DialogTitle>
+                                    <PanelHeader
+                                        isLoading={isLoading}
+                                        hasMessages={messages.length > 0}
+                                        onNewChat={handleResetChat}
+                                        onClose={() => setFullscreen(false)}
                                     />
-                                    <MessageScrollerButton className="rounded-full shadow-sm" />
-                                </MessageScroller>
-                            </MessageScrollerProvider>
-                            <SelectModel />
-                            <ChatInput
-                                input={input}
-                                onChange={setInput}
-                                onSubmit={() => trySendMessage(input)}
-                                onStop={stop}
-                                isLoading={isLoading}
-                            />
+                                    <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col">
+                                        {isFullscreen && chatBody}
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
                             <ModelSelectorModal />
                         </>
                     )}

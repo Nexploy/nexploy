@@ -10,7 +10,7 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { Terminal } from 'lucide-react';
 import { statusMap } from '@/utils/statusMap';
 import { useTerminalStore } from '@/stores/useTerminalStore';
-import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { useTranslations } from 'next-intl';
 
 interface ContainerAttachProps {
@@ -69,10 +69,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                                     <Terminal />
                                 </div>
                                 {t('title', { name: container?.name ?? 'Unknown Container' })}
-                                <Status
-                                    className="rounded-none bg-transparent"
-                                    status={currentStatus.status}
-                                >
+                                <Status className="rounded-none bg-transparent" status={currentStatus.status}>
                                     <StatusIndicator />
                                     <StatusLabel className={currentStatus.text}>
                                         {tStatus(currentStatus.labelKey)}
@@ -90,12 +87,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                             >
                                 {t('reconnect')}
                             </Button>
-                            <Button
-                                onClick={handleClose}
-                                className="h-7 text-xs"
-                                variant="white"
-                                size="sm"
-                            >
+                            <Button onClick={handleClose} className="h-7 text-xs" variant="white" size="sm">
                                 {t('close')}
                             </Button>
                         </div>

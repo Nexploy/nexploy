@@ -20,11 +20,7 @@ interface SwitchGitAccountSectionProps {
     isOwner: boolean;
 }
 
-export function SwitchGitAccountSection({
-    repositoryId,
-    currentGitAccountId,
-    isOwner,
-}: SwitchGitAccountSectionProps) {
+export function SwitchGitAccountSection({ repositoryId, currentGitAccountId, isOwner }: SwitchGitAccountSectionProps) {
     const t = useTranslations('repository.settings.gitAccount');
     const tSource = useTranslations('repository.steps.gitSource');
     const { isAdmin } = usePermissions();
@@ -41,11 +37,7 @@ export function SwitchGitAccountSection({
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={GitBranch}
-                title={t('title')}
-                description={t('description')}
-            />
+            <CardHeaderWithIcon icon={GitBranch} title={t('title')} description={t('description')} />
             <CardContent>
                 {!currentGitAccountId && (
                     <Alert variant="destructive" className="mb-4">
@@ -57,11 +49,7 @@ export function SwitchGitAccountSection({
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4">
                         <GitAccountFormField
-                            noAccountsContent={
-                                <p className="text-muted-foreground text-sm">
-                                    {tSource('noAccounts')}
-                                </p>
-                            }
+                            noAccountsContent={<p className="text-muted-foreground text-sm">{tSource('noAccounts')}</p>}
                         />
                         <Button
                             type="submit"

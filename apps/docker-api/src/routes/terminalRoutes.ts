@@ -78,10 +78,7 @@ export const createTerminalRoutes = (
                             ...(user ? { User: user } : {}),
                         };
 
-                        logger.info(
-                            { containerId, cmd: execOptions.Cmd, shell },
-                            '🚀 Creating exec',
-                        );
+                        logger.info({ containerId, cmd: execOptions.Cmd, shell }, '🚀 Creating exec');
 
                         exec = await container.exec(execOptions);
 
@@ -121,8 +118,7 @@ export const createTerminalRoutes = (
                     } catch (err) {
                         try {
                             if (ws.readyState === 1) {
-                                const errorMessage =
-                                    err instanceof Error ? err.message : String(err);
+                                const errorMessage = err instanceof Error ? err.message : String(err);
                                 ws.send(`\r\n\x1b[31m*** Error: ${errorMessage} ***\x1b[0m\r\n`);
                             }
                             ws.close();
@@ -137,10 +133,7 @@ export const createTerminalRoutes = (
                         const data = event.data;
 
                         if (!stream || stream.destroyed) {
-                            logger.warn(
-                                { containerId },
-                                'Received message but stream is not available',
-                            );
+                            logger.warn({ containerId }, 'Received message but stream is not available');
                             return;
                         }
 
@@ -161,10 +154,7 @@ export const createTerminalRoutes = (
                 },
 
                 onClose(event, ws) {
-                    logger.info(
-                        { containerId, code: event.code, reason: event.reason },
-                        '🔌 WebSocket closed',
-                    );
+                    logger.info({ containerId, code: event.code, reason: event.reason }, '🔌 WebSocket closed');
 
                     if (stream && !stream.destroyed) {
                         stream.end();
@@ -259,8 +249,7 @@ export const createTerminalRoutes = (
                     } catch (err) {
                         try {
                             if (ws.readyState === 1) {
-                                const errorMessage =
-                                    err instanceof Error ? err.message : String(err);
+                                const errorMessage = err instanceof Error ? err.message : String(err);
                                 ws.send(`\r\n\x1b[31m*** Error: ${errorMessage} ***\x1b[0m\r\n`);
                             }
                             ws.close();
@@ -275,10 +264,7 @@ export const createTerminalRoutes = (
                         const data = event.data;
 
                         if (!stream || stream.destroyed) {
-                            logger.warn(
-                                { containerId },
-                                'Received message but stream is not available',
-                            );
+                            logger.warn({ containerId }, 'Received message but stream is not available');
                             return;
                         }
 
@@ -313,10 +299,7 @@ export const createTerminalRoutes = (
                 },
 
                 onError(event, ws) {
-                    logger.error(
-                        { containerId, error: event },
-                        '❌ WebSocket error event (attach)',
-                    );
+                    logger.error({ containerId, error: event }, '❌ WebSocket error event (attach)');
 
                     if (stream && !stream.destroyed) {
                         stream.destroy();

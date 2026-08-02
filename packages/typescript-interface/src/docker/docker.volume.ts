@@ -16,9 +16,7 @@ export interface Volume {
 
 export type VolumeAction = 'create' | 'mount' | 'unmount' | 'destroy';
 
-export type VolumeDeleteResult =
-    | { type: 'deleted'; name: string }
-    | { type: 'skipped'; name: string; reason: string };
+export type VolumeDeleteResult = { type: 'deleted'; name: string } | { type: 'skipped'; name: string; reason: string };
 
 export interface VolumeDeleteResponse {
     deleted: string[];

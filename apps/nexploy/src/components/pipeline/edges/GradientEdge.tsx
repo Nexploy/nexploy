@@ -9,26 +9,15 @@ import {
     useReactFlow,
     useViewport,
 } from '@xyflow/react';
-import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
+import { type NodeData } from '@nexploy/nodes/ui/nodeDefinition';
 import { CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 
 export function GradientEdge(props: EdgeProps) {
-    const {
-        id,
-        source,
-        target,
-        sourceX,
-        sourceY,
-        targetX,
-        targetY,
-        sourcePosition,
-        targetPosition,
-        style,
-    } = props;
+    const { id, source, target, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style } = props;
 
     const nodes = useNodes();
     const { deleteElements, getEdges } = useReactFlow();

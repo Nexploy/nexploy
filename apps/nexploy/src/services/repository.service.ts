@@ -54,9 +54,10 @@ async function resolveCallerOrganizationId(session: Session): Promise<string> {
     return organizationId;
 }
 
-export async function getRepositorieById<
-    T extends Prisma.RepositoryInclude | undefined = undefined,
->(repositoryId: string, include?: T): Promise<RepositoryPayload<T> | null> {
+export async function getRepositorieById<T extends Prisma.RepositoryInclude | undefined = undefined>(
+    repositoryId: string,
+    include?: T,
+): Promise<RepositoryPayload<T> | null> {
     const t = await getErrorTranslator();
     try {
         return (await prisma.repository.findUnique({
@@ -70,11 +71,7 @@ export async function getRepositorieById<
     }
 }
 
-export async function getRepositories(
-    userId?: string,
-    isGlobalAdmin = false,
-    organizationId?: string | null,
-) {
+export async function getRepositories(userId?: string, isGlobalAdmin = false, organizationId?: string | null) {
     const t = await getErrorTranslator();
     try {
         const where: Prisma.RepositoryWhereInput = {};
@@ -338,10 +335,7 @@ export async function relinkGitAccount(repositoryId: string, gitAccountId: strin
     }
 }
 
-export async function moveRepositoryToOrganization(
-    repositoryId: string,
-    targetOrganizationId: string,
-) {
+export async function moveRepositoryToOrganization(repositoryId: string, targetOrganizationId: string) {
     const t = await getErrorTranslator();
 
     const repo = await prisma.repository.findUnique({

@@ -50,9 +50,7 @@ export function ServicePorts() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noPortsConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noPortsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -63,11 +61,7 @@ export function ServicePorts() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    type="number"
-                                                    placeholder={t('publishedPort')}
-                                                />
+                                                <Input {...field} type="number" placeholder={t('publishedPort')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -80,11 +74,7 @@ export function ServicePorts() {
                                     render={({ field }) => (
                                         <FormItem className="flex-1">
                                             <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    type="number"
-                                                    placeholder={t('targetPort')}
-                                                />
+                                                <Input {...field} type="number" placeholder={t('targetPort')} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -96,18 +86,13 @@ export function ServicePorts() {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <Select
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
-                                                >
+                                                <Select value={field.value} onValueChange={field.onChange}>
                                                     <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectGroup>
-                                                            <SelectLabel>
-                                                                {t('protocol')}
-                                                            </SelectLabel>
+                                                            <SelectLabel>{t('protocol')}</SelectLabel>
                                                             <SelectItem value="tcp">TCP</SelectItem>
                                                             <SelectItem value="udp">UDP</SelectItem>
                                                         </SelectGroup>
@@ -123,24 +108,17 @@ export function ServicePorts() {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <Select
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
-                                                >
+                                                <Select value={field.value} onValueChange={field.onChange}>
                                                     <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectGroup>
-                                                            <SelectLabel>
-                                                                {t('publishMode')}
-                                                            </SelectLabel>
+                                                            <SelectLabel>{t('publishMode')}</SelectLabel>
                                                             <SelectItem value="ingress">
                                                                 {t('publishModeIngress')}
                                                             </SelectItem>
-                                                            <SelectItem value="host">
-                                                                {t('publishModeHost')}
-                                                            </SelectItem>
+                                                            <SelectItem value="host">{t('publishModeHost')}</SelectItem>
                                                         </SelectGroup>
                                                     </SelectContent>
                                                 </Select>

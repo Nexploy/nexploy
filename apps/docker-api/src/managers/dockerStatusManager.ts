@@ -2,10 +2,7 @@ import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import { logger } from '@/utils/logger';
-import {
-    DockerStatus,
-    DockerStatusEvent,
-} from '@workspace/typescript-interface/docker/docker.status';
+import { DockerStatus, DockerStatusEvent } from '@workspace/typescript-interface/docker/docker.status';
 import { BaseMonitor } from '@/lib/base/BaseMonitor';
 
 const CONSECUTIVE_FAILURES_BEFORE_DISCONNECT = 3;
@@ -33,10 +30,7 @@ export class DockerStatusManager extends BaseMonitor {
         } catch (err) {
             this.consecutiveFailures++;
 
-            if (
-                this.status === 'connected' &&
-                this.consecutiveFailures < CONSECUTIVE_FAILURES_BEFORE_DISCONNECT
-            ) {
+            if (this.status === 'connected' && this.consecutiveFailures < CONSECUTIVE_FAILURES_BEFORE_DISCONNECT) {
                 logger.warn(
                     { environmentId: this.environmentId, attempt: this.consecutiveFailures },
                     'Docker ping failed, waiting for confirmation before reporting a disconnection',
@@ -82,9 +76,7 @@ export class DockerStatusManager extends BaseMonitor {
             };
             this.emit('status-changed', statusChangedData);
         } else if (status === 'connected') {
-            logger.info(
-                isInitial ? 'Docker daemon is available' : 'Docker daemon became available',
-            );
+            logger.info(isInitial ? 'Docker daemon is available' : 'Docker daemon became available');
 
             const statusChangedData: DockerStatusEvent = {
                 status: 'connected',

@@ -131,11 +131,7 @@ export const useNetworksStore = create<NetworkState>((set, get) => ({
                     if (!data.network) return;
 
                     get().addNetwork(data.network);
-                    notifyDocker(
-                        'networks',
-                        'success',
-                        clientT('toasts.networkAdded', { name: data.network.name }),
-                    );
+                    notifyDocker('networks', 'success', clientT('toasts.networkAdded', { name: data.network.name }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -158,11 +154,7 @@ export const useNetworksStore = create<NetworkState>((set, get) => ({
 
                     get().removeNetwork(data.networkId);
                     const networkName = data.oldState?.name || data.networkId;
-                    notifyDocker(
-                        'networks',
-                        'success',
-                        clientT('toasts.networkRemoved', { name: networkName }),
-                    );
+                    notifyDocker('networks', 'success', clientT('toasts.networkRemoved', { name: networkName }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );

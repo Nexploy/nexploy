@@ -33,19 +33,14 @@ export function CardVolumeContainers() {
                 ) : (
                     <div className="space-y-2">
                         {usingContainers.map((container) => (
-                            <div
-                                key={container.id}
-                                className="flex items-center gap-2 border-b pb-2 last:border-b-0"
-                            >
+                            <div key={container.id} className="flex items-center gap-2 border-b pb-2 last:border-b-0">
                                 <Link
                                     href={`/docker/containers/${container.id}`}
                                     className="text-primary truncate text-sm hover:underline"
                                 >
                                     {container.name}
                                 </Link>
-                                <Status
-                                    status={container.state === 'running' ? 'online' : 'offline'}
-                                >
+                                <Status status={container.state === 'running' ? 'online' : 'offline'}>
                                     <StatusIndicator />
                                     <StatusLabel>{container.state}</StatusLabel>
                                 </Status>

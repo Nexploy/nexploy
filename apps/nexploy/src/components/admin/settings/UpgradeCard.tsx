@@ -13,15 +13,9 @@ export function UpgradeCard() {
     const t = useTranslations('admin.settings');
     const { isAdmin } = usePermissions();
 
-    const {
-        version,
-        isLoading,
-        isChecking,
-        isUpgrading,
-        isRestarting,
-        refresh,
-        openUpgradeDialog,
-    } = useUpdate({ enabled: isAdmin });
+    const { version, isLoading, isChecking, isUpgrading, isRestarting, refresh, openUpgradeDialog } = useUpdate({
+        enabled: isAdmin,
+    });
 
     if (!isAdmin) {
         return null;
@@ -29,18 +23,8 @@ export function UpgradeCard() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={ArrowUpCircle}
-                title={t('upgradeTitle')}
-                description={t('upgradeDescription')}
-            >
-                <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={isChecking}
-                    className="ml-auto"
-                    onClick={() => refresh()}
-                >
+            <CardHeaderWithIcon icon={ArrowUpCircle} title={t('upgradeTitle')} description={t('upgradeDescription')}>
+                <Button variant="outline" size="sm" disabled={isChecking} className="ml-auto" onClick={() => refresh()}>
                     <RefreshCw className={isChecking ? 'size-4 animate-spin' : 'size-4'} />
                     {t('upgradeCheckButton')}
                 </Button>
@@ -71,18 +55,14 @@ export function UpgradeCard() {
                                 <div className="flex flex-1 items-center gap-4">
                                     <div className="flex flex-1 flex-col gap-2 rounded-lg border p-4 text-sm">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-muted-foreground">
-                                                {t('upgradeCurrentVersion')}
-                                            </span>
+                                            <span className="text-muted-foreground">{t('upgradeCurrentVersion')}</span>
                                             <span className="font-medium">{version.current}</span>
                                         </div>
                                     </div>
                                     →
                                     <div className="flex flex-1 flex-col gap-2 rounded-lg border p-4 text-sm">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-muted-foreground">
-                                                {t('upgradeNewVersion')}
-                                            </span>
+                                            <span className="text-muted-foreground">{t('upgradeNewVersion')}</span>
                                             <span className="font-medium">{version.latest}</span>
                                         </div>
                                     </div>
@@ -99,9 +79,7 @@ export function UpgradeCard() {
                         ) : (
                             <div className="flex flex-col gap-2 rounded-lg border p-4 text-sm">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-muted-foreground">
-                                        {t('upgradeCurrentVersion')}
-                                    </span>
+                                    <span className="text-muted-foreground">{t('upgradeCurrentVersion')}</span>
                                     <span className="font-medium">{version.current}</span>
                                 </div>
                             </div>

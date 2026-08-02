@@ -31,9 +31,7 @@ export default async function AppLayout({
 
     const activeOrganizationId = session ? await resolveActiveOrganizationId(session) : null;
     const activeOrganizationRole =
-        session && activeOrganizationId
-            ? await getCallerOrgRole(session.user.id, activeOrganizationId)
-            : null;
+        session && activeOrganizationId ? await getCallerOrgRole(session.user.id, activeOrganizationId) : null;
 
     return (
         <PermissionProvider role={session?.user?.role} orgRole={activeOrganizationRole}>

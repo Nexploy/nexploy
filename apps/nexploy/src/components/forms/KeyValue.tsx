@@ -56,20 +56,11 @@ export function KeyValueList({ items, onRemove, title }: KeyValueListProps) {
                         className="bg-muted flex items-center justify-between rounded-md p-1 px-2 transition-colors"
                     >
                         <code className="flex items-center gap-1">
-                            <code className="bg-background rounded px-2 py-1 font-mono text-sm">
-                                {key}
-                            </code>
+                            <code className="bg-background rounded px-2 py-1 font-mono text-sm">{key}</code>
                             <span className="text-muted-foreground">=</span>
-                            <code className="bg-background rounded px-2 py-1 font-mono text-sm">
-                                {value}
-                            </code>
+                            <code className="bg-background rounded px-2 py-1 font-mono text-sm">{value}</code>
                         </code>
-                        <Button
-                            type="button"
-                            size="icon"
-                            variant="destructiveGhost"
-                            onClick={() => onRemove(key)}
-                        >
+                        <Button type="button" size="icon" variant="destructiveGhost" onClick={() => onRemove(key)}>
                             <X />
                         </Button>
                     </div>

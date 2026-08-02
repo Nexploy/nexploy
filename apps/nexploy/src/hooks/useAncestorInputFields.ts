@@ -2,14 +2,14 @@
 
 import { useMemo } from 'react';
 import { useReactFlow } from '@xyflow/react';
-import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
-import { getNodeInputFields } from '@/components/pipeline/nodeManifestRegistry';
-import { type NodeInputField } from '@/components/pipeline/types/nodeManifest';
+import { type NodeData } from '@nexploy/nodes/ui/nodeDefinition';
+import { getNodeOutputFields } from '@nexploy/nodes/registry/descriptors';
+import { type NodeOutputFieldView } from '@nexploy/nodes/registry/descriptors';
 
 export interface AncestorWithInputs {
     nodeId: string;
     nodeType: string;
-    inputFields: NodeInputField[];
+    inputFields: NodeOutputFieldView[];
 }
 
 function getAncestorIds(nodeId: string, edges: { source: string; target: string }[]): string[] {
@@ -49,7 +49,7 @@ export function useAncestorInputFields(nodeId: string): AncestorWithInputs[] {
                 const nodeData = node.data as unknown as NodeData;
                 if (nodeData.disabled) return null;
                 const nodeType = nodeData.nodeType;
-                const inputFields = getNodeInputFields(nodeType);
+                const inputFields = getNodeOutputFields(nodeType);
                 if (!inputFields?.length) return null;
                 return { nodeId: id, nodeType, inputFields };
             })

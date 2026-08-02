@@ -29,7 +29,7 @@ import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { useImagesStore } from '@/stores/docker/useImagesStore.ts';
 import { useMemo } from 'react';
 import { DockerHubSearchDialog } from '@/components/docker/image/pull/DockerHubSearchDialog.tsx';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 import { Docker } from '@thesvg/react';
 import useSWR from 'swr';
 import { fetcherApi } from '@/lib/api/fetcherApi';
@@ -57,18 +57,11 @@ export function ContainerBasicConfig() {
 
     const selectedImage = form.watch('image');
 
-    const { data: registries = [] } = useSWR<RegistryInfo[]>(
-        { url: '/api/registries' },
-        fetcherApi,
-    );
+    const { data: registries = [] } = useSWR<RegistryInfo[]>({ url: '/api/registries' }, fetcherApi);
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Settings}
-                title={t('basicConfig')}
-                description={t('basicConfigDescription')}
-            />
+            <CardHeaderWithIcon icon={Settings} title={t('basicConfig')} description={t('basicConfigDescription')} />
             <CardContent className="space-y-4">
                 <FormField
                     control={form.control}
@@ -102,12 +95,8 @@ export function ContainerBasicConfig() {
                                         placeholder="postgres:latest"
                                     />
                                     <DockerHubSearchDialog
-                                        onSelect={(image) =>
-                                            form.setValue('image', `${image.slug}:latest`)
-                                        }
-                                        isSelected={(image) =>
-                                            selectedImage === `${image.slug}:latest`
-                                        }
+                                        onSelect={(image) => form.setValue('image', `${image.slug}:latest`)}
+                                        isSelected={(image) => selectedImage === `${image.slug}:latest`}
                                         trigger={
                                             <Button className={'rounded-l-none font-semibold'}>
                                                 <Docker className="size-4 [&_path]:fill-current" />
@@ -130,10 +119,7 @@ export function ContainerBasicConfig() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t('registryLabel')}</FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    value={field.value ?? 'none'}
-                                >
+                                <Select onValueChange={field.onChange} value={field.value ?? 'none'}>
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder={t('registryNone')} />
@@ -141,9 +127,7 @@ export function ContainerBasicConfig() {
                                     </FormControl>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectItem value="none">
-                                                {t('registryNone')}
-                                            </SelectItem>
+                                            <SelectItem value="none">{t('registryNone')}</SelectItem>
                                             {registries.map((registry) => (
                                                 <SelectItem key={registry.id} value={registry.id}>
                                                     {registry.name} ({registry.url})
@@ -166,9 +150,7 @@ export function ContainerBasicConfig() {
                         <FormItem>
                             <FormLabel>
                                 {t('hostname')}
-                                <span className="text-muted-foreground text-xs">
-                                    {tCommon('optional')}
-                                </span>
+                                <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
                             </FormLabel>
                             <FormControl>
                                 <Input placeholder={t('hostnamePlaceholder')} {...field} />
@@ -195,12 +177,8 @@ export function ContainerBasicConfig() {
                                         <SelectLabel>{t('restartPolicy')}</SelectLabel>
                                         <SelectItem value="no">{t('restartNever')}</SelectItem>
                                         <SelectItem value="always">{t('restartAlways')}</SelectItem>
-                                        <SelectItem value="on-failure">
-                                            {t('restartOnFailure')}
-                                        </SelectItem>
-                                        <SelectItem value="unless-stopped">
-                                            {t('restartUnlessStopped')}
-                                        </SelectItem>
+                                        <SelectItem value="on-failure">{t('restartOnFailure')}</SelectItem>
+                                        <SelectItem value="unless-stopped">{t('restartUnlessStopped')}</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
@@ -218,9 +196,7 @@ export function ContainerBasicConfig() {
                                 <Label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
                                     <div className="flex flex-col gap-0.5">
                                         <span className="text-base">{t('autoRemove')}</span>
-                                        <FormDescription className="m-0">
-                                            {t('autoRemoveDescription')}
-                                        </FormDescription>
+                                        <FormDescription className="m-0">{t('autoRemoveDescription')}</FormDescription>
                                     </div>
                                     <FormControl>
                                         <Switch
@@ -233,7 +209,6 @@ export function ContainerBasicConfig() {
                             </FormItem>
                         )}
                     />
-
                 </div>
             </CardContent>
         </Card>

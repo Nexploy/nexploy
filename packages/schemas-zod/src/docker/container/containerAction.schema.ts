@@ -38,8 +38,7 @@ export const containerRenameSchema = z.object({
         .string()
         .min(1)
         .regex(/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/, {
-            message:
-                'Name must start with a letter or digit and contain only letters, digits, _, . or -',
+            message: 'Name must start with a letter or digit and contain only letters, digits, _, . or -',
         }),
 });
 

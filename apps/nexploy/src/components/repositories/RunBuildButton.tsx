@@ -17,7 +17,6 @@ interface DeployButtonProps extends ComponentProps<typeof Button> {
 }
 
 export function RunBuildButton({ repositoryId, showText = true, ...props }: DeployButtonProps) {
-
     const t = useTranslations('repository.builds');
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
     const triggerBuildRefresh = usePipelineEditorStore((s) => s.triggerBuildRefresh);
@@ -41,7 +40,6 @@ export function RunBuildButton({ repositoryId, showText = true, ...props }: Depl
 
         execute({ repositoryId, stageId });
     };
-
 
     return (
         <Can resource="build" action="run">

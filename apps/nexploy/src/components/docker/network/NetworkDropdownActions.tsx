@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, } from '@workspace/ui/components/dropdown-menu';
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@workspace/ui/components/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Trash } from 'lucide-react';
 import { onNetworkAction } from '@/actions/docker/network/networkAction.action';
@@ -73,11 +73,7 @@ export function NetworkDropdownActions({ network }: NetworkDropdownActionsProps)
                             )}
                         </Tooltip>
                     ) : (
-                        <DropdownMenuItem
-                            variant={tool.variant}
-                            onClick={tool.action}
-                            disabled={tool.disabled}
-                        >
+                        <DropdownMenuItem variant={tool.variant} onClick={tool.action} disabled={tool.disabled}>
                             <tool.icon />
                             {tool.label}
                         </DropdownMenuItem>

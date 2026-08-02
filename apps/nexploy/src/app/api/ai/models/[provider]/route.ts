@@ -41,11 +41,7 @@ async function fetchGoogleModels(apiKey: string): Promise<ModelOption[]> {
             models: { name: string; displayName: string; supportedGenerationMethods: string[] }[];
         }>();
     return json.models
-        .filter(
-            (m) =>
-                m.supportedGenerationMethods.includes('generateContent') &&
-                m.name.includes('gemini'),
-        )
+        .filter((m) => m.supportedGenerationMethods.includes('generateContent') && m.name.includes('gemini'))
         .map((m) => ({ value: m.name.replace('models/', ''), label: m.displayName }));
 }
 

@@ -135,23 +135,14 @@ export class ContainersStateManager extends BaseStateManager {
         };
     }
 
-    private async updateContainerState(
-        containerId: string,
-        action: ContainersStateEvents,
-    ): Promise<void> {
+    private async updateContainerState(containerId: string, action: ContainersStateEvents): Promise<void> {
         try {
             if (!this.getDockerStatusManager().isConnected()) {
-                logger.debug(
-                    { containerId },
-                    'Skipping container state update: Docker not connected',
-                );
+                logger.debug({ containerId }, 'Skipping container state update: Docker not connected');
                 return;
             }
         } catch (err) {
-            logger.debug(
-                { containerId },
-                'Skipping container state update: Docker status manager not available',
-            );
+            logger.debug({ containerId }, 'Skipping container state update: Docker status manager not available');
             return;
         }
 
@@ -367,26 +358,19 @@ export class ContainersStateManager extends BaseStateManager {
     private getStateChanges(oldState: Containers, newState: Containers): ContainersStateChanges {
         const changes: ContainersStateChanges = {};
 
-        if (oldState.name !== newState.name)
-            changes.name = { from: oldState.name, to: newState.name };
-        if (oldState.state !== newState.state)
-            changes.state = { from: oldState.state, to: newState.state };
-        if (oldState.status !== newState.status)
-            changes.status = { from: oldState.status, to: newState.status };
-        if (oldState.health !== newState.health)
-            changes.health = { from: oldState.health, to: newState.health };
+        if (oldState.name !== newState.name) changes.name = { from: oldState.name, to: newState.name };
+        if (oldState.state !== newState.state) changes.state = { from: oldState.state, to: newState.state };
+        if (oldState.status !== newState.status) changes.status = { from: oldState.status, to: newState.status };
+        if (oldState.health !== newState.health) changes.health = { from: oldState.health, to: newState.health };
         if (oldState.exitCode !== newState.exitCode)
             changes.exitCode = {
                 from: oldState.exitCode,
                 to: newState.exitCode,
             };
-        if (oldState.image !== newState.image)
-            changes.image = { from: oldState.image, to: newState.image };
-        if (oldState.error !== newState.error)
-            changes.error = { from: oldState.error, to: newState.error };
+        if (oldState.image !== newState.image) changes.image = { from: oldState.image, to: newState.image };
+        if (oldState.error !== newState.error) changes.error = { from: oldState.error, to: newState.error };
         if (JSON.stringify(oldState.ports) !== JSON.stringify(newState.ports)) changes.ports = true;
-        if (JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts))
-            changes.mounts = true;
+        if (JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts)) changes.mounts = true;
 
         return changes;
     }

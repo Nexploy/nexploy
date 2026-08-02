@@ -2,12 +2,7 @@
 
 import { type BucketStorageAccountInfo } from '@/services/bucketStorage.service';
 import { useTranslations } from 'next-intl';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@workspace/ui/components/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
 import { BucketStorageAddButton } from '@/components/admin/integrations/BucketStorageAddButton';
 import { BucketStorageInstanceCard } from '@/components/admin/integrations/BucketStorageInstanceCard';
 import { cn } from '@workspace/ui/lib/utils';

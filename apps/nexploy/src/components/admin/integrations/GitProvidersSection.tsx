@@ -6,10 +6,7 @@ import { GitProviderAccordionItem } from '@/components/admin/integrations/GitPro
 import { PROVIDER_ICONS } from '@/components/git/providerIcons.tsx';
 
 export async function GitProvidersSection() {
-    const [t, providers] = await Promise.all([
-        getTranslations('integrations'),
-        getAllGitProviders(),
-    ]);
+    const [t, providers] = await Promise.all([getTranslations('integrations'), getAllGitProviders()]);
 
     return (
         <section className="space-y-2" data-tour="git-providers">

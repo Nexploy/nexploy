@@ -22,15 +22,11 @@ export function ServiceDetailConfig() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <Card>
                 <CardHeaderWithIcon icon={Network} title={t('detail.portsTitle')}>
-                    {service && service.ports.length > 0 && (
-                        <Badge variant="secondary">{service.ports.length}</Badge>
-                    )}
+                    {service && service.ports.length > 0 && <Badge variant="secondary">{service.ports.length}</Badge>}
                 </CardHeaderWithIcon>
                 <CardContent>
                     {service?.ports.length === 0 ? (
-                        <p className="text-muted-foreground py-9 text-center text-sm">
-                            {t('detail.noPorts')}
-                        </p>
+                        <p className="text-muted-foreground py-9 text-center text-sm">{t('detail.noPorts')}</p>
                     ) : (
                         <div className="space-y-2">
                             {service?.ports.map((port, i) => (
@@ -63,9 +59,7 @@ export function ServiceDetailConfig() {
                 </CardHeaderWithIcon>
                 <CardContent>
                     {service?.networks.length === 0 ? (
-                        <p className="text-muted-foreground py-9 text-center text-sm">
-                            {t('detail.noNetworks')}
-                        </p>
+                        <p className="text-muted-foreground py-9 text-center text-sm">{t('detail.noNetworks')}</p>
                     ) : (
                         <div className="flex flex-wrap gap-2">
                             {service?.networks.map((net, i) => (
@@ -79,15 +73,11 @@ export function ServiceDetailConfig() {
             </Card>
             <Card>
                 <CardHeaderWithIcon icon={Key} title={t('detail.envTitle')}>
-                    {service && service.env.length > 0 && (
-                        <Badge variant="secondary">{service.env.length}</Badge>
-                    )}
+                    {service && service.env.length > 0 && <Badge variant="secondary">{service.env.length}</Badge>}
                 </CardHeaderWithIcon>
                 <CardContent>
                     {service?.env.length === 0 ? (
-                        <p className="text-muted-foreground py-9 text-center text-sm">
-                            {t('detail.noEnv')}
-                        </p>
+                        <p className="text-muted-foreground py-9 text-center text-sm">{t('detail.noEnv')}</p>
                     ) : (
                         <div className="space-y-1.5">
                             {service?.env.map((entry, i) => {
@@ -115,16 +105,11 @@ export function ServiceDetailConfig() {
                 </CardHeaderWithIcon>
                 <CardContent>
                     {service?.constraints.length === 0 ? (
-                        <p className="text-muted-foreground py-9 text-center text-sm">
-                            {t('detail.noConstraints')}
-                        </p>
+                        <p className="text-muted-foreground py-9 text-center text-sm">{t('detail.noConstraints')}</p>
                     ) : (
                         <div className="space-y-1.5">
                             {service?.constraints.map((c, i) => (
-                                <div
-                                    key={i}
-                                    className="bg-muted/60 rounded-md px-3 py-1.5 font-mono text-xs"
-                                >
+                                <div key={i} className="bg-muted/60 rounded-md px-3 py-1.5 font-mono text-xs">
                                     {c}
                                 </div>
                             ))}

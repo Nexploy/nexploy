@@ -1,8 +1,27 @@
 import { create } from 'zustand';
 
-import { EventsStateEvent } from '@workspace/typescript-interface/docker/docker.events';
+import { DockerEventData, EventsStateEvent } from '@workspace/typescript-interface/docker/docker.events';
 import { EventsState } from '@workspace/typescript-interface/stores/docker/eventsStore';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
+
+export const getEventDisplayName = (event: DockerEventData) => {
+    const name = event.Actor.Attributes?.name;
+    const id = event.Actor.ID;
+
+    if (name) return name;
+    if (id) return id.substring(0, 12);
+    return 'Unknown';
+};
+
+const buildFilter = ({
+    typeFilter,
+    nameFilter,
+    searchQuery,
+}: Pick<EventsState, 'typeFilter' | 'nameFilter' | 'searchQuery'>) => ({
+    types: typeFilter !== 'all' ? [typeFilter] : undefined,
+    names: nameFilter !== 'all' ? [nameFilter] : undefined,
+    search: searchQuery.trim() || undefined,
+});
 
 export const useEventsStore = create<EventsState>((set, get) => ({
     events: [],
@@ -18,21 +37,36 @@ export const useEventsStore = create<EventsState>((set, get) => ({
 
     searchQuery: '',
     typeFilter: 'all',
+    nameFilter: 'all',
 
     setSearchQuery: (query) => {
         set({ searchQuery: query });
-        const { typeFilter } = get();
-        const types = typeFilter !== 'all' ? [typeFilter] : undefined;
-        const search = query.trim() || undefined;
-        get().setFilter({ types, search });
+        get().setFilter(buildFilter(get()));
     },
 
     setTypeFilter: (type) => {
+        const { nameFilter } = get();
         set({ typeFilter: type });
-        const { searchQuery } = get();
-        const types = type !== 'all' ? [type] : undefined;
-        const search = searchQuery.trim() || undefined;
-        get().setFilter({ types, search });
+
+        const names = get().getAvailableNames();
+        if (nameFilter !== 'all' && !names.includes(nameFilter)) {
+            set({ nameFilter: 'all' });
+        }
+
+        get().setFilter(buildFilter(get()));
+    },
+
+    setNameFilter: (name) => {
+        set({ nameFilter: name });
+        get().setFilter(buildFilter(get()));
+    },
+
+    getAvailableNames: () => {
+        const { events, typeFilter } = get();
+
+        const scoped = typeFilter === 'all' ? events : events.filter((event) => event.Type === typeFilter);
+
+        return Array.from(new Set(scoped.map(getEventDisplayName))).sort((a, b) => a.localeCompare(b));
     },
 
     setEvents: (events) => {
@@ -95,6 +129,10 @@ export const useEventsStore = create<EventsState>((set, get) => ({
 
         if (filter.actorIds && filter.actorIds.length > 0) {
             filtered = filtered.filter((event) => filter.actorIds!.includes(event.Actor.ID));
+        }
+
+        if (filter.names && filter.names.length > 0) {
+            filtered = filtered.filter((event) => filter.names!.includes(getEventDisplayName(event)));
         }
 
         if (filter.search) {
@@ -258,6 +296,7 @@ export const useEventsStore = create<EventsState>((set, get) => ({
 
             searchQuery: '',
             typeFilter: 'all',
+            nameFilter: 'all',
         });
     },
 }));

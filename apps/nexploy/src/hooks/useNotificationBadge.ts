@@ -6,10 +6,7 @@ import type {
 } from '@workspace/typescript-interface/stores/notificationStore';
 import { useNotificationStore } from '@/stores/useNotificationStore';
 import { useOrganizationStore } from '@/stores/organization/useOrganizationStore';
-import {
-    notificationBadgeCategories,
-    notificationBadgeTargets,
-} from '@/lib/notifications/notificationBadges';
+import { notificationBadgeCategories, notificationBadgeTargets } from '@/lib/notifications/notificationBadges';
 
 function useNotificationBadgeCounts(): Record<NotificationBadgeCategory, number> {
     const pendingInvitations = useOrganizationStore((s) => s.pendingInvitations.length);
@@ -22,8 +19,7 @@ export function useNotificationBadgeCount(node: NotificationBadgeNode): number {
     const badges = useNotificationStore((s) => s.badges);
 
     return notificationBadgeCategories.reduce((total, category) => {
-        if (!badges[category] || !notificationBadgeTargets[category].path.includes(node))
-            return total;
+        if (!badges[category] || !notificationBadgeTargets[category].path.includes(node)) return total;
 
         return total + counts[category];
     }, 0);

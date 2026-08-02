@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { deleteStageAction } from '@/actions/repository/stages/deleteStage.action';
@@ -27,9 +27,7 @@ export function StageCard({ stage, stages, repositoryId }: StageCardProps) {
     const { openDialog, closeDialog } = useConfirmationDialogStore();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
-    const requiredStageName = stage.requiredStageId
-        ? stages.find((s) => s.id === stage.requiredStageId)?.name
-        : null;
+    const requiredStageName = stage.requiredStageId ? stages.find((s) => s.id === stage.requiredStageId)?.name : null;
 
     const environments = useEnvironmentStore((state) => state.environments);
 
@@ -78,9 +76,7 @@ export function StageCard({ stage, stages, repositoryId }: StageCardProps) {
                                         {t('protectedBadge', { stage: requiredStageName })}
                                     </Badge>
                                 </TooltipTrigger>
-                                <TooltipContent>
-                                    {t('protectedTooltip', { stage: requiredStageName })}
-                                </TooltipContent>
+                                <TooltipContent>{t('protectedTooltip', { stage: requiredStageName })}</TooltipContent>
                             </Tooltip>
                         )}
                     </div>

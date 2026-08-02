@@ -1,5 +1,4 @@
 import { logger } from '@/utils/logger';
-import { BaseSingleResourceStateManager } from '@/lib/base/BaseSingleResourceStateManager';
 
 interface RegistryEntry<TManager> {
     manager: TManager;
@@ -7,7 +6,12 @@ interface RegistryEntry<TManager> {
     startPromise: Promise<void>;
 }
 
-export class SingleResourceManagerRegistry<TManager extends BaseSingleResourceStateManager<any>> {
+interface StartableManager {
+    start(): Promise<void>;
+    stop(): void | Promise<void>;
+}
+
+export class SingleResourceManagerRegistry<TManager extends StartableManager> {
     private readonly instances = new Map<string, RegistryEntry<TManager>>();
     private readonly resourceType: string;
 
@@ -24,10 +28,7 @@ export class SingleResourceManagerRegistry<TManager extends BaseSingleResourceSt
 
         if (entry) {
             entry.refCount++;
-            logger.debug(
-                { resourceId, refCount: entry.refCount },
-                `Reusing existing ${this.resourceType} manager`,
-            );
+            logger.debug({ resourceId, refCount: entry.refCount }, `Reusing existing ${this.resourceType} manager`);
             await entry.startPromise;
             return entry.manager;
         }
@@ -47,18 +48,12 @@ export class SingleResourceManagerRegistry<TManager extends BaseSingleResourceSt
         const entry = this.instances.get(key);
 
         if (!entry) {
-            logger.warn(
-                { resourceId, environmentId },
-                `Released an unknown ${this.resourceType} manager reference`,
-            );
+            logger.warn({ resourceId, environmentId }, `Released an unknown ${this.resourceType} manager reference`);
             return;
         }
 
         entry.refCount--;
-        logger.debug(
-            { resourceId, refCount: entry.refCount },
-            `Released ${this.resourceType} manager reference`,
-        );
+        logger.debug({ resourceId, refCount: entry.refCount }, `Released ${this.resourceType} manager reference`);
 
         if (entry.refCount <= 0) {
             entry.manager.stop();

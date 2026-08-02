@@ -3,10 +3,7 @@ import { streamSSE } from 'hono/streaming';
 import { getNetworksStateManager } from '@/managers/list/networksStateManager';
 import { logger } from '@/utils/logger';
 import { NetworkEvent } from '@workspace/typescript-interface/docker/docker.network';
-import {
-    filterNexployNetworks,
-    isNexployInfrastructureNetwork,
-} from '@workspace/shared/nexployFilter';
+import { filterNexployNetworks, isNexployInfrastructureNetwork } from '@workspace/shared/nexployFilter';
 import { createInitialStateGate } from '@/utils/initialStateGate';
 
 const app = new Hono();
@@ -21,9 +18,7 @@ app.get('/stream', (c) => {
             try {
                 const filteredEvent = {
                     ...networkEvent,
-                    networks: networkEvent.networks
-                        ? filterNexployNetworks(networkEvent.networks)
-                        : undefined,
+                    networks: networkEvent.networks ? filterNexployNetworks(networkEvent.networks) : undefined,
                 };
                 await stream.writeSSE({
                     data: JSON.stringify(filteredEvent),
@@ -72,9 +67,7 @@ app.get('/stream', (c) => {
         const handleStateChange = async (networkEvent: NetworkEvent) => {
             const filteredEvent = {
                 ...networkEvent,
-                networks: networkEvent.networks
-                    ? filterNexployNetworks(networkEvent.networks)
-                    : undefined,
+                networks: networkEvent.networks ? filterNexployNetworks(networkEvent.networks) : undefined,
             };
             await stream.writeSSE({
                 data: JSON.stringify(filteredEvent),

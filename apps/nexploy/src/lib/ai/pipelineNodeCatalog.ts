@@ -86,8 +86,8 @@ function buildEntry(type: string, meta: NodeMeta): NodeCatalogEntry {
     };
 }
 
-export const PIPELINE_NODE_CATALOG: NodeCatalogEntry[] = Object.entries(NODE_META_MAP).map(
-    ([type, meta]) => buildEntry(type, meta),
+export const PIPELINE_NODE_CATALOG: NodeCatalogEntry[] = Object.entries(NODE_META_MAP).map(([type, meta]) =>
+    buildEntry(type, meta),
 );
 
 export function getNodesByCategory(): Record<string, NodeCatalogEntry[]> {

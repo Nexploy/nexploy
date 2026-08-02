@@ -1,254 +1,257 @@
 {
-    "admin": {
-        "title": "AI",
-        "description": "Configure AI external access to the MCP server",
-        "settings": {
-            "title": "Settings",
-            "description": "Configure AI assistant behavior",
-            "saveFailed": "Failed to save settings",
-            "generalSection": "General",
-            "generalSectionDescription": "Control global availability of the AI assistant.",
-            "aiEnabled": "Enable AI assistant",
-            "aiEnabledDescription": "When disabled, the AI panel and chat API are unavailable to all users.",
-            "mcpEnabled": "Enable MCP server",
-            "mcpEnabledDescription": "When disabled, the external MCP API endpoint rejects all requests, cutting off Cursor, Claude Desktop and other MCP clients.",
-            "chatBehavior": "Chat behavior",
-            "chatBehaviorDescription": "Control how the AI assistant behaves during conversations.",
-            "requireConfirmation": "Require confirmation for destructive actions",
-            "requireConfirmationDescription": "When enabled, the AI will ask for explicit confirmation before executing any delete, remove, stop, or prune operation.",
-            "maxSteps": "Max tool-call steps",
-            "maxStepsDescription": "Maximum number of tool calls the AI can chain in a single response. Lower values reduce cost; higher values allow more complex tasks.",
-            "mcpPermissions": "MCP tool permissions",
-            "mcpPermissionsDescription": "Choose which tool groups the AI assistant is allowed to use.",
-            "mcpSectionDocker": "Docker",
-            "mcpSectionNexploy": "Nexploy",
-            "allowExecInContainer": "Exec in container",
-            "allowExecInContainerDescription": "Allow the AI to run arbitrary shell commands inside containers.",
-            "allowImagesGroup": "Images",
-            "allowImagesGroupDescription": "Allow the AI to list, pull, tag, delete and prune images.",
-            "allowVolumesGroup": "Volumes",
-            "allowVolumesGroupDescription": "Allow the AI to list, create, delete and prune volumes.",
-            "allowNetworksGroup": "Networks",
-            "allowNetworksGroupDescription": "Allow the AI to list, create and delete networks.",
-            "allowComposeGroup": "Compose stacks",
-            "allowComposeGroupDescription": "Allow the AI to list, deploy and manage Compose stacks.",
-            "allowSwarmOperations": "Swarm",
-            "allowSwarmOperationsDescription": "Allow the AI to list and manage Docker Swarm nodes and services.",
-            "allowRepositoriesGroup": "Repositories",
-            "allowRepositoriesGroupDescription": "Allow the AI to list repos, trigger builds, manage env variables and delete repositories.",
-            "allowRegistriesGroup": "Registries",
-            "allowRegistriesGroupDescription": "Allow the AI to list, create, update and delete container registries.",
-            "allowSslGroup": "SSL certificates",
-            "allowSslGroupDescription": "Allow the AI to list, issue and delete SSL certificates.",
-            "allowEnvironmentsGroup": "Environments",
-            "allowEnvironmentsGroupDescription": "Allow the AI to list, create, update and delete Docker environments.",
-            "customPrompt": "Custom system prompt",
-            "customPromptDescription": "Append additional instructions to the base system prompt. Useful for org-specific rules or constraints.",
-            "customPromptPlaceholder": "e.g. Always tag images with the prefix prod- before pushing…"
-        },
-        "models": {
-            "title": "Models",
-            "description": "Configure AI provider API keys",
-            "apiKey": "API Key",
-            "apiKeyPlaceholder": "sk-…",
-            "statusConfigured": "Configured",
-            "statusNotConfigured": "Not configured",
-            "changeKey": "Change key",
-            "getApiKey": "Get API key",
-            "saveSuccess": "Configuration saved",
-            "saveFailed": "Failed to save configuration",
-            "deleteSuccess": "API key deleted",
-            "deleteFailed": "Failed to delete API key",
-            "deleteConfirmTitle": "Delete API key",
-            "deleteConfirmDescription": "Are you sure you want to delete the {provider} API key? This action cannot be undone.",
-            "deleteConfirmAction": "Delete"
-        },
-        "mcp": {
-            "title": "MCP Server",
-            "description": "The Model Context Protocol server lets external tools (Cursor, Claude Desktop, etc.) interact with your Nexploy infrastructure.",
-            "endpoint": "MCP Endpoint",
-            "endpointDescription": "Use this URL in your MCP client configuration.",
-            "generateKey": "Generate API Key",
-            "keyNameLabel": "Key name",
-            "keyNamePlaceholder": "e.g. Cursor, Claude Desktop…",
-            "generatedWarning": "Copy this key now — it will not be shown again.",
-            "copyKey": "Copy",
-            "noKeys": "No API keys yet. Generate one to connect an external MCP client.",
-            "keyName": "Key",
-            "createdAt": "Created",
-            "expiresAt": "Expires",
-            "never": "Never",
-            "revokeKey": "Revoke",
-            "confirmRevoke": "Are you sure you want to revoke this API key? External tools using it will lose access.",
-            "keyCreatedSuccess": "API key generated",
-            "keyRevokedSuccess": "API key revoked",
-            "keyRevokedFailed": "Failed to revoke API key",
-            "keyCreatedFailed": "Failed to generate API key"
-        }
+  "admin": {
+    "title": "AI",
+    "description": "Configure AI external access to the MCP server",
+    "settings": {
+      "title": "Settings",
+      "description": "Configure AI assistant behavior",
+      "saveFailed": "Failed to save settings",
+      "generalSection": "General",
+      "generalSectionDescription": "Control global availability of the AI assistant.",
+      "aiEnabled": "Enable AI assistant",
+      "aiEnabledDescription": "When disabled, the AI panel and chat API are unavailable to all users.",
+      "mcpEnabled": "Enable MCP server",
+      "mcpEnabledDescription": "When disabled, the external MCP API endpoint rejects all requests, cutting off Cursor, Claude Desktop and other MCP clients.",
+      "chatBehavior": "Chat behavior",
+      "chatBehaviorDescription": "Control how the AI assistant behaves during conversations.",
+      "requireConfirmation": "Require confirmation for destructive actions",
+      "requireConfirmationDescription": "When enabled, the AI will ask for explicit confirmation before executing any delete, remove, stop, or prune operation.",
+      "maxSteps": "Max tool-call steps",
+      "maxStepsDescription": "Maximum number of tool calls the AI can chain in a single response. Lower values reduce cost; higher values allow more complex tasks.",
+      "mcpPermissions": "MCP tool permissions",
+      "mcpPermissionsDescription": "Choose which tool groups the AI assistant is allowed to use.",
+      "mcpSectionDocker": "Docker",
+      "mcpSectionNexploy": "Nexploy",
+      "allowExecInContainer": "Exec in container",
+      "allowExecInContainerDescription": "Allow the AI to run arbitrary shell commands inside containers.",
+      "allowImagesGroup": "Images",
+      "allowImagesGroupDescription": "Allow the AI to list, pull, tag, delete and prune images.",
+      "allowVolumesGroup": "Volumes",
+      "allowVolumesGroupDescription": "Allow the AI to list, create, delete and prune volumes.",
+      "allowNetworksGroup": "Networks",
+      "allowNetworksGroupDescription": "Allow the AI to list, create and delete networks.",
+      "allowComposeGroup": "Compose stacks",
+      "allowComposeGroupDescription": "Allow the AI to list, deploy and manage Compose stacks.",
+      "allowSwarmOperations": "Swarm",
+      "allowSwarmOperationsDescription": "Allow the AI to list and manage Docker Swarm nodes and services.",
+      "allowRepositoriesGroup": "Repositories",
+      "allowRepositoriesGroupDescription": "Allow the AI to list repos, trigger builds, manage env variables and delete repositories.",
+      "allowRegistriesGroup": "Registries",
+      "allowRegistriesGroupDescription": "Allow the AI to list, create, update and delete container registries.",
+      "allowSslGroup": "SSL certificates",
+      "allowSslGroupDescription": "Allow the AI to list, issue and delete SSL certificates.",
+      "allowEnvironmentsGroup": "Environments",
+      "allowEnvironmentsGroupDescription": "Allow the AI to list, create, update and delete Docker environments.",
+      "customPrompt": "Custom system prompt",
+      "customPromptDescription": "Append additional instructions to the base system prompt. Useful for org-specific rules or constraints.",
+      "customPromptPlaceholder": "e.g. Always tag images with the prefix prod- before pushing…"
     },
-    "commandGroups": {
-        "navigation": "Navigation",
+    "models": {
+      "title": "Models",
+      "description": "Configure AI provider API keys",
+      "apiKey": "API Key",
+      "apiKeyPlaceholder": "sk-…",
+      "statusConfigured": "Configured",
+      "statusNotConfigured": "Not configured",
+      "changeKey": "Change key",
+      "getApiKey": "Get API key",
+      "saveSuccess": "Configuration saved",
+      "saveFailed": "Failed to save configuration",
+      "deleteSuccess": "API key deleted",
+      "deleteFailed": "Failed to delete API key",
+      "deleteConfirmTitle": "Delete API key",
+      "deleteConfirmDescription": "Are you sure you want to delete the {provider} API key? This action cannot be undone.",
+      "deleteConfirmAction": "Delete"
+    },
+    "mcp": {
+      "title": "MCP Server",
+      "description": "The Model Context Protocol server lets external tools (Cursor, Claude Desktop, etc.) interact with your Nexploy infrastructure.",
+      "endpoint": "MCP Endpoint",
+      "endpointDescription": "Use this URL in your MCP client configuration.",
+      "generateKey": "Generate API Key",
+      "keyNameLabel": "Key name",
+      "keyNamePlaceholder": "e.g. Cursor, Claude Desktop…",
+      "generatedWarning": "Copy this key now — it will not be shown again.",
+      "copyKey": "Copy",
+      "noKeys": "No API keys yet. Generate one to connect an external MCP client.",
+      "keyName": "Key",
+      "createdAt": "Created",
+      "expiresAt": "Expires",
+      "never": "Never",
+      "revokeKey": "Revoke",
+      "confirmRevoke": "Are you sure you want to revoke this API key? External tools using it will lose access.",
+      "keyCreatedSuccess": "API key generated",
+      "keyRevokedSuccess": "API key revoked",
+      "keyRevokedFailed": "Failed to revoke API key",
+      "keyCreatedFailed": "Failed to generate API key"
+    }
+  },
+  "commandGroups": {
+    "navigation": "Navigation",
+    "containers": "Containers",
+    "images": "Images",
+    "volumes": "Volumes",
+    "stacks": "Stacks"
+  },
+  "command": {
+    "searchPlaceholder": "Type a command or search...",
+    "askAi": "Ask AI: {query}",
+    "aiAssistant": "AI Assistant",
+    "quickActions": "Quick Actions",
+    "system": "System",
+    "createContainer": "Create a container",
+    "pullImage": "Pull an image",
+    "createVolume": "Create a volume",
+    "startAll": "Start all containers",
+    "stopAll": "Stop all containers",
+    "removeStopped": "Remove stopped containers",
+    "viewStacks": "View stacks",
+    "settings": "Settings",
+    "openTerminal": "Open terminal",
+    "noResults": "No results for \"{query}\"",
+    "open": "Open",
+    "navigate": "Navigate",
+    "startBuild": "Start Build",
+    "account": "Account",
+    "types": {
+      "repository": "Repository",
+      "container": "Container",
+      "image": "Image",
+      "volume": "Volume",
+      "network": "Network"
+    }
+  },
+  "chat": {
+    "panelTitle": "Nexploy AI",
+    "close": "Close",
+    "openPanel": "Open AI panel",
+    "closePanel": "Close AI panel",
+    "newChat": "New chat",
+    "disabled": "AI assistant disabled",
+    "disabledDescription": "The administrator has disabled the AI assistant.",
+    "noProvider": "No AI model configured",
+    "noProviderDescription": "An administrator must configure an AI provider before you can use the assistant.",
+    "confirmation": {
+      "title": "Confirm destructive action",
+      "target": "Target",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "toolCall": {
+      "running": "Running",
+      "done": "Done",
+      "error": "Error",
+      "pending": "Pending",
+      "partialError": "Partial error",
+      "toolsCount": "{count, plural, one {# tool} other {# tools}}"
+    },
+    "stopGenerating": "Stop generating",
+    "generationStopped": "Response interrupted",
+    "inputPlaceholder": "Ask anything...",
+    "thinking": "Thinking...",
+    "keyboardHint": "Enter to send · Shift+Enter for new line",
+    "selectModel": "Select model",
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit fullscreen",
+    "fullscreenActive": "The assistant is open in fullscreen.",
+    "modelSelector": {
+      "title": "Select a model",
+      "search": "Search models…",
+      "noResults": "No models match your search.",
+      "loading": "Loading models…",
+      "select": "Select",
+      "allProviders": "All"
+    }
+  },
+  "context": {
+    "suggestions": {
+      "containers": {
+        "listRunning": "Which containers are currently running?",
+        "showLogs": "Show the logs of a container",
+        "execCommand": "Run a command inside a running container",
+        "cleanupStopped": "Remove all stopped containers"
+      },
+      "images": {
+        "listWithSizes": "List all images and how much space they use",
+        "pullImage": "Pull an image from a registry",
+        "scanVulnerabilities": "Scan an image for vulnerabilities",
+        "pruneDangling": "Delete all unused images to free disk space"
+      },
+      "volumes": {
+        "listVolumes": "List all volumes",
+        "createVolume": "Create a new volume",
+        "pruneUnused": "Delete all volumes not used by any container"
+      },
+      "networks": {
+        "listNetworks": "List all networks and their drivers",
+        "createBridge": "Create a new bridge network",
+        "inspectNetwork": "Inspect a network and its connected containers"
+      },
+      "compose": {
+        "listContainers": "List containers belonging to a stack",
+        "restartStack": "Restart a compose stack",
+        "teardownStack": "Stop and remove a compose stack"
+      },
+      "repositories": {
+        "listWithStatus": "List all repositories and their last build status",
+        "showFailing": "Which repositories have a failing build?",
+        "triggerBuild": "Trigger a build for a repository",
+        "showEnvVars": "List environment variables for a repository"
+      },
+      "repository": {
+        "triggerBuild": "Trigger a new build for this repository",
+        "showBuildLogs": "Show the logs of the last build",
+        "cancelBuild": "Cancel the currently running build",
+        "setEnvVar": "Add or update an environment variable"
+      },
+      "build": {
+        "whyFailed": "Why did this build fail?",
+        "showNodeLogs": "Show the logs of a specific pipeline step",
+        "cancelBuild": "Cancel this build",
+        "listBuilds": "List all builds for this repository"
+      },
+      "ssl": {
+        "listCertificates": "List all SSL certificates and their expiry dates",
+        "issueLetsEncrypt": "Issue a Let's Encrypt certificate for a domain",
+        "deleteExpired": "Delete an expired certificate"
+      },
+      "registries": {
+        "listRegistries": "List all configured registries",
+        "addRegistry": "Add a new container registry",
+        "deleteRegistry": "Remove a registry"
+      },
+      "environments": {
+        "listEnvironments": "List all configured Docker environments",
+        "addRemoteHost": "Add a remote Docker host",
+        "setDefault": "Change the default Docker environment"
+      },
+      "swarm": {
+        "listNodes": "List all swarm nodes and their status",
+        "listServices": "List all swarm services and their replica count",
+        "scaleService": "Change the number of replicas for a service",
+        "drainNode": "Drain a node for maintenance"
+      },
+      "pipeline": {
+        "generate": "Generate a deployment pipeline for this repository",
+        "listNodes": "What pipeline nodes are available?",
+        "analyzeStack": "Analyze my repository's tech stack and suggest a pipeline",
+        "showCurrent": "Show me the current pipeline configuration"
+      },
+      "categories": {
         "containers": "Containers",
         "images": "Images",
         "volumes": "Volumes",
-        "stacks": "Stacks"
-    },
-    "command": {
-        "searchPlaceholder": "Type a command or search...",
-        "askAi": "Ask AI: {query}",
-        "aiAssistant": "AI Assistant",
-        "quickActions": "Quick Actions",
-        "system": "System",
-        "createContainer": "Create a container",
-        "pullImage": "Pull an image",
-        "createVolume": "Create a volume",
-        "startAll": "Start all containers",
-        "stopAll": "Stop all containers",
-        "removeStopped": "Remove stopped containers",
-        "viewStacks": "View stacks",
-        "settings": "Settings",
-        "openTerminal": "Open terminal",
-        "noResults": "No results for \"{query}\"",
-        "open": "Open",
-        "navigate": "Navigate",
-        "startBuild": "Start Build",
-        "account": "Account",
-        "types": {
-            "repository": "Repository",
-            "container": "Container",
-            "image": "Image",
-            "volume": "Volume",
-            "network": "Network"
-        }
-    },
-    "chat": {
-        "panelTitle": "Nexploy AI",
-        "close": "Close",
-        "openPanel": "Open AI panel",
-        "closePanel": "Close AI panel",
-        "newChat": "New chat",
-        "disabled": "AI assistant disabled",
-        "disabledDescription": "The administrator has disabled the AI assistant.",
-        "noProvider": "No AI model configured",
-        "noProviderDescription": "An administrator must configure an AI provider before you can use the assistant.",
-        "confirmation": {
-            "title": "Confirm destructive action",
-            "target": "Target",
-            "confirm": "Confirm",
-            "cancel": "Cancel"
-        },
-        "toolCall": {
-            "running": "Running",
-            "done": "Done",
-            "error": "Error",
-            "pending": "Pending",
-            "partialError": "Partial error",
-            "toolsCount": "{count, plural, one {# tool} other {# tools}}"
-        },
-        "stopGenerating": "Stop generating",
-        "generationStopped": "Response interrupted",
-        "inputPlaceholder": "Ask anything...",
-        "thinking": "Thinking...",
-        "keyboardHint": "Enter to send · Shift+Enter for new line",
-        "selectModel": "Select model",
-        "modelSelector": {
-            "title": "Select a model",
-            "search": "Search models…",
-            "noResults": "No models match your search.",
-            "loading": "Loading models…",
-            "select": "Select",
-            "allProviders": "All"
-        }
-    },
-    "context": {
-        "suggestions": {
-            "containers": {
-                "listRunning": "Which containers are currently running?",
-                "showLogs": "Show the logs of a container",
-                "execCommand": "Run a command inside a running container",
-                "cleanupStopped": "Remove all stopped containers"
-            },
-            "images": {
-                "listWithSizes": "List all images and how much space they use",
-                "pullImage": "Pull an image from a registry",
-                "scanVulnerabilities": "Scan an image for vulnerabilities",
-                "pruneDangling": "Delete all unused images to free disk space"
-            },
-            "volumes": {
-                "listVolumes": "List all volumes",
-                "createVolume": "Create a new volume",
-                "pruneUnused": "Delete all volumes not used by any container"
-            },
-            "networks": {
-                "listNetworks": "List all networks and their drivers",
-                "createBridge": "Create a new bridge network",
-                "inspectNetwork": "Inspect a network and its connected containers"
-            },
-            "compose": {
-                "listContainers": "List containers belonging to a stack",
-                "restartStack": "Restart a compose stack",
-                "teardownStack": "Stop and remove a compose stack"
-            },
-            "repositories": {
-                "listWithStatus": "List all repositories and their last build status",
-                "showFailing": "Which repositories have a failing build?",
-                "triggerBuild": "Trigger a build for a repository",
-                "showEnvVars": "List environment variables for a repository"
-            },
-            "repository": {
-                "triggerBuild": "Trigger a new build for this repository",
-                "showBuildLogs": "Show the logs of the last build",
-                "cancelBuild": "Cancel the currently running build",
-                "setEnvVar": "Add or update an environment variable"
-            },
-            "build": {
-                "whyFailed": "Why did this build fail?",
-                "showNodeLogs": "Show the logs of a specific pipeline step",
-                "cancelBuild": "Cancel this build",
-                "listBuilds": "List all builds for this repository"
-            },
-            "ssl": {
-                "listCertificates": "List all SSL certificates and their expiry dates",
-                "issueLetsEncrypt": "Issue a Let's Encrypt certificate for a domain",
-                "deleteExpired": "Delete an expired certificate"
-            },
-            "registries": {
-                "listRegistries": "List all configured registries",
-                "addRegistry": "Add a new container registry",
-                "deleteRegistry": "Remove a registry"
-            },
-            "environments": {
-                "listEnvironments": "List all configured Docker environments",
-                "addRemoteHost": "Add a remote Docker host",
-                "setDefault": "Change the default Docker environment"
-            },
-            "swarm": {
-                "listNodes": "List all swarm nodes and their status",
-                "listServices": "List all swarm services and their replica count",
-                "scaleService": "Change the number of replicas for a service",
-                "drainNode": "Drain a node for maintenance"
-            },
-            "pipeline": {
-                "generate": "Generate a deployment pipeline for this repository",
-                "listNodes": "What pipeline nodes are available?",
-                "analyzeStack": "Analyze my repository's tech stack and suggest a pipeline",
-                "showCurrent": "Show me the current pipeline configuration"
-            },
-            "categories": {
-                "containers": "Containers",
-                "images": "Images",
-                "volumes": "Volumes",
-                "networks": "Networks",
-                "compose": "Compose",
-                "repositories": "Repositories",
-                "repository": "This Repository",
-                "build": "This Build",
-                "ssl": "SSL Certificates",
-                "registries": "Registries",
-                "environments": "Environments",
-                "swarm": "Swarm",
-                "pipeline": "Pipeline"
-            }
-        }
+        "networks": "Networks",
+        "compose": "Compose",
+        "repositories": "Repositories",
+        "repository": "This Repository",
+        "build": "This Build",
+        "ssl": "SSL Certificates",
+        "registries": "Registries",
+        "environments": "Environments",
+        "swarm": "Swarm",
+        "pipeline": "Pipeline"
+      }
     }
+  }
 }

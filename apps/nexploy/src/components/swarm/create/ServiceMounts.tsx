@@ -37,9 +37,7 @@ export function ServiceMounts() {
                     type="button"
                     size="sm"
                     variant="outline"
-                    onClick={() =>
-                        append({ source: '', target: '', type: 'bind', readOnly: false })
-                    }
+                    onClick={() => append({ source: '', target: '', type: 'bind', readOnly: false })}
                 >
                     <Plus />
                     {t('addMount')}
@@ -47,9 +45,7 @@ export function ServiceMounts() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noMountsConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noMountsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -60,27 +56,18 @@ export function ServiceMounts() {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormControl>
-                                                <Select
-                                                    value={field.value}
-                                                    onValueChange={field.onChange}
-                                                >
+                                                <Select value={field.value} onValueChange={field.onChange}>
                                                     <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectGroup>
-                                                            <SelectLabel>
-                                                                {t('mountType')}
-                                                            </SelectLabel>
-                                                            <SelectItem value="bind">
-                                                                {t('mountTypeBind')}
-                                                            </SelectItem>
+                                                            <SelectLabel>{t('mountType')}</SelectLabel>
+                                                            <SelectItem value="bind">{t('mountTypeBind')}</SelectItem>
                                                             <SelectItem value="volume">
                                                                 {t('mountTypeVolume')}
                                                             </SelectItem>
-                                                            <SelectItem value="tmpfs">
-                                                                {t('mountTypeTmpfs')}
-                                                            </SelectItem>
+                                                            <SelectItem value="tmpfs">{t('mountTypeTmpfs')}</SelectItem>
                                                         </SelectGroup>
                                                     </SelectContent>
                                                 </Select>
@@ -128,13 +115,8 @@ export function ServiceMounts() {
                                         <FormItem>
                                             <FormControl>
                                                 <div className="flex gap-2 self-start pt-2">
-                                                    <Switch
-                                                        checked={field.value}
-                                                        onCheckedChange={field.onChange}
-                                                    />
-                                                    <Label className="text-xs">
-                                                        {t('mountReadOnly')}
-                                                    </Label>
+                                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                                    <Label className="text-xs">{t('mountReadOnly')}</Label>
                                                 </div>
                                             </FormControl>
                                         </FormItem>

@@ -26,9 +26,9 @@ import {
     DialogTrigger,
 } from '@workspace/ui/components/dialog';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import type { DockerHubImage, DockerHubSort, } from '@workspace/typescript-interface/docker/docker.hub';
+import type { DockerHubImage, DockerHubSort } from '@workspace/typescript-interface/docker/docker.hub';
 import { ImageLogo } from '@/components/docker/image/pull/ImageLogo.tsx';
 
 type SourceFilter = 'all' | 'official';
@@ -41,11 +41,7 @@ interface DockerHubSearchDialogProps {
     isSelected?: (image: DockerHubImage) => boolean;
 }
 
-export function DockerHubSearchDialog({
-    trigger,
-    onSelect,
-    isSelected,
-}: DockerHubSearchDialogProps) {
+export function DockerHubSearchDialog({ trigger, onSelect, isSelected }: DockerHubSearchDialogProps) {
     const t = useTranslations('docker.pullImagePage');
 
     const [open, setOpen] = useState(false);
@@ -157,10 +153,7 @@ export function DockerHubSearchDialog({
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <Select
-                        value={source}
-                        onValueChange={(value) => setSource(value as SourceFilter)}
-                    >
+                    <Select value={source} onValueChange={(value) => setSource(value as SourceFilter)}>
                         <SelectTrigger>
                             <SelectValue />
                         </SelectTrigger>
@@ -174,11 +167,7 @@ export function DockerHubSearchDialog({
                     </Select>
                 </div>
 
-                <ScrollAreaWithShadow
-                    ref={setViewport}
-                    bottomShadow
-                    className="h-[70vh] overflow-hidden px-6"
-                >
+                <ScrollAreaWithShadow ref={setViewport} bottomShadow className="h-[70vh] overflow-hidden px-6">
                     {isLoading && (
                         <div className="text-muted-foreground flex items-center justify-center gap-2 py-10 text-sm">
                             <Spinner className="size-4" />
@@ -209,12 +198,8 @@ export function DockerHubSearchDialog({
                                 <div className="flex items-start gap-3">
                                     <ImageLogo image={image} />
                                     <div className="flex min-w-0 flex-1 items-center gap-2">
-                                        <span className="truncate text-sm font-semibold">
-                                            {image.name}
-                                        </span>
-                                        {image.isOfficial && (
-                                            <BadgeCheck className="text-primary size-4 shrink-0" />
-                                        )}
+                                        <span className="truncate text-sm font-semibold">{image.name}</span>
+                                        {image.isOfficial && <BadgeCheck className="text-primary size-4 shrink-0" />}
                                     </div>
                                 </div>
                                 <p className="text-muted-foreground line-clamp-2 min-h-8 text-xs">
@@ -237,10 +222,7 @@ export function DockerHubSearchDialog({
                         {isLoadingMore &&
                             !isLoading &&
                             Array.from({ length: 4 }).map((_, i) => (
-                                <div
-                                    key={`skeleton-${i}`}
-                                    className="flex h-full flex-col gap-2 rounded-lg border p-3"
-                                >
+                                <div key={`skeleton-${i}`} className="flex h-full flex-col gap-2 rounded-lg border p-3">
                                     <div className="flex items-start gap-3">
                                         <Skeleton className="size-10 shrink-0 rounded-md" />
                                         <Skeleton className="mt-1 h-4 w-2/3" />

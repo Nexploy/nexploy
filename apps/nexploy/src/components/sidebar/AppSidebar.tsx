@@ -1,9 +1,4 @@
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-} from '@workspace/ui/components/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@workspace/ui/components/sidebar';
 import Link from 'next/link';
 import { AccountMenu } from '@/components/sidebar/AccountMenu';
 import { SidebarNav } from '@/components/sidebar/SidebarNav';
@@ -26,11 +21,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
             collapsible="icon"
             variant={variant}
         >
-            <SidebarHeader
-                className={
-                    'mx-2 flex flex-row gap-4 overflow-hidden group-data-[state=collapsed]:flex-col'
-                }
-            >
+            <SidebarHeader className={'mx-2 flex flex-row gap-4 overflow-hidden group-data-[state=collapsed]:flex-col'}>
                 <Link href="/" className="flex flex-1 gap-2">
                     <Image
                         src="/assets/nexploy-logo.svg"
@@ -48,17 +39,12 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
             </SidebarHeader>
             <Organization />
             <SidebarContent className="overflow-hidden">
-                <ScrollAreaWithShadow
-                    bottomShadow
-                    className="h-full px-2"
-                >
+                <ScrollAreaWithShadow bottomShadow className="h-full px-2">
                     <SidebarNav />
                 </ScrollAreaWithShadow>
             </SidebarContent>
             <SidebarFooter
-                className={
-                    'mx-2 group-data-[collapsible=icon]:mx-0 group-data-[collapsible=icon]:items-center'
-                }
+                className={'mx-2 group-data-[collapsible=icon]:mx-0 group-data-[collapsible=icon]:items-center'}
             >
                 <UpdateBanner />
                 <ExternalLinks />

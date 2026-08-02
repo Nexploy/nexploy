@@ -1,8 +1,4 @@
-import {
-    NodeData,
-    PipelineGraph,
-    PipelineNode,
-} from '@workspace/typescript-interface/pipeline/node';
+import { NodeGraphData, PipelineGraph, PipelineNode } from '@nexploy/nodes/core/node';
 import { Edge, Node } from '@xyflow/react';
 
 export interface GraphAnalysis {
@@ -12,10 +8,7 @@ export interface GraphAnalysis {
     nodeMap: Map<string, PipelineNode>;
 }
 
-export function analyzeGraph(
-    graph: PipelineGraph,
-    triggerSource: 'manual' | 'webhook' = 'manual',
-): GraphAnalysis {
+export function analyzeGraph(graph: PipelineGraph, triggerSource: 'manual' | 'webhook' = 'manual'): GraphAnalysis {
     const nodeMap = new Map(graph.nodes.map((node) => [node.id, node]));
 
     const directed = new Map<string, string[]>(graph.nodes.map((node) => [node.id, []]));
@@ -51,15 +44,10 @@ export function analyzeGraph(
 
     const startNodeIds =
         triggerSource === 'webhook'
-            ? new Set(
-                  graph.nodes.filter((node) => node.data.type === 'webhook-clone').map((n) => n.id),
-              )
+            ? new Set(graph.nodes.filter((node) => node.data.type === 'webhook-clone').map((n) => n.id))
             : new Set(
                   graph.nodes
-                      .filter(
-                          (node) =>
-                              node.data.isStartNode === true && node.data.type !== 'webhook-clone',
-                      )
+                      .filter((node) => node.data.isStartNode === true && node.data.type !== 'webhook-clone')
                       .map((node) => node.id),
               );
     const reachableNodeIds = new Set<string>(startNodeIds);
@@ -79,15 +67,11 @@ export function analyzeGraph(
     return { sorted, reachableNodeIds, parentsMap: reverse, nodeMap };
 }
 
-function bfsAncestors(
-    startNodeId: string,
-    nodes: Node[],
-    edges: Edge[],
-): { node: Node; data: NodeData }[] {
+function bfsAncestors(startNodeId: string, nodes: Node[], edges: Edge[]): { node: Node; data: NodeGraphData }[] {
     const nodeMap = new Map(nodes.map((n) => [n.id, n]));
     const visited = new Set<string>();
     const queue = [startNodeId];
-    const result: { node: Node; data: NodeData }[] = [];
+    const result: { node: Node; data: NodeGraphData }[] = [];
 
     while (queue.length > 0) {
         const current = queue.shift()!;
@@ -98,7 +82,7 @@ function bfsAncestors(
             if (edge.target !== current) continue;
             const parent = nodeMap.get(edge.source);
             if (!parent) continue;
-            const data = parent.data as unknown as NodeData;
+            const data = parent.data as unknown as NodeGraphData;
             result.push({ node: parent, data });
             queue.push(edge.source);
         }
@@ -111,7 +95,7 @@ export function hasAncestor(
     startNodeId: string,
     nodes: Node[],
     edges: Edge[],
-    predicate: (data: NodeData) => boolean,
+    predicate: (data: NodeGraphData) => boolean,
 ): boolean {
     return bfsAncestors(startNodeId, nodes, edges).some(({ data }) => predicate(data));
 }
@@ -120,7 +104,7 @@ export function findAncestor(
     startNodeId: string,
     nodes: Node[],
     edges: Edge[],
-    predicate: (data: NodeData) => boolean,
-): { node: Node; data: NodeData } | undefined {
+    predicate: (data: NodeGraphData) => boolean,
+): { node: Node; data: NodeGraphData } | undefined {
     return bfsAncestors(startNodeId, nodes, edges).find(({ data }) => predicate(data));
 }

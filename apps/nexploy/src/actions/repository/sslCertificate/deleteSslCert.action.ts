@@ -1,12 +1,13 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { HOST_SCOPED } from '@/lib/auth/resolveOrgContext';
 import { deleteCertSchema } from '@workspace/schemas-zod/repository/sslCertificate.schema';
 import { deleteSslCertificate } from '@/services/sslCertificate.service';
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const deleteSslCert = authActionServer
-    .use(requirePermission('ssl', 'manage'))
+    .use(requirePermission('ssl', 'manage', HOST_SCOPED))
     .inputSchema(deleteCertSchema)
     .action(async ({ parsedInput }) => {
         try {

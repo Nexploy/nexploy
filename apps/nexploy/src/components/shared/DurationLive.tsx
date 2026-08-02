@@ -16,13 +16,7 @@ interface DurationLiveProps {
     className?: string;
 }
 
-export function DurationLive({
-    buildId,
-    initialStatus,
-    createdAt,
-    updatedAt,
-    className,
-}: DurationLiveProps) {
+export function DurationLive({ buildId, initialStatus, createdAt, updatedAt, className }: DurationLiveProps) {
     const [status, setStatus] = useState<BuildStatus | undefined>(initialStatus);
     const [finishedAt, setFinishedAt] = useState<number | undefined>(() =>
         initialStatus && !isBuildLive(initialStatus) ? new Date(updatedAt).getTime() : undefined,
@@ -48,15 +42,7 @@ export function DurationLive({
     }, [latestData]);
 
     const startedAt = new Date(createdAt).getTime();
-    const durationMs =
-        !isLive && finishedAt !== undefined ? Math.max(0, finishedAt - startedAt) : undefined;
+    const durationMs = !isLive && finishedAt !== undefined ? Math.max(0, finishedAt - startedAt) : undefined;
 
-    return (
-        <DurationNode
-            isRunning={isLive}
-            startedAt={startedAt}
-            durationMs={durationMs}
-            className={className}
-        />
-    );
+    return <DurationNode isRunning={isLive} startedAt={startedAt} durationMs={durationMs} className={className} />;
 }

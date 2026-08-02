@@ -16,23 +16,20 @@ export function CardInfoImages() {
 
     const isLoading = !images.length && !lastUpdate;
 
-    const { totalSizeImages, activeImagesCount, totalImages, lastUpdatedLabel, lastUpdatedName } =
-        useMemo(() => {
-            const total = images.reduce((acc, image) => acc + (image.size || 0), 0);
-            const active = images.filter((img) => img.containersUsed > 0).length;
-            const lastUpdated = [...images].sort(
-                (a, b) => dayjs(b.created || 0).valueOf() - dayjs(a.created || 0).valueOf(),
-            )[0];
-            return {
-                totalSizeImages: total,
-                activeImagesCount: active,
-                totalImages: images.length,
-                lastUpdatedLabel: lastUpdated?.created
-                    ? dayjs(lastUpdated.created).format('DD/MM/YYYY')
-                    : '',
-                lastUpdatedName: lastUpdated?.name?.[0] ?? '',
-            };
-        }, [images]);
+    const { totalSizeImages, activeImagesCount, totalImages, lastUpdatedLabel, lastUpdatedName } = useMemo(() => {
+        const total = images.reduce((acc, image) => acc + (image.size || 0), 0);
+        const active = images.filter((img) => img.containersUsed > 0).length;
+        const lastUpdated = [...images].sort(
+            (a, b) => dayjs(b.created || 0).valueOf() - dayjs(a.created || 0).valueOf(),
+        )[0];
+        return {
+            totalSizeImages: total,
+            activeImagesCount: active,
+            totalImages: images.length,
+            lastUpdatedLabel: lastUpdated?.created ? dayjs(lastUpdated.created).format('DD/MM/YYYY') : '',
+            lastUpdatedName: lastUpdated?.name?.[0] ?? '',
+        };
+    }, [images]);
 
     const imageInfos = [
         {
@@ -66,18 +63,14 @@ export function CardInfoImages() {
                 ) : (
                     <Card key={info.title} className="flex flex-col justify-between gap-0 py-6">
                         <CardHeader className="flex flex-row justify-between space-y-0">
-                            <CardTitle className="h-14 truncate text-sm font-medium">
-                                {info.title}
-                            </CardTitle>
+                            <CardTitle className="h-14 truncate text-sm font-medium">{info.title}</CardTitle>
                             <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                                 <info.icon className="text-primary size-4" />
                             </div>
                         </CardHeader>
                         <CardContent>
                             <div className="truncate text-2xl font-semibold">{info.content}</div>
-                            <p className="text-muted-foreground truncate text-xs">
-                                {info.description}
-                            </p>
+                            <p className="text-muted-foreground truncate text-xs">{info.description}</p>
                         </CardContent>
                     </Card>
                 ),

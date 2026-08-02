@@ -4,17 +4,14 @@ import { isDev } from '@/server/config';
 import { getDockerApiProxy, getInngestProxy } from '@/server/proxies';
 import { WS_PROXY_PREFIX, matchAndTransformWsUrl } from '@/server/wsRoutes';
 import { authorizeContainerUpgrade } from '@/server/wsAuthorization';
+import { actorToHeaders } from '@workspace/shared/actor';
 
 function denyUpgrade(socket: Socket, status: number, reason: string): void {
     socket.write(`HTTP/1.1 ${status} ${reason}\r\n\r\n`);
     socket.destroy();
 }
 
-export async function handleUpgrade(
-    req: IncomingMessage,
-    socket: Socket,
-    head: Buffer,
-): Promise<void> {
+export async function handleUpgrade(req: IncomingMessage, socket: Socket, head: Buffer): Promise<void> {
     const parsedUrl = new URL(req.url!, `http://${req.headers.host}`);
     const pathname = parsedUrl.pathname;
 
@@ -35,10 +32,14 @@ export async function handleUpgrade(
         }
 
         if (pathname.startsWith(WS_PROXY_PREFIX)) {
-            const denial = await authorizeContainerUpgrade(req, parsedUrl);
-            if (denial) {
-                denyUpgrade(socket, denial.status, denial.reason);
+            const authorization = await authorizeContainerUpgrade(req, parsedUrl);
+            if (!authorization.authorized) {
+                denyUpgrade(socket, authorization.denial.status, authorization.denial.reason);
                 return;
+            }
+
+            for (const [name, value] of Object.entries(actorToHeaders(authorization.actor))) {
+                req.headers[name.toLowerCase()] = value;
             }
         }
 

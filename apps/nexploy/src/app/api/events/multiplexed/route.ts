@@ -1,4 +1,6 @@
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
+import { HOST_SCOPED, resolveActiveOrganizationId } from '@/lib/auth/resolveOrgContext';
+import { actorToHeaders } from '@workspace/shared/actor';
 import dayjs from 'dayjs';
 import ky from 'ky';
 import { NextResponse } from 'next/server';
@@ -12,6 +14,7 @@ const CHANNEL_ENDPOINTS: Record<SSEChannel, string> = {
     container: `/api/container/events/stream/:containerId`,
     logs: `/api/container/events/stream/:containerId/logs/:follow/:tail`,
     stats: `/api/container/events/stream/:containerId/stats/:refreshRate`,
+    containersStats: '/api/containers/events/stream/stats/:refreshRate',
     image: '/api/image/events/stream/:imageId',
     images: '/api/images/events/stream',
     volume: '/api/volume/events/stream/:volumeName',
@@ -93,32 +96,24 @@ const buildEndpointUrl = (template: string, params?: Record<string, string>): st
 
 export const GET = route
     .use(authRouteServer)
-    .use(requirePermission('container', 'read'))
+    .use(requirePermission('container', 'read', HOST_SCOPED))
     .handler(async (request: Request, context) => {
         const { searchParams } = new URL(request.url);
         const channelsParam = searchParams.get('channels');
         const environment = searchParams.get('environment');
 
         if (!channelsParam) {
-            return NextResponse.json(
-                { error: 'Missing "channels" query parameter' },
-                { status: 400 },
-            );
+            return NextResponse.json({ error: 'Missing "channels" query parameter' }, { status: 400 });
         }
 
         const channelKeys = channelsParam.split(',').map(decodeURIComponent);
         const channelConfigs = channelKeys.map(parseChannelConfig);
 
         if (channelConfigs.length === 0) {
-            return NextResponse.json(
-                { error: 'At least one valid channel is required' },
-                { status: 400 },
-            );
+            return NextResponse.json({ error: 'At least one valid channel is required' }, { status: 400 });
         }
 
-        const invalidChannels = channelConfigs.filter(
-            (config) => !CHANNEL_ENDPOINTS[config.channel],
-        );
+        const invalidChannels = channelConfigs.filter((config) => !CHANNEL_ENDPOINTS[config.channel]);
         if (invalidChannels.length > 0) {
             return NextResponse.json(
                 { error: `Invalid channels: ${invalidChannels.map((c) => c.channel).join(', ')}` },
@@ -132,6 +127,13 @@ export const GET = route
         }
 
         const connectionId = context.ctx.session.user.id;
+        const actorHeaders = actorToHeaders({
+            source: 'user',
+            userId: context.ctx.session.user.id,
+            email: context.ctx.session.user.email ?? null,
+            role: context.ctx.session.user.role ?? null,
+            organizationId: await resolveActiveOrganizationId(context.ctx.session),
+        });
         const encoder = new TextEncoder();
         const decoder = new TextDecoder();
         const abortController = new AbortController();
@@ -177,10 +179,7 @@ export const GET = route
         };
 
         const calculateRetryDelay = (retryCount: number): number => {
-            return Math.min(
-                CONFIG.RETRY_DELAY * Math.pow(CONFIG.BACKOFF_MULTIPLIER, retryCount),
-                20_000,
-            );
+            return Math.min(CONFIG.RETRY_DELAY * Math.pow(CONFIG.BACKOFF_MULTIPLIER, retryCount), 20_000);
         };
 
         const stream = new ReadableStream({
@@ -248,6 +247,7 @@ export const GET = route
                             'Cache-Control': 'no-cache',
                             Connection: 'keep-alive',
                             'X-Client-Id': connectionId,
+                            ...actorHeaders,
                         };
                         if (process.env.NEXPLOY_API_KEY) {
                             sseHeaders['Authorization'] = `Bearer ${process.env.NEXPLOY_API_KEY}`;
@@ -261,9 +261,7 @@ export const GET = route
                         if (!response.ok) {
                             if (response.status === 404 || response.status === 503) {
                                 let code =
-                                    response.status === 404
-                                        ? 'ENVIRONMENT_NOT_FOUND'
-                                        : 'ENVIRONMENT_UNAVAILABLE';
+                                    response.status === 404 ? 'ENVIRONMENT_NOT_FOUND' : 'ENVIRONMENT_UNAVAILABLE';
                                 let message = `HTTP ${response.status}: ${response.statusText}`;
                                 let environmentId = effectiveEnvironment ?? undefined;
 
@@ -280,8 +278,7 @@ export const GET = route
                                         code = errorData.code;
                                     }
                                     if (errorData?.error) message = errorData.error;
-                                    if (errorData?.environmentId)
-                                        environmentId = errorData.environmentId;
+                                    if (errorData?.environmentId) environmentId = errorData.environmentId;
                                 } catch {
                                     /* empty */
                                 }
@@ -371,10 +368,7 @@ export const GET = route
 
                         try {
                             const parsed = JSON.parse(errorData);
-                            if (
-                                parsed.code === 'ENVIRONMENT_NOT_FOUND' ||
-                                parsed.code === 'ENVIRONMENT_UNAVAILABLE'
-                            ) {
+                            if (parsed.code === 'ENVIRONMENT_NOT_FOUND' || parsed.code === 'ENVIRONMENT_UNAVAILABLE') {
                                 shouldRetry = false;
                                 errorData = JSON.stringify(parsed);
                             }

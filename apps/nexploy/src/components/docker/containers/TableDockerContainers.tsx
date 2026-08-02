@@ -12,14 +12,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
@@ -38,11 +31,7 @@ import {
 } from '@workspace/ui/components/select';
 import { cn } from '@workspace/ui/lib/utils';
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
-import {
-    buildContainerRows,
-    containerTableGlobalFilterFn,
-    ContainerTableRow,
-} from './containerTableUtils';
+import { buildContainerRows, containerTableGlobalFilterFn, ContainerTableRow } from './containerTableUtils';
 import { getColumnsDockerContainers } from './ColumnsDockerContainers';
 import { ContainerTableActions } from './ContainerTableActions';
 
@@ -51,13 +40,8 @@ interface TableDockerContainersProps {
     isLoading: boolean;
 }
 
-function getSelectedContainers(
-    rows: ContainerTableRow[],
-    selectedIds: string[],
-): ContainerTableRow[] {
-    return rows
-        .flatMap((r) => (r.isGroup ? (r.subRows ?? []) : [r]))
-        .filter((r) => selectedIds.includes(r.id));
+function getSelectedContainers(rows: ContainerTableRow[], selectedIds: string[]): ContainerTableRow[] {
+    return rows.flatMap((r) => (r.isGroup ? (r.subRows ?? []) : [r])).filter((r) => selectedIds.includes(r.id));
 }
 
 export function TableDockerContainers({ containers, isLoading }: TableDockerContainersProps) {
@@ -123,10 +107,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
                                     <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(
-                                                  header.column.columnDef.header,
-                                                  header.getContext(),
-                                              )}
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -146,19 +127,13 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
 
                         {!isLoading && isEmpty ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
                                     {t('noContainersFound')}
                                 </TableCell>
                             </TableRow>
                         ) : !isLoading && table.getRowModel().rows.length === 0 ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
                                     {t('noContainersMatchSearch')}
                                 </TableCell>
                             </TableRow>
@@ -171,10 +146,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>

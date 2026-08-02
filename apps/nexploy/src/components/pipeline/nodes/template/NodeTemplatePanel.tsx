@@ -8,7 +8,7 @@ import { TemplateItem } from '@/components/pipeline/nodes/template/TemplateItem'
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigDefaults } from '@/components/pipeline/nodeManifestRegistry';
-import { NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { NodeId } from '@nexploy/nodes/core/node';
 import { useIsViewingBuild, usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -73,9 +73,7 @@ export function NodeTemplatePanel() {
                 <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-sm">
                     <LayoutTemplate className="size-3.5" strokeWidth={1.7} />
                 </div>
-                <span className="text-foreground flex-1 truncate text-xs">
-                    {t('templates.title')}
-                </span>
+                <span className="text-foreground flex-1 truncate text-xs">{t('templates.title')}</span>
                 <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
                     {PIPELINE_TEMPLATES.length}
                 </span>

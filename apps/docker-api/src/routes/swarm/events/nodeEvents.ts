@@ -96,10 +96,7 @@ app.get('/stream/:nodeId', (c) => {
         if (!manager.getIsSwarmActive() || !node) {
             await sendEvent({ type: 'not-found', nodeId, timestamp: Date.now() }, 'not-found');
         } else {
-            await sendEvent(
-                { type: 'initial-state', nodeId, node, tasks, timestamp: Date.now() },
-                'initial-state',
-            );
+            await sendEvent({ type: 'initial-state', nodeId, node, tasks, timestamp: Date.now() }, 'initial-state');
         }
 
         c.req.raw.signal.addEventListener('abort', cleanup);

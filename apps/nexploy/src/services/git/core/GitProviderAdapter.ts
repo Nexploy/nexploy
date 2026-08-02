@@ -1,9 +1,5 @@
 import { GitProviderType } from 'generated/client';
-import {
-    GitBranch,
-    GitProviderToken,
-    GitRepository,
-} from '@workspace/typescript-interface/git/git';
+import { GitBranch, GitProviderToken, GitRepository } from '@workspace/typescript-interface/git/git';
 import { WebhookPayload } from '@workspace/typescript-interface/webhook';
 
 export interface ParsedRepoUrl {
@@ -68,10 +64,7 @@ export interface GitProviderAdapter {
 
     parseRepoUrl(url: string): ParsedRepoUrl;
 
-    listRepositories(args: {
-        token: GitProviderToken;
-        baseUrl: string;
-    }): Promise<GitRepository[]>;
+    listRepositories(args: { token: GitProviderToken; baseUrl: string }): Promise<GitRepository[]>;
 
     getRepository(args: {
         token: GitProviderToken;
@@ -119,17 +112,9 @@ export interface GitProviderAdapter {
 
     parseWebhookPayload(body: unknown, event: string | null): WebhookPayload | null;
 
-    verifyWebhookSignature(args: {
-        headers: Headers;
-        rawBody: string;
-        secret: string;
-    }): boolean;
+    verifyWebhookSignature(args: { headers: Headers; rawBody: string; secret: string }): boolean;
 
-    buildAuthorizeUrl(args: {
-        credentials: AdapterCredentials;
-        state: string;
-        redirectUri: string;
-    }): string;
+    buildAuthorizeUrl(args: { credentials: AdapterCredentials; state: string; redirectUri: string }): string;
 
     exchangeCodeForToken(args: {
         code: string;
@@ -137,15 +122,9 @@ export interface GitProviderAdapter {
         redirectUri: string;
     }): Promise<OAuthExchangeResult>;
 
-    refreshToken(args: {
-        refreshToken: string;
-        credentials: AdapterCredentials;
-    }): Promise<GitProviderToken>;
+    refreshToken(args: { refreshToken: string; credentials: AdapterCredentials }): Promise<GitProviderToken>;
 
-    revokeToken?(args: {
-        token: GitProviderToken;
-        credentials: AdapterCredentials;
-    }): Promise<void>;
+    revokeToken?(args: { token: GitProviderToken; credentials: AdapterCredentials }): Promise<void>;
 
     createRelease(args: CreateReleaseArgs): Promise<{ releaseId: string; releaseUrl: string }>;
 

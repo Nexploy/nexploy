@@ -19,9 +19,7 @@ export function useBuildsInfinite(
         () => [
             {
                 builds: initialBuilds,
-                nextCursor: initialHasMore
-                    ? (initialBuilds[initialBuilds.length - 1]?.id ?? null)
-                    : null,
+                nextCursor: initialHasMore ? (initialBuilds[initialBuilds.length - 1]?.id ?? null) : null,
             },
         ],
         [],
@@ -44,15 +42,11 @@ export function useBuildsInfinite(
     const buildStartTrigger = usePipelineEditorStore((s) => s.buildStartTrigger);
     const buildDeleteTrigger = usePipelineEditorStore((s) => s.buildDeleteTrigger);
 
-    const { data, size, setSize, isValidating, mutate } = useSWRInfinite<BuildsPage>(
-        getKey,
-        fetcherApi,
-        {
-            fallbackData,
-            revalidateFirstPage: false,
-            revalidateOnFocus: false,
-        },
-    );
+    const { data, size, setSize, isValidating, mutate } = useSWRInfinite<BuildsPage>(getKey, fetcherApi, {
+        fallbackData,
+        revalidateFirstPage: false,
+        revalidateOnFocus: false,
+    });
 
     useEffect(() => {
         if (buildStartTrigger === 0) return;
@@ -64,10 +58,7 @@ export function useBuildsInfinite(
         mutate();
     }, [buildDeleteTrigger]);
 
-    const builds = useMemo(
-        () => data?.flatMap((page) => page.builds) ?? initialBuilds,
-        [data, initialBuilds],
-    );
+    const builds = useMemo(() => data?.flatMap((page) => page.builds) ?? initialBuilds, [data, initialBuilds]);
     const hasMore = !!data?.[data.length - 1]?.nextCursor;
     const isLoadingMore = isValidating && !!(data && data.length < size);
 

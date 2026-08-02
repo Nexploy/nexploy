@@ -18,7 +18,6 @@ export function AddStageButton({ repositoryId }: AddStageButtonProps) {
     const router = useRouter();
     const t = useTranslations('repository.stages');
 
-
     const handleAdd = () => {
         openDialog({
             title: t('newStage'),

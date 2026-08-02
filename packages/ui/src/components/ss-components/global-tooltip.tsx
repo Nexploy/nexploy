@@ -348,13 +348,7 @@ type TooltipProps = {
     alignOffset?: number;
 };
 
-function Tooltip({
-    children,
-    side = 'top',
-    sideOffset = 10,
-    align = 'center',
-    alignOffset = 0,
-}: TooltipProps) {
+function Tooltip({ children, side = 'top', sideOffset = 10, align = 'center', alignOffset = 0 }: TooltipProps) {
     const id = React.useId();
     const [content, setContent] = React.useState<React.ReactNode>(null);
     const [arrow, setArrow] = React.useState(true);

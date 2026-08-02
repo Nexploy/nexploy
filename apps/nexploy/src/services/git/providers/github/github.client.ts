@@ -9,12 +9,7 @@ import {
     GitHubUserResponse,
 } from '@workspace/typescript-interface/git/github.api';
 
-export type {
-    GitHubCommitResponse,
-    GitHubTokenResponse,
-    GitHubUserResponse,
-    GitHubManifestResponse,
-};
+export type { GitHubCommitResponse, GitHubTokenResponse, GitHubUserResponse, GitHubManifestResponse };
 
 export interface KyGithubOptions extends Options {
     withAuth?: boolean;
@@ -45,10 +40,7 @@ export const kyGithubPublic = ky.create({
 const PAGE_LIMIT = 100;
 const MAX_PAGES = 20;
 
-async function fetchAllPages<T>(
-    endpoint: string,
-    searchParams: Record<string, string> = {},
-): Promise<T[]> {
+async function fetchAllPages<T>(endpoint: string, searchParams: Record<string, string> = {}): Promise<T[]> {
     const results: T[] = [];
 
     for (let page = 1; page <= MAX_PAGES; page++) {
@@ -75,10 +67,7 @@ export async function githubGetRepository(owner: string, repo: string): Promise<
         .json<GithubRepo>();
 }
 
-export async function githubGetCommit(
-    repoPath: string,
-    ref: string,
-): Promise<GitHubCommitResponse> {
+export async function githubGetCommit(repoPath: string, ref: string): Promise<GitHubCommitResponse> {
     return kyGithubApi
         .get(`repos/${repoPath}/commits/${ref}`, {
             headers: { Accept: 'application/vnd.github.v3+json' },
@@ -117,10 +106,7 @@ export async function githubGetInstallationRepositories(
     return { repositories };
 }
 
-export async function githubGetRepositoryBranches(
-    owner: string,
-    repo: string,
-): Promise<GithubBranch[]> {
+export async function githubGetRepositoryBranches(owner: string, repo: string): Promise<GithubBranch[]> {
     return fetchAllPages<GithubBranch>(`repos/${owner}/${repo}/branches`);
 }
 
@@ -151,11 +137,7 @@ export async function githubCreateWebhook(
         .json<{ id: number }>();
 }
 
-export async function githubDeleteWebhook(
-    owner: string,
-    repo: string,
-    webhookId: string,
-): Promise<void> {
+export async function githubDeleteWebhook(owner: string, repo: string, webhookId: string): Promise<void> {
     await kyGithubApi.delete(`repos/${owner}/${repo}/hooks/${webhookId}`).json();
 }
 
@@ -202,11 +184,7 @@ export async function githubGetAuthenticatedUser(): Promise<GitHubUserResponse> 
     return kyGithubApi.get('user').json<GitHubUserResponse>();
 }
 
-export async function githubRevokeGrant(
-    clientId: string,
-    clientSecret: string,
-    accessToken: string,
-): Promise<void> {
+export async function githubRevokeGrant(clientId: string, clientSecret: string, accessToken: string): Promise<void> {
     try {
         await kyGithubApi.delete(`applications/${clientId}/grant`, {
             withAuth: false,

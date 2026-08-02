@@ -17,16 +17,15 @@ export function AIPanelToggle() {
     return (
         <Tooltip>
             <TooltipTrigger asChild>
-                <Button
-                    className={'size-8 rounded-l-none'}
-                    onClick={() => (isOpen ? closePanel() : openPanel())}
-                >
+                <Button className={'size-8 rounded-l-none'} onClick={() => (isOpen ? closePanel() : openPanel())}>
                     <Bot />
                 </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="flex items-center gap-1.5">
                 {isOpen ? t('chat.closePanel') : t('chat.openPanel')}
-                <Kbd className="px-1" suppressHydrationWarning>{mod}I</Kbd>
+                <Kbd className="px-1" suppressHydrationWarning>
+                    {mod}I
+                </Kbd>
             </TooltipContent>
         </Tooltip>
     );

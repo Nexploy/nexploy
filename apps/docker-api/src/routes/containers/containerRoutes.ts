@@ -151,10 +151,7 @@ app.post(
             stream.on('error', reject);
         });
 
-        const output = [
-            Buffer.concat(stdoutChunks).toString('utf8'),
-            Buffer.concat(stderrChunks).toString('utf8'),
-        ]
+        const output = [Buffer.concat(stdoutChunks).toString('utf8'), Buffer.concat(stderrChunks).toString('utf8')]
             .join('')
             .trim();
 
@@ -166,19 +163,8 @@ app.post(
 app.post(
     '/create',
     route({ json: containerCreateFormSchema }, async (c) => {
-        const {
-            envVars,
-            volumes,
-            networks,
-            labels,
-            hostname,
-            name,
-            ports,
-            restart,
-            image,
-            autoRemove,
-            auth,
-        } = c.req.valid('json');
+        const { envVars, volumes, networks, labels, hostname, name, ports, restart, image, autoRemove, auth } =
+            c.req.valid('json');
 
         volumes.forEach((vol) => assertSafeBindPath(vol.hostPath));
 
@@ -201,9 +187,7 @@ app.post(
             createOptions.HostConfig = {};
         }
 
-        const endpointsConfig: Record<string, {}> = Object.fromEntries(
-            networks.map((net) => [net.name, {}]),
-        );
+        const endpointsConfig: Record<string, {}> = Object.fromEntries(networks.map((net) => [net.name, {}]));
 
         if (!(TRAEFIK_NETWORK_NAME in endpointsConfig)) {
             try {
@@ -265,8 +249,7 @@ app.post(
 app.post(
     '/recreate',
     route({ json: ContainerRecreateFormSchema }, async (c) => {
-        const { ports, envVars, volumes, networks, containerId, image, pullImage, auth } =
-            c.req.valid('json');
+        const { ports, envVars, volumes, networks, containerId, image, pullImage, auth } = c.req.valid('json');
 
         const container = docker.getContainer(containerId);
         const containerInfo = await container.inspect();
@@ -287,9 +270,7 @@ app.post(
             const key = `${privatePort}/${type}`;
             delete exposedPorts[key];
             if (portBindings[key]) {
-                portBindings[key] = portBindings[key].filter(
-                    (b: any) => b.HostPort !== String(publicPort),
-                );
+                portBindings[key] = portBindings[key].filter((b: any) => b.HostPort !== String(publicPort));
                 if (portBindings[key].length === 0) delete portBindings[key];
             }
         };
@@ -305,11 +286,7 @@ app.post(
             if (port.typeAction === 'delete' || port.typeAction === 'edit') {
                 if (port.currentPrivatePort && port.currentType) {
                     if (port.currentPublicPort) {
-                        removePort(
-                            port.currentPrivatePort,
-                            port.currentType,
-                            port.currentPublicPort,
-                        );
+                        removePort(port.currentPrivatePort, port.currentType, port.currentPublicPort);
                     } else {
                         const key = `${port.currentPrivatePort}/${port.currentType}`;
                         delete exposedPorts[key];
@@ -392,9 +369,7 @@ app.post(
                         assertSafeBindPath(hostPath);
                     }
 
-                    bindsSet.add(
-                        getBindString(hostPath, volume.containerPath, volume.readOnly || false),
-                    );
+                    bindsSet.add(getBindString(hostPath, volume.containerPath, volume.readOnly || false));
                     volumesConfig[volume.containerPath] = {};
                 }
             }
@@ -411,9 +386,7 @@ app.post(
             }
         }
 
-        const networksConfig = Object.fromEntries(
-            Array.from(networksSet).map((name) => [name, {}]),
-        );
+        const networksConfig = Object.fromEntries(Array.from(networksSet).map((name) => [name, {}]));
 
         await container.remove();
 

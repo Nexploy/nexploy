@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@workspace/ui/lib/utils';
-import type { NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import type { NodeRunStatus } from '@nexploy/nodes/core/pipeline';
 
 type BadgeVariant = ComponentProps<typeof Badge>['variant'];
 

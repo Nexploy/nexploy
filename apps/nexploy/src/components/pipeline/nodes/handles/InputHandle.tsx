@@ -1,4 +1,4 @@
-import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
 import { Handle, Position, useConnection, useNodeConnections } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 
@@ -12,15 +12,7 @@ interface InputHandleProps {
     total: number;
 }
 
-export function InputHandle({
-    handle,
-    nodeId,
-    handleColor,
-    position,
-    square,
-    index,
-    total,
-}: InputHandleProps) {
+export function InputHandle({ handle, nodeId, handleColor, position, square, index, total }: InputHandleProps) {
     const connection = useConnection();
     const connections = useNodeConnections({ handleType: 'target', handleId: handle.id });
 
@@ -29,9 +21,7 @@ export function InputHandle({
         connection.toNode?.id === nodeId &&
         (!connection.toHandle?.id || connection.toHandle.id === handle.id);
     const isDraggingFrom =
-        connection.inProgress &&
-        connection.fromNode?.id === nodeId &&
-        connection.fromHandle?.id === handle.id;
+        connection.inProgress && connection.fromNode?.id === nodeId && connection.fromHandle?.id === handle.id;
     const active = connections.length > 0 || isTargetConnecting || isDraggingFrom;
 
     const offsetClass =
@@ -46,8 +36,7 @@ export function InputHandle({
     const offset = total > 1 ? `${((index + 1) / (total + 1)) * 100}%` : undefined;
     const isVertical = position === Position.Left || position === Position.Right;
 
-    const positionStyle =
-        offset !== undefined ? (isVertical ? { top: offset } : { left: offset }) : undefined;
+    const positionStyle = offset !== undefined ? (isVertical ? { top: offset } : { left: offset }) : undefined;
 
     return (
         <Handle

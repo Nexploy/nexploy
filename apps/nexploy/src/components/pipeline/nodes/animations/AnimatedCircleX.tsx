@@ -8,11 +8,7 @@ interface AnimatedCircleXProps {
 
 export function AnimatedCircleX({ className }: AnimatedCircleXProps) {
     return (
-        <svg
-            className={cn('animate-node-pop-in', className)}
-            viewBox="0 0 16 16"
-            fill="none"
-        >
+        <svg className={cn('animate-node-pop-in', className)} viewBox="0 0 16 16" fill="none">
             <circle
                 cx="8"
                 cy="8"
@@ -25,7 +21,10 @@ export function AnimatedCircleX({ className }: AnimatedCircleXProps) {
                 className="animate-[node-draw-path_0.4s_ease-out_both]"
             />
             <line
-                x1="5.5" y1="5.5" x2="10.5" y2="10.5"
+                x1="5.5"
+                y1="5.5"
+                x2="10.5"
+                y2="10.5"
                 stroke="#ef4444"
                 strokeWidth="1.5"
                 strokeLinecap="round"
@@ -34,7 +33,10 @@ export function AnimatedCircleX({ className }: AnimatedCircleXProps) {
                 className="animate-[node-draw-path_0.2s_ease-out_0.35s_both]"
             />
             <line
-                x1="10.5" y1="5.5" x2="5.5" y2="10.5"
+                x1="10.5"
+                y1="5.5"
+                x2="5.5"
+                y2="10.5"
                 stroke="#ef4444"
                 strokeWidth="1.5"
                 strokeLinecap="round"

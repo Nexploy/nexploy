@@ -1,7 +1,7 @@
 'use client';
 
-import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
+import { NodeId } from '@nexploy/nodes/core/node';
 import { cn } from '@workspace/ui/lib/utils';
 import { Plus } from 'lucide-react';
 import { CATEGORY_BG } from '@/components/pipeline/pipelineTheme';
@@ -35,12 +35,7 @@ export function NodeItem({
                 )}
             />
 
-            <div
-                className={cn(
-                    'flex size-7 shrink-0 items-center justify-center rounded-md',
-                    def.metadata.color,
-                )}
-            >
+            <div className={cn('flex size-7 shrink-0 items-center justify-center rounded-md', def.metadata.color)}>
                 <Icon className="size-3.5" strokeWidth={1.6} />
             </div>
 

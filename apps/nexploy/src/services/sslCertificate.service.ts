@@ -7,8 +7,7 @@ import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { TRAEFIK_SERVICE_DIR } from '@/lib/traefik/paths';
 
 const CERTS_DIR = path.join(TRAEFIK_SERVICE_DIR, 'certs');
-const TRAEFIK_CERTS_CONTAINER_PATH =
-    process.env.TRAEFIK_CERTS_CONTAINER_PATH ?? '/etc/nexploy/traefik/service/certs';
+const TRAEFIK_CERTS_CONTAINER_PATH = process.env.TRAEFIK_CERTS_CONTAINER_PATH ?? '/etc/nexploy/traefik/service/certs';
 
 function parseCertExpiry(certPem: string): Date | null {
     try {
@@ -70,12 +69,7 @@ export async function createLetsEncryptCertificate(name: string, domain: string,
     }
 }
 
-export async function createCustomCertificate(
-    name: string,
-    domain: string,
-    certificate: string,
-    privateKey: string,
-) {
+export async function createCustomCertificate(name: string, domain: string, certificate: string, privateKey: string) {
     const t = await getErrorTranslator();
     await validateCertKeyPair(certificate, privateKey);
 

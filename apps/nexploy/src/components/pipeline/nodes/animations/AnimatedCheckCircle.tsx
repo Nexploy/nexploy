@@ -8,11 +8,7 @@ interface AnimatedCheckCircleProps {
 
 export function AnimatedCheckCircle({ className }: AnimatedCheckCircleProps) {
     return (
-        <svg
-            className={cn('animate-node-pop-in', className)}
-            viewBox="0 0 16 16"
-            fill="none"
-        >
+        <svg className={cn('animate-node-pop-in', className)} viewBox="0 0 16 16" fill="none">
             <circle
                 cx="8"
                 cy="8"

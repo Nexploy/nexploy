@@ -3,11 +3,11 @@
 import { useTranslations } from 'next-intl';
 import { Variable } from 'lucide-react';
 import { useAncestorInputFields } from '@/hooks/useAncestorInputFields';
-import { type NodeInputField } from '@/components/pipeline/types/nodeManifest';
+import { type NodeInputField } from '@nexploy/nodes/ui/nodeManifest';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import { NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef.ts';
+import { NodeFieldRef } from '@nexploy/nodes/core/nodeFieldRef';
 
 interface InputChipProps {
     nodeId: string;
@@ -72,9 +72,7 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
                     <div className="flex size-6 items-center justify-center rounded-md bg-amber-400/10">
                         <Variable className="size-3.5 text-amber-400" />
                     </div>
-                    <span className="text-foreground text-sm font-semibold">
-                        {t('availableInputs')}
-                    </span>
+                    <span className="text-foreground text-sm font-semibold">{t('availableInputs')}</span>
                 </div>
                 <p className="text-muted-foreground text-[11px]">{t('dragHint')}</p>
             </div>
@@ -101,12 +99,7 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
                                 </div>
                                 <div className="flex flex-col gap-1.5">
                                     {inputFields.map((field) => (
-                                        <InputChip
-                                            key={field.key}
-                                            nodeId={nodeId}
-                                            nodeType={nodeType}
-                                            field={field}
-                                        />
+                                        <InputChip key={field.key} nodeId={nodeId} nodeType={nodeType} field={field} />
                                     ))}
                                 </div>
                             </div>

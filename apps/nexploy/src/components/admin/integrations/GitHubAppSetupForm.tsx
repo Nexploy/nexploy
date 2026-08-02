@@ -6,21 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 import { CheckIcon } from 'lucide-react';
-import {
-    githubSetupSchema,
-    type GitHubSetupValues,
-} from '@workspace/schemas-zod/git/githubSetup.schema';
+import { githubSetupSchema, type GitHubSetupValues } from '@workspace/schemas-zod/git/githubSetup.schema';
 
 function buildManifest(appUrl: string) {
     return {
@@ -111,9 +101,7 @@ export function GitHubAppSetupForm() {
                                     onCheckedChange={field.onChange}
                                 />
                             </FormControl>
-                            <FormLabel className="mt-0! cursor-pointer">
-                                {t('organization')}
-                            </FormLabel>
+                            <FormLabel className="mt-0! cursor-pointer">{t('organization')}</FormLabel>
                         </FormItem>
                     )}
                 />
@@ -134,17 +122,8 @@ export function GitHubAppSetupForm() {
                 )}
 
                 <div className="space-y-1.5 rounded-md border p-3">
-                    <p className="text-muted-foreground text-xs font-medium">
-                        {t('permissionsTitle')}
-                    </p>
-                    {(
-                        [
-                            'permContents',
-                            'permMetadata',
-                            'permAdministration',
-                            'permStatuses',
-                        ] as const
-                    ).map((key) => (
+                    <p className="text-muted-foreground text-xs font-medium">{t('permissionsTitle')}</p>
+                    {(['permContents', 'permMetadata', 'permAdministration', 'permStatuses'] as const).map((key) => (
                         <div key={key} className="flex items-center gap-2 text-xs">
                             <CheckIcon className="size-3 shrink-0 text-green-500" />
                             <span>{t(key)}</span>

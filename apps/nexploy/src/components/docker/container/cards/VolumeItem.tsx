@@ -62,21 +62,14 @@ export function VolumeItem({ mount, isNew }: VolumeItemProps) {
                     <span className="bg-primary/20 text-primary rounded px-2 py-1 text-xs font-medium">
                         {mount.type}
                     </span>
-                    <span className="bg-secondary rounded px-2 py-1 text-xs">
-                        {mount.rw ? 'RW' : 'RO'}
-                    </span>
+                    <span className="bg-secondary rounded px-2 py-1 text-xs">{mount.rw ? 'RW' : 'RO'}</span>
                     <code className="text-xs font-medium">{mount.name ?? mount.source}</code>
                     {statusIndicator}
                 </div>
                 {isDeleted ? (
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-6 w-6"
-                                onClick={handleCancelDelete}
-                            >
+                            <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleCancelDelete}>
                                 <X />
                             </Button>
                         </TooltipTrigger>
@@ -85,12 +78,7 @@ export function VolumeItem({ mount, isNew }: VolumeItemProps) {
                 ) : (
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button
-                                size="icon"
-                                variant="destructiveGhost"
-                                className="h-6 w-6"
-                                onClick={handleDelete}
-                            >
+                            <Button size="icon" variant="destructiveGhost" className="h-6 w-6" onClick={handleDelete}>
                                 <Trash2 />
                             </Button>
                         </TooltipTrigger>

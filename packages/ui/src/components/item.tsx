@@ -18,12 +18,7 @@ function ItemGroup({ className, ...props }: React.ComponentProps<'div'>) {
 
 function ItemSeparator({ className, ...props }: React.ComponentProps<typeof Separator>) {
     return (
-        <Separator
-            data-slot="item-separator"
-            orientation="horizontal"
-            className={cn('my-0', className)}
-            {...props}
-        />
+        <Separator data-slot="item-separator" orientation="horizontal" className={cn('my-0', className)} {...props} />
     );
 }
 
@@ -102,10 +97,7 @@ function ItemContent({ className, ...props }: React.ComponentProps<'div'>) {
     return (
         <div
             data-slot="item-content"
-            className={cn(
-                'flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none',
-                className,
-            )}
+            className={cn('flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none', className)}
             {...props}
         />
     );
@@ -115,10 +107,7 @@ function ItemTitle({ className, ...props }: React.ComponentProps<'div'>) {
     return (
         <div
             data-slot="item-title"
-            className={cn(
-                'flex w-fit items-center gap-2 text-sm leading-snug font-medium',
-                className,
-            )}
+            className={cn('flex w-fit items-center gap-2 text-sm leading-snug font-medium', className)}
             {...props}
         />
     );
@@ -139,13 +128,7 @@ function ItemDescription({ className, ...props }: React.ComponentProps<'p'>) {
 }
 
 function ItemActions({ className, ...props }: React.ComponentProps<'div'>) {
-    return (
-        <div
-            data-slot="item-actions"
-            className={cn('flex items-center gap-2', className)}
-            {...props}
-        />
-    );
+    return <div data-slot="item-actions" className={cn('flex items-center gap-2', className)} {...props} />;
 }
 
 function ItemHeader({ className, ...props }: React.ComponentProps<'div'>) {

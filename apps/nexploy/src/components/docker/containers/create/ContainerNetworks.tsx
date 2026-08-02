@@ -21,11 +21,7 @@ export function ContainerNetworks() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Network}
-                title={t('networks')}
-                description={t('networksDescription')}
-            >
+            <CardHeaderWithIcon icon={Network} title={t('networks')} description={t('networksDescription')}>
                 <Button
                     type="button"
                     size="sm"
@@ -39,9 +35,7 @@ export function ContainerNetworks() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">
-                        {t('noNetworksConfigured')}
-                    </p>
+                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noNetworksConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

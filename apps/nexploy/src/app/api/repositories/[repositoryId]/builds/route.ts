@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
-import {
-    buildsQuerySchema,
-    repositoryIdParamSchema,
-} from '@workspace/schemas-zod/api/params.schema';
+import { buildsQuerySchema, repositoryIdParamSchema } from '@workspace/schemas-zod/api/params.schema';
 import { getBuildsPage } from '@/services/repository/build.service';
 import { BUILDS_PAGE_SIZE } from '@/lib/constants';
 import { byRepositoryIdParam } from '@/lib/auth/resolveOrgContext';

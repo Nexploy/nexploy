@@ -1,14 +1,6 @@
 import { HttpError } from '@workspace/shared/http-error';
 
-const DENIED_HOST_PATHS = [
-    '/var/run/docker.sock',
-    '/var/lib/docker',
-    '/etc',
-    '/root',
-    '/boot',
-    '/proc',
-    '/sys',
-];
+const DENIED_HOST_PATHS = ['/var/run/docker.sock', '/var/lib/docker', '/etc', '/root', '/boot', '/proc', '/sys'];
 
 export function assertSafeBindPath(hostPath: string): void {
     if (!hostPath.startsWith('/')) {

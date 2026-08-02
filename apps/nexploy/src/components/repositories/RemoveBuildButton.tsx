@@ -17,12 +17,7 @@ interface RemoveBuildButtonProps extends ComponentProps<typeof Button> {
     onSuccess?: () => void;
 }
 
-export function RemoveBuildButton({
-    buildId,
-    mode = 'button',
-    onSuccess,
-    ...props
-}: RemoveBuildButtonProps) {
+export function RemoveBuildButton({ buildId, mode = 'button', onSuccess, ...props }: RemoveBuildButtonProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const t = useTranslations('repository.builds');
     const tCommon = useTranslations('common');

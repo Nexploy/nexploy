@@ -6,14 +6,7 @@ import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { InputGroup, InputGroupInput } from '@workspace/ui/components/input-group';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { useTranslations } from 'next-intl';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -76,21 +69,13 @@ export function ProfileInfoForm({ user }: ProfileInfoFormProps) {
                                 <FormLabel>{t('email')}</FormLabel>
                                 <FormControl>
                                     <InputGroup className={'cursor-not-allowed'}>
-                                        <InputGroupInput
-                                            disabled
-                                            defaultValue={user?.email}
-                                            readOnly
-                                        />
+                                        <InputGroupInput disabled defaultValue={user?.email} readOnly />
                                     </InputGroup>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         </div>
-                        <Button
-                            type="submit"
-                            disabled={!form.formState.isDirty}
-                            className={'self-end'}
-                        >
+                        <Button type="submit" disabled={!form.formState.isDirty} className={'self-end'}>
                             {t('updateProfile')}
                         </Button>
                     </form>

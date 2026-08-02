@@ -9,14 +9,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -95,14 +88,14 @@ export function TableRequests() {
         <div className="mx-5 space-y-3">
             <div className="flex flex-wrap justify-between gap-3">
                 <Input
-                    className="w-56 shadow-xs"
+                    className="shadow-xs w-56"
                     placeholder={t('searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <div className="flex gap-2">
                     <Select value={methodFilter} onValueChange={setMethodFilter}>
-                        <SelectTrigger className={'w-40'}>
+                        <SelectTrigger className={'min-w-40'}>
                             <SelectValue placeholder={t('method')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -118,7 +111,7 @@ export function TableRequests() {
                         </SelectContent>
                     </Select>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className={'w-40'}>
+                        <SelectTrigger className={'min-w-40'}>
                             <SelectValue placeholder={t('status')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -133,7 +126,7 @@ export function TableRequests() {
                         </SelectContent>
                     </Select>
                     <Select value={serviceFilter} onValueChange={setServiceFilter}>
-                        <SelectTrigger className={'w-40'}>
+                        <SelectTrigger className={'min-w-40'}>
                             <SelectValue placeholder={t('service')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -160,10 +153,7 @@ export function TableRequests() {
                                     <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(
-                                                  header.column.columnDef.header,
-                                                  header.getContext(),
-                                              )}
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -195,10 +185,7 @@ export function TableRequests() {
                                 <TableRow key={row.id} className="h-12">
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>
@@ -211,9 +198,7 @@ export function TableRequests() {
             {!isLoading && !!filteredRequests.length && (
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">
-                            {t('requestsPerPage')}
-                        </span>
+                        <span className="text-muted-foreground text-sm">{t('requestsPerPage')}</span>
                         <Select
                             value={pageSize === 'all' ? 'all' : `${pageSize}`}
                             onValueChange={(value) => {

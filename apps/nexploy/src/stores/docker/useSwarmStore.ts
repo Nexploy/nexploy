@@ -149,11 +149,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'node-added', (e) => {
                     const data = JSON.parse(e.data) as SwarmNodeAddedEvent;
                     get().addNode(data.node);
-                    notifyDocker(
-                        'swarm',
-                        'success',
-                        clientT('toasts.nodeJoined', { hostname: data.node.hostname }),
-                    );
+                    notifyDocker('swarm', 'success', clientT('toasts.nodeJoined', { hostname: data.node.hostname }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -190,10 +186,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                                 'error',
                                 clientT('toasts.nodeDown', { hostname: data.node.hostname }),
                             );
-                        } else if (
-                            data.changes.state.to === 'ready' &&
-                            data.changes.state.from === 'down'
-                        ) {
+                        } else if (data.changes.state.to === 'ready' && data.changes.state.from === 'down') {
                             notifyDocker(
                                 'swarm',
                                 'success',
@@ -210,11 +203,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'node-removed', (e) => {
                     const data = JSON.parse(e.data) as SwarmNodeRemovedEvent;
                     get().removeNode(data.nodeId);
-                    notifyDocker(
-                        'swarm',
-                        'info',
-                        clientT('toasts.nodeLeft', { hostname: data.previousNode.hostname }),
-                    );
+                    notifyDocker('swarm', 'info', clientT('toasts.nodeLeft', { hostname: data.previousNode.hostname }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );
@@ -223,11 +212,7 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
                 sseMultiplexer.subscribe('swarm', 'service-added', (e) => {
                     const data = JSON.parse(e.data) as SwarmServiceAddedEvent;
                     get().addService(data.service);
-                    notifyDocker(
-                        'swarm',
-                        'success',
-                        clientT('toasts.serviceCreated', { name: data.service.name }),
-                    );
+                    notifyDocker('swarm', 'success', clientT('toasts.serviceCreated', { name: data.service.name }));
                     set({ lastUpdate: data.timestamp });
                 }),
             );

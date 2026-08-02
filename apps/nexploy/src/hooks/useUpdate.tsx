@@ -66,9 +66,7 @@ export function useUpdate({ enabled = true, refreshInterval }: UseUpdateOptions 
                 <>
                     {activeBuilds.builds.length > 0 && (
                         <div className="border-destructive/30 bg-destructive/10 mb-4 rounded-lg border p-3 text-sm">
-                            <p className="text-destructive font-medium">
-                                {t('upgradeActiveBuildsWarning')}
-                            </p>
+                            <p className="text-destructive font-medium">{t('upgradeActiveBuildsWarning')}</p>
                             <ul className="text-destructive/90 mt-1.5 list-disc pl-4">
                                 {activeBuilds.builds.map((build) => (
                                     <li key={build.id}>{build.repositoryName}</li>

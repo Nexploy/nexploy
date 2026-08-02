@@ -73,29 +73,19 @@ export function ServiceDetailInfo() {
         <Card>
             <CardHeaderWithIcon icon={Hash} title={t('detail.infoTitle')} />
             <CardContent className="px-0">
-                <ScrollAreaWithShadow
-                    bottomShadow
-                    className="h-60 overflow-hidden px-6"
-                >
+                <ScrollAreaWithShadow bottomShadow className="h-60 overflow-hidden px-6">
                     <div className="space-y-3">
                         {fields.map((field, index) => (
                             <div
                                 key={index}
                                 className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < fields.length - 1 ? 'border-b pb-2' : ''}`}
                             >
-                                <span className="text-muted-foreground text-sm whitespace-nowrap">
-                                    {field.label}
-                                </span>
+                                <span className="text-muted-foreground text-sm whitespace-nowrap">{field.label}</span>
                                 <div className="flex min-w-0 items-center justify-end gap-1">
                                     <div className="flex min-w-0 flex-1 justify-end overflow-hidden">
                                         {typeof field.value === 'string' ? (
-                                            <Badge
-                                                variant="secondary"
-                                                className="w-auto max-w-full shrink"
-                                            >
-                                                <span className="block truncate">
-                                                    {field.value}
-                                                </span>
+                                            <Badge variant="secondary" className="w-auto max-w-full shrink">
+                                                <span className="block truncate">{field.value}</span>
                                             </Badge>
                                         ) : (
                                             field.value

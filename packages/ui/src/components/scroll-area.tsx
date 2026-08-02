@@ -12,17 +12,25 @@ interface ScrollAreaProps extends React.ComponentProps<typeof ScrollAreaPrimitiv
     scrollbarX?: boolean;
 }
 
-function ScrollArea({ className, children, thumbColor, trackColor, viewportClassName, viewportRef, scrollbarX, ...props }: ScrollAreaProps) {
+function ScrollArea({
+    className,
+    children,
+    thumbColor,
+    trackColor,
+    viewportClassName,
+    viewportRef,
+    scrollbarX,
+    ...props
+}: ScrollAreaProps) {
     return (
-        <ScrollAreaPrimitive.Root
-            data-slot="scroll-area"
-            className={cn('relative', className)}
-            {...props}
-        >
+        <ScrollAreaPrimitive.Root data-slot="scroll-area" className={cn('relative', className)} {...props}>
             <ScrollAreaPrimitive.Viewport
                 ref={viewportRef}
                 data-slot="scroll-area-viewport"
-                className={cn('focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1', viewportClassName)}
+                className={cn(
+                    'focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1',
+                    viewportClassName,
+                )}
             >
                 {children}
             </ScrollAreaPrimitive.Viewport>
@@ -33,20 +41,13 @@ function ScrollArea({ className, children, thumbColor, trackColor, viewportClass
     );
 }
 
-interface ScrollBarProps
-    extends React.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar> {
+interface ScrollBarProps extends React.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar> {
     thumbColor?: string;
     trackColor?: string;
     thumbHoverColor?: string;
 }
 
-function ScrollBar({
-    className,
-    orientation = 'vertical',
-    thumbColor,
-    trackColor,
-    ...props
-}: ScrollBarProps) {
+function ScrollBar({ className, orientation = 'vertical', thumbColor, trackColor, ...props }: ScrollBarProps) {
     return (
         <ScrollAreaPrimitive.ScrollAreaScrollbar
             data-slot="scroll-area-scrollbar"

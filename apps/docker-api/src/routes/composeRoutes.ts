@@ -79,9 +79,7 @@ app.post(
         const { stackName, yaml } = c.req.valid('json');
 
         const environmentId = getCurrentEnvironmentId();
-        const envConfig = environmentId
-            ? dockerClientRegistry.getEnvironmentConfig(environmentId)
-            : null;
+        const envConfig = environmentId ? dockerClientRegistry.getEnvironmentConfig(environmentId) : null;
         const dockerEnvResult = buildDockerHostEnv(envConfig);
         const dockerEnv = dockerEnvResult.env;
 
@@ -100,10 +98,7 @@ app.post(
             );
 
             if (exitCode !== 0) {
-                throw new HttpError(
-                    `docker compose up failed (exit ${exitCode}): ${logs.slice(-5).join('; ')}`,
-                    500,
-                );
+                throw new HttpError(`docker compose up failed (exit ${exitCode}): ${logs.slice(-5).join('; ')}`, 500);
             }
 
             return { success: true, stackName, logs };
@@ -134,10 +129,7 @@ app.post(
         }
 
         if (!('services' in parsed)) {
-            throw new HttpError(
-                'Invalid Docker Compose file: missing required "services" key',
-                422,
-            );
+            throw new HttpError('Invalid Docker Compose file: missing required "services" key', 422);
         }
 
         return { valid: true };

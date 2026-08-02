@@ -1,10 +1,6 @@
 'use server';
 
-import {
-    authActionServer,
-    preventInfrastructureNetworkAction,
-    requirePermission,
-} from '@/lib/api/safe-action';
+import { authActionServer, preventInfrastructureNetworkAction, requirePermission } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/lib/toastServer';
 import { networkActionsSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
@@ -33,9 +29,7 @@ export const onNetworkAction = authActionServer
                 const t = await getTranslations('docker');
                 for (const skipped of result.skipped) {
                     const key = skipReasonToKey[skipped.reason];
-                    const message = key
-                        ? t(key, { count: 1, name: skipped.name })
-                        : skipped.reason;
+                    const message = key ? t(key, { count: 1, name: skipped.name }) : skipped.reason;
                     await setToastServer({ type: 'error', message });
                 }
             }

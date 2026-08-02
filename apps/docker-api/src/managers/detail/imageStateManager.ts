@@ -1,5 +1,5 @@
 import { ImageInspectInfo } from 'dockerode';
-import { Image, ImageDetailEvent, ImageHistoryEntry, } from '@workspace/typescript-interface/docker/docker.image';
+import { Image, ImageDetailEvent, ImageHistoryEntry } from '@workspace/typescript-interface/docker/docker.image';
 import { BaseSingleResourceStateManager } from '@/lib/base/BaseSingleResourceStateManager';
 
 export class ImageStateManager extends BaseSingleResourceStateManager<Image> {

@@ -1,4 +1,4 @@
-import { NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { NodeId } from '@nexploy/nodes/core/node';
 
 export type TemplateNode = {
     type: NodeId;

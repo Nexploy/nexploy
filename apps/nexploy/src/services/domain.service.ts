@@ -1,6 +1,6 @@
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { generateTraefikConfig, getDomainKey, getDomains } from '@/services/traefik.service';
-import { provisionDomainDns, removeDomainDns, syncDomainDns, } from '@/services/domainCloudflare.service';
+import { provisionDomainDns, removeDomainDns, syncDomainDns } from '@/services/domainCloudflare.service';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export async function createDomain(domain: Domain): Promise<Domain> {

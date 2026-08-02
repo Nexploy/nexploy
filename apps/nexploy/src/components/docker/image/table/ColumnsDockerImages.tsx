@@ -25,8 +25,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
         header: ({ table }) => {
             const allRows = table.getRowModel().flatRows;
             const selectableRows = allRows.filter((row) => !row.original.isGroup);
-            const allSelected =
-                selectableRows.length > 0 && selectableRows.every((row) => row.getIsSelected());
+            const allSelected = selectableRows.length > 0 && selectableRows.every((row) => row.getIsSelected());
             const someSelected = selectableRows.some((row) => row.getIsSelected());
 
             return (
@@ -68,10 +67,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
     {
         accessorKey: 'name',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('repository')}
                 <ArrowUpDown />
             </Button>
@@ -109,11 +105,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                     <StatusIndicator />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    {containersUsed ? (
-                                        <p>{t('imageUsed')}</p>
-                                    ) : (
-                                        <p>{t('imageUnused')}</p>
-                                    )}
+                                    {containersUsed ? <p>{t('imageUsed')}</p> : <p>{t('imageUnused')}</p>}
                                 </TooltipContent>
                             </Tooltip>
                             <StatusLabel className="text-current">
@@ -140,17 +132,11 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                                 <StatusIndicator />
                             </TooltipTrigger>
                             <TooltipContent>
-                                {containersUsed ? (
-                                    <p>{t('imageUsed')}</p>
-                                ) : (
-                                    <p>{t('imageUnused')}</p>
-                                )}
+                                {containersUsed ? <p>{t('imageUsed')}</p> : <p>{t('imageUnused')}</p>}
                             </TooltipContent>
                         </Tooltip>
 
-                        <StatusLabel className="text-current hover:underline">
-                            {nameJoin}
-                        </StatusLabel>
+                        <StatusLabel className="text-current hover:underline">{nameJoin}</StatusLabel>
                     </Status>
                 </Link>
             );
@@ -159,10 +145,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
     {
         accessorKey: 'tag',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('version')}
                 <ArrowUpDown />
             </Button>
@@ -192,20 +175,13 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
 
             const image = row.original.id ?? '';
 
-            return (
-                <Badge variant="secondary">
-                    {image.length > 20 ? image.slice(0, 20) + '…' : image}
-                </Badge>
-            );
+            return <Badge variant="secondary">{image.length > 20 ? image.slice(0, 20) + '…' : image}</Badge>;
         },
     },
     {
         accessorKey: 'created',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('created')}
                 <ArrowUpDown />
             </Button>
@@ -220,10 +196,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
     {
         accessorKey: 'size',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('size')}
                 <ArrowUpDown />
             </Button>

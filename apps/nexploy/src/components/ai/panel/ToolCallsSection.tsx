@@ -14,17 +14,12 @@ export function ToolCallsSection({ tools }: ToolCallsSectionProps) {
     const t = useTranslations('ai.chat.toolCall');
     const [isOpen, setIsOpen] = useState(true);
 
-    const isAnyRunning = tools.some(
-        (p) => p.state === 'input-streaming' || p.state === 'input-available',
-    );
+    const isAnyRunning = tools.some((p) => p.state === 'input-streaming' || p.state === 'input-available');
     const hasError = tools.some(
-        (p) =>
-            p.state === 'output-available' &&
-            (p.output as { success?: boolean })?.success === false,
+        (p) => p.state === 'output-available' && (p.output as { success?: boolean })?.success === false,
     );
     const lastTool = tools[tools.length - 1];
-    const lastIsRunning =
-        lastTool?.state === 'input-streaming' || lastTool?.state === 'input-available';
+    const lastIsRunning = lastTool?.state === 'input-streaming' || lastTool?.state === 'input-available';
     const lastIsDone = lastTool?.state === 'output-available';
     const lastOutput = lastTool?.output as { success?: boolean } | undefined;
     const lastSuccess = lastOutput?.success !== false;

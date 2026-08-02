@@ -3,17 +3,11 @@
 import { useCallback, useState } from 'react';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
-import {
-    CommandDialog,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandList,
-} from '@workspace/ui/components/command';
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandList } from '@workspace/ui/components/command';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow.tsx';
 import type { Provider } from '@workspace/typescript-interface/ai/aiConfig';
-import { fetcherApi } from '@/lib/api/fetcherApi.ts';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useAIPanelStore } from '@/stores/useAIPanelStore';
 import { ProviderGroup } from './ProviderGroup';
 import { ModelSelectorActionBar } from './ModelSelectorActionBar';
@@ -38,14 +32,10 @@ export function ModelSelectorModal() {
     const [activeProvider, setActiveProvider] = useState<ProviderFilter>('ALL');
     const [settledProviders, setSettledProviders] = useState<Set<Provider>>(new Set());
 
-    const { data, isLoading } = useSWR<{ providers: Provider[] }>(
-        { url: '/api/ai/providers' },
-        fetcherApi,
-    );
+    const { data, isLoading } = useSWR<{ providers: Provider[] }>({ url: '/api/ai/providers' }, fetcherApi);
 
     const providers = data?.providers ?? [];
-    const visibleProviders =
-        activeProvider === 'ALL' ? providers : providers.filter((p) => p === activeProvider);
+    const visibleProviders = activeProvider === 'ALL' ? providers : providers.filter((p) => p === activeProvider);
 
     const handleGroupSettled = useCallback((provider: Provider) => {
         setSettledProviders((prev) => {
@@ -77,10 +67,7 @@ export function ModelSelectorModal() {
                 />
             )}
             <CommandList className="bg-card max-h-none overflow-hidden">
-                <ScrollAreaWithShadow
-                    viewportClassName="max-h-[60vh] [&>div]:!block"
-                    bottomShadow
-                >
+                <ScrollAreaWithShadow viewportClassName="max-h-[60vh] [&>div]:!block" bottomShadow>
                     {isLoading ? (
                         Array.from({ length: 2 }).map((_, i) => (
                             <CommandGroup key={i}>

@@ -15,7 +15,7 @@ import {
     useReactFlow,
     useStore,
 } from '@xyflow/react';
-import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
 import { Maximize, Minus, Paintbrush, Plus, SquareMousePointer } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
@@ -23,11 +23,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useAutoLayout } from '@/hooks/useAutoLayout';
-import {
-    usePipelineActions,
-    usePipelineBuilds,
-    usePipelineDisplay,
-} from '@/stores/pipeline/usePipelineStore';
+import { usePipelineActions, usePipelineBuilds, usePipelineDisplay } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
@@ -39,6 +35,7 @@ import { AttachNode } from '@/components/pipeline/nodes/types/AttachNode';
 import { BuildPreviewBanner } from '@/components/pipeline/BuildPreviewBanner';
 import { useFitViewOptions } from '@/components/pipeline/utils/fitView';
 import { PipelineSidePanel } from '@/components/pipeline/PipelineSidePanel.tsx';
+import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 
 const nodeTypes = {
     'base-node': BaseNode,
@@ -47,8 +44,7 @@ const nodeTypes = {
 };
 const edgeTypes = { 'gradient-edge': GradientEdge };
 
-const canvasControlButtonClassName =
-    'bg-sidebar/85 border-border/70 hover:bg-sidebar size-8 border  backdrop-blur-md';
+const canvasControlButtonClassName = 'bg-sidebar/85 border-border/70 hover:bg-sidebar size-8 border  backdrop-blur-md';
 
 export function PipelineCanvas() {
     const t = useTranslations('repository.pipeline');
@@ -75,18 +71,14 @@ export function PipelineCanvas() {
             const sourceDef = sourceNode.data.definition as NodeDefinition | undefined;
 
             if (connection.sourceHandle) {
-                const attachment = sourceDef?.handles?.attachments?.find(
-                    (a) => a.id === connection.sourceHandle,
-                );
+                const attachment = sourceDef?.handles?.attachments?.find((a) => a.id === connection.sourceHandle);
                 if (attachment) {
                     return attachment.id === (targetNode.data.nodeType as string);
                 }
             }
 
             const targetDef = targetNode.data.definition as NodeDefinition | undefined;
-            const targetHandle = targetDef?.handles.inputs.find(
-                (h) => h.id === connection.targetHandle,
-            );
+            const targetHandle = targetDef?.handles.inputs.find((h) => h.id === connection.targetHandle);
             if (targetHandle?.acceptsFrom) {
                 return connection.sourceHandle === targetHandle.acceptsFrom;
             }
@@ -100,6 +92,7 @@ export function PipelineCanvas() {
     const fitViewOptions = useFitViewOptions();
 
     const { nodes, displayNodes, displayEdges, isViewingBuild } = usePipelineDisplay();
+    const isSidePanelOpen = usePipelinePanelStore((s) => s.activePanel !== null);
     const { builds } = usePipelineBuilds();
     const {
         onNodesChange,
@@ -159,9 +152,7 @@ export function PipelineCanvas() {
             const selectedIds = new Set(selected.map((node) => node.id));
             setNodes((nodes) =>
                 nodes.map((node) =>
-                    selectedIds.has(node.id)
-                        ? { ...node, data: { ...node.data, disabled: !allDisabled } }
-                        : node,
+                    selectedIds.has(node.id) ? { ...node, data: { ...node.data, disabled: !allDisabled } } : node,
                 ),
             );
             triggerAutoSave();
@@ -221,9 +212,7 @@ export function PipelineCanvas() {
                 edges={displayEdges}
                 onNodesChange={isViewingBuild ? () => {} : onNodesChange}
                 onEdgesChange={isViewingBuild ? () => {} : onEdgesChange}
-                onEdgeMouseEnter={
-                    isViewingBuild ? undefined : (_, edge) => setHoveredEdgeId(edge.id)
-                }
+                onEdgeMouseEnter={isViewingBuild ? undefined : (_, edge) => setHoveredEdgeId(edge.id)}
                 onEdgeMouseLeave={isViewingBuild ? undefined : () => setHoveredEdgeId(null)}
                 onConnect={isViewingBuild ? undefined : onConnect}
                 isValidConnection={isViewingBuild ? undefined : isValidConnection}
@@ -255,20 +244,12 @@ export function PipelineCanvas() {
                 defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
                 proOptions={{ hideAttribution: true }}
             >
-                <Background
-                    variant={BackgroundVariant.Dots}
-                    gap={20}
-                    size={1.5}
-                    color="var(--base-7)"
-                />
+                <Background variant={BackgroundVariant.Dots} gap={20} size={1.5} color="var(--base-7)" />
                 <BuildsPanel />
                 <ButtonPanel />
                 <PipelineSidePanel />
                 {isViewingBuild && activeBuildNumber && (
-                    <BuildPreviewBanner
-                        buildNumber={activeBuildNumber}
-                        onExit={() => setActiveBuildId(null)}
-                    />
+                    <BuildPreviewBanner buildNumber={activeBuildNumber} onExit={() => setActiveBuildId(null)} />
                 )}
                 {displayNodes.length > 0 && (
                     <Panel className={'m-2!'} position="bottom-left">
@@ -313,19 +294,20 @@ export function PipelineCanvas() {
                     </Panel>
                 )}
                 {displayNodes.length === 0 && (
-                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
+                    <div
+                        className={cn(
+                            'pointer-events-none absolute inset-y-0 left-0 flex flex-col items-center justify-center gap-3 transition-[right] duration-200 ease-out',
+                            isSidePanelOpen ? 'right-[19rem]' : 'right-0',
+                        )}
+                    >
                         <div className="border-border bg-card flex size-12 items-center justify-center rounded-lg border">
                             <SquareMousePointer className={'text-muted-foreground'} />
                         </div>
-                        <p className="text-muted-foreground mx-5 text-center text-sm">
-                            {t('empty')}
-                        </p>
+                        <p className="text-muted-foreground mx-5 text-center text-sm">{t('empty')}</p>
                     </div>
                 )}
             </ReactFlow>
-            {contextMenu && (
-                <NodeContextMenu menu={contextMenu} onClose={() => setContextMenu(null)} />
-            )}
+            {contextMenu && <NodeContextMenu menu={contextMenu} onClose={() => setContextMenu(null)} />}
         </div>
     );
 }

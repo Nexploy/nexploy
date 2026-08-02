@@ -6,14 +6,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -72,9 +65,7 @@ export function UploadNowTab({ volumeName, bucketStorageAccounts }: UploadNowTab
                             <Select value={field.value} onValueChange={field.onChange}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue
-                                            placeholder={t('selectBucketStorageAccount')}
-                                        />
+                                        <SelectValue placeholder={t('selectBucketStorageAccount')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>

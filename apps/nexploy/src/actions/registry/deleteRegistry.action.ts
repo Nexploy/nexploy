@@ -4,7 +4,7 @@ import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { deleteRegistrySchema } from '@workspace/schemas-zod/registry/registry.schema';
 import { revalidatePath } from 'next/cache';
 import { kyDocker } from '@/lib/api/kyDocker.ts';
-import { deleteRegistry, getRegistryById } from '@/services/registry.service.ts';
+import { deleteRegistry, getRegistryById } from '@/services/registry.service';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer.ts';
 
@@ -27,7 +27,7 @@ export const deleteRegistryAction = authActionServer
                 }
             }
 
-            revalidatePath('/admin/registry');
+            revalidatePath('/registry');
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 const body = await err.response.json<{ message: string }>();

@@ -8,11 +8,7 @@ import { ScrollArea, ScrollBar } from '@workspace/ui/components/scroll-area';
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
     return (
         <ScrollArea className="grid h-full w-full grid-cols-1">
-            <table
-                data-slot="table"
-                className={cn('w-full caption-bottom text-sm', className)}
-                {...props}
-            />
+            <table data-slot="table" className={cn('w-full caption-bottom text-sm', className)} {...props} />
             <ScrollBar orientation="horizontal" />
             <ScrollBar orientation="vertical" />
         </ScrollArea>
@@ -20,19 +16,11 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
 }
 
 function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
-    return (
-        <thead data-slot="table-header" className={cn('[&_tr]:border-b', className)} {...props} />
-    );
+    return <thead data-slot="table-header" className={cn('[&_tr]:border-b', className)} {...props} />;
 }
 
 function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
-    return (
-        <tbody
-            data-slot="table-body"
-            className={cn('[&_tr:last-child]:border-0', className)}
-            {...props}
-        />
-    );
+    return <tbody data-slot="table-body" className={cn('[&_tr:last-child]:border-0', className)} {...props} />;
 }
 
 function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
@@ -49,10 +37,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
     return (
         <tr
             data-slot="table-row"
-            className={cn(
-                'hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors',
-                className,
-            )}
+            className={cn('hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors', className)}
             {...props}
         />
     );
@@ -86,11 +71,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
 
 function TableCaption({ className, ...props }: React.ComponentProps<'caption'>) {
     return (
-        <caption
-            data-slot="table-caption"
-            className={cn('text-muted-foreground mt-4 text-sm', className)}
-            {...props}
-        />
+        <caption data-slot="table-caption" className={cn('text-muted-foreground mt-4 text-sm', className)} {...props} />
     );
 }
 

@@ -36,11 +36,7 @@ export function GeneralSettingsCard({ aiEnabled, mcpEnabled }: GeneralSettingsCa
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Power}
-                title={t('generalSection')}
-                description={t('generalSectionDescription')}
-            />
+            <CardHeaderWithIcon icon={Power} title={t('generalSection')} description={t('generalSectionDescription')} />
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-2">

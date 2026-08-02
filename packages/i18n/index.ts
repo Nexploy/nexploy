@@ -99,15 +99,11 @@ function interpolate(template: string, params?: Record<string, string | number>)
 export type TranslatorFn = (key: string, params?: Record<string, string | number>) => string;
 
 export function createTranslator(locale: string, namespace?: string): TranslatorFn {
-    const resolvedLocale: AppLocale = appLocales.includes(locale as AppLocale)
-        ? (locale as AppLocale)
-        : defaultLocale;
+    const resolvedLocale: AppLocale = appLocales.includes(locale as AppLocale) ? (locale as AppLocale) : defaultLocale;
 
     const messages = locales[resolvedLocale] as Record<string, NestedRecord>;
     const fallbackMessages =
-        resolvedLocale !== defaultLocale
-            ? (locales[defaultLocale] as Record<string, NestedRecord>)
-            : null;
+        resolvedLocale !== defaultLocale ? (locales[defaultLocale] as Record<string, NestedRecord>) : null;
 
     return (key: string, params?: Record<string, string | number>): string => {
         const fullKey = namespace ? `${namespace}.${key}` : key;

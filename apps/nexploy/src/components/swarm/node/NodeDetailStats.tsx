@@ -48,19 +48,11 @@ export function NodeDetailStats() {
             icon: Server,
             render: () => (
                 <>
-                    <Status
-                        className="border-0"
-                        status={nodeStateToStatus(node.state)}
-                        variant="outline"
-                    >
+                    <Status className="border-0" status={nodeStateToStatus(node.state)} variant="outline">
                         <StatusIndicator />
-                        <div className="truncate text-2xl font-semibold capitalize">
-                            {node.state}
-                        </div>
+                        <div className="truncate text-2xl font-semibold capitalize">{node.state}</div>
                     </Status>
-                    <p className="text-muted-foreground truncate text-xs capitalize">
-                        {node.availability}
-                    </p>
+                    <p className="text-muted-foreground truncate text-xs capitalize">{node.availability}</p>
                 </>
             ),
         },
@@ -70,9 +62,7 @@ export function NodeDetailStats() {
             render: () => (
                 <>
                     <div className="text-2xl font-bold">{cpuCores}</div>
-                    <p className="text-muted-foreground truncate text-xs">
-                        {t('node.availableCores')}
-                    </p>
+                    <p className="text-muted-foreground truncate text-xs">{t('node.availableCores')}</p>
                 </>
             ),
         },
@@ -81,12 +71,8 @@ export function NodeDetailStats() {
             icon: MemoryStick,
             render: () => (
                 <>
-                    <div className="text-2xl font-bold">
-                        {formatBytes(node.resources.memoryBytes)}
-                    </div>
-                    <p className="text-muted-foreground truncate text-xs">
-                        {t('node.totalMemory')}
-                    </p>
+                    <div className="text-2xl font-bold">{formatBytes(node.resources.memoryBytes)}</div>
+                    <p className="text-muted-foreground truncate text-xs">{t('node.totalMemory')}</p>
                 </>
             ),
         },
@@ -98,9 +84,7 @@ export function NodeDetailStats() {
                     <div className="text-2xl font-bold">
                         {runningTasks}/{tasks.length}
                     </div>
-                    <p className="text-muted-foreground truncate text-xs">
-                        {t('node.tasksRunning')}
-                    </p>
+                    <p className="text-muted-foreground truncate text-xs">{t('node.tasksRunning')}</p>
                 </>
             ),
         },
@@ -111,9 +95,7 @@ export function NodeDetailStats() {
             {cards.map((card, index) => (
                 <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                     <CardHeader className="flex flex-row justify-between space-y-0">
-                        <CardTitle className="flex h-14 text-sm font-medium">
-                            {card.title}
-                        </CardTitle>
+                        <CardTitle className="flex h-14 text-sm font-medium">{card.title}</CardTitle>
                         <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                             <card.icon className="text-primary size-4" />
                         </div>

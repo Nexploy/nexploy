@@ -1,6 +1,6 @@
-import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
-import { type LogLevel, type NodeOutputStore, } from '@workspace/typescript-interface/pipeline/pipeline';
-import { isNodeFieldRef } from '@/lib/nodeFieldRef';
+import { type NodeFieldRef } from '@nexploy/nodes/core/nodeFieldRef';
+import { type LogLevel, type NodeOutputStore } from '@nexploy/nodes/core/pipeline';
+import { isNodeFieldRef } from '@nexploy/nodes/core/nodeFieldRef';
 
 export function formatErrorDetails(error: unknown): string {
     if (!(error instanceof Error)) {
@@ -13,13 +13,9 @@ export function formatErrorDetails(error: unknown): string {
         lines.push(`Stack trace:\n${error.stack}`);
     }
 
-    const extraProps = Object.entries(error).filter(
-        ([key]) => !['message', 'name', 'stack'].includes(key),
-    );
+    const extraProps = Object.entries(error).filter(([key]) => !['message', 'name', 'stack'].includes(key));
     if (extraProps.length > 0) {
-        lines.push(
-            `Additional info:\n${extraProps.map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join('\n')}`,
-        );
+        lines.push(`Additional info:\n${extraProps.map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join('\n')}`);
     }
 
     return lines.join('\n');

@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, } from '@workspace/ui/components/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -26,11 +26,7 @@ export function RegistrySelector({ registries }: RegistrySelectorProps) {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Warehouse}
-                title={t('registry')}
-                description={t('registryDescription')}
-            />
+            <CardHeaderWithIcon icon={Warehouse} title={t('registry')} description={t('registryDescription')} />
             <CardContent>
                 <FormField
                     control={form.control}

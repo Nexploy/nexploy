@@ -148,14 +148,9 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
             socketPath: environmentData.socketPath ?? currentEnv.socketPath ?? undefined,
             host: environmentData.host ?? currentEnv.host ?? undefined,
             port: environmentData.port ?? currentEnv.port ?? undefined,
-            tlsCert:
-                environmentData.tlsCert ??
-                (currentEnv.tlsCert ? decrypt(currentEnv.tlsCert) : undefined),
-            tlsKey:
-                environmentData.tlsKey ??
-                (currentEnv.tlsKey ? decrypt(currentEnv.tlsKey) : undefined),
-            tlsCa:
-                environmentData.tlsCa ?? (currentEnv.tlsCa ? decrypt(currentEnv.tlsCa) : undefined),
+            tlsCert: environmentData.tlsCert ?? (currentEnv.tlsCert ? decrypt(currentEnv.tlsCert) : undefined),
+            tlsKey: environmentData.tlsKey ?? (currentEnv.tlsKey ? decrypt(currentEnv.tlsKey) : undefined),
+            tlsCa: environmentData.tlsCa ?? (currentEnv.tlsCa ? decrypt(currentEnv.tlsCa) : undefined),
             description: environmentData.description ?? currentEnv.description ?? undefined,
         };
 

@@ -23,10 +23,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
         size: 28,
         header: ({ table }) => (
             <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && 'indeterminate')
-                }
+                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                 aria-label="Select all"
             />
@@ -44,10 +41,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
     {
         accessorKey: 'name',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('name')}
                 <ArrowUpDown />
             </Button>
@@ -63,10 +57,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             const isBuiltin = isBuiltinNetwork(name);
 
             return (
-                <Link
-                    href={`/docker/networks/${row.original.id}`}
-                    className="flex items-start gap-2"
-                >
+                <Link href={`/docker/networks/${row.original.id}`} className="flex items-start gap-2">
                     <Status
                         className="justify-start border-0 text-sm"
                         status={isBuiltin ? 'maintenance' : 'online'}
@@ -77,11 +68,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
                                 <StatusIndicator />
                             </TooltipTrigger>
                             <TooltipContent>
-                                {isBuiltin ? (
-                                    <p>{t('systemNetwork')}</p>
-                                ) : (
-                                    <p>{t('customNetwork')}</p>
-                                )}
+                                {isBuiltin ? <p>{t('systemNetwork')}</p> : <p>{t('customNetwork')}</p>}
                             </TooltipContent>
                         </Tooltip>
 
@@ -94,10 +81,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
     {
         accessorKey: 'driver',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('driver')}
                 <ArrowUpDown />
             </Button>
@@ -131,19 +115,14 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             const networkId = row.original.id ?? '';
 
             return (
-                <Badge variant="secondary">
-                    {networkId.length > 20 ? networkId.slice(0, 20) + '…' : networkId}
-                </Badge>
+                <Badge variant="secondary">{networkId.length > 20 ? networkId.slice(0, 20) + '…' : networkId}</Badge>
             );
         },
     },
     {
         accessorKey: 'containers',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('containers')}
                 <ArrowUpDown />
             </Button>
@@ -163,10 +142,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
     {
         accessorKey: 'created',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('created')}
                 <ArrowUpDown />
             </Button>

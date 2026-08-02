@@ -10,14 +10,7 @@ import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/k
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Separator } from '@workspace/ui/components/separator';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { cn } from '@workspace/ui/lib/utils';
 import { addAiConfigAction } from '@/actions/admin/ai/addAiConfig.action.ts';
 import { deleteAiConfigAction } from '@/actions/admin/ai/deleteAiConfig.action';
@@ -28,14 +21,7 @@ import { mutate } from 'swr';
 import { useAction } from 'next-safe-action/hooks';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 
-export function ModelProviderCard({
-    provider,
-    label,
-    color,
-    icon,
-    hasKey,
-    keyUrl,
-}: ProviderCardConfig) {
+export function ModelProviderCard({ provider, label, color, icon, hasKey, keyUrl }: ProviderCardConfig) {
     const t = useTranslations('ai.admin.models');
     const tCommon = useTranslations('common');
 
@@ -102,12 +88,7 @@ export function ModelProviderCard({
             <form onSubmit={handleSubmitWithAction} className="bg-card rounded-xl border shadow-sm">
                 <div className="flex items-center justify-between gap-2 p-4">
                     <div className={'flex items-center gap-2'}>
-                        <div
-                            className={cn(
-                                'flex size-9 shrink-0 items-center justify-center rounded-lg',
-                                color,
-                            )}
-                        >
+                        <div className={cn('flex size-9 shrink-0 items-center justify-center rounded-lg', color)}>
                             {icon}
                         </div>
                         <div className="flex gap-2">
@@ -121,12 +102,7 @@ export function ModelProviderCard({
                         </div>
                     </div>
                     <Link href={keyUrl} className="min-w-0 overflow-hidden">
-                        <Button
-                            variant="ghost"
-                            type={'button'}
-                            size="sm"
-                            className="w-full overflow-hidden"
-                        >
+                        <Button variant="ghost" type={'button'} size="sm" className="w-full overflow-hidden">
                             <ExternalLink className="shrink-0" />
                             <span className="truncate">{t('getApiKey')}</span>
                         </Button>
@@ -151,12 +127,7 @@ export function ModelProviderCard({
                                                 disabled={form.formState.isSubmitting}
                                             />
                                         ) : (
-                                            <Input
-                                                value="••••••••••••••••••••••••"
-                                                type="text"
-                                                readOnly
-                                                disabled
-                                            />
+                                            <Input value="••••••••••••••••••••••••" type="text" readOnly disabled />
                                         )}
                                     </FormControl>
                                     <FormMessage />
@@ -178,9 +149,7 @@ export function ModelProviderCard({
                                 <Button
                                     type="submit"
                                     isLoading={form.formState.isSubmitting}
-                                    disabled={
-                                        form.formState.isSubmitting || !form.formState.isDirty
-                                    }
+                                    disabled={form.formState.isSubmitting || !form.formState.isDirty}
                                 >
                                     {tCommon('save')}
                                 </Button>

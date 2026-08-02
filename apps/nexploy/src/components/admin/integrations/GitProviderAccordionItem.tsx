@@ -1,11 +1,7 @@
 import { ProviderInstanceCard } from '@/components/admin/integrations/ProviderInstanceCard';
 import { IntegrationsAddButtons } from '@/components/admin/integrations/IntegrationsAddButtons';
 import { cn } from '@workspace/ui/lib/utils';
-import {
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@workspace/ui/components/accordion';
+import { AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
 import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import { GitProviderInfo } from '@/services/git/gitProviders.service';
@@ -17,12 +13,7 @@ type GitProviderAccordionItemProps = {
     instances: GitProviderInfo[];
 };
 
-export async function GitProviderAccordionItem({
-    value,
-    icon,
-    titleKey,
-    instances,
-}: GitProviderAccordionItemProps) {
+export async function GitProviderAccordionItem({ value, icon, titleKey, instances }: GitProviderAccordionItemProps) {
     const t = await getTranslations('integrations');
     const hasInstances = instances.length > 0;
 
@@ -40,9 +31,7 @@ export async function GitProviderAccordionItem({
                 }
             >
                 <div className="flex min-w-0 flex-1 items-center gap-3">
-                    <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
-                        {icon}
-                    </div>
+                    <div className="bg-muted flex size-10 items-center justify-center rounded-lg">{icon}</div>
                     <div className="flex min-w-0 flex-col text-left">
                         <span>{t(titleKey)}</span>
                         <span className="text-muted-foreground text-xs">

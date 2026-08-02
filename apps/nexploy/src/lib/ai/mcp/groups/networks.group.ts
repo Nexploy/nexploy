@@ -1,9 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import {
-    networkCreateSchema,
-    networkDeleteSchema,
-} from '@workspace/schemas-zod/docker/network/networkAction.schema';
+import { networkCreateSchema, networkDeleteSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
@@ -14,28 +11,24 @@ export const networksGroup: ToolGroup = {
     register(server: McpServer, ctx: ToolContext) {
         if (ctx.allowNetworksGroup === false) return;
 
-        server.registerTool(
-            'listNetworks',
-            { description: 'List all Docker networks.' },
-            async () => {
-                const g = guard(ctx, 'network', 'read');
-                if (g) return g;
-                try {
-                    const networks = await kyDocker
-                        .get('networks', { environmentId: ctx.environmentId } as KyDockerOptions)
-                        .json<any[]>();
-                    const data = networks.map((n) => ({
-                        id: n.id?.slice(0, 12),
-                        name: n.name,
-                        driver: n.driver,
-                        scope: n.scope,
-                    }));
-                    return ok(JSON.stringify({ count: networks.length, data }));
-                } catch (e: any) {
-                    return fail(e.message);
-                }
-            },
-        );
+        server.registerTool('listNetworks', { description: 'List all Docker networks.' }, async () => {
+            const g = guard(ctx, 'network', 'read');
+            if (g) return g;
+            try {
+                const networks = await kyDocker
+                    .get('networks', { environmentId: ctx.environmentId } as KyDockerOptions)
+                    .json<any[]>();
+                const data = networks.map((n) => ({
+                    id: n.id?.slice(0, 12),
+                    name: n.name,
+                    driver: n.driver,
+                    scope: n.scope,
+                }));
+                return ok(JSON.stringify({ count: networks.length, data }));
+            } catch (e: any) {
+                return fail(e.message);
+            }
+        });
 
         server.registerTool(
             'inspectNetwork',

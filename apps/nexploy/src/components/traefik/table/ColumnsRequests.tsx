@@ -43,10 +43,7 @@ export const getColumnsTableRequests = (t: TranslationFunction): ColumnDef<Traef
     {
         accessorKey: 'timestamp',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('table.timestamp')}
                 <ArrowUpDown />
             </Button>
@@ -60,10 +57,7 @@ export const getColumnsTableRequests = (t: TranslationFunction): ColumnDef<Traef
     {
         accessorKey: 'method',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('table.method')}
                 <ArrowUpDown />
             </Button>
@@ -86,10 +80,7 @@ export const getColumnsTableRequests = (t: TranslationFunction): ColumnDef<Traef
     {
         accessorKey: 'status',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('table.status')}
                 <ArrowUpDown />
             </Button>
@@ -103,44 +94,32 @@ export const getColumnsTableRequests = (t: TranslationFunction): ColumnDef<Traef
     {
         accessorKey: 'duration',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('table.duration')}
                 <ArrowUpDown />
             </Button>
         ),
         cell: ({ row }) => (
-            <div className="text-muted-foreground font-mono text-sm">
-                {formatDuration(row.original.duration)}
-            </div>
+            <div className="text-muted-foreground font-mono text-sm">{formatDuration(row.original.duration)}</div>
         ),
     },
     {
         accessorKey: 'size',
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('table.size')}
                 <ArrowUpDown />
             </Button>
         ),
         cell: ({ row }) => (
-            <div className="text-muted-foreground font-mono text-sm">
-                {formatBytes(row.original.size)}
-            </div>
+            <div className="text-muted-foreground font-mono text-sm">{formatBytes(row.original.size)}</div>
         ),
     },
     {
         accessorKey: 'serviceName',
         header: t('table.service'),
         cell: ({ row }) => (
-            <div className="text-muted-foreground max-w-40 truncate text-sm">
-                {row.original.serviceName || '-'}
-            </div>
+            <div className="text-muted-foreground max-w-40 truncate text-sm">{row.original.serviceName || '-'}</div>
         ),
     },
 ];

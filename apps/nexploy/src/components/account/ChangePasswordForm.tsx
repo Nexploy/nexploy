@@ -2,21 +2,11 @@
 
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-    changePasswordFormSchema,
-    TypeChangePasswordFormSchema,
-} from '@workspace/schemas-zod/auth/auth.schema';
+import { changePasswordFormSchema, TypeChangePasswordFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 import { authClient } from '@/lib/auth/auth-client';
 import { toast } from 'sonner';
 import { useState } from 'react';

@@ -28,10 +28,7 @@ export function CardExecuteId() {
                 ) : (
                     <div className="space-y-2">
                         {execIds.map((execId, idx) => (
-                            <code
-                                key={idx}
-                                className="bg-muted/30 block truncate rounded-md p-2 text-xs"
-                            >
+                            <code key={idx} className="bg-muted/30 block truncate rounded-md p-2 text-xs">
                                 {execId}
                             </code>
                         ))}

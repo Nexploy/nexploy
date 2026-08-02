@@ -27,10 +27,7 @@ class DockerClientRegistry {
                 registeredEnvironmentIds.push(config.id!);
                 successCount++;
             } catch (err) {
-                logger.error(
-                    { err, environmentId: config.id, name: config.name },
-                    'Failed to register environment',
-                );
+                logger.error({ err, environmentId: config.id, name: config.name }, 'Failed to register environment');
                 failCount++;
             }
         }
@@ -70,9 +67,7 @@ class DockerClientRegistry {
         try {
             await Promise.race([
                 client.ping(),
-                new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Ping timeout after 5s')), 5000),
-                ),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Ping timeout after 5s')), 5000)),
             ]);
 
             logger.info({ environmentId: config.id, name: config.name }, 'Environment connected');

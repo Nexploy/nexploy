@@ -1,5 +1,6 @@
 import type { Connection, Edge, EdgeChange, Node, NodeChange } from '@xyflow/react';
-import type { NodeId, NodeRunStatus } from '../pipeline/node';
+export type NodeId = string;
+export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed' | 'cancelled' | 'not-configured';
 
 export type PipelineBuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
 
@@ -43,15 +44,11 @@ export interface PipelineActionsContextValue {
     ) => void;
     setBuildNodeDurations: (
         buildId: string,
-        updater:
-            | Record<string, number>
-            | ((prev: Record<string, number>) => Record<string, number>),
+        updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>),
     ) => void;
     setBuildNodeStartTimes: (
         buildId: string,
-        updater:
-            | Record<string, number>
-            | ((prev: Record<string, number>) => Record<string, number>),
+        updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>),
     ) => void;
 }
 
@@ -117,15 +114,11 @@ export interface PipelineStoreState {
     ) => void;
     setBuildNodeDurations: (
         buildId: string,
-        updater:
-            | Record<string, number>
-            | ((prev: Record<string, number>) => Record<string, number>),
+        updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>),
     ) => void;
     setBuildNodeStartTimes: (
         buildId: string,
-        updater:
-            | Record<string, number>
-            | ((prev: Record<string, number>) => Record<string, number>),
+        updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>),
     ) => void;
 
     _commit: (snapshot: Snapshot) => void;

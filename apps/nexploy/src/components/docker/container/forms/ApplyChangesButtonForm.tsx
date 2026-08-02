@@ -10,18 +10,10 @@ import { cn } from '@workspace/ui/lib/utils';
 
 export function ApplyChangesButtonForm() {
     const t = useTranslations('common');
-    const {
-        portChanges,
-        envVarChanges,
-        networkChanges,
-        volumeChanges,
-        hasChanges,
-        resetAllChanges,
-    } = useContainerChangesStore();
+    const { portChanges, envVarChanges, networkChanges, volumeChanges, hasChanges, resetAllChanges } =
+        useContainerChangesStore();
     const containerId = useContainerStore((state) => state.container?.id);
-    const isSwarmContainer = useContainerStore(
-        (state) => !!state.container?.labels?.['com.docker.swarm.service.id'],
-    );
+    const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
@@ -48,12 +40,7 @@ export function ApplyChangesButtonForm() {
     if (isSwarmContainer || !hasChanges()) return null;
 
     return (
-        <Button
-            icon={Save}
-            isLoading={isLoading}
-            onClick={handleApplyChanges}
-            className={cn('mt-5')}
-        >
+        <Button icon={Save} isLoading={isLoading} onClick={handleApplyChanges} className={cn('mt-5')}>
             {t('applyChanges')}
         </Button>
     );

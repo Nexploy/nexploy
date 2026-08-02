@@ -1,20 +1,17 @@
 'use server';
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { HOST_SCOPED } from '@/lib/auth/resolveOrgContext';
 import { createLetsEncryptCertSchema } from '@workspace/schemas-zod/repository/sslCertificate.schema';
 import { createLetsEncryptCertificate } from '@/services/sslCertificate.service';
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const createLetsEncryptCert = authActionServer
-    .use(requirePermission('ssl', 'manage'))
+    .use(requirePermission('ssl', 'manage', HOST_SCOPED))
     .inputSchema(createLetsEncryptCertSchema)
     .action(async ({ parsedInput }) => {
         try {
-            return createLetsEncryptCertificate(
-                parsedInput.name,
-                parsedInput.domain,
-                parsedInput.email,
-            );
+            return createLetsEncryptCertificate(parsedInput.name, parsedInput.domain, parsedInput.email);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 await setToastServer({

@@ -24,10 +24,7 @@ import { containerPortSchema } from '@workspace/schemas-zod/docker/container/con
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
 import { Plus, Save, Trash } from 'lucide-react';
-import {
-    ContainerPortForm,
-    PortFormProps,
-} from '@workspace/typescript-interface/docker/docker.port';
+import { ContainerPortForm, PortFormProps } from '@workspace/typescript-interface/docker/docker.port';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { useTranslations } from 'next-intl';
 
@@ -98,16 +95,12 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                         <FormItem>
                             <FormLabel>
                                 {t('port.hostPort')}
-                                <span className="text-muted-foreground text-xs">
-                                    {tCommon('optional')}
-                                </span>
+                                <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
                             </FormLabel>
                             <FormControl>
                                 <Input {...field} type="number" placeholder="8080" />
                             </FormControl>
-                            <FormDescription className="text-xs">
-                                {t('port.hostPortDescription')}
-                            </FormDescription>
+                            <FormDescription className="text-xs">{t('port.hostPortDescription')}</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -155,23 +148,13 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
 
                 <DialogFooter className="flex justify-between! pt-4">
                     {mode === 'edit' && (
-                        <Button
-                            size="icon"
-                            type="button"
-                            variant="destructive"
-                            icon={Trash}
-                            onClick={handleDelete}
-                        />
+                        <Button size="icon" type="button" variant="destructive" icon={Trash} onClick={handleDelete} />
                     )}
                     <div className="flex flex-1 flex-row justify-end gap-2">
                         <DialogClose asChild>
                             <Button variant="outline">{t('cancel')}</Button>
                         </DialogClose>
-                        <Button
-                            type="submit"
-                            disabled={!form.formState.isDirty}
-                            icon={mode === 'add' ? Plus : Save}
-                        >
+                        <Button type="submit" disabled={!form.formState.isDirty} icon={mode === 'add' ? Plus : Save}>
                             {mode === 'add' ? t('add') : t('edit')}
                         </Button>
                     </div>

@@ -6,7 +6,7 @@ export interface BuildLogEntry {
     buildId: string;
 }
 
-import { WebhookTrigger } from '../webhook';
+import type { WebhookTrigger } from '../webhook';
 
 export interface BuildConfig {
     userId: string;

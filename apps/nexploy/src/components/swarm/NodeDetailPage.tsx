@@ -56,9 +56,7 @@ export function NodeDetailPage({ nodeId }: NodeDetailPageProps) {
                             </>
                         ) : (
                             <div className="flex flex-col">
-                                <h1 className="text-3xl font-semibold tracking-tight">
-                                    {node?.hostname}
-                                </h1>
+                                <h1 className="text-3xl font-semibold tracking-tight">{node?.hostname}</h1>
                                 {node && (
                                     <Badge
                                         variant={node.role === 'manager' ? 'default' : 'secondary'}
@@ -81,11 +79,7 @@ export function NodeDetailPage({ nodeId }: NodeDetailPageProps) {
                         <Can resource="swarm" action="manage">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        disabled={isConnecting || !node}
-                                    >
+                                    <Button variant="outline" size="icon" disabled={isConnecting || !node}>
                                         <MoreHorizontal className="size-4" />
                                     </Button>
                                 </DropdownMenuTrigger>

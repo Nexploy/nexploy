@@ -11,7 +11,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import React, { useState } from 'react';
 import { getColumnsTableVolumes } from '@/components/docker/volume/table/ColumnsDockerVolumes';
 import { useTranslations } from 'next-intl';
@@ -146,10 +146,7 @@ export function TableDockerVolumes() {
                                     <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(
-                                                  header.column.columnDef.header,
-                                                  header.getContext(),
-                                              )}
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -169,10 +166,7 @@ export function TableDockerVolumes() {
 
                         {!isLoading && isEmpty ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
                                     {t('noVolumesFound')}
                                 </TableCell>
                             </TableRow>
@@ -185,10 +179,7 @@ export function TableDockerVolumes() {
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>

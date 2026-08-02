@@ -12,9 +12,7 @@ export const onImageAction = authActionServer
     .inputSchema(imageActionsSchema)
     .action(async ({ parsedInput: { action, imageIds, force } }) => {
         try {
-            return await kyDocker
-                .post(`images/${action}`, { json: { imageIds, force } })
-                .json<ImageDeleteResponse>();
+            return await kyDocker.post(`images/${action}`, { json: { imageIds, force } }).json<ImageDeleteResponse>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({ type: 'error', message: err.message });

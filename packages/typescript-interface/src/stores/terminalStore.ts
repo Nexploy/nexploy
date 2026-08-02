@@ -42,9 +42,5 @@ export interface TerminalState {
     resetInactivityTimer: () => void;
     disconnect: () => void;
     connect: (url?: string) => Promise<void>;
-    initializeSocket: (
-        socketUrl: string,
-        term: TerminalInstance,
-        fitAddon: FitAddonInstance,
-    ) => void;
+    initializeSocket: (socketUrl: string, term: TerminalInstance, fitAddon: FitAddonInstance) => void;
 }

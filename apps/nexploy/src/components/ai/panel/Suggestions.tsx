@@ -1,5 +1,5 @@
 import type { AISuggestionCategory } from '@/hooks/useAIContext';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 
 interface SuggestionsProps {
     categories: AISuggestionCategory[];

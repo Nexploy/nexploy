@@ -1,4 +1,4 @@
-import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
 import { Handle, Position, useConnection, useNodeConnections } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -13,23 +13,14 @@ interface OutputHandleProps {
     total: number;
 }
 
-export function OutputHandle({
-    handle,
-    nodeId,
-    handleColor,
-    position,
-    index,
-    total,
-}: OutputHandleProps) {
+export function OutputHandle({ handle, nodeId, handleColor, position, index, total }: OutputHandleProps) {
     const t = useTranslations('repository.pipeline');
     const displayLabel = handle.labelKey && t(handle.labelKey);
     const connection = useConnection();
     const connections = useNodeConnections({ handleType: 'source', handleId: handle.id });
 
     const isSourceConnecting =
-        connection.inProgress &&
-        connection.fromNode?.id === nodeId &&
-        connection.fromHandle?.id === handle.id;
+        connection.inProgress && connection.fromNode?.id === nodeId && connection.fromHandle?.id === handle.id;
     const isTargetHovered =
         connection.inProgress &&
         connection.toNode?.id === nodeId &&
@@ -48,8 +39,7 @@ export function OutputHandle({
     const offset = total > 1 ? `${((index + 1) / (total + 1)) * 100}%` : undefined;
     const isVertical = position === Position.Left || position === Position.Right;
 
-    const positionStyle =
-        offset !== undefined ? (isVertical ? { top: offset } : { left: offset }) : undefined;
+    const positionStyle = offset !== undefined ? (isVertical ? { top: offset } : { left: offset }) : undefined;
 
     return (
         <Tooltip>
@@ -72,11 +62,7 @@ export function OutputHandle({
                     )}
                 </Handle>
             </TooltipTrigger>
-            {displayLabel && (
-                <TooltipContent className="flex items-center gap-1.5">
-                    {displayLabel}
-                </TooltipContent>
-            )}
+            {displayLabel && <TooltipContent className="flex items-center gap-1.5">{displayLabel}</TooltipContent>}
         </Tooltip>
     );
 }

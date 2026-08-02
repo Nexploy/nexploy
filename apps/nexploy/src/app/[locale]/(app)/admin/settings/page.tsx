@@ -3,7 +3,6 @@ import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getCleanupSettings, getCurrentEnvironmentKey } from '@/services/cleanupSettings.service';
-import { DiskUsageCard } from '@/components/admin/settings/DiskUsageCard';
 import { CleanupScheduleCard } from '@/components/admin/settings/CleanupScheduleCard';
 import { InstanceDomainCard } from '@/components/admin/settings/InstanceDomainCard';
 import { UpgradeCard } from '@/components/admin/settings/UpgradeCard';
@@ -16,10 +15,7 @@ export const metadata: Metadata = {
 
 export default async function SettingsPage() {
     const environmentId = await getCurrentEnvironmentKey();
-    const [t, settings] = await Promise.all([
-        getTranslations('admin.settings'),
-        getCleanupSettings(environmentId),
-    ]);
+    const [t, settings] = await Promise.all([getTranslations('admin.settings'), getCleanupSettings(environmentId)]);
 
     const instanceDomainSettings = getInstanceDomainSettings();
 
@@ -31,9 +27,7 @@ export default async function SettingsPage() {
                         <Settings className="text-primary size-7" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="break-all text-3xl font-semibold tracking-tight">
-                            {t('title')}
-                        </h1>
+                        <h1 className="break-all text-3xl font-semibold tracking-tight">{t('title')}</h1>
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
@@ -41,11 +35,8 @@ export default async function SettingsPage() {
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
                     <div className="flex flex-col gap-5 pb-5">
                         <UpgradeCard />
-                        <DiskUsageCard />
                         <CleanupScheduleCard settings={settings} />
-                        {instanceDomainSettings && (
-                            <InstanceDomainCard settings={instanceDomainSettings} />
-                        )}
+                        {instanceDomainSettings && <InstanceDomainCard settings={instanceDomainSettings} />}
                     </div>
                 </ScrollAreaWithShadow>
             </div>

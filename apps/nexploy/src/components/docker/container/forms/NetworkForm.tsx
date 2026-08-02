@@ -1,13 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
@@ -54,9 +47,7 @@ export function NetworkForm() {
     };
 
     const connectedNetworks = container ? Object.keys(container.network.networks) : [];
-    const addedNetworks = networkChanges
-        .filter((change) => change.typeAction === 'add')
-        .map((change) => change.name);
+    const addedNetworks = networkChanges.filter((change) => change.typeAction === 'add').map((change) => change.name);
     const deletedNetworks = networkChanges
         .filter((change) => change.typeAction === 'delete')
         .map((change) => change.currentName);

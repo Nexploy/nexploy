@@ -29,10 +29,7 @@ export function NodeDetailInfo() {
         {
             label: t('role'),
             value: (
-                <Badge
-                    variant={node.role === 'manager' ? 'default' : 'secondary'}
-                    className="capitalize"
-                >
+                <Badge variant={node.role === 'manager' ? 'default' : 'secondary'} className="capitalize">
                     {node.role}
                     {node.managerStatus?.leader && ' · leader'}
                 </Badge>
@@ -54,11 +51,7 @@ export function NodeDetailInfo() {
                       label: t('node.managerReachability'),
                       value: (
                           <Badge
-                              variant={
-                                  node.managerStatus.reachability === 'reachable'
-                                      ? 'default'
-                                      : 'destructive'
-                              }
+                              variant={node.managerStatus.reachability === 'reachable' ? 'default' : 'destructive'}
                               className="capitalize"
                           >
                               {node.managerStatus.leader
@@ -84,29 +77,19 @@ export function NodeDetailInfo() {
         <Card>
             <CardHeaderWithIcon icon={Server} title={t('node.infoTitle')} />
             <CardContent className="px-0">
-                <ScrollAreaWithShadow
-                    bottomShadow
-                    className="h-60 overflow-hidden px-6"
-                >
+                <ScrollAreaWithShadow bottomShadow className="h-60 overflow-hidden px-6">
                     <div className="space-y-3">
                         {fields.map((field, index) => (
                             <div
                                 key={index}
                                 className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < fields.length - 1 ? 'border-b pb-2' : ''}`}
                             >
-                                <span className="text-muted-foreground text-sm whitespace-nowrap">
-                                    {field.label}
-                                </span>
+                                <span className="text-muted-foreground text-sm whitespace-nowrap">{field.label}</span>
                                 <div className="flex min-w-0 items-center justify-end gap-1">
                                     <div className="flex min-w-0 flex-1 justify-end overflow-hidden">
                                         {typeof field.value === 'string' ? (
-                                            <Badge
-                                                variant="secondary"
-                                                className="w-auto max-w-full shrink"
-                                            >
-                                                <span className="block truncate">
-                                                    {field.value}
-                                                </span>
+                                            <Badge variant="secondary" className="w-auto max-w-full shrink">
+                                                <span className="block truncate">{field.value}</span>
                                             </Badge>
                                         ) : (
                                             field.value

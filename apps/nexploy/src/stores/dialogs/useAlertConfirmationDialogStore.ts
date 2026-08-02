@@ -21,8 +21,7 @@ export interface AlertConfirmationDialogActions {
     closeAlertDialog: () => void;
 }
 
-export type AlertConfirmationDialogStore = AlertConfirmationDialogState &
-    AlertConfirmationDialogActions;
+export type AlertConfirmationDialogStore = AlertConfirmationDialogState & AlertConfirmationDialogActions;
 
 const defaultAlertState: AlertConfirmationDialogState = {
     isOpen: false,

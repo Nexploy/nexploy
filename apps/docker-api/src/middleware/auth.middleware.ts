@@ -2,6 +2,7 @@ import { Context, Next } from 'hono';
 import { HTTPError } from 'ky';
 import { logger } from '@/utils/logger';
 import { kyNexploy } from '@/lib/kyNexploy';
+import { type Actor, actorFromHeaders, SYSTEM_ACTOR } from '@workspace/shared/actor';
 
 const VERIFY_CACHE_TTL_MS = 60_000;
 const VERIFY_INVALID_CACHE_TTL_MS = 3_000;
@@ -31,10 +32,7 @@ async function verifyApiKey(token: string): Promise<VerifyOutcome> {
         ttl = outcome === 'valid' ? VERIFY_CACHE_TTL_MS : VERIFY_INVALID_CACHE_TTL_MS;
     } catch (error) {
         if (error instanceof HTTPError) {
-            logger.warn(
-                { status: error.response.status },
-                'Nexploy rejected the API key verification request',
-            );
+            logger.warn({ status: error.response.status }, 'Nexploy rejected the API key verification request');
             outcome = 'invalid';
             ttl = VERIFY_INVALID_CACHE_TTL_MS;
         } else {
@@ -64,10 +62,7 @@ export async function authMiddleware(c: Context, next: Next) {
 
     if (scheme !== 'Bearer' || !token) {
         logger.warn('Invalid Authorization header format');
-        return c.json(
-            { error: 'Invalid Authorization header format. Expected: Bearer <token>.' },
-            401,
-        );
+        return c.json({ error: 'Invalid Authorization header format. Expected: Bearer <token>.' }, 401);
     }
 
     const outcome = await verifyApiKey(token);
@@ -81,5 +76,14 @@ export async function authMiddleware(c: Context, next: Next) {
         return c.json({ error: 'Invalid API key.' }, 401);
     }
 
+    c.set(
+        'actor',
+        actorFromHeaders((name) => c.req.header(name)),
+    );
+
     await next();
+}
+
+export function getActor(c: Context): Actor {
+    return (c.get('actor') as Actor | undefined) ?? SYSTEM_ACTOR;
 }

@@ -54,9 +54,7 @@ export function useEnvironmentNetworks(environmentId?: string): {
                 (e) => {
                     const data: NetworkEvent = JSON.parse(e.data);
                     if (!data.network) return;
-                    setNetworks((prev) =>
-                        prev.map((n) => (n.id === data.network!.id ? data.network! : n)),
-                    );
+                    setNetworks((prev) => prev.map((n) => (n.id === data.network!.id ? data.network! : n)));
                 },
                 params,
             ),

@@ -9,7 +9,5 @@ interface RepositoryEnvTabProps {
 export async function RepositoryEnvTab({ repositoryId, stageId }: RepositoryEnvTabProps) {
     const envVariables = await getAllEnvsBuild(stageId);
 
-    return (
-        <RepositoryEnv repositoryId={repositoryId} stageId={stageId} envVariables={envVariables} />
-    );
+    return <RepositoryEnv repositoryId={repositoryId} stageId={stageId} envVariables={envVariables} />;
 }

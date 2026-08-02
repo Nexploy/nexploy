@@ -27,7 +27,7 @@ export const createRegistryAction = authActionServer
             }
 
             await createRegistry(parsedInput);
-            revalidatePath('/admin/registry');
+            revalidatePath('/registry');
         } catch (err: any) {
             await setToastServer({ type: 'error', message: err.message });
             throw err;

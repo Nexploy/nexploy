@@ -3,13 +3,7 @@
 import { TriangleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@workspace/ui/components/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@workspace/ui/components/dialog';
 import { ReassociateGitAccountForm } from '@/components/repositories/reassociateGitAccount/ReassociateGitAccountForm';
 import { BackButton } from '@/components/shared/BackButton';
 
@@ -19,11 +13,7 @@ interface ReassociateGitAccountDialogProps {
     open: boolean;
 }
 
-export function ReassociateGitAccountDialog({
-    repositoryId,
-    repositoryName,
-    open,
-}: ReassociateGitAccountDialogProps) {
+export function ReassociateGitAccountDialog({ repositoryId, repositoryName, open }: ReassociateGitAccountDialogProps) {
     const t = useTranslations('repository.reassociateGitAccount');
     const [isOpen, setIsOpen] = useState(open);
 

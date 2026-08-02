@@ -212,17 +212,13 @@ export class NetworksStateManager extends BaseStateManager {
             changes.internal = { from: oldState.internal, to: newState.internal };
         if (oldState.attachable !== newState.attachable)
             changes.attachable = { from: oldState.attachable, to: newState.attachable };
-        if (oldLabels !== newLabels)
-            changes.labels = { from: oldState.labels, to: newState.labels };
-        if (oldState.driver !== newState.driver)
-            changes.driver = { from: oldState.driver, to: newState.driver };
-        if (oldState.scope !== newState.scope)
-            changes.scope = { from: oldState.scope, to: newState.scope };
+        if (oldLabels !== newLabels) changes.labels = { from: oldState.labels, to: newState.labels };
+        if (oldState.driver !== newState.driver) changes.driver = { from: oldState.driver, to: newState.driver };
+        if (oldState.scope !== newState.scope) changes.scope = { from: oldState.scope, to: newState.scope };
         if (oldState.enableIPv6 !== newState.enableIPv6)
             changes.enableIPv6 = { from: oldState.enableIPv6, to: newState.enableIPv6 };
         if (JSON.stringify(oldState.ipam) !== JSON.stringify(newState.ipam)) changes.ipam = true;
-        if (JSON.stringify(oldState.options) !== JSON.stringify(newState.options))
-            changes.options = true;
+        if (JSON.stringify(oldState.options) !== JSON.stringify(newState.options)) changes.options = true;
 
         return changes;
     }
@@ -282,9 +278,7 @@ export class NetworksStateManager extends BaseStateManager {
 
     private async buildNetworkMap(): Promise<Map<string, Network>> {
         const networks = await this.docker.listNetworks();
-        const inspected = await Promise.all(
-            networks.map(({ Id }) => this.docker.getNetwork(Id).inspect()),
-        );
+        const inspected = await Promise.all(networks.map(({ Id }) => this.docker.getNetwork(Id).inspect()));
 
         const networkMap = new Map<string, Network>();
         for (const network of inspected) {

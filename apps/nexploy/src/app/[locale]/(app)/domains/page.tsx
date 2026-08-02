@@ -4,7 +4,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { TableDomains } from '@/components/domains/TableDomains.tsx';
 import { AddDomainButton } from '@/components/domains/AddDomainButton';
 import type { Metadata } from 'next';
-import { getDomains } from '@/services/traefik.service.ts';
+import { getVisibleDomains } from '@/services/visibleDomains.service';
 
 export const metadata: Metadata = {
     title: 'Domains',
@@ -12,10 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function DomainsPage() {
-    const [t, domains] = await Promise.all([
-        getTranslations('repository.settings.domains'),
-        getDomains(),
-    ]);
+    const [t, domains] = await Promise.all([getTranslations('repository.settings.domains'), getVisibleDomains()]);
 
     return (
         <div className="flex h-full flex-1 flex-col">
@@ -26,9 +23,7 @@ export default async function DomainsPage() {
                             <Globe className="text-primary size-7" />
                         </div>
                         <div className="mt-3.5 flex flex-col">
-                            <h1 className="text-3xl font-semibold tracking-tight break-all">
-                                {t('pageTitle')}
-                            </h1>
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">{t('pageTitle')}</h1>
                             <p className="text-muted-foreground text-sm">{t('pageDescription')}</p>
                         </div>
                     </div>

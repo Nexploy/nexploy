@@ -15,19 +15,13 @@ export function DeleteRepositoryButton({ repositoryId, repositoryName }: DeleteR
     const t = useTranslations('repository.settings.dangerZone');
     const { openDialog } = useConfirmationDialogStore();
 
-
     const handleOpenDelete = () => {
         openDialog({
             title: t('deleteTitle'),
             description: t('deleteDescription'),
             props: { showCloseButton: false },
             closeOnBackground: false,
-            content: (
-                <DeleteRepositoryForm
-                    repositoryId={repositoryId}
-                    repositoryName={repositoryName}
-                />
-            ),
+            content: <DeleteRepositoryForm repositoryId={repositoryId} repositoryName={repositoryName} />,
         });
     };
 

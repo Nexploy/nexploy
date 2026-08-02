@@ -39,15 +39,9 @@ export function ContainerSeachGroup() {
                     <Container className="text-muted-foreground h-4 w-4 shrink-0" />
                     <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span className="truncate text-sm font-medium">{container.name}</span>
-                        <span className="text-muted-foreground truncate text-xs">
-                            {container.image}
-                        </span>
+                        <span className="text-muted-foreground truncate text-xs">{container.image}</span>
                     </div>
-                    <Status
-                        className="border-0"
-                        status={containerDisplayState[container.state]}
-                        variant="outline"
-                    >
+                    <Status className="border-0" status={containerDisplayState[container.state]} variant="outline">
                         <StatusIndicator />
                         <div className="text-muted-foreground text-xs">{container.state}</div>
                     </Status>

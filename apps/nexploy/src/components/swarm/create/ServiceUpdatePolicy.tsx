@@ -30,11 +30,7 @@ export function ServiceUpdatePolicy() {
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={RefreshCw}
-                title={t('updatePolicy')}
-                description={t('updatePolicyDescription')}
-            />
+            <CardHeaderWithIcon icon={RefreshCw} title={t('updatePolicy')} description={t('updatePolicyDescription')} />
             <CardContent className="space-y-6">
                 <div className="grid gap-4 md:grid-cols-2">
                     <FormField
@@ -49,11 +45,7 @@ export function ServiceUpdatePolicy() {
                                         min={0}
                                         {...field}
                                         onChange={(e) =>
-                                            field.onChange(
-                                                e.target.value === ''
-                                                    ? 1
-                                                    : parseInt(e.target.value, 10),
-                                            )
+                                            field.onChange(e.target.value === '' ? 1 : parseInt(e.target.value, 10))
                                         }
                                     />
                                 </FormControl>
@@ -70,10 +62,7 @@ export function ServiceUpdatePolicy() {
                             <FormItem>
                                 <FormLabel>{t('updateDelay')}</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        className="font-mono"
-                                        {...field}
-                                    />
+                                    <Input className="font-mono" {...field} />
                                 </FormControl>
                                 <FormDescription>{t('updateDelayDescription')}</FormDescription>
                                 <FormMessage />
@@ -96,15 +85,9 @@ export function ServiceUpdatePolicy() {
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>{t('failureAction')}</SelectLabel>
-                                            <SelectItem value="pause">
-                                                {t('failureActionPause')}
-                                            </SelectItem>
-                                            <SelectItem value="continue">
-                                                {t('failureActionContinue')}
-                                            </SelectItem>
-                                            <SelectItem value="rollback">
-                                                {t('failureActionRollback')}
-                                            </SelectItem>
+                                            <SelectItem value="pause">{t('failureActionPause')}</SelectItem>
+                                            <SelectItem value="continue">{t('failureActionContinue')}</SelectItem>
+                                            <SelectItem value="rollback">{t('failureActionRollback')}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -128,12 +111,8 @@ export function ServiceUpdatePolicy() {
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>{t('updateOrder')}</SelectLabel>
-                                            <SelectItem value="stop-first">
-                                                {t('updateOrderStopFirst')}
-                                            </SelectItem>
-                                            <SelectItem value="start-first">
-                                                {t('updateOrderStartFirst')}
-                                            </SelectItem>
+                                            <SelectItem value="stop-first">{t('updateOrderStopFirst')}</SelectItem>
+                                            <SelectItem value="start-first">{t('updateOrderStartFirst')}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -146,9 +125,7 @@ export function ServiceUpdatePolicy() {
                 <div className={'flex flex-col gap-3'}>
                     <div className={'flex flex-col'}>
                         <p className="text-sm font-medium">{t('restartPolicy')}</p>
-                        <p className="text-muted-foreground text-xs">
-                            {t('restartPolicyDescription')}
-                        </p>
+                        <p className="text-muted-foreground text-xs">{t('restartPolicyDescription')}</p>
                     </div>
                     <div className="grid gap-4 md:grid-cols-2">
                         <FormField
@@ -166,15 +143,11 @@ export function ServiceUpdatePolicy() {
                                         <SelectContent>
                                             <SelectGroup>
                                                 <SelectLabel>{t('restartCondition')}</SelectLabel>
-                                                <SelectItem value="none">
-                                                    {t('restartConditionNone')}
-                                                </SelectItem>
+                                                <SelectItem value="none">{t('restartConditionNone')}</SelectItem>
                                                 <SelectItem value="on-failure">
                                                     {t('restartConditionOnFailure')}
                                                 </SelectItem>
-                                                <SelectItem value="any">
-                                                    {t('restartConditionAny')}
-                                                </SelectItem>
+                                                <SelectItem value="any">{t('restartConditionAny')}</SelectItem>
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
@@ -195,11 +168,7 @@ export function ServiceUpdatePolicy() {
                                             min={0}
                                             {...field}
                                             onChange={(e) =>
-                                                field.onChange(
-                                                    e.target.value === ''
-                                                        ? 0
-                                                        : parseInt(e.target.value, 10),
-                                                )
+                                                field.onChange(e.target.value === '' ? 0 : parseInt(e.target.value, 10))
                                             }
                                         />
                                     </FormControl>

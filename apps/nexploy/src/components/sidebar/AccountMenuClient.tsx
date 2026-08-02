@@ -1,6 +1,6 @@
 'use client';
 
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar, } from '@workspace/ui/components/sidebar';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@workspace/ui/components/sidebar';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -39,11 +39,7 @@ export function AccountMenuClient({ session }: AccountMenuClientProps) {
                             }
                             size="lg"
                         >
-                            <DicebearAvatar
-                                seed={session?.user.email}
-                                size={32}
-                                alt="Account Image"
-                            />
+                            <DicebearAvatar seed={session?.user.email} size={32} alt="Account Image" />
                             {isSidebarExpanded && (
                                 <>
                                     <span className={'flex-1 truncate'}>{session?.user.name}</span>
@@ -64,10 +60,7 @@ export function AccountMenuClient({ session }: AccountMenuClientProps) {
                         sideOffset={4}
                     >
                         <DropdownMenuItem asChild>
-                            <Link
-                                className={'flex cursor-pointer items-center gap-2'}
-                                href={'/account'}
-                            >
+                            <Link className={'flex cursor-pointer items-center gap-2'} href={'/account'}>
                                 <User />
                                 <span className={'flex-1'}>{tAccount('title')}</span>
                                 <NotificationBadge node={'account'} />

@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchStore } from '@/stores/useSearchStore';
-import { Button } from '@workspace/ui/components/button.tsx';
+import { Button } from '@workspace/ui/components/button';
 import { Kbd, KbdGroup } from '@workspace/ui/components/kbd.tsx';
 import { useSearchActions } from '@/hooks/search/useSearchActions.ts';
 
@@ -47,9 +47,7 @@ export function SearchActionBar() {
                         className="flex h-7 cursor-pointer items-center gap-1.5"
                         onClick={() => secondaryAction.handler()}
                     >
-                        <span className="text-xs font-medium transition-colors">
-                            {secondaryAction.label}
-                        </span>
+                        <span className="text-xs font-medium transition-colors">{secondaryAction.label}</span>
                         <KbdGroup>
                             {secondaryAction.hotkeys.map((k) => (
                                 <Kbd key={k}>{k}</Kbd>

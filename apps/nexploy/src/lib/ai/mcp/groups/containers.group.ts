@@ -18,9 +18,7 @@ async function resolveContainer(
     idOrName: string,
     environmentId?: string,
 ): Promise<{ match: Container; name: string } | null> {
-    const containers = await kyDocker
-        .get('containers', { environmentId } as KyDockerOptions)
-        .json<Container[]>();
+    const containers = await kyDocker.get('containers', { environmentId } as KyDockerOptions).json<Container[]>();
     const match = containers.find(
         (c) => c.id?.startsWith(idOrName) || c.name === idOrName || c.name === `/${idOrName}`,
     );
@@ -68,8 +66,7 @@ export const containersGroup: ToolGroup = {
         server.registerTool(
             'inspectContainer',
             {
-                description:
-                    'Get full inspection details of a container (config, mounts, network, state).',
+                description: 'Get full inspection details of a container (config, mounts, network, state).',
                 inputSchema: z.object({
                     idOrName: z.string().describe('Container name or partial ID'),
                 }).shape,
@@ -125,10 +122,7 @@ export const containersGroup: ToolGroup = {
                         .get('containers', { environmentId: ctx.environmentId } as KyDockerOptions)
                         .json<Container[]>();
                     const match = containers.find(
-                        (c) =>
-                            c.id?.startsWith(idOrName) ||
-                            c.name === idOrName ||
-                            c.name === `/${idOrName}`,
+                        (c) => c.id?.startsWith(idOrName) || c.name === idOrName || c.name === `/${idOrName}`,
                     );
                     if (!match) {
                         const names = containers.map((c) => c.name.replace(/^\//, '')).join(', ');
@@ -136,13 +130,7 @@ export const containersGroup: ToolGroup = {
                     }
                     const name = match.name.replace(/^\//, '');
                     if (action === 'remove') {
-                        const gd = await guardDestructiveContainer(
-                            ctx,
-                            match.id,
-                            'container',
-                            'remove',
-                            name,
-                        );
+                        const gd = await guardDestructiveContainer(ctx, match.id, 'container', 'remove', name);
                         if (gd) return gd;
                         await kyDocker.delete('container/remove', {
                             json: { containerIds: [match.id] },
@@ -239,8 +227,7 @@ export const containersGroup: ToolGroup = {
         server.registerTool(
             'recreateContainer',
             {
-                description:
-                    'Recreate a container with an updated configuration (ports, env vars, volumes, networks).',
+                description: 'Recreate a container with an updated configuration (ports, env vars, volumes, networks).',
                 inputSchema: ContainerRecreateFormSchema.shape,
             },
             async (params: import('zod').infer<typeof ContainerRecreateFormSchema>) => {
@@ -283,35 +270,36 @@ export const containersGroup: ToolGroup = {
             },
         );
 
-        if (ctx.allowExecInContainer !== false) server.registerTool(
-            'execInContainer',
-            {
-                description: 'Execute a shell command inside a running container.',
-                inputSchema: mcpExecInContainerSchema.shape,
-            },
-            async ({ idOrName, command }) => {
-                try {
-                    const resolved = await resolveContainer(idOrName, ctx.environmentId);
-                    if (!resolved) return fail(`No container matching "${idOrName}"`);
-                    const g = await guardDestructiveContainer(
-                        ctx,
-                        resolved.match.id,
-                        'container',
-                        'manage',
-                        idOrName,
-                    );
-                    if (g) return g;
-                    const result = await kyDocker
-                        .post(`container/${idOrName}/exec`, {
-                            json: { command },
-                            environmentId: ctx.environmentId,
-                        } as KyDockerOptions)
-                        .json<{ exitCode: number; output: string }>();
-                    return ok(`Exit code: ${result.exitCode}\n\n${result.output}`);
-                } catch (e: any) {
-                    return fail(e.message);
-                }
-            },
-        );
+        if (ctx.allowExecInContainer !== false)
+            server.registerTool(
+                'execInContainer',
+                {
+                    description: 'Execute a shell command inside a running container.',
+                    inputSchema: mcpExecInContainerSchema.shape,
+                },
+                async ({ idOrName, command }) => {
+                    try {
+                        const resolved = await resolveContainer(idOrName, ctx.environmentId);
+                        if (!resolved) return fail(`No container matching "${idOrName}"`);
+                        const g = await guardDestructiveContainer(
+                            ctx,
+                            resolved.match.id,
+                            'container',
+                            'manage',
+                            idOrName,
+                        );
+                        if (g) return g;
+                        const result = await kyDocker
+                            .post(`container/${idOrName}/exec`, {
+                                json: { command },
+                                environmentId: ctx.environmentId,
+                            } as KyDockerOptions)
+                            .json<{ exitCode: number; output: string }>();
+                        return ok(`Exit code: ${result.exitCode}\n\n${result.output}`);
+                    } catch (e: any) {
+                        return fail(e.message);
+                    }
+                },
+            );
     },
 };

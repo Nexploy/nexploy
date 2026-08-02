@@ -9,7 +9,7 @@ import {
     volumeNameParamSchema,
     volumePruneSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
-import { cacheRestoreSchema, cacheSaveSchema, } from '@workspace/schemas-zod/docker/volume/volumeCache.schema';
+import { cacheRestoreSchema, cacheSaveSchema } from '@workspace/schemas-zod/docker/volume/volumeCache.schema';
 import { restoreCache, saveCache } from '@/services/cacheService';
 import { deleteVolumes } from '@/services/volumeService';
 
@@ -52,11 +52,7 @@ app.post(
 
         const toRecord = (entries: { key: string; value: string }[]) =>
             entries.length > 0
-                ? Object.fromEntries(
-                      entries
-                          .filter((e) => e.key.trim())
-                          .map((e) => [e.key.trim(), e.value.trim()]),
-                  )
+                ? Object.fromEntries(entries.filter((e) => e.key.trim()).map((e) => [e.key.trim(), e.value.trim()]))
                 : undefined;
 
         await docker.createVolume({

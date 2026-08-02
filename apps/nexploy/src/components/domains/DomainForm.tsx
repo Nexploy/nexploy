@@ -21,30 +21,26 @@ export function DomainForm({ domain }: DomainFormProps) {
     const { onSuccess } = useConfirmationDialogStore();
     const isEdit = !!domain?.id;
 
-    const { form, handleSubmitWithAction } = useHookFormAction(
-        editDomain,
-        zodResolver(domainFormSchema),
-        {
-            formProps: {
-                defaultValues: {
-                    domain: (domain ?? {
-                        host: '',
-                        path: '/',
-                        internalPath: '/',
-                        stripPath: false,
-                        containerPort: 3000,
-                        https: false,
-                    }) as Domain,
-                },
-            },
-            actionProps: {
-                onSuccess: ({ data }) => {
-                    toast.success(isEdit ? t('updated') : t('created'));
-                    if (onSuccess) onSuccess(data);
-                },
+    const { form, handleSubmitWithAction } = useHookFormAction(editDomain, zodResolver(domainFormSchema), {
+        formProps: {
+            defaultValues: {
+                domain: (domain ?? {
+                    host: '',
+                    path: '/',
+                    internalPath: '/',
+                    stripPath: false,
+                    containerPort: 3000,
+                    https: false,
+                }) as Domain,
             },
         },
-    );
+        actionProps: {
+            onSuccess: ({ data }) => {
+                toast.success(isEdit ? t('updated') : t('created'));
+                if (onSuccess) onSuccess(data);
+            },
+        },
+    });
 
     const isSubmitting = form.formState.isSubmitting;
 

@@ -54,9 +54,7 @@ export function useEnvironmentVolumes(environmentId?: string): {
                 (e) => {
                     const data: VolumeEvent = JSON.parse(e.data);
                     if (!data.volume) return;
-                    setVolumes((prev) =>
-                        prev.map((v) => (v.name === data.volume!.name ? data.volume! : v)),
-                    );
+                    setVolumes((prev) => prev.map((v) => (v.name === data.volume!.name ? data.volume! : v)));
                 },
                 params,
             ),

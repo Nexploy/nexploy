@@ -1,19 +1,19 @@
 {
-    "name": "@workspace/shared",
-    "version": "1.0.0",
-    "private": true,
-    "type": "module",
-    "exports": {
-        "./*": "./src/*.ts"
-    },
-    "dependencies": {
-        "@workspace/typescript-interface": "workspace:*"
-    },
-    "devDependencies": {
-        "@workspace/typescript-config": "workspace:*",
-        "typescript": "7.0.2"
-    },
-    "scripts": {
-        "typecheck": "tsc --noEmit"
-    }
+  "name": "@workspace/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "dependencies": {
+    "@workspace/typescript-interface": "workspace:*"
+  },
+  "devDependencies": {
+    "@workspace/typescript-config": "workspace:*",
+    "typescript": "7.0.2"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
 }

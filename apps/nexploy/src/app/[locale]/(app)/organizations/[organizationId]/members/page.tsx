@@ -8,22 +8,14 @@ import { InviteMemberButton } from '@/components/organization/members/InviteMemb
 import { getTranslations } from 'next-intl/server';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 
-export default async function OrganizationMembersPage({
-    params,
-}: {
-    params: Promise<{ organizationId: string }>;
-}) {
+export default async function OrganizationMembersPage({ params }: { params: Promise<{ organizationId: string }> }) {
     const { organizationId } = await params;
     const t = await getTranslations('organization');
     const session = await getUserSession();
 
     if (!session) notFound();
 
-    const detail = await getOrganizationDetail(
-        organizationId,
-        session.user.id,
-        session.user.role === 'admin',
-    );
+    const detail = await getOrganizationDetail(organizationId, session.user.id, session.user.role === 'admin');
 
     if (!detail || detail.isPersonal) notFound();
 
@@ -42,9 +34,7 @@ export default async function OrganizationMembersPage({
                                 <h1 className="break-all text-3xl font-semibold tracking-tight">
                                     {detail.organization.name}
                                 </h1>
-                                <p className="text-muted-foreground text-sm">
-                                    {t('members.title')}
-                                </p>
+                                <p className="text-muted-foreground text-sm">{t('members.title')}</p>
                             </div>
                         </div>
                         {canManageMembers && <InviteMemberButton organizationId={organizationId} />}

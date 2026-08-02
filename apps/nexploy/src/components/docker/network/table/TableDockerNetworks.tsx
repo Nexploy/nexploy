@@ -12,14 +12,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@workspace/ui/components/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import React, { useCallback, useRef, useState } from 'react';
 import { getColumnsTableNetworks } from '@/components/docker/network/table/ColumnsDockerNetworks';
 import { useNetworksStore } from '../../../../stores/docker/useNetworksStore';
@@ -119,9 +112,7 @@ export function TableDockerNetworks() {
                         }
                     >
                         <div className={'space-y-0.5'}>
-                            <p className={'text-destructive text-sm font-medium'}>
-                                {tDocker('errors.forceDelete')}
-                            </p>
+                            <p className={'text-destructive text-sm font-medium'}>{tDocker('errors.forceDelete')}</p>
                             <p className={'text-xs'}>{tDocker('errors.forceDeleteDescription')}</p>
                         </div>
                         <Switch
@@ -183,10 +174,7 @@ export function TableDockerNetworks() {
                                     <TableHead key={header.id}>
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(
-                                                  header.column.columnDef.header,
-                                                  header.getContext(),
-                                              )}
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -206,19 +194,13 @@ export function TableDockerNetworks() {
 
                         {!isLoading && isEmpty ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
                                     {tDocker('noNetworks')}
                                 </TableCell>
                             </TableRow>
                         ) : !isLoading && table.getRowModel().rows.length === 0 ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="py-6 text-center"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
                                     {tCommon('noMatchSearch')}
                                 </TableCell>
                             </TableRow>
@@ -231,10 +213,7 @@ export function TableDockerNetworks() {
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>

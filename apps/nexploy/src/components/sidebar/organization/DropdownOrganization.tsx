@@ -12,22 +12,8 @@ import {
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
-import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
-} from '@workspace/ui/components/sidebar';
-import {
-    Check,
-    ChevronsUpDown,
-    LogOut,
-    MoreHorizontal,
-    Pencil,
-    Plus,
-    Trash2,
-    Users,
-} from 'lucide-react';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@workspace/ui/components/sidebar';
+import { Check, ChevronsUpDown, LogOut, MoreHorizontal, Pencil, Plus, Trash2, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import type { UserOrganization } from '@workspace/typescript-interface/organization/organization';
@@ -36,10 +22,7 @@ import { deleteOrganizationAction } from '@/actions/organization/deleteOrganizat
 import { leaveOrganizationAction } from '@/actions/organization/leaveOrganization.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import {
-    initializeOrganizationStore,
-    useOrganizationStore,
-} from '@/stores/organization/useOrganizationStore';
+import { initializeOrganizationStore, useOrganizationStore } from '@/stores/organization/useOrganizationStore';
 import { CreateOrganizationForm } from '@/components/organization/CreateOrganizationForm';
 import { RenameOrganizationForm } from '@/components/organization/RenameOrganizationForm';
 import { DicebearAvatar } from '@/components/shared/DicebearAvatar.tsx';
@@ -49,10 +32,7 @@ interface DropdownOrganizationProps {
     activeOrganizationId: string | null;
 }
 
-export function DropdownOrganization({
-    organizations,
-    activeOrganizationId,
-}: DropdownOrganizationProps) {
+export function DropdownOrganization({ organizations, activeOrganizationId }: DropdownOrganizationProps) {
     const router = useRouter();
     const pathname = usePathname();
     const { isMobile, state } = useSidebar();
@@ -115,9 +95,7 @@ export function DropdownOrganization({
         openDialog({
             title: t('settings.rename'),
             description: t('settings.renameDescription', { name: organization.name }),
-            content: (
-                <RenameOrganizationForm organizationId={organization.id} name={organization.name} />
-            ),
+            content: <RenameOrganizationForm organizationId={organization.id} name={organization.name} />,
         });
     };
 
@@ -166,33 +144,20 @@ export function DropdownOrganization({
                             disabled={isPending}
                             className="border-sidebar-border bg-sidebar-accent/40 h-9 cursor-pointer gap-2 rounded-md border text-sm font-medium"
                         >
-                            <DicebearAvatar
-                                seed={current?.name}
-                                size={24}
-                                style={'glass'}
-                                alt="Organization Icon"
-                            />
+                            <DicebearAvatar seed={current?.name} size={24} style={'glass'} alt="Organization Icon" />
                             <span className="flex-1 truncate">{current?.name}</span>
                             <ChevronsUpDown className="text-muted-foreground size-3.5" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        align="start"
-                        side={isSidebarExpanded ? 'bottom' : 'right'}
-                        sideOffset={4}
-                    >
-                        <DropdownMenuLabel className="text-muted-foreground text-xs">
-                            {t('title')}
-                        </DropdownMenuLabel>
+                    <DropdownMenuContent align="start" side={isSidebarExpanded ? 'bottom' : 'right'} sideOffset={4}>
+                        <DropdownMenuLabel className="text-muted-foreground text-xs">{t('title')}</DropdownMenuLabel>
                         {visibleOrganizations.map((organization) => {
                             const canViewMembers = !organization.isPersonal;
                             const canRename =
                                 !organization.isPersonal &&
                                 (organization.role === 'owner' || organization.role === 'admin');
-                            const canDelete =
-                                organization.role === 'owner' && !organization.isPersonal;
-                            const hasMenuActions =
-                                canViewMembers || canRename || canDelete || organization.canLeave;
+                            const canDelete = organization.role === 'owner' && !organization.isPersonal;
+                            const hasMenuActions = canViewMembers || canRename || canDelete || organization.canLeave;
 
                             return (
                                 <div key={organization.id} className="flex items-center">
@@ -207,9 +172,7 @@ export function DropdownOrganization({
                                             alt="Organization Icon"
                                         />
                                         <span className="flex-1">{organization.name}</span>
-                                        {current?.id === organization.id && (
-                                            <Check className="size-4" />
-                                        )}
+                                        {current?.id === organization.id && <Check className="size-4" />}
                                     </DropdownMenuItem>
                                     {hasMenuActions && (
                                         <DropdownMenu>
@@ -226,26 +189,20 @@ export function DropdownOrganization({
                                             <DropdownMenuContent side={'right'} align="start">
                                                 {canViewMembers && (
                                                     <DropdownMenuItem asChild>
-                                                        <Link
-                                                            href={`/organizations/${organization.id}/members`}
-                                                        >
+                                                        <Link href={`/organizations/${organization.id}/members`}>
                                                             <Users />
                                                             {t('members.title')}
                                                         </Link>
                                                     </DropdownMenuItem>
                                                 )}
                                                 {canRename && (
-                                                    <DropdownMenuItem
-                                                        onClick={() => handleRename(organization)}
-                                                    >
+                                                    <DropdownMenuItem onClick={() => handleRename(organization)}>
                                                         <Pencil />
                                                         {t('settings.rename')}
                                                     </DropdownMenuItem>
                                                 )}
                                                 {(canViewMembers || canRename) &&
-                                                    (organization.canLeave || canDelete) && (
-                                                        <DropdownMenuSeparator />
-                                                    )}
+                                                    (organization.canLeave || canDelete) && <DropdownMenuSeparator />}
                                                 {organization.canLeave && (
                                                     <DropdownMenuItem
                                                         variant="destructive"

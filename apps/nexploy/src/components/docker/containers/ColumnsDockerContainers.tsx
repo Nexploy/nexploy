@@ -27,8 +27,7 @@ export function getColumnsDockerContainers(
             header: ({ table }) => {
                 const allRows = table.getRowModel().flatRows;
                 const selectableRows = allRows.filter((row) => !row.original.isGroup);
-                const allSelected =
-                    selectableRows.length > 0 && selectableRows.every((row) => row.getIsSelected());
+                const allSelected = selectableRows.length > 0 && selectableRows.every((row) => row.getIsSelected());
                 const someSelected = selectableRows.some((row) => row.getIsSelected());
                 return (
                     <Checkbox
@@ -68,10 +67,7 @@ export function getColumnsDockerContainers(
         {
             accessorKey: 'name',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('name')}
                     <ArrowUpDown />
                 </Button>
@@ -99,9 +95,7 @@ export function getColumnsDockerContainers(
                             <div className="bg-primary/10 flex size-7 shrink-0 items-center justify-center rounded-md">
                                 <Layers className="text-primary size-4" />
                             </div>
-                            <span className="max-w-40 flex-1 truncate">
-                                {row.original.stackName}
-                            </span>
+                            <span className="max-w-40 flex-1 truncate">{row.original.stackName}</span>
                             <Badge variant="secondary" className="shrink-0 text-xs">
                                 {row.original.runningCount}/{row.original.totalCount}
                             </Badge>
@@ -122,10 +116,7 @@ export function getColumnsDockerContainers(
         {
             accessorKey: 'state',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('containerStatus')}
                     <ArrowUpDown />
                 </Button>
@@ -161,10 +152,7 @@ export function getColumnsDockerContainers(
         {
             accessorKey: 'image',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('containerImage')}
                     <ArrowUpDown />
                 </Button>
@@ -178,19 +166,14 @@ export function getColumnsDockerContainers(
                 const imageId = row.original.imageId;
 
                 return imageId ? (
-                    <Link
-                        href={`/docker/images/${imageId}`}
-                        className="max-w-full min-w-0 overflow-hidden"
-                    >
+                    <Link href={`/docker/images/${imageId}`} className="max-w-full min-w-0 overflow-hidden">
                         <Badge variant="secondary" className={'hover:underline'}>
                             {image.length > 20 ? image.slice(0, 20) + '…' : image}
                         </Badge>
                     </Link>
                 ) : (
                     <span className="max-w-full min-w-0 overflow-hidden">
-                        <Badge variant="secondary">
-                            {image.length > 20 ? image.slice(0, 20) + '…' : image}
-                        </Badge>
+                        <Badge variant="secondary">{image.length > 20 ? image.slice(0, 20) + '…' : image}</Badge>
                     </span>
                 );
             },

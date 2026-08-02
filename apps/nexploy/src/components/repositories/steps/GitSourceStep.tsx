@@ -1,19 +1,7 @@
 'use client';
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
-import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -113,8 +101,7 @@ export function GitSourceStep() {
                                                 placeholder={
                                                     isLoadingRepos
                                                         ? tSource('loading')
-                                                        : (emptyMessage ??
-                                                          tSource('selectRepository'))
+                                                        : (emptyMessage ?? tSource('selectRepository'))
                                                 }
                                             />
                                         </SelectTrigger>

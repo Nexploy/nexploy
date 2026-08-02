@@ -15,8 +15,7 @@ export const metadata: Metadata = {
 export default async function AIPage() {
     const t = await getTranslations('ai.admin');
 
-    const appUrl =
-        process.env.BETTER_AUTH_URL ?? process.env.NEXPLOY_URL ?? 'http://localhost:3000';
+    const appUrl = process.env.BETTER_AUTH_URL ?? process.env.NEXPLOY_URL ?? 'http://localhost:3000';
     const mcpUrl = `${appUrl}/api/mcp`;
 
     const { apiKeys } = await auth.api.listApiKeys({ headers: await headers() });
@@ -39,9 +38,7 @@ export default async function AIPage() {
                             <Bot className="text-primary size-7" />
                         </div>
                         <div className="mt-3.5 flex flex-col">
-                            <h1 className="text-3xl font-semibold tracking-tight break-all">
-                                {t('title')}
-                            </h1>
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">{t('title')}</h1>
                             <p className="text-muted-foreground text-sm">{t('description')}</p>
                         </div>
                     </div>

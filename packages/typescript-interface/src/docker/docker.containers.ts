@@ -1,13 +1,6 @@
 import { ContainerState } from './docker.container';
 
-export type ContainersAction =
-    | 'start'
-    | 'stop'
-    | 'restart'
-    | 'pause'
-    | 'unpause'
-    | 'kill'
-    | 'remove';
+export type ContainersAction = 'start' | 'stop' | 'restart' | 'pause' | 'unpause' | 'kill' | 'remove';
 
 export type ContainersStateEvents =
     | 'start'
@@ -24,12 +17,7 @@ export type ContainersStateEvents =
 
 export type ContainersType = 'initial' | 'added' | 'updated' | 'removed' | 'heartbeat';
 
-export type Event =
-    | 'state-change'
-    | 'initial-state'
-    | 'container-added'
-    | 'container-removed'
-    | 'container-updated';
+export type Event = 'state-change' | 'initial-state' | 'container-added' | 'container-removed' | 'container-updated';
 
 export type ContainersPorts = {
     privatePort: number;

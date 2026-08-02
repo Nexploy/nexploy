@@ -30,9 +30,7 @@ export async function recreateContainerWithImage(
                 Object.entries(info.NetworkSettings.Networks ?? {}).map(([name, network]) => [
                     name,
                     {
-                        Aliases: Array.from(
-                            new Set([...(network.Aliases ?? []), ...(overrides.aliases ?? [])]),
-                        ),
+                        Aliases: Array.from(new Set([...(network.Aliases ?? []), ...(overrides.aliases ?? [])])),
                     },
                 ]),
             ),

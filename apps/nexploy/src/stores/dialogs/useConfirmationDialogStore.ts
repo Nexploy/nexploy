@@ -15,10 +15,7 @@ export interface ConfirmationDialogState {
 }
 
 export interface ConfirmationDialogActions {
-    openDialog: (
-        data: Omit<ConfirmationDialogState, 'isOpen'> | null,
-        keepPrevData?: boolean,
-    ) => void;
+    openDialog: (data: Omit<ConfirmationDialogState, 'isOpen'> | null, keepPrevData?: boolean) => void;
     closeDialog: () => void;
 }
 

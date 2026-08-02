@@ -36,9 +36,7 @@ export function ServiceDetailStats() {
                 </CardHeader>
                 <CardContent>
                     <div className="text-2xl font-bold">
-                        {service?.mode === 'replicated'
-                            ? `${runningCount}/${service?.replicas}`
-                            : '—'}
+                        {service?.mode === 'replicated' ? `${runningCount}/${service?.replicas}` : '—'}
                     </div>
                     <p className="text-muted-foreground text-xs">{t('detail.replicasRunning')}</p>
                 </CardContent>

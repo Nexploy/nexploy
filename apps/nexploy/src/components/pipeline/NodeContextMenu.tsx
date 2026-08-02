@@ -45,9 +45,7 @@ export function NodeContextMenu({ menu, onClose }: NodeContextMenuProps) {
         const selectedIds = getNodes()
             .filter((n) => n.selected)
             .map((n) => n.id);
-        return selectedIds.length > 1 && selectedIds.includes(menu.nodeId)
-            ? selectedIds
-            : [menu.nodeId];
+        return selectedIds.length > 1 && selectedIds.includes(menu.nodeId) ? selectedIds : [menu.nodeId];
     };
 
     const targetNode = getNodes().find((n) => n.id === menu.nodeId);
@@ -61,9 +59,7 @@ export function NodeContextMenu({ menu, onClose }: NodeContextMenuProps) {
     const handleToggleDisabled = () => {
         const ids = getTargetIds();
         setNodes((nds) =>
-            nds.map((n) =>
-                ids.includes(n.id) ? { ...n, data: { ...n.data, disabled: !disabled } } : n,
-            ),
+            nds.map((n) => (ids.includes(n.id) ? { ...n, data: { ...n.data, disabled: !disabled } } : n)),
         );
         triggerAutoSave();
         onClose();

@@ -100,6 +100,7 @@ const developer = ac.newRole({
     volume: ['read'],
     swarm: ['read'],
     gitProvider: ['read'],
+    registry: ['read', 'mirror'],
     dns: ['read'],
     cloudBackup: ['read'],
     traefik: ['read', 'manage'],

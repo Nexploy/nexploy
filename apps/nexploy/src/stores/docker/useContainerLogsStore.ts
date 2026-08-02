@@ -1,10 +1,7 @@
 import { create } from 'zustand';
 import dayjs from 'dayjs';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
-import {
-    ContainerLogsEvent,
-    LogEntry,
-} from '@workspace/typescript-interface/docker/docker.container.logs';
+import { ContainerLogsEvent, LogEntry } from '@workspace/typescript-interface/docker/docker.container.logs';
 import { ContainerLogsState } from '@workspace/typescript-interface/stores/docker/containerLogsStore';
 
 const defaultValue = {
@@ -241,9 +238,7 @@ export const useContainerLogsStore = create<ContainerLogsState>((set, get) => ({
     downloadLogs: (containerName = 'container') => {
         const { logs } = get();
 
-        const logsText = logs
-            .map((log) => `[${log.timestamp}] [${log.stream}] ${log.message}`)
-            .join('\n');
+        const logsText = logs.map((log) => `[${log.timestamp}] [${log.stream}] ${log.message}`).join('\n');
 
         const blob = new Blob([logsText], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);

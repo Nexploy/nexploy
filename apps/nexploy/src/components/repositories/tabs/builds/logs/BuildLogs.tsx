@@ -59,9 +59,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
                         {isLive && !commitMessage ? (
                             <Skeleton className="h-6 w-64" />
                         ) : (
-                            <span className="text-xl font-semibold">
-                                {commitMessage ?? `#${build.id}`}
-                            </span>
+                            <span className="text-xl font-semibold">{commitMessage ?? `#${build.id}`}</span>
                         )}
                         <div className="text-muted-foreground flex items-center gap-2 text-xs">
                             {isLive && !branch ? (
@@ -80,10 +78,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
                             ) : (
                                 commitHash && (
                                     <>
-                                        <Separator
-                                            orientation={'vertical'}
-                                            className={'h-3! w-1'}
-                                        />
+                                        <Separator orientation={'vertical'} className={'h-3! w-1'} />
                                         <code className="flex shrink-0 items-center gap-1">
                                             <GitCommit className="size-3" />
                                             {commitHash.slice(0, 7)}
@@ -101,9 +96,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
                                 <Button
                                     key={action.id}
                                     size={action.label ? 'default' : 'icon'}
-                                    variant={
-                                        action.variant === 'destructive' ? 'destructive' : 'default'
-                                    }
+                                    variant={action.variant === 'destructive' ? 'destructive' : 'default'}
                                     onClick={action.onClick}
                                 >
                                     <action.icon className="size-4" />

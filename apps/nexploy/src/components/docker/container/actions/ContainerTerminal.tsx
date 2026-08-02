@@ -23,7 +23,7 @@ import { statusMap } from '@/utils/statusMap';
 import { Terminal } from 'lucide-react';
 import { useTerminalStore } from '@/stores/useTerminalStore';
 import { useLocalStorage } from 'usehooks-ts';
-import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { useTranslations } from 'next-intl';
 
 interface ContainerTerminalProps {
@@ -116,10 +116,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                                     {t('title', { name: container?.name ?? 'Unknown Container' })}
                                 </span>
                             </DialogTitle>
-                            <Status
-                                className="shrink-0 rounded-none bg-transparent"
-                                status={currentStatus.status}
-                            >
+                            <Status className="shrink-0 rounded-none bg-transparent" status={currentStatus.status}>
                                 <StatusIndicator />
                                 <StatusLabel className={currentStatus.text}>
                                     {tStatus(currentStatus.labelKey)}
@@ -164,16 +161,8 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                             >
                                 {t('reconnect')}
                             </Button>
-                            <Separator
-                                orientation="vertical"
-                                className="h-5! border-white bg-white/50"
-                            />
-                            <Button
-                                onClick={handleClose}
-                                className="h-7 text-xs"
-                                variant="white"
-                                size="sm"
-                            >
+                            <Separator orientation="vertical" className="h-5! border-white bg-white/50" />
+                            <Button onClick={handleClose} className="h-7 text-xs" variant="white" size="sm">
                                 {t('close')}
                             </Button>
                         </div>

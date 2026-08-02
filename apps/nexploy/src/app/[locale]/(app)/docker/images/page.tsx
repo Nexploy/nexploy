@@ -9,7 +9,7 @@ import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { Can } from '@/components/permission/Can';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 
 export default function ImagesPage() {
     const t = useTranslations('docker.pages.images');
@@ -33,9 +33,7 @@ export default function ImagesPage() {
                     <Button asChild className={'mt-5'} disabled>
                         <Link
                             href={'/docker/images/pull'}
-                            className={cn(
-                                statusDocker !== 'connected' && 'pointer-events-none opacity-50',
-                            )}
+                            className={cn(statusDocker !== 'connected' && 'pointer-events-none opacity-50')}
                         >
                             <Plus />
                             {tDocker('pullImage')}

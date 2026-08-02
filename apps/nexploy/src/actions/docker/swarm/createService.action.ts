@@ -11,9 +11,7 @@ export const onCreateServiceAction = authActionServer
     .inputSchema(createServiceFormSchema)
     .action(async ({ parsedInput }) => {
         try {
-            return await kyDocker
-                .post('swarm/services', { json: parsedInput })
-                .json<{ id: string }>();
+            return await kyDocker.post('swarm/services', { json: parsedInput }).json<{ id: string }>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({ type: 'error', message: err.message as string });

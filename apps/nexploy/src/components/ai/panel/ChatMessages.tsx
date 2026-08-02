@@ -23,10 +23,7 @@ type DynamicToolPart = {
 };
 
 function isEmptyAssistantMessage(m: UIMessage): boolean {
-    return (
-        m.role === 'assistant' &&
-        m.parts.every((p) => p.type !== 'text' || !(p as TextUIPart).text?.trim())
-    );
+    return m.role === 'assistant' && m.parts.every((p) => p.type !== 'text' || !(p as TextUIPart).text?.trim());
 }
 
 function ChatMessage({ message, showLoader }: { message: UIMessage; showLoader: boolean }) {
@@ -63,32 +60,22 @@ export function ChatMessages({ messages, isLoading, error }: ChatMessagesProps) 
     const t = useTranslations('ai.chat');
 
     const lastMsg = messages[messages.length - 1];
-    const showShimmer =
-        isLoading && (lastMsg?.role === 'user' || (lastMsg && isEmptyAssistantMessage(lastMsg)));
-    const showStreamingLoader =
-        isLoading && lastMsg?.role === 'assistant' && !isEmptyAssistantMessage(lastMsg);
+    const showShimmer = isLoading && (lastMsg?.role === 'user' || (lastMsg && isEmptyAssistantMessage(lastMsg)));
+    const showStreamingLoader = isLoading && lastMsg?.role === 'assistant' && !isEmptyAssistantMessage(lastMsg);
 
     return (
         <>
             {messages.map((message) => {
-                if (isLoading && isEmptyAssistantMessage(message) && message === lastMsg)
-                    return null;
+                if (isLoading && isEmptyAssistantMessage(message) && message === lastMsg) return null;
 
                 return (
-                    <MessageScrollerItem
-                        key={message.id}
-                        messageId={message.id}
-                        scrollAnchor={message.role === 'user'}
-                    >
+                    <MessageScrollerItem key={message.id} messageId={message.id} scrollAnchor={message.role === 'user'}>
                         {isEmptyAssistantMessage(message) ? (
                             <Marker variant="separator" className="text-[10px]">
                                 <MarkerContent>{t('generationStopped')}</MarkerContent>
                             </Marker>
                         ) : (
-                            <ChatMessage
-                                message={message}
-                                showLoader={showStreamingLoader && message === lastMsg}
-                            />
+                            <ChatMessage message={message} showLoader={showStreamingLoader && message === lastMsg} />
                         )}
                     </MessageScrollerItem>
                 );
@@ -104,9 +91,7 @@ export function ChatMessages({ messages, isLoading, error }: ChatMessagesProps) 
                                         <MarkerIcon>
                                             <NexployLoader size={14} />
                                         </MarkerIcon>
-                                        <MarkerContent className={'shimmer'}>
-                                            {t('thinking')}
-                                        </MarkerContent>
+                                        <MarkerContent className={'shimmer'}>{t('thinking')}</MarkerContent>
                                     </Marker>
                                 </BubbleContent>
                             </Bubble>
@@ -120,9 +105,7 @@ export function ChatMessages({ messages, isLoading, error }: ChatMessagesProps) 
                     <Message className="text-xs">
                         <MessageContent>
                             <Bubble variant="destructive" className="max-w-full">
-                                <BubbleContent className="break-all text-xs">
-                                    {error.message}
-                                </BubbleContent>
+                                <BubbleContent className="break-all text-xs">{error.message}</BubbleContent>
                             </Bubble>
                         </MessageContent>
                     </Message>

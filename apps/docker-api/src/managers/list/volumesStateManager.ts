@@ -139,10 +139,7 @@ export class VolumesStateManager extends BaseStateManager {
     }
 
     private async refreshVolumeState(volumeName: string): Promise<void> {
-        const [info, dfResult] = await Promise.all([
-            this.docker.getVolume(volumeName).inspect(),
-            this.docker.df(),
-        ]);
+        const [info, dfResult] = await Promise.all([this.docker.getVolume(volumeName).inspect(), this.docker.df()]);
         const dfVolume = dfResult.Volumes?.find((v: VolumeInspectInfo) => v.Name === volumeName);
         const newState = this.parseVolumeInfo({ ...info, UsageData: dfVolume?.UsageData ?? info.UsageData });
 

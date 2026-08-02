@@ -41,15 +41,10 @@ export function CardHealthDetails() {
                                 {t('consecutiveFailures')}
                             </span>
                             <div className="flex justify-end">
-                                <Badge variant="secondary">
-                                    {container?.health?.failingStreak}
-                                </Badge>
+                                <Badge variant="secondary">{container?.health?.failingStreak}</Badge>
                             </div>
                         </div>
-                        <ScrollAreaWithShadow
-                            bottomShadow
-                            className="h-60 overflow-hidden px-6"
-                        >
+                        <ScrollAreaWithShadow bottomShadow className="h-60 overflow-hidden px-6">
                             <div className="space-y-2">
                                 {logs.map((log, idx) => (
                                     <div key={idx} className="bg-muted/30 space-y-2 rounded-lg p-3">
@@ -57,11 +52,7 @@ export function CardHealthDetails() {
                                             <span className="text-muted-foreground text-xs">
                                                 {dayjs(log.start).format('DD/MM/YYYY HH:mm:ss')}
                                             </span>
-                                            <Badge
-                                                variant={
-                                                    log.exitCode === 0 ? 'default' : 'destructive'
-                                                }
-                                            >
+                                            <Badge variant={log.exitCode === 0 ? 'default' : 'destructive'}>
                                                 {t('exit', { code: log.exitCode })}
                                             </Badge>
                                         </div>

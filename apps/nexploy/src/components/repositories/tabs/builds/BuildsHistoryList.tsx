@@ -14,12 +14,7 @@ interface BuildsHistoryListProps {
     initialHasMore: boolean;
 }
 
-export function BuildsHistoryList({
-    repositoryId,
-    stageId,
-    initialBuilds,
-    initialHasMore,
-}: BuildsHistoryListProps) {
+export function BuildsHistoryList({ repositoryId, stageId, initialBuilds, initialHasMore }: BuildsHistoryListProps) {
     const t = useTranslations('repository.builds');
     const sentinelRef = useRef<HTMLDivElement>(null);
 

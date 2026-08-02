@@ -5,6 +5,7 @@ export interface AIPanelStore {
     pendingPrompt: string | null;
     selectedModel: SelectedModel | null;
     modelSelectorOpen: boolean;
+    isFullscreen: boolean;
     aiEnabled: boolean;
     openPanel: (prompt?: string) => void;
     closePanel: () => void;
@@ -12,5 +13,7 @@ export interface AIPanelStore {
     setSelectedModel: (model: SelectedModel) => void;
     openModelSelector: () => void;
     closeModelSelector: () => void;
+    setFullscreen: (fullscreen: boolean) => void;
+    toggleFullscreen: () => void;
     setAiEnabled: (enabled: boolean) => void;
 }

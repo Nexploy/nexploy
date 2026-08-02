@@ -3,12 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { BookOpen, Globe } from 'lucide-react';
 import Github from '@thesvg/react/github';
-import {
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
-} from '@workspace/ui/components/sidebar';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@workspace/ui/components/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Separator } from '@workspace/ui/components/separator.tsx';
 
@@ -30,11 +25,7 @@ export function ExternalLinks() {
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <SidebarMenuButton asChild className="size-8 justify-center">
-                                <a
-                                    href="https://nexploy.app"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
+                                <a href="https://nexploy.app" target="_blank" rel="noopener noreferrer">
                                     <Globe />
                                 </a>
                             </SidebarMenuButton>
@@ -46,11 +37,7 @@ export function ExternalLinks() {
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <SidebarMenuButton asChild className="size-8 justify-center">
-                                <a
-                                    href="https://docs.nexploy.app"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
+                                <a href="https://docs.nexploy.app" target="_blank" rel="noopener noreferrer">
                                     <BookOpen />
                                 </a>
                             </SidebarMenuButton>
@@ -67,11 +54,7 @@ export function ExternalLinks() {
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <SidebarMenuButton asChild className="size-8 justify-center">
-                            <a
-                                href="https://github.com/Nexploy/nexploy"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
+                            <a href="https://github.com/Nexploy/nexploy" target="_blank" rel="noopener noreferrer">
                                 <Github className="[&_path]:fill-current" />
                             </a>
                         </SidebarMenuButton>

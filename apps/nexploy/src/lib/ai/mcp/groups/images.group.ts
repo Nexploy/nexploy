@@ -16,27 +16,23 @@ export const imagesGroup: ToolGroup = {
     register(server: McpServer, ctx: ToolContext) {
         if (ctx.allowImagesGroup === false) return;
 
-        server.registerTool(
-            'listImages',
-            { description: 'List all locally available Docker images.' },
-            async () => {
-                const g = guard(ctx, 'image', 'read');
-                if (g) return g;
-                try {
-                    const images = await kyDocker
-                        .get('images', { environmentId: ctx.environmentId } as KyDockerOptions)
-                        .json<any[]>();
-                    const data = images.map((img) => ({
-                        id: img.id,
-                        tags: img.repoTags ?? img.tags ?? [],
-                        size: img.size ? `${Math.round(img.size / 1024 / 1024)}MB` : 'unknown',
-                    }));
-                    return ok(JSON.stringify({ count: images.length, data }));
-                } catch (e: any) {
-                    return fail(e.message);
-                }
-            },
-        );
+        server.registerTool('listImages', { description: 'List all locally available Docker images.' }, async () => {
+            const g = guard(ctx, 'image', 'read');
+            if (g) return g;
+            try {
+                const images = await kyDocker
+                    .get('images', { environmentId: ctx.environmentId } as KyDockerOptions)
+                    .json<any[]>();
+                const data = images.map((img) => ({
+                    id: img.id,
+                    tags: img.repoTags ?? img.tags ?? [],
+                    size: img.size ? `${Math.round(img.size / 1024 / 1024)}MB` : 'unknown',
+                }));
+                return ok(JSON.stringify({ count: images.length, data }));
+            } catch (e: any) {
+                return fail(e.message);
+            }
+        });
 
         server.registerTool(
             'inspectImage',
@@ -126,15 +122,12 @@ export const imagesGroup: ToolGroup = {
                         .json<{ deleted: string[]; skipped: { id: string; name: string; reason: string }[] }>();
 
                     if (result.deleted.length === 0 && result.skipped.length > 0) {
-                        const reasons = result.skipped
-                            .map((s) => `${s.name}: ${s.reason}`)
-                            .join(', ');
+                        const reasons = result.skipped.map((s) => `${s.name}: ${s.reason}`).join(', ');
                         return fail(`No images deleted. Skipped: ${reasons}`);
                     }
 
                     const parts: string[] = [];
-                    if (result.deleted.length > 0)
-                        parts.push(`Deleted ${result.deleted.length} image(s)`);
+                    if (result.deleted.length > 0) parts.push(`Deleted ${result.deleted.length} image(s)`);
                     if (result.skipped.length > 0)
                         parts.push(
                             `skipped ${result.skipped.length} (${result.skipped.map((s) => s.reason).join(', ')})`,

@@ -1,9 +1,4 @@
-export type DockerStatus =
-    | 'connected'
-    | 'disconnected'
-    | 'connecting'
-    | 'error'
-    | 'not_accessible';
+export type DockerStatus = 'connected' | 'disconnected' | 'connecting' | 'error' | 'not_accessible';
 
 export type Event = 'status-changed' | 'reconnected' | 'disconnected';
 

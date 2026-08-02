@@ -28,9 +28,7 @@ export const onSwarmNodeAction = authActionServer
                     return await kyDocker.post(`swarm/nodes/${nodeId}/pause`).json();
                 }
                 case 'remove': {
-                    return await kyDocker
-                        .delete(`swarm/nodes/${nodeId}`, { json: { force: !!force } })
-                        .json();
+                    return await kyDocker.delete(`swarm/nodes/${nodeId}`, { json: { force: !!force } }).json();
                 }
             }
         } catch (err: unknown) {

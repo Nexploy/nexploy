@@ -90,10 +90,7 @@ export async function getValidToken(
                 gitAccountId,
                 requestedUserId: userId,
             });
-            if (
-                !freshToken.accessTokenExpiresAt ||
-                dayjs(freshToken.accessTokenExpiresAt).isAfter(dayjs())
-            ) {
+            if (!freshToken.accessTokenExpiresAt || dayjs(freshToken.accessTokenExpiresAt).isAfter(dayjs())) {
                 return freshToken;
             }
             throw new Error(t('gitProvider.oauthTokenExpired', { provider }));

@@ -1,7 +1,7 @@
 import { LucideIcon } from 'lucide-react';
 import { CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { PropsWithChildren } from 'react';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 
 interface HeaderWithIconProps {
     isDestructive?: boolean;

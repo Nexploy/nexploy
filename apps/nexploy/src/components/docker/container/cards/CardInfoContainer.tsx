@@ -46,9 +46,7 @@ export function CardInfoContainer() {
             description: `${t('version')} ${container?.image.split(':')[1] || 'latest'}`,
             render: () => (
                 <Link href={`/docker/images/${container?.imageId}`} className="group">
-                    <div className="truncate text-2xl font-semibold group-hover:underline">
-                        {container?.image}
-                    </div>
+                    <div className="truncate text-2xl font-semibold group-hover:underline">{container?.image}</div>
                     <p className="text-muted-foreground truncate text-xs">
                         {`${t('version')} ${container?.image.split(':')[1] || 'latest'}`}
                     </p>
@@ -74,9 +72,7 @@ export function CardInfoContainer() {
             {containerInfoCards.map((info, index) => (
                 <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                     <CardHeader className="flex flex-row justify-between space-y-0">
-                        <CardTitle className="h-14 truncate text-sm font-medium">
-                            {info.title}
-                        </CardTitle>
+                        <CardTitle className="h-14 truncate text-sm font-medium">{info.title}</CardTitle>
                         <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                             <info.icon className="text-primary size-4" />
                         </div>
@@ -86,12 +82,8 @@ export function CardInfoContainer() {
                             info.render()
                         ) : (
                             <>
-                                <div className="truncate text-2xl font-semibold">
-                                    {info.content}
-                                </div>
-                                <p className="text-muted-foreground truncate text-xs">
-                                    {info.description}
-                                </p>
+                                <div className="truncate text-2xl font-semibold">{info.content}</div>
+                                <p className="text-muted-foreground truncate text-xs">{info.description}</p>
                             </>
                         )}
                     </CardContent>

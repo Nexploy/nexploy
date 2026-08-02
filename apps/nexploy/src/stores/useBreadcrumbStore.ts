@@ -3,8 +3,7 @@ import type { BreadcrumbStore } from '@workspace/typescript-interface/stores/bre
 
 export const useBreadcrumbStore = create<BreadcrumbStore>((set) => ({
     overrides: {},
-    setOverrides: (segments) =>
-        set((state) => ({ overrides: { ...state.overrides, ...segments } })),
+    setOverrides: (segments) => set((state) => ({ overrides: { ...state.overrides, ...segments } })),
     clearOverrides: (keys) =>
         set((state) => {
             const overrides = { ...state.overrides };

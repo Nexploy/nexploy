@@ -20,28 +20,13 @@ const styleGlyphs = new Style(glyphs);
 const styleInitials = new Style(initials);
 const styleGlass = new Style(glass);
 
-export function DicebearAvatar({
-    seed,
-    size = 28,
-    className,
-    style = 'glyphs',
-    alt = 'Avatar',
-}: DicebearAvatarProps) {
-    const dataUri = new Avatar(
-        style === 'glyphs' ? styleGlyphs : style === 'initials' ? styleInitials : styleGlass,
-        {
-            seed,
-            size,
-        },
-    ).toDataUri();
+export function DicebearAvatar({ seed, size = 28, className, style = 'glyphs', alt = 'Avatar' }: DicebearAvatarProps) {
+    const dataUri = new Avatar(style === 'glyphs' ? styleGlyphs : style === 'initials' ? styleInitials : styleGlass, {
+        seed,
+        size,
+    }).toDataUri();
 
     return (
-        <Image
-            className={cn('size-fit rounded-md', className)}
-            src={dataUri}
-            width={size}
-            height={size}
-            alt={alt}
-        />
+        <Image className={cn('size-fit rounded-md', className)} src={dataUri} width={size} height={size} alt={alt} />
     );
 }

@@ -9,7 +9,7 @@ import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { Can } from '@/components/permission/Can';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 
 export default function NetworksPage() {
     const t = useTranslations('docker.pages.networks');
@@ -35,9 +35,7 @@ export default function NetworksPage() {
                     <Button asChild className={'mt-5'}>
                         <Link
                             href={'/docker/networks/create'}
-                            className={cn(
-                                statusDocker !== 'connected' && 'pointer-events-none opacity-50',
-                            )}
+                            className={cn(statusDocker !== 'connected' && 'pointer-events-none opacity-50')}
                         >
                             <Plus />
                             {tDocker('createNetwork')}

@@ -4,13 +4,7 @@ import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@workspace/ui/components/button';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
-import {
-    Empty,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
-} from '@workspace/ui/components/empty.tsx';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@workspace/ui/components/empty.tsx';
 
 interface NotFoundSSEProps {
     title: string;

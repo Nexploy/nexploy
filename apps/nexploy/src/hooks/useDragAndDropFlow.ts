@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Edge, Node, ReactFlowInstance } from '@xyflow/react';
-import { NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { NodeId } from '@nexploy/nodes/core/node';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigDefaults } from '@/components/pipeline/nodeManifestRegistry';
 import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';

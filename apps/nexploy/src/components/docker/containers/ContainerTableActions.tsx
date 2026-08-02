@@ -20,10 +20,7 @@ interface ContainerTableActionsProps {
     onResetSelection: () => void;
 }
 
-export function ContainerTableActions({
-    selectedContainers,
-    onResetSelection,
-}: ContainerTableActionsProps) {
+export function ContainerTableActions({ selectedContainers, onResetSelection }: ContainerTableActionsProps) {
     const t = useTranslations('docker.tables');
     const tActions = useTranslations('docker.containerActions');
     const tCommon = useTranslations('common');
@@ -31,16 +28,13 @@ export function ContainerTableActions({
 
     const { executeAsync: startAsync, isPending: isStarting } = useAction(onContainerStartAction);
     const { executeAsync: stopAsync, isPending: isStopping } = useAction(onContainerStopAction);
-    const { executeAsync: restartAsync, isPending: isRestarting } =
-        useAction(onContainerRestartAction);
+    const { executeAsync: restartAsync, isPending: isRestarting } = useAction(onContainerRestartAction);
     const { executeAsync: removeAsync, isPending: isRemoving } = useAction(onContainerRemoveAction);
 
     const isAnyLoading = isStarting || isStopping || isRestarting || isRemoving;
     const numberOfSelectedRows = selectedContainers.length;
 
-    const canStart = selectedContainers.some(
-        (c) => !['running', 'restarting', 'paused'].includes(c.state ?? ''),
-    );
+    const canStart = selectedContainers.some((c) => !['running', 'restarting', 'paused'].includes(c.state ?? ''));
     const canStop = selectedContainers.some((c) => c.state === 'running');
     const canRestart = selectedContainers.some((c) => c.state === 'running');
 
@@ -53,17 +47,13 @@ export function ContainerTableActions({
     };
 
     const handleStop = async () => {
-        const containerIds = selectedContainers
-            .filter((c) => c.state === 'running')
-            .map((c) => c.id);
+        const containerIds = selectedContainers.filter((c) => c.state === 'running').map((c) => c.id);
         if (containerIds.length) await stopAsync({ containerIds });
         onResetSelection();
     };
 
     const handleRestart = async () => {
-        const containerIds = selectedContainers
-            .filter((c) => c.state === 'running')
-            .map((c) => c.id);
+        const containerIds = selectedContainers.filter((c) => c.state === 'running').map((c) => c.id);
         if (containerIds.length) await restartAsync({ containerIds });
         onResetSelection();
     };
@@ -86,9 +76,7 @@ export function ContainerTableActions({
                         }
                     >
                         <div className={'space-y-0.5'}>
-                            <p className={'text-destructive text-sm font-medium'}>
-                                {t('forceRemove')}
-                            </p>
+                            <p className={'text-destructive text-sm font-medium'}>{t('forceRemove')}</p>
                             <p className={'text-xs'}>{t('forceRemoveDescription')}</p>
                         </div>
                         <Switch
@@ -101,8 +89,7 @@ export function ContainerTableActions({
             ),
             onAction: async () => {
                 const containerIds = selectedContainers.map((c) => c.id);
-                if (containerIds.length)
-                    await removeAsync({ containerIds, force: forceRef.current });
+                if (containerIds.length) await removeAsync({ containerIds, force: forceRef.current });
                 onResetSelection();
             },
         });

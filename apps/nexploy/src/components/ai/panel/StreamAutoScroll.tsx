@@ -1,10 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import {
-    useMessageScroller,
-    useMessageScrollerScrollable,
-} from '@workspace/ui/components/message-scroller';
+import { useMessageScroller, useMessageScrollerScrollable } from '@workspace/ui/components/message-scroller';
 
 interface StreamAutoScrollProps {
     turnId?: string;

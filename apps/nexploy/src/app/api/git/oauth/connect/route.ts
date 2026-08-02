@@ -12,49 +12,44 @@ import { getGitAdapter, isSupportedGitProvider } from '@/services/git/core/regis
 export const GET = route
     .use(authRouteServer)
     .query(oauthConnectQuerySchema)
-    .handler(
-        async (
-            _,
-            { ctx, query }: { ctx: { session: Session }; query: { gitProviderId: string } },
-        ) => {
-            const { gitProviderId } = query;
+    .handler(async (_, { ctx, query }: { ctx: { session: Session }; query: { gitProviderId: string } }) => {
+        const { gitProviderId } = query;
 
-            const gitProvider = await prisma.gitProvider.findUnique({
-                where: { id: gitProviderId, enabled: true },
-            });
+        const gitProvider = await prisma.gitProvider.findUnique({
+            where: { id: gitProviderId, enabled: true },
+        });
 
-            if (!gitProvider || !gitProvider.clientId || !gitProvider.clientSecret) {
-                const t = await getErrorTranslator();
-                return NextResponse.json({ error: t('api.providerNotConfigured') }, { status: 400 });
-            }
+        if (!gitProvider || !gitProvider.clientId || !gitProvider.clientSecret) {
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.providerNotConfigured') }, { status: 400 });
+        }
 
-            if (!isSupportedGitProvider(gitProvider.provider)) {
-                const t = await getErrorTranslator();
-                return NextResponse.json({ error: t('api.unsupportedProvider') }, { status: 400 });
-            }
+        if (!isSupportedGitProvider(gitProvider.provider)) {
+            const t = await getErrorTranslator();
+            return NextResponse.json({ error: t('api.unsupportedProvider') }, { status: 400 });
+        }
 
-            const clientId = decrypt(gitProvider.clientId);
-            const state = generateOAuthState({
-                userId: ctx.session.user.id,
-                provider: gitProvider.provider,
-                gitProviderId: gitProvider.id,
-            });
+        const clientId = decrypt(gitProvider.clientId);
+        const state = generateOAuthState({
+            userId: ctx.session.user.id,
+            provider: gitProvider.provider,
+            gitProviderId: gitProvider.id,
+        });
 
-            const baseUrl = await getBaseUrl();
-            const redirectUri = `${baseUrl}/api/git/oauth/callback`;
+        const baseUrl = await getBaseUrl();
+        const redirectUri = `${baseUrl}/api/git/oauth/callback`;
 
-            const authUrl = getGitAdapter(gitProvider.provider).buildAuthorizeUrl({
-                credentials: {
-                    clientId,
-                    clientSecret: decrypt(gitProvider.clientSecret),
-                    appName: gitProvider.appName ?? undefined,
-                    tenantId: gitProvider.tenantId ?? undefined,
-                    baseUrl: gitProvider.baseUrl ?? undefined,
-                },
-                state,
-                redirectUri,
-            });
+        const authUrl = getGitAdapter(gitProvider.provider).buildAuthorizeUrl({
+            credentials: {
+                clientId,
+                clientSecret: decrypt(gitProvider.clientSecret),
+                appName: gitProvider.appName ?? undefined,
+                tenantId: gitProvider.tenantId ?? undefined,
+                baseUrl: gitProvider.baseUrl ?? undefined,
+            },
+            state,
+            redirectUri,
+        });
 
-            return NextResponse.redirect(authUrl);
-        },
-    );
+        return NextResponse.redirect(authUrl);
+    });

@@ -20,20 +20,14 @@ interface ColumnsOptions {
     onDelete: (domain: Domain) => void;
 }
 
-export const getColumnsDomains = (
-    t: TranslationFunction,
-    options: ColumnsOptions,
-): ColumnDef<Domain>[] => {
+export const getColumnsDomains = (t: TranslationFunction, options: ColumnsOptions): ColumnDef<Domain>[] => {
     const { onEdit, onDelete } = options;
 
     return [
         {
             accessorKey: 'host',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('table.host')}
                     <ArrowUpDown className="ml-2 size-4" />
                 </Button>
@@ -68,25 +62,17 @@ export const getColumnsDomains = (
         {
             accessorKey: 'containerName',
             header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('table.container')}
                     <ArrowUpDown className="ml-2 size-4" />
                 </Button>
             ),
             cell: ({ row }) => {
-                const container = useContainersStore((state) =>
-                    state.getContainerByName(row.original.containerName),
-                );
+                const container = useContainersStore((state) => state.getContainerByName(row.original.containerName));
 
                 if (row.original.containerName) {
                     return (
-                        <Link
-                            href={`/docker/containers/${container?.id}`}
-                            className="flex hover:underline"
-                        >
+                        <Link href={`/docker/containers/${container?.id}`} className="flex hover:underline">
                             <span>{row.original.containerName}</span>
                         </Link>
                     );
@@ -98,9 +84,7 @@ export const getColumnsDomains = (
             accessorKey: 'containerPort',
             header: t('table.port'),
             cell: ({ row }) => (
-                <span className="text-muted-foreground font-mono text-sm">
-                    :{row.original.containerPort}
-                </span>
+                <span className="text-muted-foreground font-mono text-sm">:{row.original.containerPort}</span>
             ),
         },
         {
@@ -130,10 +114,7 @@ export const getColumnsDomains = (
                                     <Pencil />
                                     {t('edit')}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    variant="destructive"
-                                    onClick={() => onDelete(domain)}
-                                >
+                                <DropdownMenuItem variant="destructive" onClick={() => onDelete(domain)}>
                                     <Trash2 />
                                     {t('remove')}
                                 </DropdownMenuItem>

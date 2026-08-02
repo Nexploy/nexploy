@@ -6,17 +6,11 @@ import { useRealtime } from 'inngest/react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { usePipelineStoreInstance } from '@/contexts/PipelineContext';
 import { isBuildLive } from '@/utils/buildStatus';
-import { type CommitInfo, type NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import { type CommitInfo, type NodeRunStatus } from '@nexploy/nodes/core/pipeline';
 import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 import type { PipelineBuildStatus } from '@workspace/typescript-interface/stores/pipelineStore';
 
-export function BuildTracker({
-    buildId,
-    initialStatus,
-}: {
-    buildId: string;
-    initialStatus: PipelineBuildStatus;
-}) {
+export function BuildTracker({ buildId, initialStatus }: { buildId: string; initialStatus: PipelineBuildStatus }) {
     const store = usePipelineStoreInstance();
     const patchBuildOverlay = useStore(store, (s) => s.patchBuildOverlay);
     const setBuildNodeStatuses = useStore(store, (s) => s.setBuildNodeStatuses);
@@ -69,8 +63,7 @@ export function BuildTracker({
                 }
                 case 'node-status':
                     if (event.data?.nodeId) {
-                        nodeUpdates[event.data.nodeId as string] = event.data
-                            .nodeStatus as NodeRunStatus;
+                        nodeUpdates[event.data.nodeId as string] = event.data.nodeStatus as NodeRunStatus;
                         if (typeof event.data.durationMs === 'number') {
                             durationUpdates[event.data.nodeId as string] = event.data.durationMs;
                         }
@@ -91,14 +84,7 @@ export function BuildTracker({
         if (Object.keys(startTimeUpdates).length > 0) {
             setBuildNodeStartTimes(buildId, (prev) => ({ ...prev, ...startTimeUpdates }));
         }
-    }, [
-        liveEvents,
-        buildId,
-        patchBuildOverlay,
-        setBuildNodeStatuses,
-        setBuildNodeDurations,
-        setBuildNodeStartTimes,
-    ]);
+    }, [liveEvents, buildId, patchBuildOverlay, setBuildNodeStatuses, setBuildNodeDurations, setBuildNodeStartTimes]);
 
     return null;
 }

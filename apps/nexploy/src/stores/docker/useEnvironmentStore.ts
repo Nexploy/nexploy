@@ -8,13 +8,7 @@ import { useVolumesStore } from '@/stores/docker/useVolumesStore';
 import { useNetworksStore } from '@/stores/docker/useNetworksStore';
 
 const resetDockerStores = () => {
-    const stores = [
-        useDockerStore,
-        useContainersStore,
-        useImagesStore,
-        useVolumesStore,
-        useNetworksStore,
-    ];
+    const stores = [useDockerStore, useContainersStore, useImagesStore, useVolumesStore, useNetworksStore];
 
     stores.forEach((store) => store.getState().reset());
     stores.forEach((store) => store.getState().connect());
@@ -71,9 +65,7 @@ export const useEnvironmentStore = create<EnvironmentState>((set, get) => {
 
         updateEnvironment: (id, data) => {
             set((state) => ({
-                environments: state.environments.map((env) =>
-                    env.id === id ? { ...env, ...data } : env,
-                ),
+                environments: state.environments.map((env) => (env.id === id ? { ...env, ...data } : env)),
             }));
         },
 

@@ -74,10 +74,7 @@ export async function teardownPersonalOrganizationRepositories(userId: string) {
         try {
             await teardownRepositoryWebhook(id);
         } catch (error) {
-            console.error(
-                `[AUTH] Failed to tear down webhook for repository ${id} of deleted user ${userId}`,
-                error,
-            );
+            console.error(`[AUTH] Failed to tear down webhook for repository ${id} of deleted user ${userId}`, error);
         }
     }
 }
@@ -115,11 +112,7 @@ export async function getPendingInvitations(email: string) {
     }
 }
 
-export async function getOrganizationDetail(
-    organizationId: string,
-    userId: string,
-    isGlobalAdmin: boolean,
-) {
+export async function getOrganizationDetail(organizationId: string, userId: string, isGlobalAdmin: boolean) {
     const caller = await prisma.member.findFirst({
         where: { organizationId, userId },
         select: { role: true },

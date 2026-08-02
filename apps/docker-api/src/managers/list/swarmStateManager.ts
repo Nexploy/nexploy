@@ -80,10 +80,7 @@ export class SwarmStateManager extends BaseStateManager {
 
             this.isSwarmActive = true;
 
-            const [swarm, nodesList] = await Promise.all([
-                this.docker.swarmInspect(),
-                this.docker.listNodes(),
-            ]);
+            const [swarm, nodesList] = await Promise.all([this.docker.swarmInspect(), this.docker.listNodes()]);
             this.swarmInfo = this.parseSwarmInfo(swarm, info);
 
             for (const node of nodesList) {
@@ -91,10 +88,7 @@ export class SwarmStateManager extends BaseStateManager {
                 this.nodes.set(parsedNode.id, parsedNode);
             }
 
-            const [servicesList, tasksList] = await Promise.all([
-                this.docker.listServices(),
-                this.docker.listTasks(),
-            ]);
+            const [servicesList, tasksList] = await Promise.all([this.docker.listServices(), this.docker.listTasks()]);
 
             const serviceTaskCounts = new Map<string, { running: number; total: number }>();
             for (const task of tasksList) {
@@ -429,10 +423,7 @@ export class SwarmStateManager extends BaseStateManager {
     }
 
     private async syncServicesAndTasks(): Promise<void> {
-        const [servicesList, tasksList] = await Promise.all([
-            this.docker.listServices(),
-            this.docker.listTasks(),
-        ]);
+        const [servicesList, tasksList] = await Promise.all([this.docker.listServices(), this.docker.listTasks()]);
         const currentServiceIds = new Set<string>();
         const currentTaskIds = new Set<string>();
 
@@ -813,9 +804,7 @@ export class SwarmStateManager extends BaseStateManager {
         const currLabelsSet = new Set(currLabels);
         const added = currLabels.filter((k) => !prevLabelsSet.has(k));
         const removed = prevLabels.filter((k) => !currLabelsSet.has(k));
-        const changed = currLabels.filter(
-            (k) => prevLabelsSet.has(k) && previous.labels[k] !== current.labels[k],
-        );
+        const changed = currLabels.filter((k) => prevLabelsSet.has(k) && previous.labels[k] !== current.labels[k]);
 
         if (added.length > 0 || removed.length > 0 || changed.length > 0) {
             changes.labels = { added, removed, changed };

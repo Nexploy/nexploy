@@ -1,12 +1,7 @@
 import dayjs from 'dayjs';
 import ky from 'ky';
 import { GitProviderAdapter, ParsedRepoUrl } from '@/services/git/core/GitProviderAdapter';
-import {
-    GitBranch,
-    GitLabCommit,
-    GitProviderToken,
-    GitRepository,
-} from '@workspace/typescript-interface/git/git';
+import { GitBranch, GitLabCommit, GitProviderToken, GitRepository } from '@workspace/typescript-interface/git/git';
 import { MergeRequestAction, WebhookPayload } from '@workspace/typescript-interface/webhook';
 import { GitlabRepo } from '@workspace/typescript-interface/git/repository/gitlab.repository';
 import { GitlabBranch } from '@workspace/typescript-interface/git/branch/gitlab.branch';
@@ -72,10 +67,7 @@ export const gitlabAdapter: GitProviderAdapter = {
 
     async listBranches({ token, baseUrl, repoId }): Promise<GitBranch[]> {
         const branches = await tokenGitStorage.run(token, async () =>
-            gitlabFetchAllPages<GitlabBranch>(
-                baseUrl,
-                `v4/projects/${repoId}/repository/branches`,
-            ),
+            gitlabFetchAllPages<GitlabBranch>(baseUrl, `v4/projects/${repoId}/repository/branches`),
         );
         return branches.map((branch: GitlabBranch) => ({
             name: branch.name,
@@ -121,9 +113,7 @@ export const gitlabAdapter: GitProviderAdapter = {
     },
 
     async deleteWebhook({ token, baseUrl, repo, webhookId }): Promise<void> {
-        await tokenGitStorage.run(token, async () =>
-            gitlabDeleteWebhook(baseUrl, repo.gitId, webhookId),
-        );
+        await tokenGitStorage.run(token, async () => gitlabDeleteWebhook(baseUrl, repo.gitId, webhookId));
     },
 
     parseWebhookPayload(body: any): WebhookPayload | null {
@@ -134,10 +124,7 @@ export const gitlabAdapter: GitProviderAdapter = {
             const attributes = body.object_attributes;
             const action = GITLAB_MERGE_REQUEST_ACTIONS[attributes?.action as string];
             if (!attributes || !action) return null;
-            if (
-                attributes.source_project_id &&
-                attributes.source_project_id !== attributes.target_project_id
-            ) {
+            if (attributes.source_project_id && attributes.source_project_id !== attributes.target_project_id) {
                 return null;
             }
 
@@ -225,9 +212,7 @@ export const gitlabAdapter: GitProviderAdapter = {
 
         const accessToken = tokenData.access_token;
         const refreshToken = tokenData.refresh_token ?? null;
-        const accessTokenExpiresAt = tokenData.expires_in
-            ? dayjs().add(tokenData.expires_in, 'second').toDate()
-            : null;
+        const accessTokenExpiresAt = tokenData.expires_in ? dayjs().add(tokenData.expires_in, 'second').toDate() : null;
 
         const user = await this.getAuthenticatedUser({
             token: { accessToken, refreshToken, accessTokenExpiresAt },
@@ -276,9 +261,7 @@ export const gitlabAdapter: GitProviderAdapter = {
         return {
             accessToken: data.access_token,
             refreshToken: data.refresh_token ?? refreshToken,
-            accessTokenExpiresAt: data.expires_in
-                ? dayjs().add(data.expires_in, 'second').toDate()
-                : null,
+            accessTokenExpiresAt: data.expires_in ? dayjs().add(data.expires_in, 'second').toDate() : null,
         };
     },
 

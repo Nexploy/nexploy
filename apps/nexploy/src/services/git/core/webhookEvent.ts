@@ -1,9 +1,6 @@
 import { MergeRequestAction } from '@workspace/typescript-interface/webhook';
 
-export function mapPullRequestAction(
-    action: string | undefined,
-    merged?: boolean,
-): MergeRequestAction | null {
+export function mapPullRequestAction(action: string | undefined, merged?: boolean): MergeRequestAction | null {
     switch (action) {
         case 'opened':
         case 'reopened':

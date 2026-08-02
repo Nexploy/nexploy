@@ -11,7 +11,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { getLogLevelColor, getLogLevelColorGradiant, parseAnsiColors } from '@/utils/color';
 import { cn } from '@workspace/ui/lib/utils';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import { NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import { NodeRunStatus } from '@nexploy/nodes/core/pipeline';
 import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 import { useTranslations } from 'next-intl';
 import { LogsToolbar } from '@/components/shared/LogsToolbar';
@@ -26,13 +26,7 @@ interface NodeLogsPanelProps {
     nodeStartedAt?: number;
 }
 
-export function NodeLogsPanel({
-    buildId,
-    nodeId,
-    nodeStatus,
-    nodeDurationMs,
-    nodeStartedAt,
-}: NodeLogsPanelProps) {
+export function NodeLogsPanel({ buildId, nodeId, nodeStatus, nodeDurationMs, nodeStartedAt }: NodeLogsPanelProps) {
     const t = useTranslations('repository.builds.logs');
     const params = useParams<{ repositoryId: string }>();
 
@@ -57,19 +51,12 @@ export function NodeLogsPanel({
 
     const logs = [...initialLogs, ...liveLogs];
 
-    const {
-        logsContainerRef,
-        logsEndRef,
-        showTimestamp,
-        setShowTimestamp,
-        autoScroll,
-        setAutoScroll,
-        downloadLogs,
-    } = useLogsToolbar({
-        logs,
-        downloadFileName: `node-${nodeId.slice(-6)}-logs.txt`,
-        localStorageKey: 'timestamp-build-log-node',
-    });
+    const { logsContainerRef, logsEndRef, showTimestamp, setShowTimestamp, autoScroll, setAutoScroll, downloadLogs } =
+        useLogsToolbar({
+            logs,
+            downloadFileName: `node-${nodeId.slice(-6)}-logs.txt`,
+            localStorageKey: 'timestamp-build-log-node',
+        });
 
     return (
         <div className="flex flex-1 flex-col overflow-hidden">
@@ -92,11 +79,7 @@ export function NodeLogsPanel({
                     onAutoScrollToggle={() => setAutoScroll((prev) => !prev)}
                 />
             </div>
-            <ScrollAreaWithShadow
-                ref={logsContainerRef}
-                bottomShadow
-                className="h-full font-mono text-xs"
-            >
+            <ScrollAreaWithShadow ref={logsContainerRef} bottomShadow className="h-full font-mono text-xs">
                 {isLoading ? (
                     <div className="text-muted-foreground flex flex-1 items-center justify-center py-4">
                         {t('loading')}

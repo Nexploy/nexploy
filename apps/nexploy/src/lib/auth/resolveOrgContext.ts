@@ -1,6 +1,6 @@
 import { prisma } from '../../../prisma/prisma';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
+import { NEXPLOY_LABELS } from '@nexploy/nodes/core/nexployLabels';
 import { getDomains } from '@/services/traefik.service';
 import type { Session } from '@/lib/auth/auth';
 
@@ -77,11 +77,17 @@ export async function getCallerOrgRole(userId: string, organizationId: string): 
     return member?.role ?? null;
 }
 
+export const HOST_SCOPED = 'host-scoped' as const;
+
+export type HostScoped = typeof HOST_SCOPED;
+
 export type OrgResolver = (
     clientInput: unknown,
     bindArgsClientInputs: readonly unknown[] | undefined,
     session: Session,
 ) => Promise<string | string[] | null>;
+
+export type OrgScopeResolver = OrgResolver | HostScoped;
 
 export const byActiveOrganization: OrgResolver = (_input, _bindArgsClientInputs, session) =>
     resolveActiveOrganizationId(session);
@@ -89,14 +95,11 @@ export const byActiveOrganization: OrgResolver = (_input, _bindArgsClientInputs,
 export const byRepositoryId: OrgResolver = (input) =>
     resolveOrganizationIdForRepository((input as { repositoryId: string }).repositoryId);
 
-export const byBuildId: OrgResolver = (input) =>
-    resolveOrganizationIdForBuild((input as { buildId: string }).buildId);
+export const byBuildId: OrgResolver = (input) => resolveOrganizationIdForBuild((input as { buildId: string }).buildId);
 
-export const byStageId: OrgResolver = (input) =>
-    resolveOrganizationIdForStage((input as { stageId: string }).stageId);
+export const byStageId: OrgResolver = (input) => resolveOrganizationIdForStage((input as { stageId: string }).stageId);
 
-export const byStageEntityId: OrgResolver = (input) =>
-    resolveOrganizationIdForStage((input as { id: string }).id);
+export const byStageEntityId: OrgResolver = (input) => resolveOrganizationIdForStage((input as { id: string }).id);
 
 export const byBoundRepositoryId: OrgResolver = (_input, bindArgsClientInputs) =>
     resolveOrganizationIdForRepository(bindArgsClientInputs?.[0] as string);
@@ -108,6 +111,8 @@ export const byContainerIds: OrgResolver = (input) => {
 };
 
 export type RequestOrgResolver = (request: Request) => Promise<string | string[] | null>;
+
+export type RequestOrgScopeResolver = RequestOrgResolver | HostScoped;
 
 export const byRepositoryIdParam: RequestOrgResolver = (request) => {
     const match = new URL(request.url).pathname.match(/\/repositories\/([^/]+)/);

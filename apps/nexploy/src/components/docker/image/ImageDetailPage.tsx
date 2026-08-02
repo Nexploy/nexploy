@@ -15,7 +15,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { CardImageConfig } from '@/components/docker/image/cards/CardImageConfig';
 import { CardImageContainers } from '@/components/docker/image/cards/CardImageContainers';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
-import { Tooltip, TooltipContent } from '@workspace/ui/components/tooltip.tsx';
+import { Tooltip, TooltipContent } from '@workspace/ui/components/tooltip';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
 import { Switch } from '@workspace/ui/components/switch';
@@ -61,9 +61,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                         }
                     >
                         <div className={'space-y-0.5'}>
-                            <p className={'text-destructive text-sm font-medium'}>
-                                {tActions('image.forceDelete')}
-                            </p>
+                            <p className={'text-destructive text-sm font-medium'}>{tActions('image.forceDelete')}</p>
                             <p className={'text-xs'}>{tActions('image.forceDeleteDescription')}</p>
                         </div>
                         <Switch
@@ -110,9 +108,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                         {!image ? (
                             <Skeleton className="h-9 w-40" />
                         ) : (
-                            <h1 className="text-3xl font-semibold tracking-tight break-all">
-                                {imageName}
-                            </h1>
+                            <h1 className="text-3xl font-semibold tracking-tight break-all">{imageName}</h1>
                         )}
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
@@ -125,12 +121,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                             </TooltipTrigger>
                             <TooltipContent>{t('useImage')}</TooltipContent>
                         </Tooltip>
-                        <Button
-                            variant="destructive"
-                            size="icon"
-                            onClick={handleRemove}
-                            disabled={!image}
-                        >
+                        <Button variant="destructive" size="icon" onClick={handleRemove} disabled={!image}>
                             <Trash className="size-4" />
                         </Button>
                     </div>

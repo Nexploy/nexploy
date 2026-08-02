@@ -102,16 +102,7 @@ export async function scanImage(
     const severities = getSeveritiesAbove(severity);
 
     const { stdout, stderr, exitCode } = await runTrivyContainer(
-        [
-            'image',
-            '--format',
-            'json',
-            '--severity',
-            severities,
-            '--no-progress',
-            '--quiet',
-            fullImage,
-        ],
+        ['image', '--format', 'json', '--severity', severities, '--no-progress', '--quiet', fullImage],
         trivyVersion,
         buildId,
     );
@@ -150,9 +141,7 @@ export async function scanImage(
             lines.push('');
             lines.push('Top vulnerabilities:');
             for (const v of top) {
-                lines.push(
-                    `  [${v.Severity}] ${v.VulnerabilityID ?? '?'} - ${v.Title ?? 'no title'}`,
-                );
+                lines.push(`  [${v.Severity}] ${v.VulnerabilityID ?? '?'} - ${v.Title ?? 'no title'}`);
             }
             if (allVulns.length > 10) lines.push(`  ... and ${allVulns.length - 10} more`);
         }

@@ -5,7 +5,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { SSEProvider } from '@/providers/SSEProviders';
 import { useTranslations } from 'next-intl';
-import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore.ts';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { TableRequests } from '@/components/traefik/table/TableRequests';
 
 export default function RequestsPage() {
@@ -30,10 +30,7 @@ export default function RequestsPage() {
     };
 
     return (
-        <SSEProvider
-            connections={['traefik']}
-            params={{ traefik: { environmentId: defaultLocalEnvironment?.id } }}
-        >
+        <SSEProvider connections={['traefik']} params={{ traefik: { environmentId: defaultLocalEnvironment?.id } }}>
             <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex gap-3 px-5">
                     <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">

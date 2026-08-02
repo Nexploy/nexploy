@@ -53,9 +53,7 @@ export const sslGroup: ToolGroup = {
                 if (g) return g;
                 try {
                     const cert = await createLetsEncryptCertificate(name, domain, email);
-                    return ok(
-                        `Certificate "${cert.name}" created for ${cert.domain} (ID: ${cert.id})`,
-                    );
+                    return ok(`Certificate "${cert.name}" created for ${cert.domain} (ID: ${cert.id})`);
                 } catch (e: any) {
                     return fail(e.message);
                 }
@@ -72,15 +70,8 @@ export const sslGroup: ToolGroup = {
                 const g = guard(ctx, 'ssl', 'manage');
                 if (g) return g;
                 try {
-                    const cert = await createCustomCertificate(
-                        name,
-                        domain,
-                        certificate,
-                        privateKey,
-                    );
-                    return ok(
-                        `Custom certificate "${cert.name}" added for ${cert.domain} (ID: ${cert.id})`,
-                    );
+                    const cert = await createCustomCertificate(name, domain, certificate, privateKey);
+                    return ok(`Custom certificate "${cert.name}" added for ${cert.domain} (ID: ${cert.id})`);
                 } catch (e: any) {
                     return fail(e.message);
                 }

@@ -79,15 +79,12 @@ export function JoinSwarmForm() {
                     rows={3}
                     className="font-mono text-sm"
                 />
-                <p className="text-muted-foreground text-xs">
-                    {t('managerAddressesDescription')}
-                </p>
+                <p className="text-muted-foreground text-xs">{t('managerAddressesDescription')}</p>
             </div>
 
             <div className="grid gap-2">
                 <Label htmlFor="advertiseAddr">
-                    {t('advertiseAddress')}{' '}
-                    <span className="text-muted-foreground text-xs">{t('optional')}</span>
+                    {t('advertiseAddress')} <span className="text-muted-foreground text-xs">{t('optional')}</span>
                 </Label>
                 <Input
                     id="advertiseAddr"
@@ -95,9 +92,7 @@ export function JoinSwarmForm() {
                     onChange={(e) => setAdvertiseAddr(e.target.value)}
                     placeholder={t('advertiseAddressPlaceholder')}
                 />
-                <p className="text-muted-foreground text-xs">
-                    {t('advertiseAddressDescription')}
-                </p>
+                <p className="text-muted-foreground text-xs">{t('advertiseAddressDescription')}</p>
             </div>
 
             <div className="flex justify-end gap-2 pt-4">

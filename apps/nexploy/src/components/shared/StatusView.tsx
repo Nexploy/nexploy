@@ -8,7 +8,7 @@ import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status
 import { STATUS_PIPELINE } from '@/components/shared/buildStatusMapping';
 import * as React from 'react';
 import type { VariantProps } from 'class-variance-authority';
-import { cn } from '@workspace/ui/lib/utils.ts';
+import { cn } from '@workspace/ui/lib/utils';
 
 interface StatusViewProps {
     status?: BuildStatus;

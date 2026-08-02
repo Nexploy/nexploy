@@ -39,12 +39,10 @@ interface UseBuildActionsProps {
     onRemoveSuccess?: () => void;
 }
 
-export function useBuildActions({
-    buildId,
-    initialStatus,
-    mode = 'button',
-    onRemoveSuccess,
-}: UseBuildActionsProps): { actions: BuildAction[]; status: BuildStatus } {
+export function useBuildActions({ buildId, initialStatus, mode = 'button', onRemoveSuccess }: UseBuildActionsProps): {
+    actions: BuildAction[];
+    status: BuildStatus;
+} {
     const t = useTranslations('repository.builds');
 
     const refreshToken = useCallback(async () => {
@@ -87,9 +85,7 @@ export function useBuildActions({
         actions.push({
             type: 'component',
             id: 'remove',
-            component: (
-                <RemoveBuildButton mode={mode} buildId={buildId} onSuccess={onRemoveSuccess} />
-            ),
+            component: <RemoveBuildButton mode={mode} buildId={buildId} onSuccess={onRemoveSuccess} />,
         });
     }
 

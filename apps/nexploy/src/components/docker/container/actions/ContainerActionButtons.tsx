@@ -59,9 +59,7 @@ export function ContainerActionButtons() {
                 currentGroup = [];
             }
 
-            groups.push(
-                <ButtonGroup key={`sep-${index}`}>{renderButton(action, index)}</ButtonGroup>,
-            );
+            groups.push(<ButtonGroup key={`sep-${index}`}>{renderButton(action, index)}</ButtonGroup>);
         } else {
             currentGroup.push(renderButton(action, index));
         }

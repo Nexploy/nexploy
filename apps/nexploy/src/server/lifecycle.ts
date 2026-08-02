@@ -10,9 +10,7 @@ export async function ensureTraefikReady(): Promise<void> {
 
     try {
         await ensureTraefikSetup();
-        console.log(
-            `✓ Traefik config directory ready: ${process.env.TRAEFIK_SERVICE_DIR ?? '(default)'}`,
-        );
+        console.log(`✓ Traefik config directory ready: ${process.env.TRAEFIK_SERVICE_DIR ?? '(default)'}`);
     } catch (err) {
         console.error('❌ Failed to set up Traefik config directory:', err);
         process.exit(1);

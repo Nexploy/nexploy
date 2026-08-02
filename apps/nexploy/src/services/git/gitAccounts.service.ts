@@ -1,10 +1,6 @@
 import { GitProviderType } from 'generated/client';
 import { prisma } from '@/../prisma/prisma';
-import {
-    GitBranch,
-    GitRepository,
-    GitRepositoryList,
-} from '@workspace/typescript-interface/git/git';
+import { GitBranch, GitRepository, GitRepositoryList } from '@workspace/typescript-interface/git/git';
 import { decrypt } from '@/lib/encryption';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { getGitAdapter } from '@/services/git/core/registry';
@@ -167,9 +163,7 @@ export async function disconnectGitAccount(userId: string, gitProviderId: string
                 await adapter.revokeToken({
                     token: {
                         accessToken: decrypt(gitAccount.accessToken),
-                        refreshToken: gitAccount.refreshToken
-                            ? decrypt(gitAccount.refreshToken)
-                            : null,
+                        refreshToken: gitAccount.refreshToken ? decrypt(gitAccount.refreshToken) : null,
                         accessTokenExpiresAt: gitAccount.accessTokenExpiresAt,
                     },
                     credentials,

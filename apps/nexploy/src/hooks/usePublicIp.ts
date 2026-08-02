@@ -6,11 +6,9 @@ interface PublicIpResponse {
 }
 
 export function usePublicIp() {
-    const { data, isLoading, error, mutate } = useSWR<PublicIpResponse>(
-        { url: '/api/network/public-ip' },
-        fetcherApi,
-        { revalidateOnFocus: false },
-    );
+    const { data, isLoading, error, mutate } = useSWR<PublicIpResponse>({ url: '/api/network/public-ip' }, fetcherApi, {
+        revalidateOnFocus: false,
+    });
 
     return {
         ip: data?.ip,

@@ -6,7 +6,7 @@ import { createMistral } from '@ai-sdk/mistral';
 import { createGroq } from '@ai-sdk/groq';
 import { createPerplexity } from '@ai-sdk/perplexity';
 import { createXai } from '@ai-sdk/xai';
-import { convertToModelMessages, generateId, type LanguageModel, stepCountIs, streamText, type ToolSet, } from 'ai';
+import { convertToModelMessages, generateId, type LanguageModel, stepCountIs, streamText, type ToolSet } from 'ai';
 import { createMCPClient } from '@ai-sdk/mcp';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { NextResponse } from 'next/server';
@@ -131,10 +131,7 @@ export const POST = route
             const aiSettings = await getAISettings();
 
             if (!aiSettings?.aiEnabled) {
-                return NextResponse.json(
-                    { error: 'AI assistant is disabled by the administrator.' },
-                    { status: 403 },
-                );
+                return NextResponse.json({ error: 'AI assistant is disabled by the administrator.' }, { status: 403 });
             }
 
             const requireConfirmation = aiSettings?.requireDestructiveConfirmation ?? false;

@@ -10,6 +10,7 @@ import {
     HardDrive,
     LayoutList,
     Network,
+    PieChart,
     Send,
     User,
     Warehouse,
@@ -41,7 +42,7 @@ export function SearchNavigationList() {
         { href: '/monitoring', icon: Activity, label: tNav('monitoring') },
         { href: '/requests', icon: Send, label: tNav('requests') },
         { href: '/swarm', icon: Network, label: tNav('swarm') },
-        { href: '/admin/registry', icon: Warehouse, label: tNav('registry') },
+        { href: '/registry', icon: Warehouse, label: tNav('registry') },
     ].filter((item) => matchesQuery(item.label, inputValue));
 
     const dockerItems: NavItem[] = [
@@ -50,6 +51,7 @@ export function SearchNavigationList() {
         { href: '/docker/volumes', icon: HardDrive, label: tNav('volumes') },
         { href: '/docker/networks', icon: EthernetPort, label: tNav('networks') },
         { href: '/docker/events', icon: Bug, label: tNav('events') },
+        { href: '/docker/disk-usage', icon: PieChart, label: tNav('diskUsage') },
     ].filter((item) => matchesQuery(item.label, inputValue));
 
     const showAccount = matchesQuery(t('account'), inputValue);
@@ -66,19 +68,13 @@ export function SearchNavigationList() {
 
     return (
         <>
-            {homeItems.length > 0 && (
-                <CommandGroup heading={tNav('home')}>{homeItems.map(renderItem)}</CommandGroup>
-            )}
+            {homeItems.length > 0 && <CommandGroup heading={tNav('home')}>{homeItems.map(renderItem)}</CommandGroup>}
             {dockerItems.length > 0 && (
                 <CommandGroup heading={tNav('docker')}>{dockerItems.map(renderItem)}</CommandGroup>
             )}
             {showAccount && (
                 <CommandGroup heading={t('system')}>
-                    <CommandItem
-                        {...getItemProps(t('account'), () =>
-                            runCommand(() => router.push('/account')),
-                        )}
-                    >
+                    <CommandItem {...getItemProps(t('account'), () => runCommand(() => router.push('/account')))}>
                         <User className="text-muted-foreground shrink-0" />
                         <span className="text-sm font-medium">{t('account')}</span>
                     </CommandItem>

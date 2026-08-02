@@ -5,12 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
-import {
-    InputOTP,
-    InputOTPGroup,
-    InputOTPSeparator,
-    InputOTPSlot,
-} from '@workspace/ui/components/input-otp';
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@workspace/ui/components/input-otp';
 import { CheckCircle2 } from 'lucide-react';
 import { twoFactorAuthCodeSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.schema';
 import { useRouter } from '@/i18n/navigation';

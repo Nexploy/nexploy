@@ -3,20 +3,8 @@
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@workspace/ui/components/card';
-import {
-    Empty,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle,
-} from '@workspace/ui/components/empty';
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@workspace/ui/components/empty';
 import {
     Select,
     SelectContent,
@@ -90,10 +78,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                 />
 
                 <div className={'flex gap-3'}>
-                    <Select
-                        value={providerFilter}
-                        onValueChange={(value: GitProviderType) => setProviderFilter(value)}
-                    >
+                    <Select value={providerFilter} onValueChange={(value: GitProviderType) => setProviderFilter(value)}>
                         <SelectTrigger className="w-40">
                             <SelectValue placeholder={t('filterByProvider')} />
                         </SelectTrigger>
@@ -135,11 +120,8 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                         </SelectContent>
                     </Select>
 
-                    <Select
-                        value={statusFilter}
-                        onValueChange={(value: BuildStatus) => setStatusFilter(value)}
-                    >
-                        <SelectTrigger className="w-40">
+                    <Select value={statusFilter} onValueChange={(value: BuildStatus) => setStatusFilter(value)}>
+                        <SelectTrigger className="min-w-40">
                             <SelectValue placeholder={t('filterByStatus')} />
                         </SelectTrigger>
                         <SelectContent>
@@ -201,13 +183,8 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                                                     {capitalizeFirstLetter(repository.gitProvider)}
                                                     {hostname && (
                                                         <>
-                                                            <Separator
-                                                                orientation="vertical"
-                                                                className="h-3! w-1"
-                                                            />
-                                                            <span className="truncate">
-                                                                {hostname}
-                                                            </span>
+                                                            <Separator orientation="vertical" className="h-3! w-1" />
+                                                            <span className="truncate">{hostname}</span>
                                                         </>
                                                     )}
                                                 </CardDescription>

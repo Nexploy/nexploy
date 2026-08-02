@@ -1,9 +1,10 @@
 import { prisma } from '../../prisma/prisma';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
-import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import { PipelineGraph } from '@nexploy/nodes/core/node';
 import { SavePipelineInput } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
-import { type NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import { type NodeRunStatus } from '@nexploy/nodes/core/pipeline';
 import { decryptPipelineNodes, encryptPipelineNodes } from '@/lib/pipelineEncryption';
+import { getNodeDescriptor } from '@nexploy/nodes/registry/descriptors';
 
 export interface BuildPipelineStatus {
     nodeStatuses: Record<string, NodeRunStatus>;
@@ -57,12 +58,14 @@ export async function getPipelineConfig(stageId: string): Promise<PipelineGraph 
     }
 }
 
-export async function savePipelineConfig({
-    repositoryId,
-    stageId,
-    graph,
-}: SavePipelineInput): Promise<void> {
+export async function savePipelineConfig({ repositoryId, stageId, graph }: SavePipelineInput): Promise<void> {
     const t = await getErrorTranslator();
+
+    const unknownTypes = [...new Set(graph.nodes.map((node) => node.type).filter((type) => !getNodeDescriptor(type)))];
+    if (unknownTypes.length > 0) {
+        throw new Error(t('pipeline.unknownNodeTypes', { types: unknownTypes.join(', ') }));
+    }
+
     try {
         const encryptedNodes = encryptPipelineNodes(graph.nodes);
         await prisma.pipelineConfig.upsert({

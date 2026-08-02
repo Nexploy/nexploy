@@ -4,10 +4,7 @@ import type Docker from 'dockerode';
 import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
 import { Readable } from 'stream';
-import {
-    ContainerLogsEvent,
-    LogEntry,
-} from '@workspace/typescript-interface/docker/docker.container.logs';
+import { ContainerLogsEvent, LogEntry } from '@workspace/typescript-interface/docker/docker.container.logs';
 
 export class ContainerLogsStateManager extends EventEmitter {
     private readonly containerId: string;
@@ -63,10 +60,7 @@ export class ContainerLogsStateManager extends EventEmitter {
             });
             this.setupStreamHandlers();
 
-            logger.info(
-                { containerId: this.containerId, follow, tail },
-                'Container logs stream started',
-            );
+            logger.info({ containerId: this.containerId, follow, tail }, 'Container logs stream started');
         } catch (error) {
             this.isActive = false;
             const err = error as Error;
@@ -123,10 +117,7 @@ export class ContainerLogsStateManager extends EventEmitter {
 
                     await this.handleReconnect(true);
                 } else {
-                    logger.info(
-                        { containerId: this.containerId },
-                        'Container is not running, not reconnecting',
-                    );
+                    logger.info({ containerId: this.containerId }, 'Container is not running, not reconnecting');
 
                     this.emit('log', {
                         type: 'end',

@@ -6,8 +6,8 @@ import { useParams } from 'next/navigation';
 import { useBuildsInfinite } from '@/hooks/useBuildsInfinite';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
-import { type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
-import type { NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import { type PipelineGraph } from '@nexploy/nodes/core/node';
+import type { NodeRunStatus } from '@nexploy/nodes/core/pipeline';
 import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
 import { createPipelineStore, type PipelineStore } from '@/stores/pipeline/createPipelineStore';
 import { PipelineContext } from '@/contexts/PipelineContext';
@@ -63,26 +63,22 @@ export function PipelineProvider({
         nodeStatuses: Record<string, NodeRunStatus>;
         nodeDurations: Record<string, number>;
         nodeStartTimes: Record<string, number>;
-    }>(
-        activeBuildId ? { url: `/api/repositories/${repositoryId}/builds/${activeBuildId}` } : null,
-        fetcherApi,
-        {
-            onSuccess: (data) => {
-                store.getState().setBuildNodeStatuses(activeBuildId!, (prev) => ({
-                    ...(data?.nodeStatuses ?? {}),
-                    ...prev,
-                }));
-                store.getState().setBuildNodeDurations(activeBuildId!, (prev) => ({
-                    ...(data?.nodeDurations ?? {}),
-                    ...prev,
-                }));
-                store.getState().setBuildNodeStartTimes(activeBuildId!, (prev) => ({
-                    ...(data?.nodeStartTimes ?? {}),
-                    ...prev,
-                }));
-            },
+    }>(activeBuildId ? { url: `/api/repositories/${repositoryId}/builds/${activeBuildId}` } : null, fetcherApi, {
+        onSuccess: (data) => {
+            store.getState().setBuildNodeStatuses(activeBuildId!, (prev) => ({
+                ...(data?.nodeStatuses ?? {}),
+                ...prev,
+            }));
+            store.getState().setBuildNodeDurations(activeBuildId!, (prev) => ({
+                ...(data?.nodeDurations ?? {}),
+                ...prev,
+            }));
+            store.getState().setBuildNodeStartTimes(activeBuildId!, (prev) => ({
+                ...(data?.nodeStartTimes ?? {}),
+                ...prev,
+            }));
         },
-    );
+    });
 
     useEffect(() => {
         return () => setActiveBuildId(null);
@@ -93,11 +89,7 @@ export function PipelineProvider({
             {builds.map(
                 (build) =>
                     isBuildLive(build.status) && (
-                        <BuildTracker
-                            key={build.id}
-                            buildId={build.id}
-                            initialStatus={build.status}
-                        />
+                        <BuildTracker key={build.id} buildId={build.id} initialStatus={build.status} />
                     ),
             )}
             {children}

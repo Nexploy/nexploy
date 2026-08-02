@@ -1,9 +1,5 @@
 import { Fragment } from 'react';
-import {
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-} from '@workspace/ui/components/dropdown-menu';
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@workspace/ui/components/dropdown-menu';
 import { ContainerState } from '@workspace/typescript-interface/docker/docker.container';
 import { useContainerActions } from '@/hooks/useContainerActions';
 
@@ -15,9 +11,7 @@ interface ContainerDropdownActionsProps {
     };
 }
 
-export function ContainersDropdownActions({
-    container: { id, name, state },
-}: ContainerDropdownActionsProps) {
+export function ContainersDropdownActions({ container: { id, name, state } }: ContainerDropdownActionsProps) {
     const isPaused = state === 'paused';
     const containerTools = useContainerActions({ containerId: id, containerName: name, isPaused });
 

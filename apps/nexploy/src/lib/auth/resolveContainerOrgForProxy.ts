@@ -1,5 +1,5 @@
 import { prisma } from '../../../prisma/prisma';
-import { NEXPLOY_LABELS } from '@/lib/nexployLabels';
+import { NEXPLOY_LABELS } from '@nexploy/nodes/core/nexployLabels';
 
 export async function resolveOrganizationIdForContainerId(containerId: string): Promise<string | null> {
     try {
@@ -24,10 +24,7 @@ export async function resolveOrganizationIdForContainerId(containerId: string): 
     }
 }
 
-export async function getCallerOrgRoleForProxy(
-    userId: string,
-    organizationId: string,
-): Promise<string | null> {
+export async function getCallerOrgRoleForProxy(userId: string, organizationId: string): Promise<string | null> {
     const member = await prisma.member.findFirst({
         where: { organizationId, userId },
         select: { role: true },

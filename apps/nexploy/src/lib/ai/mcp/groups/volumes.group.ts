@@ -1,9 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import {
-    volumeCreateSchema,
-    volumeDeleteSchema,
-} from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
+import { volumeCreateSchema, volumeDeleteSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { kyDocker, type KyDockerOptions } from '@/lib/api/kyDocker';
 import { fail, guard, guardDestructive, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';
@@ -14,23 +11,19 @@ export const volumesGroup: ToolGroup = {
     register(server: McpServer, ctx: ToolContext) {
         if (ctx.allowVolumesGroup === false) return;
 
-        server.registerTool(
-            'listVolumes',
-            { description: 'List all Docker volumes.' },
-            async () => {
-                const g = guard(ctx, 'volume', 'read');
-                if (g) return g;
-                try {
-                    const volumes = await kyDocker
-                        .get('volumes', { environmentId: ctx.environmentId } as KyDockerOptions)
-                        .json<any[]>();
-                    const data = volumes.map((v) => ({ name: v.name, driver: v.driver }));
-                    return ok(JSON.stringify({ count: volumes.length, data }));
-                } catch (e: any) {
-                    return fail(e.message);
-                }
-            },
-        );
+        server.registerTool('listVolumes', { description: 'List all Docker volumes.' }, async () => {
+            const g = guard(ctx, 'volume', 'read');
+            if (g) return g;
+            try {
+                const volumes = await kyDocker
+                    .get('volumes', { environmentId: ctx.environmentId } as KyDockerOptions)
+                    .json<any[]>();
+                const data = volumes.map((v) => ({ name: v.name, driver: v.driver }));
+                return ok(JSON.stringify({ count: volumes.length, data }));
+            } catch (e: any) {
+                return fail(e.message);
+            }
+        });
 
         server.registerTool(
             'inspectVolume',

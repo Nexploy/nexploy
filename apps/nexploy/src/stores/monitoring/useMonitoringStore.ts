@@ -20,7 +20,7 @@ const defaultValue: Omit<
     eventSource: null,
     connectionState: 'disconnected',
     history: [],
-    maxHistorySize: 60,
+    maxHistorySize: 120,
 };
 
 let lastConnectionParams: MonitoringStateParams | null = null;

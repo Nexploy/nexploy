@@ -37,9 +37,7 @@ export function AlertConfirmationDialog() {
             <AlertDialogContent>
                 <AlertDialogHeader className={'break-all'}>
                     <AlertDialogTitle asChild={isValidElement(title)}>{title}</AlertDialogTitle>
-                    <AlertDialogDescription asChild={isValidElement(description)}>
-                        {description}
-                    </AlertDialogDescription>
+                    <AlertDialogDescription asChild={isValidElement(description)}>{description}</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     {!disableCancelButton && (

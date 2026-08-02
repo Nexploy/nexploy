@@ -27,41 +27,26 @@ export function CardImageDetails() {
                 <Table>
                     <TableBody>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('id')}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('id')}</TableCell>
                             <TableCell className="max-w-0">
                                 <div className="flex items-center gap-2">
                                     <code className="block truncate text-xs">{image.id}</code>
-                                    <CopyButton
-                                        text={image.id}
-                                        className="size-6"
-                                        size="icon"
-                                        variant="ghost"
-                                    />
+                                    <CopyButton text={image.id} className="size-6" size="icon" variant="ghost" />
                                 </div>
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('size')}daz
-                            </TableCell>
-                            <TableCell className="max-w-0 truncate">
-                                {formatBytes(image.size)}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('size')}daz</TableCell>
+                            <TableCell className="max-w-0 truncate">{formatBytes(image.size)}</TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('created')}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('created')}</TableCell>
                             <TableCell className={'max-w-0 truncate'}>
                                 {dayjs(image.created).format('YYYY-MM-DD HH:mm:ss')}
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">
-                                {t('build')}
-                            </TableCell>
+                            <TableCell className="text-muted-foreground w-32 font-medium">{t('build')}</TableCell>
                             <TableCell className={'max-w-0 truncate'}>
                                 {t('buildValue', {
                                     os: image.os || 'unknown',

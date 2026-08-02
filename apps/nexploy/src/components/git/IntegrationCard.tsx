@@ -49,9 +49,7 @@ export function IntegrationCard({
     return (
         <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="flex items-center gap-3">
-                <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-lg">
-                    {icon}
-                </div>
+                <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-lg">{icon}</div>
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <span>{name}</span>
@@ -66,14 +64,10 @@ export function IntegrationCard({
                                 {subtitle}
                             </Badge>
                         ) : null}
-                        <Status
-                            status={statusMap[isConnected ? 'connected' : 'disconnected'].status}
-                        >
+                        <Status status={statusMap[isConnected ? 'connected' : 'disconnected'].status}>
                             <StatusIndicator />
                             <StatusLabel>
-                                {tStatus(
-                                    statusMap[isConnected ? 'connected' : 'disconnected'].labelKey,
-                                )}
+                                {tStatus(statusMap[isConnected ? 'connected' : 'disconnected'].labelKey)}
                             </StatusLabel>
                         </Status>
                     </div>
@@ -91,10 +85,7 @@ export function IntegrationCard({
                     {t('disconnect')}
                 </Button>
             ) : (
-                <Link
-                    prefetch={false}
-                    href={`/api/git/oauth/connect?gitProviderId=${gitProviderId}`}
-                >
+                <Link prefetch={false} href={`/api/git/oauth/connect?gitProviderId=${gitProviderId}`}>
                     <Button icon={Plus} disabled={isLoading} isLoading={isLoading}>
                         {t('connect')}
                     </Button>

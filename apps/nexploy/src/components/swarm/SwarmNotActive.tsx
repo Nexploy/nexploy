@@ -53,11 +53,7 @@ export function SwarmNotActive() {
             <Can
                 resource="swarm"
                 action="manage"
-                fallback={
-                    <p className="text-muted-foreground max-w-md text-sm">
-                        {t('activationRequiresAdmin')}
-                    </p>
-                }
+                fallback={<p className="text-muted-foreground max-w-md text-sm">{t('activationRequiresAdmin')}</p>}
             >
                 <div className="flex justify-center gap-4">
                     <Button onClick={handleInitSwarm}>

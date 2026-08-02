@@ -2,9 +2,10 @@
 
 import { createStore } from 'zustand';
 import { addEdge, applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
-import { type NodeId, type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeId, type PipelineGraph } from '@nexploy/nodes/core/node';
 import { flowToGraph, graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { getNodeLifecycle } from '@/components/pipeline/nodeManifestRegistry';
+import { nodesClientServices } from '@/components/pipeline/nodesClientServices';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import type { PipelineBuild, PipelineStoreState, Snapshot } from '@workspace/typescript-interface/stores/pipelineStore';
@@ -47,11 +48,9 @@ export function createPipelineStore({
         buildNodeDurations: {},
         buildNodeStartTimes: {},
 
-        setNodes: (updater) =>
-            set((s) => ({ nodes: typeof updater === 'function' ? updater(s.nodes) : updater })),
+        setNodes: (updater) => set((s) => ({ nodes: typeof updater === 'function' ? updater(s.nodes) : updater })),
 
-        setEdges: (updater) =>
-            set((s) => ({ edges: typeof updater === 'function' ? updater(s.edges) : updater })),
+        setEdges: (updater) => set((s) => ({ edges: typeof updater === 'function' ? updater(s.edges) : updater })),
 
         onNodesChange: (changes) => {
             set((s) => ({ nodes: applyNodeChanges(changes, s.nodes) }));
@@ -90,16 +89,18 @@ export function createPipelineStore({
 
         handleConfigChange: (nodeId, config) => {
             set((s) => ({
-                nodes: s.nodes.map((n) =>
-                    n.id === nodeId ? { ...n, data: { ...n.data, config } } : n,
-                ),
+                nodes: s.nodes.map((n) => (n.id === nodeId ? { ...n, data: { ...n.data, config } } : n)),
             }));
         },
 
         handleNodeAdded: (nodeType: NodeId, _nodeId?) => {
             const lifecycle = getNodeLifecycle(nodeType);
             if (!lifecycle?.onAdd) return;
-            lifecycle.onAdd(get().repositoryId);
+            lifecycle.onAdd({
+                repositoryId: get().repositoryId,
+                remainingNodesOfType: get().nodes.filter((n) => n.data.nodeType === nodeType).length,
+                services: nodesClientServices,
+            });
         },
 
         triggerAutoSave: () => {
@@ -124,10 +125,7 @@ export function createPipelineStore({
                 selected: true,
                 data: { ...n.data },
             }));
-            const newNodes = [
-                ...nodes.map((n) => (n.selected ? { ...n, selected: false } : n)),
-                ...copies,
-            ];
+            const newNodes = [...nodes.map((n) => (n.selected ? { ...n, selected: false } : n)), ...copies];
             const newEdges = [
                 ...edges,
                 ...edges
@@ -158,8 +156,11 @@ export function createPipelineStore({
                 seen.add(nodeType);
                 const lifecycle = getNodeLifecycle(nodeType);
                 if (lifecycle?.onRemove) {
-                    const count = remaining.filter((n) => n.data.nodeType === nodeType).length;
-                    lifecycle.onRemove(repoId, count);
+                    lifecycle.onRemove({
+                        repositoryId: repoId,
+                        remainingNodesOfType: remaining.filter((n) => n.data.nodeType === nodeType).length,
+                        services: nodesClientServices,
+                    });
                 }
             }
 

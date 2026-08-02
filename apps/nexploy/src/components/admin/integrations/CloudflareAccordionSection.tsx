@@ -2,12 +2,7 @@
 
 import { type CloudflareAccountInfo } from '@workspace/typescript-interface/cloudflare/cloudflare';
 import { useTranslations } from 'next-intl';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@workspace/ui/components/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
 import { CloudflareAddButton } from '@/components/admin/integrations/CloudflareAddButton';
 import { CloudflareInstanceCard } from '@/components/admin/integrations/CloudflareInstanceCard';
 import { cn } from '@workspace/ui/lib/utils';

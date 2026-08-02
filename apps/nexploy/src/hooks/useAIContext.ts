@@ -84,11 +84,7 @@ const CATEGORY_KEYS: { id: string; keys: string[] }[] = [
     },
     {
         id: 'ssl',
-        keys: [
-            'suggestions.ssl.listCertificates',
-            'suggestions.ssl.issueLetsEncrypt',
-            'suggestions.ssl.deleteExpired',
-        ],
+        keys: ['suggestions.ssl.listCertificates', 'suggestions.ssl.issueLetsEncrypt', 'suggestions.ssl.deleteExpired'],
     },
     {
         id: 'registries',

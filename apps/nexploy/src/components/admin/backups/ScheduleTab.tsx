@@ -6,14 +6,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@workspace/ui/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
     Select,
     SelectContent,
@@ -30,15 +23,7 @@ import { BucketStorageAccountInfo } from '@workspace/typescript-interface/bucket
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 
-const DAY_OF_WEEK_KEYS = [
-    'sunday',
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-] as const;
+const DAY_OF_WEEK_KEYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
 
 const DAYS_OF_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
 
@@ -52,8 +37,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
     const t = useTranslations('admin');
     const locale = useLocale();
 
-    const is12h =
-        new Intl.DateTimeFormat(locale, { hour: 'numeric' }).resolvedOptions().hour12 ?? false;
+    const is12h = new Intl.DateTimeFormat(locale, { hour: 'numeric' }).resolvedOptions().hour12 ?? false;
 
     const { closeDialog } = useConfirmationDialogStore();
 
@@ -106,9 +90,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                 <Select value={field.value} onValueChange={field.onChange}>
                                     <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue
-                                                placeholder={t('selectBucketStorageAccount')}
-                                            />
+                                            <SelectValue placeholder={t('selectBucketStorageAccount')} />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
@@ -153,11 +135,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                         field.onChange(val);
                                         form.setValue(
                                             'scheduledDay',
-                                            val === 'WEEKLY'
-                                                ? 1
-                                                : val === 'MONTHLY'
-                                                  ? 1
-                                                  : undefined,
+                                            val === 'WEEKLY' ? 1 : val === 'MONTHLY' ? 1 : undefined,
                                         );
                                     }}
                                 >
@@ -169,18 +147,10 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>{t('frequency')}</SelectLabel>
-                                            <SelectItem value="HOURLY">
-                                                {t('frequencyHourly')}
-                                            </SelectItem>
-                                            <SelectItem value="DAILY">
-                                                {t('frequencyDaily')}
-                                            </SelectItem>
-                                            <SelectItem value="WEEKLY">
-                                                {t('frequencyWeekly')}
-                                            </SelectItem>
-                                            <SelectItem value="MONTHLY">
-                                                {t('frequencyMonthly')}
-                                            </SelectItem>
+                                            <SelectItem value="HOURLY">{t('frequencyHourly')}</SelectItem>
+                                            <SelectItem value="DAILY">{t('frequencyDaily')}</SelectItem>
+                                            <SelectItem value="WEEKLY">{t('frequencyWeekly')}</SelectItem>
+                                            <SelectItem value="MONTHLY">{t('frequencyMonthly')}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -240,9 +210,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                         </FormControl>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>
-                                                    {t('scheduledDayOfMonth')}
-                                                </SelectLabel>
+                                                <SelectLabel>{t('scheduledDayOfMonth')}</SelectLabel>
                                                 {DAYS_OF_MONTH.map((d) => (
                                                     <SelectItem key={d} value={`${d}`}>
                                                         {d}
@@ -272,9 +240,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                             max={59}
                                             onChange={(e) =>
                                                 field.onChange(
-                                                    isNaN(e.target.valueAsNumber)
-                                                        ? 0
-                                                        : e.target.valueAsNumber,
+                                                    isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber,
                                                 )
                                             }
                                         />
@@ -306,10 +272,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                                             onChange={(e) => {
                                                                 const h = Math.min(
                                                                     12,
-                                                                    Math.max(
-                                                                        1,
-                                                                        Number(e.target.value) || 1,
-                                                                    ),
+                                                                    Math.max(1, Number(e.target.value) || 1),
                                                                 );
                                                                 field.onChange(to24h(h, period));
                                                             }}
@@ -318,9 +281,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                                     <Select
                                                         value={period}
                                                         onValueChange={(v) =>
-                                                            field.onChange(
-                                                                to24h(hour12, v as 'AM' | 'PM'),
-                                                            )
+                                                            field.onChange(to24h(hour12, v as 'AM' | 'PM'))
                                                         }
                                                     >
                                                         <SelectTrigger>
@@ -328,12 +289,8 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             <SelectGroup>
-                                                                <SelectItem value="AM">
-                                                                    AM
-                                                                </SelectItem>
-                                                                <SelectItem value="PM">
-                                                                    PM
-                                                                </SelectItem>
+                                                                <SelectItem value="AM">AM</SelectItem>
+                                                                <SelectItem value="PM">PM</SelectItem>
                                                             </SelectGroup>
                                                         </SelectContent>
                                                     </Select>
@@ -374,9 +331,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                                 max={59}
                                                 onChange={(e) =>
                                                     field.onChange(
-                                                        isNaN(e.target.valueAsNumber)
-                                                            ? 0
-                                                            : e.target.valueAsNumber,
+                                                        isNaN(e.target.valueAsNumber) ? 0 : e.target.valueAsNumber,
                                                     )
                                                 }
                                             />

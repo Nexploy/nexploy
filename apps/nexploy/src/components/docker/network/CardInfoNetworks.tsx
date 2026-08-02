@@ -19,16 +19,11 @@ export function CardInfoNetworks() {
     const networkInfos = useMemo(() => {
         const totalNetworks = networks.length;
         const customNetworks = networks.filter((net) => !isBuiltinNetwork(net.name)).length;
-        const connectedContainers = networks.reduce(
-            (acc, net) => acc + (net.containers?.length || 0),
-            0,
-        );
+        const connectedContainers = networks.reduce((acc, net) => acc + (net.containers?.length || 0), 0);
 
         const lastCreated = [...networks].sort((a, b) => b.created - a.created)[0];
 
-        const lastCreatedLabel = lastCreated?.created
-            ? dayjs.unix(lastCreated.created).format('DD/MM/YYYY')
-            : '';
+        const lastCreatedLabel = lastCreated?.created ? dayjs.unix(lastCreated.created).format('DD/MM/YYYY') : '';
 
         const lastCreatedName = lastCreated?.name ?? '';
 
@@ -68,18 +63,14 @@ export function CardInfoNetworks() {
                 ) : (
                     <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                         <CardHeader className="flex flex-1 flex-row justify-between space-y-0">
-                            <CardTitle className="h-14 truncate text-sm font-medium">
-                                {info.title}
-                            </CardTitle>
+                            <CardTitle className="h-14 truncate text-sm font-medium">{info.title}</CardTitle>
                             <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
                                 <info.icon className="text-primary size-4" />
                             </div>
                         </CardHeader>
                         <CardContent>
                             <div className="truncate text-2xl font-semibold">{info.content}</div>
-                            <p className="text-muted-foreground truncate text-xs">
-                                {info.description}
-                            </p>
+                            <p className="text-muted-foreground truncate text-xs">{info.description}</p>
                         </CardContent>
                     </Card>
                 ),

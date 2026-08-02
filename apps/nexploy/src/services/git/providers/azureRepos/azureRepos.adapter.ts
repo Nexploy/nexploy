@@ -1,10 +1,6 @@
 import dayjs from 'dayjs';
 import { GitProviderAdapter, ParsedRepoUrl } from '@/services/git/core/GitProviderAdapter';
-import {
-    GitBranch,
-    GitProviderToken,
-    GitRepository,
-} from '@workspace/typescript-interface/git/git';
+import { GitBranch, GitProviderToken, GitRepository } from '@workspace/typescript-interface/git/git';
 import { MergeRequestAction, WebhookPayload } from '@workspace/typescript-interface/webhook';
 import { tokenGitStorage } from '@/lib/storage/token-git-storage';
 import { timingSafeEqual } from '@/lib/api/crypto-utils';
@@ -97,9 +93,7 @@ export const azureReposAdapter: GitProviderAdapter = {
 
             const perOrganization = await Promise.all(
                 accounts.map(async (account) => {
-                    const repositories = await azureGetOrganizationRepositories(
-                        account.accountName,
-                    );
+                    const repositories = await azureGetOrganizationRepositories(account.accountName);
                     return repositories.map((repo) => mapRepo(account.accountName, repo));
                 }),
             );
@@ -117,9 +111,7 @@ export const azureReposAdapter: GitProviderAdapter = {
     },
 
     async listBranches({ token, repositoryUrl, owner, repoName }): Promise<GitBranch[]> {
-        const location = repositoryUrl
-            ? locationFromRepoUrl(repositoryUrl)
-            : splitFullName(`${owner}/${repoName}`);
+        const location = repositoryUrl ? locationFromRepoUrl(repositoryUrl) : splitFullName(`${owner}/${repoName}`);
 
         const refs = await tokenGitStorage.run(token, async () =>
             azureGetBranches(location.organization, location.project, location.repository),
@@ -196,8 +188,7 @@ export const azureReposAdapter: GitProviderAdapter = {
                 repositoryUrl,
                 branch: branchFromRef(pullRequest.sourceRefName),
                 targetBranch: branchFromRef(pullRequest.targetRefName ?? ''),
-                mergeRequestAction:
-                    pullRequest.status === 'completed' ? 'merged' : mergeRequestAction,
+                mergeRequestAction: pullRequest.status === 'completed' ? 'merged' : mergeRequestAction,
                 commitHash: pullRequest.lastMergeSourceCommit?.commitId?.substring(0, 8),
                 commitMessage: pullRequest.title,
             };
@@ -265,9 +256,7 @@ export const azureReposAdapter: GitProviderAdapter = {
 
         const accessToken = tokenData.access_token;
         const refreshToken = tokenData.refresh_token ?? null;
-        const accessTokenExpiresAt = tokenData.expires_in
-            ? dayjs().add(tokenData.expires_in, 'second').toDate()
-            : null;
+        const accessTokenExpiresAt = tokenData.expires_in ? dayjs().add(tokenData.expires_in, 'second').toDate() : null;
 
         const user = await this.getAuthenticatedUser({
             token: { accessToken, refreshToken, accessTokenExpiresAt },
@@ -290,37 +279,19 @@ export const azureReposAdapter: GitProviderAdapter = {
         }
         const data = await azureRefreshAccessToken(refreshToken, clientId, clientSecret, tenantId);
         if (data.error || !data.access_token) {
-            throw new Error(
-                data.error_description || data.error || 'Azure Repos token refresh failed',
-            );
+            throw new Error(data.error_description || data.error || 'Azure Repos token refresh failed');
         }
         return {
             accessToken: data.access_token,
             refreshToken: data.refresh_token ?? refreshToken,
-            accessTokenExpiresAt: data.expires_in
-                ? dayjs().add(data.expires_in, 'second').toDate()
-                : null,
+            accessTokenExpiresAt: data.expires_in ? dayjs().add(data.expires_in, 'second').toDate() : null,
         };
     },
 
     async createRelease({ token, owner, repo, tagName, targetBranch, notes }) {
         const { organization, project, repository } = splitFullName(`${owner}/${repo}`);
-        const commitHash = await azureGetBranchHead(
-            token,
-            organization,
-            project,
-            targetBranch,
-            repository,
-        );
-        const tag = await azureCreateAnnotatedTag(
-            token,
-            organization,
-            project,
-            repository,
-            tagName,
-            commitHash,
-            notes,
-        );
+        const commitHash = await azureGetBranchHead(token, organization, project, targetBranch, repository);
+        const tag = await azureCreateAnnotatedTag(token, organization, project, repository, tagName, commitHash, notes);
         return {
             releaseId: tag.name,
             releaseUrl: `${azureCloneUrl(organization, project, repository)}?version=GT${encodeURIComponent(tagName)}`,

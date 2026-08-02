@@ -30,11 +30,7 @@ export function CustomPromptCard({ customSystemPrompt }: CustomPromptCardProps) 
 
     return (
         <Card>
-            <CardHeaderWithIcon
-                icon={Pencil}
-                title={t('customPrompt')}
-                description={t('customPromptDescription')}
-            />
+            <CardHeaderWithIcon icon={Pencil} title={t('customPrompt')} description={t('customPromptDescription')} />
             <CardContent>
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction}>
@@ -58,9 +54,7 @@ export function CustomPromptCard({ customSystemPrompt }: CustomPromptCardProps) 
                                     </FormControl>
                                     <div className="flex items-center justify-between">
                                         <FormMessage />
-                                        <p className="text-muted-foreground ml-auto text-xs">
-                                            {value.length}/4000
-                                        </p>
+                                        <p className="text-muted-foreground ml-auto text-xs">{value.length}/4000</p>
                                     </div>
                                 </FormItem>
                             )}
