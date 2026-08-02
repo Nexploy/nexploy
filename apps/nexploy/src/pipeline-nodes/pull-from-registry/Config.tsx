@@ -15,7 +15,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
-import type { RegistryInfo } from '@/services/registry.service';
+import type { RegistryInfo } from '@workspace/typescript-interface/registry/registry';
 
 const DOCKER_HUB = 'docker-hub';
 

@@ -5,6 +5,7 @@ import {
     useNodeEnvironmentId,
     useNodeEnvironments,
     useNodeResource,
+    useNodeHostComponents,
 } from '@workspace/pipeline-ui/adapter';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
@@ -22,7 +23,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@workspace/ui/components/alert';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Info, ShieldCheck } from 'lucide-react';
-import { CloudflareDomainSelector } from '@/components/domains/CloudflareDomainSelector';
 import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 interface CertOption {
@@ -42,6 +42,7 @@ export function AddDomainConfig() {
 
     const { data: certificates = [] } = useNodeResource<CertOption[]>(httpsEnabled ? '/api/ssl-certificates' : null);
 
+    const { CloudflareDomainField } = useNodeHostComponents();
     const environmentId = useNodeEnvironmentId();
     const environment = useNodeEnvironments().find((environment) => environment.id === environmentId);
 
@@ -58,7 +59,7 @@ export function AddDomainConfig() {
                     <AlertDescription>{tDomains('remotePortHint')}</AlertDescription>
                 </Alert>
             )}
-            <CloudflareDomainSelector form={form} />
+            <CloudflareDomainField form={form} />
             <div className="grid items-start gap-4 md:grid-cols-2">
                 <FormField
                     control={form.control}

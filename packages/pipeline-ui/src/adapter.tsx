@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, type ComponentType, type ReactNode } from 'react';
 import type { Containers } from '@workspace/typescript-interface/docker/docker.containers';
 import type { Image } from '@workspace/typescript-interface/docker/docker.image';
 import type { Network } from '@workspace/typescript-interface/docker/docker.network';
@@ -36,6 +36,29 @@ export interface AncestorWithInputs {
     inputFields: NodeOutputFieldView[];
 }
 
+export interface PermissionGateProps {
+    resource: string;
+    action: string;
+    condition?: boolean;
+    fallback?: ReactNode;
+    children: ReactNode;
+}
+
+export interface CloudflareDomainFieldProps {
+    form: unknown;
+    basePath?: string;
+}
+
+export interface NodeHostComponents {
+    PermissionGate: ComponentType<PermissionGateProps>;
+    CloudflareDomainField: ComponentType<CloudflareDomainFieldProps>;
+}
+
+export interface WebhookSetup {
+    execute: (input: { repositoryId: string; refresh?: boolean }) => void;
+    isPending: boolean;
+}
+
 export interface NodesUIAdapter {
     useEnvironmentId(): string | undefined;
     usePanelNodeId(): string | undefined;
@@ -48,6 +71,8 @@ export interface NodesUIAdapter {
     useNetworks(environmentId?: string): { networks: Network[]; isLoading: boolean };
     useResource<T>(url: string | null): ResourceResult<T>;
     useAncestorInputFields(nodeId: string): AncestorWithInputs[];
+    useWebhookSetup(onSuccess: () => void): WebhookSetup;
+    components: NodeHostComponents;
 }
 
 const NodesUIContext = createContext<NodesUIAdapter | null>(null);
@@ -106,4 +131,12 @@ export function useNodeResource<T>(url: string | null): ResourceResult<T> {
 
 export function useNodeAncestorInputFields(nodeId: string): AncestorWithInputs[] {
     return useAdapter().useAncestorInputFields(nodeId);
+}
+
+export function useNodeWebhookSetup(onSuccess: () => void): WebhookSetup {
+    return useAdapter().useWebhookSetup(onSuccess);
+}
+
+export function useNodeHostComponents(): NodeHostComponents {
+    return useAdapter().components;
 }

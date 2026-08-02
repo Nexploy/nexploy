@@ -9,6 +9,7 @@ import { useEnvironmentNetworks } from '@/hooks/sse/useEnvironmentNetworks';
 import { useEnvironmentVolumes } from '@/hooks/sse/useEnvironmentVolumes';
 import { usePipelineEnvironmentId } from '@/hooks/pipeline/usePipelineEnvironmentId';
 import { useAncestorInputFields } from '@/hooks/useAncestorInputFields';
+import { nodesHostComponents, useWebhookSetup } from '@/components/pipeline/nodesHostComponents';
 import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
@@ -31,4 +32,6 @@ export const nodesUIAdapter: NodesUIAdapter = {
     useNetworks: useEnvironmentNetworks,
     useResource,
     useAncestorInputFields,
+    useWebhookSetup,
+    components: nodesHostComponents,
 };

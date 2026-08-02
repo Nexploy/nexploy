@@ -1,6 +1,6 @@
 'use client';
 
-import { useNodeResource } from '@workspace/pipeline-ui/adapter';
+import { useNodeHostComponents, useNodeResource, useNodeWebhookSetup } from '@workspace/pipeline-ui/adapter';
 import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { useParams } from 'next/navigation';
@@ -19,9 +19,6 @@ import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Label } from '@workspace/ui/components/label';
 import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert';
-import { useAction } from 'next-safe-action/hooks';
-import { setupWebhookAction } from '@/actions/repository/pipeline/setupWebhook.action';
-import { Can } from '@/components/permission/Can';
 import { MERGE_REQUEST_ACTIONS, WEBHOOK_TRIGGER_EVENTS } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 
 interface WebhookStatus {
@@ -48,14 +45,13 @@ export function WebhookCloneConfig() {
     const t = useTranslations('repository.pipeline.config');
     const form = useFormContext();
     const params = useParams<{ repositoryId: string }>();
+    const { PermissionGate } = useNodeHostComponents();
 
     const { data: webhookStatus, mutate } = useNodeResource<WebhookStatus>(
         `/api/repositories/${params.repositoryId}/webhook`,
     );
 
-    const { execute, isPending } = useAction(setupWebhookAction, {
-        onSuccess: () => mutate(),
-    });
+    const { execute, isPending } = useNodeWebhookSetup(mutate);
 
     const selectedEvents: TriggerEvent[] = form.watch('triggerEvents') ?? ['push'];
 
@@ -66,7 +62,7 @@ export function WebhookCloneConfig() {
                     <CheckCircle />
                     <AlertDescription className="flex items-center justify-between gap-3 text-green-600">
                         <span>{t('webhookStatusConfigured')}</span>
-                        <Can resource="repository" action="update">
+                        <PermissionGate resource="repository" action="update">
                             <Button
                                 type="button"
                                 size="sm"
@@ -84,7 +80,7 @@ export function WebhookCloneConfig() {
                             >
                                 {t('webhookResyncButton')}
                             </Button>
-                        </Can>
+                        </PermissionGate>
                     </AlertDescription>
                 </Alert>
             ) : (
@@ -94,7 +90,7 @@ export function WebhookCloneConfig() {
                         <AlertTitle className="text-yellow-600">{t('webhookStatusNotConfigured')}</AlertTitle>
                         <AlertDescription className="flex items-center justify-between gap-3">
                             <span className="text-yellow-600/80">{t('webhookStatusNotConfiguredDescription')}</span>
-                            <Can resource="repository" action="update">
+                            <PermissionGate resource="repository" action="update">
                                 <Button
                                     type="button"
                                     size="sm"
@@ -107,7 +103,7 @@ export function WebhookCloneConfig() {
                                 >
                                     {t('webhookSetupButton')}
                                 </Button>
-                            </Can>
+                            </PermissionGate>
                         </AlertDescription>
                     </Alert>
                 )

@@ -13,7 +13,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import type { RegistryInfo } from '@/services/registry.service';
+import type { RegistryInfo } from '@workspace/typescript-interface/registry/registry';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { RefAware } from '@workspace/pipeline-ui/RefAware';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
