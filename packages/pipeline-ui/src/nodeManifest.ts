@@ -1,7 +1,7 @@
 import { type ComponentType } from 'react';
 import { z } from 'zod';
 import { type NodeDefinition } from '@workspace/pipeline-ui/nodeDefinition';
-import { type NodeLifecycleCallbacks } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeLifecycleCallbacks } from '@workspace/pipeline-core/node';
 
 export interface NodeInputField {
     key: string;

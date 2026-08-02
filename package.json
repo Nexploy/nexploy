@@ -20,7 +20,13 @@
     "test:e2e:ui": "bash scripts/e2e.sh run --ui",
     "test:e2e:stack:up": "bash scripts/e2e.sh up",
     "test:e2e:stack:down": "bash scripts/e2e.sh down",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*": [
+      "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off"
+    ]
   },
   "dependencies": {
     "@workspace/typescript-config": "workspace:*"
@@ -31,6 +37,8 @@
     "@turbo/gen": "^2.9.4",
     "@types/node": "^24.7.2",
     "baseline-browser-mapping": "^2.9.19",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0",
     "tsx": "^4.20.6",
     "turbo": "^2.9.4",
     "typescript": "7.0.2"

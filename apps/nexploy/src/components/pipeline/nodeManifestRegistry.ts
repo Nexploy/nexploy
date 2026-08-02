@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { type NodeDefinition } from '@workspace/pipeline-ui/nodeDefinition';
-import { type NodeInputField, type NodeManifest } from './types/nodeManifest';
+import { type NodeInputField, type NodeManifest } from '@workspace/pipeline-ui/nodeManifest';
 import { allBuiltinManifests } from '@/pipeline-nodes/registry/client';
 
 const builtinRegistry = new Map<string, NodeManifest>(

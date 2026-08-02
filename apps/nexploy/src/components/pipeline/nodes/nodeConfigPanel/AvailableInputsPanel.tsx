@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Variable } from 'lucide-react';
 import { useAncestorInputFields } from '@/hooks/useAncestorInputFields';
-import { type NodeInputField } from '@/components/pipeline/types/nodeManifest';
+import { type NodeInputField } from '@workspace/pipeline-ui/nodeManifest';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
