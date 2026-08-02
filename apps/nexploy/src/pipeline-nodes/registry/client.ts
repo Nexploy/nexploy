@@ -4,7 +4,7 @@ import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/no
 import { type HandlePosition, type NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
 import { type NodeManifest } from '@/components/pipeline/types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT, ICON_NAME_MAP } from '@/components/pipeline/pipelineTheme';
-import { ALL_NODE_DESCRIPTORS } from './descriptors';
+import { ALL_NODE_DESCRIPTORS, getNodeOutputFields } from './descriptors';
 import { webhookCloneLifecycle } from '../webhook-clone/lifecycle';
 import { AddDomainConfig } from '../add-domain/Config';
 import { AddSslCertificateConfig } from '../add-ssl-certificate/Config';
@@ -173,22 +173,13 @@ function toDefinition(descriptor: NodeDescriptor): NodeDefinition {
 }
 
 function toManifest(descriptor: NodeDescriptor): NodeManifest {
-    const visibleOutputs = (descriptor.outputs ?? []).filter((output) => !output.internal);
-
     return {
         type: descriptor.type,
         definition: toDefinition(descriptor),
         configSchema: descriptor.configSchema as NodeManifest['configSchema'],
         configPanel: configPanels[descriptor.type]!,
         lifecycle: lifecycles[descriptor.type as keyof typeof lifecycles],
-        inputFields: visibleOutputs.length
-            ? visibleOutputs.map((output) => ({
-                  key: output.key,
-                  labelKey: output.labelKey ?? `pipeline.inputs.${output.key}`,
-                  descriptionKey: output.descriptionKey ?? `pipeline.inputs.desc_${output.key}`,
-                  type: output.type ?? 'input',
-              }))
-            : undefined,
+        inputFields: getNodeOutputFields(descriptor.type),
     };
 }
 

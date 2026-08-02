@@ -18,7 +18,7 @@ import { Button } from '@workspace/ui/components/button';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Plus, Trash2 } from 'lucide-react';
 import { useMemo } from 'react';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function CreateServiceConfig() {
     const t = useTranslations('repository.pipeline.config');

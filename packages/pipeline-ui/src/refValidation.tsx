@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, type ReactNode, useContext, useMemo } from 'react';
-import { type AncestorWithInputs, useAncestorInputFields } from '@/hooks/useAncestorInputFields';
+import { type AncestorWithInputs, useNodeAncestorInputFields } from '@workspace/pipeline-ui/adapter';
 
 interface RefValidationContextValue {
     validIds: Set<string>;
@@ -13,13 +13,8 @@ const RefValidationContext = createContext<RefValidationContextValue>({
     ancestors: [],
 });
 
-interface RefValidationProviderProps {
-    nodeId: string;
-    children: ReactNode;
-}
-
-export function RefValidationProvider({ nodeId, children }: RefValidationProviderProps) {
-    const ancestors = useAncestorInputFields(nodeId);
+export function RefValidationProvider({ nodeId, children }: { nodeId: string; children: ReactNode }) {
+    const ancestors = useNodeAncestorInputFields(nodeId);
     const validIds = useMemo(() => new Set(ancestors.map((a) => a.nodeId)), [ancestors]);
     const value = useMemo(() => ({ validIds, ancestors }), [validIds, ancestors]);
 

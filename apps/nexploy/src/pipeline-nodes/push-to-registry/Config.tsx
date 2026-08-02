@@ -15,7 +15,7 @@ import {
 } from '@workspace/ui/components/select';
 import type { RegistryInfo } from '@/services/registry.service';
 import { AlertTriangle, Loader2 } from 'lucide-react';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { useMemo } from 'react';
 

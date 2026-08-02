@@ -13,7 +13,7 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function FetchSecretsInfisicalConfig() {
     const t = useTranslations('repository.pipeline.config');

@@ -14,8 +14,6 @@ import { saveNodeConfigAction } from '@/actions/repository/pipeline/saveNodeConf
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { getConfigPanel, getConfigSchema, hasConfigSchema } from '@/components/pipeline/nodeManifestRegistry';
-import { NodesUIProvider } from '@workspace/pipeline-ui/adapter';
-import { nodesUIAdapter } from '@/components/pipeline/nodesUIAdapter';
 import { cn } from '@workspace/ui/lib/utils';
 import { usePermissions } from '@/contexts/PermissionContext';
 
@@ -82,11 +80,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                         disabled={isViewingBuild || !canEdit}
                         className={cn('grid grid-cols-1 p-4', (isViewingBuild || !canEdit) && 'pointer-events-none')}
                     >
-                        {ConfigComponent && (
-                            <NodesUIProvider adapter={nodesUIAdapter}>
-                                <ConfigComponent />
-                            </NodesUIProvider>
-                        )}
+                        {ConfigComponent && <ConfigComponent />}
                     </fieldset>
                 </ScrollAreaWithShadow>
 

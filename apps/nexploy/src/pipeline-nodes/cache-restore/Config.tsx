@@ -6,7 +6,7 @@ import { useFormContext } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function CacheRestoreConfig() {
     const t = useTranslations('repository.pipeline.config');

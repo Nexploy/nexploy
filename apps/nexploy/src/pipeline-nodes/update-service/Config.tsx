@@ -15,7 +15,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Switch } from '@workspace/ui/components/switch';
 import { AlertTriangle, Loader2 } from 'lucide-react';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 import { isNodeFieldRef } from '@workspace/pipeline-core/nodeFieldRef';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { useMemo } from 'react';

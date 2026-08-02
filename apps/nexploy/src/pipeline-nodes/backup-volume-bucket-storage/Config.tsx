@@ -17,7 +17,7 @@ import { Input } from '@workspace/ui/components/input';
 import { type BucketStorageAccountInfo } from '@workspace/typescript-interface/bucket-storage/bucketStorage';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { isNodeFieldRef } from '@workspace/pipeline-core/nodeFieldRef';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function BackupVolumeBucketStorageConfig() {
     const t = useTranslations('repository.pipeline.config');

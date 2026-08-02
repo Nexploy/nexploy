@@ -18,7 +18,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 import { GitBranch } from '@workspace/typescript-interface/git/git';
 import { GitBranchIcon } from 'lucide-react';
 

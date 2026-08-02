@@ -5,10 +5,16 @@
   "type": "module",
   "exports": {
     "./*": "./src/*.ts",
-    "./adapter": "./src/adapter.tsx"
+    "./adapter": "./src/adapter.tsx",
+    "./RefAware": "./src/RefAware.tsx",
+    "./refValidation": "./src/refValidation.tsx"
   },
   "dependencies": {
+    "@workspace/pipeline-core": "workspace:*",
     "@workspace/typescript-interface": "workspace:*",
+    "@workspace/ui": "workspace:*",
+    "lucide-react": "^1.17.0",
+    "next-intl": "^4.9.1",
     "react": "^19.2.3"
   },
   "devDependencies": {

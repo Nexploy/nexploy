@@ -19,7 +19,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { isNodeFieldRef } from '@workspace/pipeline-core/nodeFieldRef';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function DeleteNetworkConfig() {
     const t = useTranslations('repository.pipeline.config');

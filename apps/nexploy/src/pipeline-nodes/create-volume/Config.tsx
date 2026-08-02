@@ -14,7 +14,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { VOLUME_DRIVERS } from '@workspace/shared/dockerConstants';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function CreateVolumeConfig() {
     const t = useTranslations('repository.pipeline.config');

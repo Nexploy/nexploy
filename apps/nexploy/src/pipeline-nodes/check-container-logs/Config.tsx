@@ -18,7 +18,7 @@ import {
 import { AlertTriangle, Info, Loader2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function CheckContainerLogsConfig() {
     const t = useTranslations('repository.pipeline.config');

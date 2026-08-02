@@ -17,7 +17,7 @@ import { Switch } from '@workspace/ui/components/switch';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { isNodeFieldRef } from '@workspace/pipeline-core/nodeFieldRef';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function DeleteContainerConfig() {
     const t = useTranslations('repository.pipeline.config');

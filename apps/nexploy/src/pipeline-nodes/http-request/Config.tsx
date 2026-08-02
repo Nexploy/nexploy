@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Switch } from '@workspace/ui/components/switch';
 import { Button } from '@workspace/ui/components/button';

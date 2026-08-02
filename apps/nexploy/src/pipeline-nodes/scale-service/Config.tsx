@@ -15,7 +15,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { AlertTriangle } from 'lucide-react';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function ScaleServiceConfig() {
     const t = useTranslations('repository.pipeline.config');

@@ -15,7 +15,7 @@ import {
 } from '@workspace/ui/components/select';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { AlertTriangle, Loader2 } from 'lucide-react';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function RemoveContainerConfig() {
     const t = useTranslations('repository.pipeline.config');

@@ -7,7 +7,7 @@ import { AlertTriangle, Variable, X } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { useTranslations } from 'next-intl';
-import { useAncestorIndex, useValidAncestorNodeIds } from '@/contexts/RefValidationContext';
+import { useAncestorIndex, useValidAncestorNodeIds } from '@workspace/pipeline-ui/refValidation';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 interface RefAwareProps {

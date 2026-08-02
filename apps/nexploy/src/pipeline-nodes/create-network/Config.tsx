@@ -14,7 +14,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { NETWORK_DRIVERS } from '@workspace/shared/dockerConstants';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function CreateNetworkConfig() {
     const t = useTranslations('repository.pipeline.config');

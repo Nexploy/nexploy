@@ -12,7 +12,7 @@ import {
 } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function ComposeBuildConfig() {
     const t = useTranslations('repository.pipeline.config');

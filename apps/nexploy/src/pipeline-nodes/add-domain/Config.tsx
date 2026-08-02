@@ -23,7 +23,7 @@ import { Alert, AlertDescription } from '@workspace/ui/components/alert';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Info, ShieldCheck } from 'lucide-react';
 import { CloudflareDomainSelector } from '@/components/domains/CloudflareDomainSelector';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 interface CertOption {
     id: string;

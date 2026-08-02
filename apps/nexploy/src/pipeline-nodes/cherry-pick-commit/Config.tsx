@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 import { GitBranch } from '@workspace/typescript-interface/git/git';
 import {
     Select,

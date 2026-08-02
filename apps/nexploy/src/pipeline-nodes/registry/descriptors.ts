@@ -132,3 +132,22 @@ const descriptorsByType = new Map(ALL_NODE_DESCRIPTORS.map((d) => [d.type as str
 export function getNodeDescriptor(type: string): NodeDescriptor | undefined {
     return descriptorsByType.get(type);
 }
+
+export interface NodeOutputFieldView {
+    key: string;
+    labelKey: string;
+    descriptionKey: string;
+    type: 'input' | 'number' | 'array';
+}
+
+export function getNodeOutputFields(type: string): NodeOutputFieldView[] | undefined {
+    const outputs = descriptorsByType.get(type)?.outputs?.filter((output) => !output.internal);
+    if (!outputs?.length) return undefined;
+
+    return outputs.map((output) => ({
+        key: output.key,
+        labelKey: output.labelKey ?? `pipeline.inputs.${output.key}`,
+        descriptionKey: output.descriptionKey ?? `pipeline.inputs.desc_${output.key}`,
+        type: output.type ?? 'input',
+    }));
+}

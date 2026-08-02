@@ -17,7 +17,7 @@ import {
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { Status, StatusIndicator } from '@workspace/ui/components/kibo-ui/status';
 import { Switch } from '@workspace/ui/components/switch';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function RunCommandInContainerConfig() {
     const t = useTranslations('repository.pipeline.config');

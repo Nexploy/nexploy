@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { ArrowRightFromLine } from 'lucide-react';
 import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
-import { getNodeInputFields } from '@/components/pipeline/nodeManifestRegistry';
+import { getNodeOutputFields } from '@/pipeline-nodes/registry/descriptors';
 import { type Node } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -48,7 +48,7 @@ interface NodeOutputsPanelProps {
 export function NodeOutputsPanel({ node }: NodeOutputsPanelProps) {
     const t = useTranslations('repository.pipeline');
     const nodeData = node.data as unknown as NodeData;
-    const outputFields = getNodeInputFields(nodeData.nodeType);
+    const outputFields = getNodeOutputFields(nodeData.nodeType);
 
     return (
         <div className="flex w-56 flex-col gap-2 overflow-hidden">

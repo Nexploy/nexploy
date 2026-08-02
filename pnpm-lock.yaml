@@ -390,9 +390,21 @@ importers:
 
   packages/pipeline-ui:
     dependencies:
+      '@workspace/pipeline-core':
+        specifier: workspace:*
+        version: link:../pipeline-core
       '@workspace/typescript-interface':
         specifier: workspace:*
         version: link:../typescript-interface
+      '@workspace/ui':
+        specifier: workspace:*
+        version: link:../ui
+      lucide-react:
+        specifier: ^1.17.0
+        version: 1.17.0(react@19.2.3)
+      next-intl:
+        specifier: ^4.9.1
+        version: 4.9.1(next@16.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@7.0.2)
       react:
         specifier: ^19.2.3
         version: 19.2.3

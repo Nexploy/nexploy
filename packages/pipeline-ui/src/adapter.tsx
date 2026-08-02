@@ -23,6 +23,19 @@ export interface ResourceResult<T> {
     mutate: () => void;
 }
 
+export interface NodeOutputFieldView {
+    key: string;
+    labelKey: string;
+    descriptionKey: string;
+    type: 'input' | 'number' | 'array';
+}
+
+export interface AncestorWithInputs {
+    nodeId: string;
+    nodeType: string;
+    inputFields: NodeOutputFieldView[];
+}
+
 export interface NodesUIAdapter {
     useEnvironmentId(): string | undefined;
     usePanelNodeId(): string | undefined;
@@ -34,6 +47,7 @@ export interface NodesUIAdapter {
     useVolumes(environmentId?: string): { volumes: Volume[]; isLoading: boolean };
     useNetworks(environmentId?: string): { networks: Network[]; isLoading: boolean };
     useResource<T>(url: string | null): ResourceResult<T>;
+    useAncestorInputFields(nodeId: string): AncestorWithInputs[];
 }
 
 const NodesUIContext = createContext<NodesUIAdapter | null>(null);
@@ -88,4 +102,8 @@ export function useNodeNetworks(environmentId?: string) {
 
 export function useNodeResource<T>(url: string | null): ResourceResult<T> {
     return useAdapter().useResource<T>(url);
+}
+
+export function useNodeAncestorInputFields(nodeId: string): AncestorWithInputs[] {
+    return useAdapter().useAncestorInputFields(nodeId);
 }

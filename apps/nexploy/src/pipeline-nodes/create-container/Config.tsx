@@ -20,7 +20,7 @@ import { Label } from '@workspace/ui/components/label';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Plus, Trash2 } from 'lucide-react';
 import { useMemo } from 'react';
-import { RefAware } from '@/components/pipeline/nodes/nodeConfigPanel/RefAware';
+import { RefAware } from '@workspace/pipeline-ui/RefAware';
 
 export function CreateContainerConfig() {
     const t = useTranslations('repository.pipeline.config');
