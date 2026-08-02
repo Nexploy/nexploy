@@ -4,7 +4,7 @@ import { useNodePanelNodeId } from '@workspace/pipeline-ui/adapter';
 import { useTranslations } from 'next-intl';
 import { useReactFlow } from '@xyflow/react';
 import { useFormContext } from 'react-hook-form';
-import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeData } from '@workspace/pipeline-ui/nodeDefinition';
 import { findClosestEnabledNodes } from '@workspace/pipeline-core/helpers';
 import { cn } from '@workspace/ui/lib/utils';
 import { FormControl, FormField, FormItem, FormLabel } from '@workspace/ui/components/form';

@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { composeRunConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { composeRunConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const composeRunDescriptor: NodeDescriptor = {
     type: 'compose-run',

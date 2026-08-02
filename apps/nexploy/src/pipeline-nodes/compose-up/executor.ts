@@ -1,11 +1,7 @@
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
 import { createDockerService } from '@workspace/pipeline-core/dockerService';
-import { composeUpConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { composeUpConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { z } from 'zod';
 import { requireComposeFileFromAncestor, resolveComposeEnvVars } from '@workspace/pipeline-core/composeContext';
 

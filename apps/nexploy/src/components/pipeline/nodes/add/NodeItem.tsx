@@ -1,6 +1,6 @@
 'use client';
 
-import { NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { NodeDefinition } from '@workspace/pipeline-ui/nodeDefinition';
 import { NodeId } from '@workspace/typescript-interface/pipeline/node';
 import { cn } from '@workspace/ui/lib/utils';
 import { Plus } from 'lucide-react';

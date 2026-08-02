@@ -374,15 +374,9 @@ importers:
 
   packages/pipeline-core:
     dependencies:
-      '@workspace/schemas-zod':
-        specifier: workspace:*
-        version: link:../schemas-zod
-      '@workspace/shared':
-        specifier: workspace:*
-        version: link:../shared
-      '@workspace/typescript-interface':
-        specifier: workspace:*
-        version: link:../typescript-interface
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@types/node':
         specifier: ^24.7.2
@@ -405,6 +399,9 @@ importers:
       '@workspace/ui':
         specifier: workspace:*
         version: link:../ui
+      '@xyflow/react':
+        specifier: ^12.11.1
+        version: 12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       lucide-react:
         specifier: ^1.17.0
         version: 1.17.0(react@19.2.3)
@@ -427,6 +424,9 @@ importers:
 
   packages/schemas-zod:
     dependencies:
+      '@workspace/pipeline-core':
+        specifier: workspace:*
+        version: link:../pipeline-core
       '@workspace/typescript-interface':
         specifier: workspace:*
         version: link:../typescript-interface
@@ -443,6 +443,9 @@ importers:
 
   packages/shared:
     dependencies:
+      '@workspace/pipeline-core':
+        specifier: workspace:*
+        version: link:../pipeline-core
       '@workspace/typescript-interface':
         specifier: workspace:*
         version: link:../typescript-interface
@@ -458,6 +461,9 @@ importers:
 
   packages/typescript-interface:
     dependencies:
+      '@workspace/pipeline-core':
+        specifier: workspace:*
+        version: link:../pipeline-core
       '@xyflow/react':
         specifier: ^12.11.1
         version: 12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)

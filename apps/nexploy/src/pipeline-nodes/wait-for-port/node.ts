@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { waitForPortConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { waitForPortConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const waitForPortDescriptor: NodeDescriptor = {
     type: 'wait-for-port',

@@ -1,9 +1,5 @@
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
 
 export class SaveVersionExecutor implements INodeExecutor {
     readonly type = 'save-version';

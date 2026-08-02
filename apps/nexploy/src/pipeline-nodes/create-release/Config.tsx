@@ -19,7 +19,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { RefAware } from '@workspace/pipeline-ui/RefAware';
-import { GitBranch } from '@workspace/typescript-interface/git/git';
+import { GitBranch } from '@workspace/pipeline-core/hostResponses';
 import { GitBranchIcon } from 'lucide-react';
 
 interface RepositoryGitMeta {

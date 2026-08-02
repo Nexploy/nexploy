@@ -8,7 +8,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@works
 import { Input } from '@workspace/ui/components/input';
 import { Switch } from '@workspace/ui/components/switch';
 import { RefAware } from '@workspace/pipeline-ui/RefAware';
-import { GitBranch } from '@workspace/typescript-interface/git/git';
+import { GitBranch } from '@workspace/pipeline-core/hostResponses';
 import {
     Select,
     SelectContent,

@@ -1,4 +1,4 @@
-import type { NodeDefinition } from '../pipeline/nodeDefinition';
+import type { NodeDefinition } from '@workspace/pipeline-ui/nodeDefinition';
 
 export interface NodeRegistryState {
     nodes: NodeDefinition[];

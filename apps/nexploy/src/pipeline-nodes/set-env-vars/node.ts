@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { setEnvVarsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { setEnvVarsConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const setEnvVarsDescriptor: NodeDescriptor = {
     type: 'set-env-vars',

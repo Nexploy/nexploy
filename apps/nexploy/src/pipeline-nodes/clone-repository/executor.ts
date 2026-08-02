@@ -1,10 +1,6 @@
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
 import { createGitService } from '@workspace/pipeline-core/gitService';
-import { cloneRepositoryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { cloneRepositoryConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { z } from 'zod';
 
 export class CloneRepositoryExecutor implements INodeExecutor {

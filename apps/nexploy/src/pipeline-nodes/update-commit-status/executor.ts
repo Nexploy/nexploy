@@ -1,12 +1,8 @@
 import { getFromAllOutputs } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
-import { updateCommitStatusConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
+import { updateCommitStatusConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { z } from 'zod';
-import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+import { ResolveRefs } from '@workspace/pipeline-core/schemas/nodeFieldRef.schema';
 
 export class UpdateCommitStatusExecutor implements INodeExecutor {
     readonly type = 'update-commit-status';

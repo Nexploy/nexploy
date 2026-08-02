@@ -1,12 +1,8 @@
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
-import { waitForHealthConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
+import { waitForHealthConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { z } from 'zod';
-import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+import { ResolveRefs } from '@workspace/pipeline-core/schemas/nodeFieldRef.schema';
 import { ContainerInspectInfo } from 'dockerode';
 
 export class WaitForHealthExecutor implements INodeExecutor {

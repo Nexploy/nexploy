@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useReactFlow } from '@xyflow/react';
-import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeData } from '@workspace/pipeline-ui/nodeDefinition';
 import { getNodeOutputFields } from '@/pipeline-nodes/registry/descriptors';
 import { type NodeOutputFieldView } from '@/pipeline-nodes/registry/descriptors';
 

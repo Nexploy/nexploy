@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { removeContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { removeContainerConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const removeContainerDescriptor: NodeDescriptor = {
     type: 'remove-container',

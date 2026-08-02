@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { deleteVolumeConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { deleteVolumeConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const deleteVolumeDescriptor: NodeDescriptor = {
     type: 'delete-volume',

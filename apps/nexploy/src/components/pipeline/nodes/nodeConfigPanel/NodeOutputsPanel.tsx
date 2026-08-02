@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { ArrowRightFromLine } from 'lucide-react';
-import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeData } from '@workspace/pipeline-ui/nodeDefinition';
 import { getNodeOutputFields } from '@/pipeline-nodes/registry/descriptors';
 import { type Node } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';

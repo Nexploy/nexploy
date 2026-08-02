@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { composeFileConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const deployComposeDescriptor: NodeDescriptor = {
     type: 'deploy-compose',

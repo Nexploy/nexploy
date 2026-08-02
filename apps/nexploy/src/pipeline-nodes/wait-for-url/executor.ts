@@ -1,10 +1,6 @@
 import ky from 'ky';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
-import { waitForUrlConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
+import { waitForUrlConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { z } from 'zod';
 
 export class WaitForUrlExecutor implements INodeExecutor {

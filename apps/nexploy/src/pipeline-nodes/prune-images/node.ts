@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { pruneImagesConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { pruneImagesConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const pruneImagesDescriptor: NodeDescriptor = {
     type: 'prune-images',

@@ -1,10 +1,6 @@
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
-import { waitForPortConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
+import { waitForPortConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { checkPort } from '@workspace/pipeline-core/net';
 import { z } from 'zod';
 import { ContainerInspectInfo } from 'dockerode';

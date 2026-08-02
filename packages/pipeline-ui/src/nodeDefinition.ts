@@ -1,4 +1,4 @@
-import { NodeCategory, NodeId, NodeType } from './node';
+import { NodeCategory, NodeGraphData, NodeId, NodeType } from '@workspace/pipeline-core/node';
 import { Position } from '@xyflow/react';
 import { LucideIcon } from 'lucide-react';
 
@@ -26,4 +26,8 @@ export interface NodeDefinition<TConfig = Record<string, unknown>> {
         outputs: HandleDefinition[];
         attachments: HandleDefinition[];
     };
+}
+
+export interface NodeData extends NodeGraphData {
+    definition: NodeDefinition;
 }

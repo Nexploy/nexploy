@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { pullFromRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { pullFromRegistryConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const pullFromRegistryDescriptor: NodeDescriptor = {
     type: 'pull-from-registry',

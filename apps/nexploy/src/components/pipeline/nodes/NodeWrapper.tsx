@@ -7,7 +7,7 @@ import { Button } from '@workspace/ui/components/button';
 import { useReactFlow } from '@xyflow/react';
 import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { usePermissions } from '@/contexts/PermissionContext';
-import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeData } from '@workspace/pipeline-ui/nodeDefinition';
 import { CATEGORY_BG } from '@/components/pipeline/pipelineTheme';
 import { InputHandle } from '@/components/pipeline/nodes/handles/InputHandle';
 import { OutputHandle } from '@/components/pipeline/nodes/handles/OutputHandle';

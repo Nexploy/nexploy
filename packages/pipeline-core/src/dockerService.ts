@@ -1,5 +1,5 @@
-import type { SSEEvent } from '@workspace/typescript-interface/pipeline/pipeline';
-import type { DockerApiClient } from '@workspace/typescript-interface/pipeline/nodeServices';
+import type { SSEEvent } from '@workspace/pipeline-core/pipeline';
+import type { DockerApiClient } from '@workspace/pipeline-core/nodeServices';
 
 type LogWriter = (message: string) => Promise<void>;
 

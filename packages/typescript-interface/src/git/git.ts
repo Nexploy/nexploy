@@ -27,16 +27,9 @@ export interface GitRepositoryList {
     alreadyAddedCount: number;
 }
 
-export interface GitBranch {
-    name: string;
-    protected: boolean;
-}
+export type { GitBranch } from '@workspace/pipeline-core/hostResponses';
 
-export interface GitProviderToken {
-    accessToken: string | null;
-    refreshToken: string | null;
-    accessTokenExpiresAt: Date | null;
-}
+export type { GitProviderToken } from '@workspace/pipeline-core/gitToken';
 
 export interface GitLabCommit {
     id: string;

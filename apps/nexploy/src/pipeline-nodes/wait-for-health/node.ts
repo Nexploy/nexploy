@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { waitForHealthConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { waitForHealthConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const waitForHealthDescriptor: NodeDescriptor = {
     type: 'wait-for-health',

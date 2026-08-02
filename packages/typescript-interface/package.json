@@ -8,6 +8,7 @@
     "./stores/*": "./src/stores/*.ts"
   },
   "dependencies": {
+    "@workspace/pipeline-core": "workspace:*",
     "@xyflow/react": "^12.11.1",
     "dockerode": "^5.0.0",
     "hono": "4.12.27",

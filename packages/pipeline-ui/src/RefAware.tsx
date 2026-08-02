@@ -1,7 +1,7 @@
 'use client';
 
 import { type PropsWithChildren } from 'react';
-import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
+import { type NodeFieldRef } from '@workspace/pipeline-core/nodeFieldRef';
 import { isNodeFieldRef } from '@workspace/pipeline-core/nodeFieldRef';
 import { AlertTriangle, Variable, X } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';

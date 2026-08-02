@@ -1,12 +1,8 @@
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
 import { createGitService } from '@workspace/pipeline-core/gitService';
-import { webhookCloneConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { webhookCloneConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { matchesWebhookTrigger } from '@workspace/pipeline-core/webhookTrigger';
-import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
+import { WebhookTrigger } from '@workspace/pipeline-core/webhook';
 import { z } from 'zod';
 
 const SKIP_MESSAGES: Record<string, (detail: string) => string> = {

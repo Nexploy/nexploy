@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { waitForUrlConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { waitForUrlConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const waitForUrlDescriptor: NodeDescriptor = {
     type: 'wait-for-url',

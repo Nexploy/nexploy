@@ -9,8 +9,8 @@ import {
     useReactFlow,
     useViewport,
 } from '@xyflow/react';
-import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { type NodeData } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeDefinition } from '@workspace/pipeline-ui/nodeDefinition';
+import { type NodeData } from '@workspace/pipeline-ui/nodeDefinition';
 import { CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';

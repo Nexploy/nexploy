@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useFormContext } from 'react-hook-form';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { GitBranch } from '@workspace/typescript-interface/git/git';
+import { GitBranch } from '@workspace/pipeline-core/hostResponses';
 import {
     FormControl,
     FormDescription,

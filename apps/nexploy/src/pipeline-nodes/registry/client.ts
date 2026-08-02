@@ -1,7 +1,7 @@
 import { type ComponentType } from 'react';
 import { Position } from '@xyflow/react';
-import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
-import { type HandlePosition, type NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
+import { type NodeDefinition } from '@workspace/pipeline-ui/nodeDefinition';
+import { type HandlePosition, type NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
 import { type NodeManifest } from '@/components/pipeline/types/nodeManifest';
 import { CATEGORY_BG_MUTED, CATEGORY_TEXT, ICON_NAME_MAP } from '@/components/pipeline/pipelineTheme';
 import { ALL_NODE_DESCRIPTORS, getNodeOutputFields } from './descriptors';

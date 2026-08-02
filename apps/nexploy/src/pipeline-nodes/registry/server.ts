@@ -1,4 +1,4 @@
-import { INodeExecutor } from '@workspace/typescript-interface/pipeline/pipeline';
+import { INodeExecutor } from '@workspace/pipeline-core/pipeline';
 import { addDomainExecutor } from '../add-domain/executor';
 import { addSslCertificateExecutor } from '../add-ssl-certificate/executor';
 import { backupVolumeBucketStorageExecutor } from '../backup-volume-bucket-storage/executor';

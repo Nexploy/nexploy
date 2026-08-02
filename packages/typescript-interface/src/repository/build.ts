@@ -6,19 +6,4 @@ export interface BuildLogEntry {
     buildId: string;
 }
 
-import { WebhookTrigger } from '../webhook';
-
-export interface BuildConfig {
-    userId: string;
-    repositoryName: string;
-    gitAccountId?: string;
-    repositoryId: string;
-    gitProvider: 'GITHUB' | 'GITLAB' | 'GITEA' | 'BITBUCKET' | 'AZURE_REPOS';
-    gitUrl: string;
-    gitBranch?: string;
-    buildId: string;
-    triggerSource: 'manual' | 'webhook';
-    webhookTrigger?: WebhookTrigger;
-    stageId?: string;
-    environmentId?: string;
-}
+export type { BuildConfig } from '@workspace/pipeline-core/buildConfig';

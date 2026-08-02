@@ -1,18 +1,14 @@
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
 import { createDockerService } from '@workspace/pipeline-core/dockerService';
 import {
     getComposeProjectName,
     resolveComposeEnvVars,
     resolveComposeLabels,
 } from '@workspace/pipeline-core/composeContext';
-import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { composeFileConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { z } from 'zod';
-import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+import { ResolveRefs } from '@workspace/pipeline-core/schemas/nodeFieldRef.schema';
 
 export class DeployComposeExecutor implements INodeExecutor {
     readonly type = 'deploy-compose';

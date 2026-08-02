@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { composeBuildConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { composeBuildConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const composeBuildDescriptor: NodeDescriptor = {
     type: 'compose-build',

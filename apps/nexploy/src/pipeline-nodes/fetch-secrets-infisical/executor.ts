@@ -1,12 +1,8 @@
 import ky, { HTTPError } from 'ky';
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
-import { fetchSecretsInfisicalConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
+import { fetchSecretsInfisicalConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/pipeline-core/schemas/nodeFieldRef.schema';
 import { z } from 'zod';
 
 interface InfisicalSecret {

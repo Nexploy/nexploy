@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { downloadFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { downloadFileConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const downloadFileDescriptor: NodeDescriptor = {
     type: 'download-file',

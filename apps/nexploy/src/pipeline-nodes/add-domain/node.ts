@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { addDomainConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { addDomainConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const addDomainDescriptor: NodeDescriptor = {
     type: 'add-domain',

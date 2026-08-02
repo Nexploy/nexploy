@@ -39,10 +39,7 @@ export type ImageDeleteResult =
     | { type: 'deleted'; id: string }
     | { type: 'skipped'; id: string; name: string; reason: string };
 
-export interface ImageDeleteResponse {
-    deleted: string[];
-    skipped: { id: string; name: string; reason: string }[];
-}
+export type { ImageDeleteResponse } from '@workspace/pipeline-core/hostResponses';
 
 export interface ImageTool extends DropdownActionTool {
     disabled?: boolean;

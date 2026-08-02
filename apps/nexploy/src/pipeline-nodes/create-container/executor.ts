@@ -1,12 +1,8 @@
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
-import { createContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
-import { NEXPLOY_LABELS } from '@workspace/shared/nexployLabels';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
+import { createContainerConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/pipeline-core/schemas/nodeFieldRef.schema';
+import { NEXPLOY_LABELS } from '@workspace/pipeline-core/nexployLabels';
 import { z } from 'zod';
 
 export class CreateContainerExecutor implements INodeExecutor {

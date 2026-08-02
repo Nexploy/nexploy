@@ -1,10 +1,10 @@
 import { spawn } from 'node:child_process';
 import { access, mkdir, readFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { BuildConfig } from '@workspace/typescript-interface/repository/build';
-import type { GitProviderToken } from '@workspace/typescript-interface/git/git';
-import type { NodeHostServices } from '@workspace/typescript-interface/pipeline/nodeServices';
-import type { ProgressCallback } from '@workspace/typescript-interface/pipeline/pipeline';
+import type { BuildConfig } from '@workspace/pipeline-core/buildConfig';
+import type { GitProviderToken } from '@workspace/pipeline-core/gitToken';
+import type { NodeHostServices } from '@workspace/pipeline-core/nodeServices';
+import type { ProgressCallback } from '@workspace/pipeline-core/pipeline';
 
 const ALLOWED_GIT_PROTOCOLS = ['http:', 'https:'];
 

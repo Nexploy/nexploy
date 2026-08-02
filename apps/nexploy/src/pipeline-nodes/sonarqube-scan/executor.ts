@@ -1,12 +1,8 @@
 import ky from 'ky';
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
-import { type DockerApiClient } from '@workspace/typescript-interface/pipeline/nodeServices';
-import { sonarqubeScanConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
+import { type DockerApiClient } from '@workspace/pipeline-core/nodeServices';
+import { sonarqubeScanConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { z } from 'zod';
 import { ContainerInspectInfo } from 'dockerode';
 

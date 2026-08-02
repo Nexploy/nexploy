@@ -1,6 +1,6 @@
 import { type ComponentType } from 'react';
 import { z } from 'zod';
-import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { type NodeDefinition } from '@workspace/pipeline-ui/nodeDefinition';
 import { type NodeLifecycleCallbacks } from '@workspace/typescript-interface/pipeline/node';
 
 export interface NodeInputField {

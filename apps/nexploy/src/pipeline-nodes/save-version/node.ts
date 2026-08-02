@@ -1,4 +1,4 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
 
 export const saveVersionDescriptor: NodeDescriptor = {
     type: 'save-version',

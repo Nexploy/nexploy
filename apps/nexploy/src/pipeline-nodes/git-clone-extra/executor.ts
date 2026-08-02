@@ -1,10 +1,6 @@
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
-import { gitCloneExtraConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
+import { gitCloneExtraConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { createGitService } from '@workspace/pipeline-core/gitService';
 import { safeResolvePath } from '@workspace/shared/pathSafety';
 import { z } from 'zod';

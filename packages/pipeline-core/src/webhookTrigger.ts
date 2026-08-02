@@ -1,5 +1,5 @@
-import { MERGE_REQUEST_ACTIONS, WEBHOOK_TRIGGER_EVENTS } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { MergeRequestAction, WebhookEventType, WebhookTrigger } from '@workspace/typescript-interface/webhook';
+import { MERGE_REQUEST_ACTIONS, WEBHOOK_TRIGGER_EVENTS } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
+import { MergeRequestAction, WebhookEventType, WebhookTrigger } from '@workspace/pipeline-core/webhook';
 
 type TriggerEvent = (typeof WEBHOOK_TRIGGER_EVENTS)[number];
 

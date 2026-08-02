@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { type NodeDefinition } from '@workspace/typescript-interface/pipeline/nodeDefinition';
+import { type NodeDefinition } from '@workspace/pipeline-ui/nodeDefinition';
 import { type NodeInputField, type NodeManifest } from './types/nodeManifest';
 import { allBuiltinManifests } from '@/pipeline-nodes/registry/client';
 

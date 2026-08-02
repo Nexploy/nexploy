@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { checkContainerLogsConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { checkContainerLogsConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const checkContainerLogsDescriptor: NodeDescriptor = {
     type: 'check-container-logs',

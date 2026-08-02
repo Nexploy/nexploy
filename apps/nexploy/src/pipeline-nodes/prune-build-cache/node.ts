@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { pruneBuildCacheConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { pruneBuildCacheConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const pruneBuildCacheDescriptor: NodeDescriptor = {
     type: 'prune-build-cache',

@@ -14,7 +14,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { Input } from '@workspace/ui/components/input';
-import { type BucketStorageAccountInfo } from '@workspace/typescript-interface/bucket-storage/bucketStorage';
+import { type BucketStorageAccountInfo } from '@workspace/pipeline-core/hostResponses';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { isNodeFieldRef } from '@workspace/pipeline-core/nodeFieldRef';
 import { RefAware } from '@workspace/pipeline-ui/RefAware';

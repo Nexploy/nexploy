@@ -1,4 +1,4 @@
-import { type NodeLifecycleCallbacks } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeLifecycleCallbacks } from '@workspace/pipeline-core/node';
 
 export const webhookCloneLifecycle: NodeLifecycleCallbacks = {
     onAdd: async ({ repositoryId, services }) => {

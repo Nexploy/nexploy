@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { updateCommitStatusConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { updateCommitStatusConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const updateCommitStatusDescriptor: NodeDescriptor = {
     type: 'update-commit-status',

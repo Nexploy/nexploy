@@ -1,12 +1,8 @@
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
-import { addDomainConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
+import { addDomainConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/pipeline-core/schemas/nodeFieldRef.schema';
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
+import type { DomainRoute } from '@workspace/pipeline-core/nodeServices';
 import { z } from 'zod';
 
 export class AddDomainExecutor implements INodeExecutor {
@@ -44,7 +40,7 @@ export class AddDomainExecutor implements INodeExecutor {
             await logger.info(nodeId, `Domain already exists, overwriting config: ${host}`);
         }
 
-        const newDomain: Domain = {
+        const newDomain: DomainRoute = {
             id: domainId,
             host,
             path,

@@ -19,7 +19,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Label } from '@workspace/ui/components/label';
 import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert';
-import { MERGE_REQUEST_ACTIONS, WEBHOOK_TRIGGER_EVENTS } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { MERGE_REQUEST_ACTIONS, WEBHOOK_TRIGGER_EVENTS } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 interface WebhookStatus {
     isConfigured: boolean;

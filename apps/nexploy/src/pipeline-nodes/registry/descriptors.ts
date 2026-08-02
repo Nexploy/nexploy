@@ -1,4 +1,4 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
 import { addDomainDescriptor } from '../add-domain/node';
 import { addSslCertificateDescriptor } from '../add-ssl-certificate/node';
 import { backupVolumeBucketStorageDescriptor } from '../backup-volume-bucket-storage/node';

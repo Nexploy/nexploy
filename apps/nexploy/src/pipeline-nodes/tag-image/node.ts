@@ -1,5 +1,5 @@
-import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
-import { tagImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { NodeDescriptor } from '@workspace/pipeline-core/nodeDescriptor';
+import { tagImageConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 
 export const tagImageDescriptor: NodeDescriptor = {
     type: 'tag-image',

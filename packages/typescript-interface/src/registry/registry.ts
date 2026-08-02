@@ -1,7 +1,1 @@
-export interface RegistryInfo {
-    id: string;
-    name: string;
-    url: string;
-    username: string | null;
-    createdAt: Date;
-}
+export * from '@workspace/pipeline-core/registryInfo';

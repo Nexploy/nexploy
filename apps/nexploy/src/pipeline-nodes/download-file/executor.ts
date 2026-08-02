@@ -3,13 +3,9 @@ import * as path from 'node:path';
 import * as os from 'node:os';
 import ky from 'ky';
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
-import { downloadFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
+import { downloadFileConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
+import { ResolveRefs } from '@workspace/pipeline-core/schemas/nodeFieldRef.schema';
 import { safeResolvePath } from '@workspace/shared/pathSafety';
 import { z } from 'zod';
 

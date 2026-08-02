@@ -1,10 +1,6 @@
-import {
-    INodeExecutor,
-    NodeExecutionContext,
-    NodeExecutionResult,
-} from '@workspace/typescript-interface/pipeline/pipeline';
+import { INodeExecutor, NodeExecutionContext, NodeExecutionResult } from '@workspace/pipeline-core/pipeline';
 import { findClosestEnabledNodes } from '@workspace/pipeline-core/helpers';
-import { conditionConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
+import { conditionConfigSchema } from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
 import { z } from 'zod';
 
 export class ConditionExecutor implements INodeExecutor {
