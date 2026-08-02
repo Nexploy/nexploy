@@ -460,6 +460,10 @@
     "volumes": {
       "title": "Volumes Docker",
       "description": "Gérez et visualisez tous vos volumes Docker"
+    },
+    "diskUsage": {
+      "title": "Utilisation du disque",
+      "description": "Surveillez et récupérez l’espace disque utilisé par Docker"
     }
   },
   "tables": {
@@ -892,5 +896,26 @@
     "volumeSkipNotFound": "{count, plural, one {Le volume {name} est introuvable.} other {# volumes sont introuvables.}}"
   },
   "viewGrid": "Vue grille",
-  "viewTable": "Vue tableau"
+  "viewTable": "Vue tableau",
+  "diskUsage": {
+    "title": "Utilisation du disque",
+    "description": "Espace récupérable utilisé par les images, conteneurs, volumes et cache de build Docker",
+    "unavailable": "L'utilisation du disque est actuellement indisponible",
+    "refresh": "Actualiser",
+    "totalReclaimable": "Total récupérable",
+    "ofTotal": "sur {total} utilisés",
+    "cleanAll": "Tout nettoyer",
+    "clean": "Nettoyer",
+    "reclaimableOf": "{reclaimable} récupérables sur {total}",
+    "cleanupDone": "Nettoyage terminé — {space} récupérés",
+    "cleanupFailed": "Échec du nettoyage",
+    "confirmClean": "Cela supprimera définitivement : {target}. Cette action est irréversible. Continuer ?",
+    "confirmCleanAll": "Cela supprimera définitivement toutes les images inutilisées, conteneurs arrêtés, volumes inutilisés et le cache de build. Cette action est irréversible. Continuer ?",
+    "target": {
+      "images": "Images inutilisées",
+      "containers": "Conteneurs arrêtés",
+      "volumes": "Volumes inutilisés",
+      "build": "Cache de build"
+    }
+  }
 }

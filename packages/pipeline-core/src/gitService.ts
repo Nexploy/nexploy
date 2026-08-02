@@ -1,17 +1,16 @@
-import { spawn } from 'child_process';
-import dayjs from 'dayjs';
-import { access, mkdir, readFile, rm } from 'fs/promises';
-import { join } from 'path';
-import { kyDocker } from '@/lib/api/kyDocker';
-import { BuildConfig } from '@workspace/typescript-interface/repository/build';
-import { GitProviderToken } from '@workspace/typescript-interface/git/git';
-import { getGitProviderToken, getValidToken } from '@/services/git/core/token.service';
-import { getGitAdapter } from '@/services/git/core/registry';
-import { ProgressCallback } from '@workspace/typescript-interface/pipeline/pipeline';
+import { spawn } from 'node:child_process';
+import { access, mkdir, readFile, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { BuildConfig } from '@workspace/typescript-interface/repository/build';
+import type { GitProviderToken } from '@workspace/typescript-interface/git/git';
+import type { NodeHostServices } from '@workspace/typescript-interface/pipeline/nodeServices';
+import type { ProgressCallback } from '@workspace/typescript-interface/pipeline/pipeline';
 
 const ALLOWED_GIT_PROTOCOLS = ['http:', 'https:'];
 
 class GitService {
+    constructor(private readonly services: NodeHostServices) {}
+
     private assertSafeGitUrl(gitUrl: string): void {
         let parsed: URL;
         try {
@@ -82,11 +81,10 @@ class GitService {
         this.assertSafeGitUrl(buildConfig.gitUrl);
 
         const workDir =
-            options?.destDir ??
-            join(process.env.DEPLOYER_WORK_DIR as string, buildConfig.repositoryId, Date.now().toString());
+            options?.destDir ?? join(this.services.git.workDirRoot, buildConfig.repositoryId, Date.now().toString());
         await mkdir(workDir, { recursive: true });
 
-        const token = await this.resolveToken(buildConfig, options?.manualToken);
+        const token = await this.services.git.resolveToken(buildConfig, options?.manualToken);
 
         try {
             await this.execCloneWithRetry(token, buildConfig, workDir, options?.submodules ?? false, onProgress);
@@ -106,33 +104,14 @@ class GitService {
         return workDir;
     }
 
-    private async resolveToken(buildConfig: BuildConfig, manualToken?: string): Promise<GitProviderToken> {
-        if (manualToken !== undefined) {
-            return {
-                accessToken: manualToken || null,
-                refreshToken: null,
-                accessTokenExpiresAt: null,
-            };
-        }
-        const stored = await getGitProviderToken(buildConfig.gitProvider, {
-            gitAccountId: buildConfig.gitAccountId,
-            requestedUserId: buildConfig.userId,
-        });
-        return getValidToken(stored, buildConfig.gitProvider, buildConfig.userId, buildConfig.gitAccountId);
-    }
-
     private baseGitEnv(): NodeJS.ProcessEnv {
         return { ...process.env, GIT_TERMINAL_PROMPT: '0', GIT_ASKPASS: 'echo' };
-    }
-
-    private gitCredentialUsername(provider: BuildConfig['gitProvider']): string {
-        return getGitAdapter(provider).cloneCredentialUsername;
     }
 
     private buildAuthedUrl(gitUrl: string, accessToken: string | null, provider: BuildConfig['gitProvider']): string {
         if (!accessToken) return gitUrl;
         const url = new URL(gitUrl);
-        url.username = this.gitCredentialUsername(provider);
+        url.username = this.services.git.getCloneCredentialUsername(provider);
         url.password = accessToken;
         return url.toString();
     }
@@ -188,12 +167,7 @@ class GitService {
             const message = cloneError instanceof Error ? cloneError.message : String(cloneError);
             if (!this.isAuthenticationError(message) || !token.accessToken) throw cloneError;
 
-            const refreshedToken = await getValidToken(
-                { ...token, accessTokenExpiresAt: dayjs(0).toDate() },
-                buildConfig.gitProvider,
-                buildConfig.userId,
-                buildConfig.gitAccountId,
-            );
+            const refreshedToken = await this.services.git.refreshToken(buildConfig, token);
 
             await rm(workDir, { recursive: true, force: true }).catch(() => {});
             await mkdir(workDir, { recursive: true });
@@ -236,7 +210,7 @@ class GitService {
 
     async validateComposeSyntax(workDir: string, composePath: string): Promise<void> {
         const content = await readFile(join(workDir, composePath), 'utf-8');
-        await kyDocker.post('composes/validate-syntax', { json: { content } });
+        await this.services.docker.post('composes/validate-syntax', { json: { content } });
     }
 
     async validateDockerfile(workDir: string, dockerfilePath?: string): Promise<void> {
@@ -370,4 +344,8 @@ class GitService {
     }
 }
 
-export const gitService = new GitService();
+export type GitCommandService = InstanceType<typeof GitService>;
+
+export function createGitService(services: NodeHostServices): GitCommandService {
+    return new GitService(services);
+}

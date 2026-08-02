@@ -5,7 +5,7 @@ import {
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { gitTagConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { gitService } from '@/inngest/pipeline/services/git.service';
+import { createGitService } from '@workspace/pipeline-core/gitService';
 import { z } from 'zod';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 
@@ -16,7 +16,8 @@ export class GitTagExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof gitTagConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, edges } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, edges, services } = ctx;
+        const gitService = createGitService(services);
 
         const { tagName, message, remote } = nodeConfig;
 

@@ -4,7 +4,7 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
-import { gitService } from '@/inngest/pipeline/services/git.service';
+import { createGitService } from '@workspace/pipeline-core/gitService';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -16,7 +16,8 @@ export class ValidateComposeExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof composeFileConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { allOutputs, logger, nodeId, nodeConfig, edges } = ctx;
+        const { allOutputs, logger, nodeId, nodeConfig, edges, services } = ctx;
+        const gitService = createGitService(services);
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 

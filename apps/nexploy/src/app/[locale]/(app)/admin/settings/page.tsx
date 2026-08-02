@@ -3,7 +3,6 @@ import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getCleanupSettings, getCurrentEnvironmentKey } from '@/services/cleanupSettings.service';
-import { DiskUsageCard } from '@/components/admin/settings/DiskUsageCard';
 import { CleanupScheduleCard } from '@/components/admin/settings/CleanupScheduleCard';
 import { InstanceDomainCard } from '@/components/admin/settings/InstanceDomainCard';
 import { UpgradeCard } from '@/components/admin/settings/UpgradeCard';
@@ -36,7 +35,6 @@ export default async function SettingsPage() {
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
                     <div className="flex flex-col gap-5 pb-5">
                         <UpgradeCard />
-                        <DiskUsageCard />
                         <CleanupScheduleCard settings={settings} />
                         {instanceDomainSettings && <InstanceDomainCard settings={instanceDomainSettings} />}
                     </div>

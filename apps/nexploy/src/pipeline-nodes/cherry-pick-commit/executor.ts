@@ -6,7 +6,7 @@ import {
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { cherryPickCommitConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
-import { gitService } from '@/inngest/pipeline/services/git.service';
+import { createGitService } from '@workspace/pipeline-core/gitService';
 import { z } from 'zod';
 
 export class CherryPickCommitExecutor implements INodeExecutor {
@@ -16,7 +16,8 @@ export class CherryPickCommitExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof cherryPickCommitConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges } = ctx;
+        const { nodeId, nodeConfig, allOutputs, logger, abortSignal, edges, services } = ctx;
+        const gitService = createGitService(services);
 
         const { targetBranch, noCommit, remote } = nodeConfig;
 

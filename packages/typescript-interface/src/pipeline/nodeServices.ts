@@ -1,3 +1,6 @@
+import type { BuildConfig } from '../repository/build';
+import type { GitProviderToken } from '../git/git';
+
 export interface DockerRequestOptions {
     json?: unknown;
     searchParams?: Record<string, string | number | boolean>;
@@ -46,7 +49,15 @@ export interface BuildHostService {
     startStageBuild(input: StartStageBuildInput): Promise<StartedBuild | null>;
 }
 
+export interface GitHostService {
+    workDirRoot: string;
+    resolveToken(buildConfig: BuildConfig, manualToken?: string): Promise<GitProviderToken>;
+    refreshToken(buildConfig: BuildConfig, expiredToken: GitProviderToken): Promise<GitProviderToken>;
+    getCloneCredentialUsername(provider: BuildConfig['gitProvider']): string;
+}
+
 export interface NodeHostServices {
     docker: DockerApiClient;
     build: BuildHostService;
+    git: GitHostService;
 }

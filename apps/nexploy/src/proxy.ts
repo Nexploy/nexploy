@@ -25,6 +25,7 @@ const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: s
     { path: '/docker/images/pull', resource: 'image', action: 'pull' },
     { path: '/docker/volumes/create', resource: 'volume', action: 'manage' },
     { path: '/docker/networks/create', resource: 'network', action: 'manage' },
+    { path: '/docker/disk-usage', resource: 'setting', action: 'manage' },
     { path: '/swarm/services/create', resource: 'swarm', action: 'manage' },
     { path: '/admin/users', resource: 'user', action: 'update' },
     { path: '/admin/integrations', resource: 'gitProvider', action: 'create' },

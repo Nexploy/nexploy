@@ -460,6 +460,10 @@
     "volumes": {
       "title": "Docker Volumes",
       "description": "Manage and view all your Docker volumes"
+    },
+    "diskUsage": {
+      "title": "Disk usage",
+      "description": "Monitor and reclaim the disk space used by Docker"
     }
   },
   "tables": {
@@ -892,5 +896,26 @@
     "volumeSkipNotFound": "{count, plural, one {Volume {name} was not found.} other {# volumes were not found.}}"
   },
   "viewGrid": "Grid view",
-  "viewTable": "Table view"
+  "viewTable": "Table view",
+  "diskUsage": {
+    "title": "Disk usage",
+    "description": "Reclaimable space used by Docker images, containers, volumes and build cache",
+    "unavailable": "Disk usage is currently unavailable",
+    "refresh": "Refresh",
+    "totalReclaimable": "Total reclaimable",
+    "ofTotal": "of {total} used",
+    "cleanAll": "Clean all",
+    "clean": "Clean",
+    "reclaimableOf": "{reclaimable} reclaimable of {total}",
+    "cleanupDone": "Cleanup done — {space} reclaimed",
+    "cleanupFailed": "Cleanup failed",
+    "confirmClean": "This will permanently remove: {target}. This action cannot be undone. Continue?",
+    "confirmCleanAll": "This will permanently remove all unused images, stopped containers, unused volumes and the build cache. This action cannot be undone. Continue?",
+    "target": {
+      "images": "Unused images",
+      "containers": "Stopped containers",
+      "volumes": "Unused volumes",
+      "build": "Build cache"
+    }
+  }
 }

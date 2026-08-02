@@ -3,7 +3,7 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
-import { gitService } from '@/inngest/pipeline/services/git.service';
+import { createGitService } from '@workspace/pipeline-core/gitService';
 import { cloneRepositoryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -15,6 +15,7 @@ export class CloneRepositoryExecutor implements INodeExecutor {
         ctx: NodeExecutionContext<z.infer<typeof cloneRepositoryConfigSchema>>,
     ): Promise<NodeExecutionResult> {
         const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter, services } = ctx;
+        const gitService = createGitService(services);
 
         const effectiveBranch = nodeConfig.branch;
         const effectiveCommitHash = nodeConfig.commitHash;

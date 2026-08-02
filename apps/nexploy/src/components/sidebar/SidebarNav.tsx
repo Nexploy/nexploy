@@ -16,6 +16,7 @@ import {
     HardDrive,
     LayoutList,
     Network,
+    PieChart,
     Plug,
     Send,
     Settings,
@@ -80,6 +81,12 @@ const groups: PermissionedSidebarNavGroup[] = [
                     { titleKey: 'volumes', icon: HardDrive, href: '/docker/volumes' },
                     { titleKey: 'networks', icon: EthernetPort, href: '/docker/networks' },
                     { titleKey: 'events', icon: Bug, href: '/docker/events' },
+                    {
+                        titleKey: 'diskUsage',
+                        icon: PieChart,
+                        href: '/docker/disk-usage',
+                        permission: { resource: 'setting', action: 'manage' },
+                    },
                     {
                         titleKey: 'registry',
                         icon: Warehouse,

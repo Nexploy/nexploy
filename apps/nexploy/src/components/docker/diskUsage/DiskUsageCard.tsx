@@ -24,7 +24,7 @@ const ICONS = {
 } as const;
 
 export function DiskUsageCard() {
-    const t = useTranslations('admin.settings');
+    const t = useTranslations('docker.diskUsage');
     const tCommon = useTranslations('common');
 
     const {
@@ -81,7 +81,7 @@ export function DiskUsageCard() {
 
     return (
         <Card>
-            <CardHeaderWithIcon icon={HardDrive} title={t('diskUsageTitle')} description={t('diskUsageDescription')}>
+            <CardHeaderWithIcon icon={HardDrive} title={t('title')} description={t('description')}>
                 <Button variant="outline" size="sm" onClick={refresh} disabled={refreshing} className="ml-auto">
                     <RefreshCw className={refreshing ? 'animate-spin' : ''} />
                     {t('refresh')}
@@ -120,7 +120,7 @@ export function DiskUsageCard() {
                         </div>
                     </>
                 ) : !usage ? (
-                    <p className="text-muted-foreground py-6 text-center text-sm">{t('diskUsageUnavailable')}</p>
+                    <p className="text-muted-foreground py-6 text-center text-sm">{t('unavailable')}</p>
                 ) : (
                     <>
                         <div className="bg-muted/40 flex items-center justify-between rounded-lg border p-4">

@@ -10,6 +10,7 @@ import {
     HardDrive,
     LayoutList,
     Network,
+    PieChart,
     Send,
     User,
     Warehouse,
@@ -50,6 +51,7 @@ export function SearchNavigationList() {
         { href: '/docker/volumes', icon: HardDrive, label: tNav('volumes') },
         { href: '/docker/networks', icon: EthernetPort, label: tNav('networks') },
         { href: '/docker/events', icon: Bug, label: tNav('events') },
+        { href: '/docker/disk-usage', icon: PieChart, label: tNav('diskUsage') },
     ].filter((item) => matchesQuery(item.label, inputValue));
 
     const showAccount = matchesQuery(t('account'), inputValue);

@@ -3,7 +3,7 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
-import { gitService } from '@/inngest/pipeline/services/git.service';
+import { createGitService } from '@workspace/pipeline-core/gitService';
 import { webhookCloneConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { matchesWebhookTrigger } from '@/services/webhook/webhookTrigger';
 import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
@@ -22,6 +22,7 @@ export class WebhookCloneExecutor implements INodeExecutor {
 
     async execute(ctx: NodeExecutionContext<z.infer<typeof webhookCloneConfigSchema>>): Promise<NodeExecutionResult> {
         const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter, services } = ctx;
+        const gitService = createGitService(services);
 
         const branch = buildConfig.gitBranch;
 

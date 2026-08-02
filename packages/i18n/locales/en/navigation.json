@@ -49,5 +49,6 @@
   "traefik": "Traefik",
   "website": "Website",
   "documentation": "Documentation",
-  "github": "GitHub"
+  "github": "GitHub",
+  "diskUsage": "Disk usage"
 }

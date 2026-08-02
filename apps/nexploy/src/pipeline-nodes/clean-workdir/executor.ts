@@ -4,13 +4,14 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
-import { gitService } from '@/inngest/pipeline/services/git.service';
+import { createGitService } from '@workspace/pipeline-core/gitService';
 
 export class CleanWorkdirExecutor implements INodeExecutor {
     readonly type = 'clean-workdir';
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { inputOutputs, allOutputs, logger, nodeId, edges } = ctx;
+        const { inputOutputs, allOutputs, logger, nodeId, edges, services } = ctx;
+        const gitService = createGitService(services);
 
         const workDirFromInputs = inputOutputs.map((o) => o.workDir).find((v): v is string => typeof v === 'string');
 
