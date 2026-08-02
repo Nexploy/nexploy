@@ -6,6 +6,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "preinstall": "node scripts/check-nodes-repo.mjs",
+    "check:nodes": "node scripts/check-nodes-versions.mjs",
     "dev": "turbo run dev --filter=nexploy --filter=docker-api",
     "dev:nexploy": "turbo run dev --filter=nexploy --ui stream",
     "dev:docker-api": "turbo run dev --filter=docker-api --ui stream",
