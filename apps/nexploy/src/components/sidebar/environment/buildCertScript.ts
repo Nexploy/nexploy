@@ -132,11 +132,21 @@ else
 EOF
 fi
 
-# 6. If systemd uses '-H fd://', it conflicts with the 'hosts' key. Override it.
-if [ -d /etc/systemd/system ]; then
+# 6. If systemd uses '-H fd://', it conflicts with the 'hosts' key.
+#    Add a dedicated drop-in that keeps the distribution flags but drops '-H fd://',
+#    instead of overwriting any override.conf you may already have.
+if [ -d /etc/systemd/system ] && command -v systemctl >/dev/null 2>&1; then
+  DOCKER_EXEC="/usr/bin/dockerd"
+  DOCKER_UNIT="$($SUDO systemctl show -p FragmentPath --value docker 2>/dev/null)"
+  if [ -n "$DOCKER_UNIT" ] && [ -f "$DOCKER_UNIT" ]; then
+    CURRENT_EXEC="$(grep -m1 '^ExecStart=' "$DOCKER_UNIT" | sed 's/^ExecStart=//')"
+    if [ -n "$CURRENT_EXEC" ]; then
+      DOCKER_EXEC="$(echo "$CURRENT_EXEC" | sed -e 's|-H fd://||g' -e 's|--host=fd://||g' -e 's|  *| |g' -e 's| *$||')"
+    fi
+  fi
   $SUDO mkdir -p /etc/systemd/system/docker.service.d
-  printf '[Service]\\nExecStart=\\nExecStart=/usr/bin/dockerd\\n' | \\
-    $SUDO tee /etc/systemd/system/docker.service.d/override.conf >/dev/null
+  printf '[Service]\\nExecStart=\\nExecStart=%s\\n' "$DOCKER_EXEC" | \\
+    $SUDO tee /etc/systemd/system/docker.service.d/zz-nexploy-tls.conf >/dev/null
   $SUDO systemctl daemon-reload 2>/dev/null || true
 fi
 
