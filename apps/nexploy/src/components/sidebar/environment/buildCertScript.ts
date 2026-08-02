@@ -53,7 +53,74 @@ $SUDO chmod 0400 /etc/docker/server-key.pem
 DAEMON_JSON="/etc/docker/daemon.json"
 echo "Configuring $DAEMON_JSON ..."
 
-read -r -d '' DAEMON_TLS <<'EOF'
+DAEMON_TLS='{
+  "tls": true,
+  "tlsverify": true,
+  "tlscacert": "/etc/docker/ca.pem",
+  "tlscert": "/etc/docker/server-cert.pem",
+  "tlskey": "/etc/docker/server-key.pem"
+}'
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "jq is required to safely update daemon.json, installing it ..."
+  if command -v apt-get >/dev/null 2>&1; then
+    $SUDO apt-get update -qq >/dev/null 2>&1 && $SUDO apt-get install -y -qq jq >/dev/null 2>&1
+  elif command -v dnf >/dev/null 2>&1; then
+    $SUDO dnf install -y -q jq >/dev/null 2>&1
+  elif command -v yum >/dev/null 2>&1; then
+    $SUDO yum install -y -q jq >/dev/null 2>&1
+  elif command -v apk >/dev/null 2>&1; then
+    $SUDO apk add --no-cache jq >/dev/null 2>&1
+  elif command -v pacman >/dev/null 2>&1; then
+    $SUDO pacman -Sy --noconfirm jq >/dev/null 2>&1
+  elif command -v zypper >/dev/null 2>&1; then
+    $SUDO zypper -q install -y jq >/dev/null 2>&1
+  fi
+fi
+
+if [ -f "$DAEMON_JSON" ]; then
+  $SUDO cp -p "$DAEMON_JSON" "$DAEMON_JSON.bak.$(date +%s)"
+  echo "Existing daemon.json backed up."
+fi
+
+if command -v jq >/dev/null 2>&1; then
+  CURRENT_JSON="{}"
+  if [ -s "$DAEMON_JSON" ]; then
+    if ! CURRENT_JSON="$($SUDO cat "$DAEMON_JSON")" || ! echo "$CURRENT_JSON" | jq empty >/dev/null 2>&1; then
+      echo "ERROR: $DAEMON_JSON exists but is not valid JSON. Aborting to avoid destroying your configuration."
+      echo "       Fix it manually, then re-run this script."
+      exit 1
+    fi
+  fi
+
+  TMP_JSON="$(mktemp)"
+  # Merge the TLS keys into the existing config and append the tcp host
+  # without dropping any host already configured
+  printf '%s\\n%s\\n' "$CURRENT_JSON" "$DAEMON_TLS" | jq -s '
+    .[0] as $current
+    | ($current * .[1])
+    | .hosts = ((($current.hosts) // ["unix:///var/run/docker.sock"])
+        + ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"] | unique)
+  ' > "$TMP_JSON"
+
+  if [ ! -s "$TMP_JSON" ]; then
+    echo "ERROR: failed to merge the TLS settings into $DAEMON_JSON. Nothing was changed."
+    rm -f "$TMP_JSON"
+    exit 1
+  fi
+
+  $SUDO cp "$TMP_JSON" "$DAEMON_JSON"
+  rm -f "$TMP_JSON"
+  echo "TLS settings merged into $DAEMON_JSON (existing keys preserved)."
+elif [ -s "$DAEMON_JSON" ]; then
+  echo "ERROR: jq is not available and $DAEMON_JSON already exists."
+  echo "       Refusing to overwrite it. Install jq and re-run this script, or add these keys manually:"
+  echo "$DAEMON_TLS"
+  echo '       plus "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"]'
+  exit 1
+else
+  # No existing config at all -> write a fresh daemon.json
+  $SUDO tee "$DAEMON_JSON" >/dev/null <<'EOF'
 {
   "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"],
   "tls": true,
@@ -63,22 +130,6 @@ read -r -d '' DAEMON_TLS <<'EOF'
   "tlskey": "/etc/docker/server-key.pem"
 }
 EOF
-
-if command -v jq >/dev/null 2>&1 && [ -s "$DAEMON_JSON" ]; then
-  # Merge into the existing config, keeping any other settings intact
-  TMP_JSON="$(mktemp)"
-  echo "$DAEMON_TLS" | $SUDO jq -s '.[0] * .[1]' "$DAEMON_JSON" - > "$TMP_JSON"
-  # Ensure the tcp host is present in the hosts array (avoid duplicates)
-  jq '.hosts = ((.hosts // []) + ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"] | unique)' "$TMP_JSON" > "$TMP_JSON.2"
-  $SUDO mv "$TMP_JSON.2" "$DAEMON_JSON"
-  rm -f "$TMP_JSON"
-else
-  # No existing config (or no jq) -> write a fresh daemon.json
-  if [ -f "$DAEMON_JSON" ]; then
-    $SUDO cp "$DAEMON_JSON" "$DAEMON_JSON.bak.$(date +%s)"
-    echo "Existing daemon.json backed up."
-  fi
-  echo "$DAEMON_TLS" | $SUDO tee "$DAEMON_JSON" >/dev/null
 fi
 
 # 6. If systemd uses '-H fd://', it conflicts with the 'hosts' key. Override it.

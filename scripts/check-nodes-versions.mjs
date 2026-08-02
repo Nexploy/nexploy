@@ -1,5 +1,5 @@
 import { createRequire } from 'node:module';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -31,9 +31,17 @@ const require = createRequire(join(repoRoot, 'apps', 'nexploy', 'package.json'))
 function resolvedVersion(name) {
     try {
         return require(`${name}/package.json`).version;
-    } catch {
-        return null;
-    }
+    } catch {}
+    try {
+        const entry = realpathSync(require.resolve(name));
+        let dir = dirname(entry);
+        while (dir !== dirname(dir)) {
+            const manifest = join(dir, 'package.json');
+            if (existsSync(manifest)) return JSON.parse(readFileSync(manifest, 'utf8')).version;
+            dir = dirname(dir);
+        }
+    } catch {}
+    return null;
 }
 
 const pinned = readOverrides(workspaceFile);
