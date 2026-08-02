@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "delete-container": {
+      "name": "Delete Container",
+      "description": "Delete a container, optionally force-removing it and its volumes"
+    }
+  }
+}

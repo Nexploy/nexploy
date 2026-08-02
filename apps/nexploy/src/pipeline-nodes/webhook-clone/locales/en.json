@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "webhook-clone": {
+      "name": "Webhook Clone",
+      "description": "Clone the repository when a webhook push event is received"
+    }
+  }
+}

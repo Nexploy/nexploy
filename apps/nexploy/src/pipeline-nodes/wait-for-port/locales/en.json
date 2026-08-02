@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "wait-for-port": {
+      "name": "Wait for Container Port",
+      "description": "TCP check until a port is open on the given container"
+    }
+  }
+}

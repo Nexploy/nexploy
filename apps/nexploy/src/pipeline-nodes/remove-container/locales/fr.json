@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "remove-container": {
+      "name": "Supprimer un conteneur",
+      "description": "Supprimer un conteneur Docker"
+    }
+  }
+}

@@ -50,7 +50,8 @@ export function TemplateItem({
 
             <div className="flex flex-wrap items-center gap-1 pl-0.5">
                 {template.nodes.map((node, i) => {
-                    const NodeIcon = NODE_ICONS[node.type]!;
+                    const NodeIcon = NODE_ICONS[node.type];
+                    if (!NodeIcon) return null;
                     return (
                         <div key={i} className="flex items-center gap-1">
                             <div

@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "delete-volume": {
+      "name": "Delete Volume",
+      "description": "Delete a Docker volume by name"
+    }
+  }
+}

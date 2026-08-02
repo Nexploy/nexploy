@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "compose-up": {
+      "name": "Compose Up",
+      "description": "Démarrer la stack Compose construite au préalable"
+    }
+  }
+}

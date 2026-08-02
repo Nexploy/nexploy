@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "prune-images": {
+      "name": "Nettoyer les images",
+      "description": "Supprime les images Docker inutilisées pour libérer de l'espace disque"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "prune-images": {
+      "name": "Prune Images",
+      "description": "Remove unused Docker images to free disk space"
+    }
+  }
+}

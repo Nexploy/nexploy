@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "create-container": {
+      "name": "Create Container",
+      "description": "Create and start a Docker container from an image"
+    }
+  }
+}

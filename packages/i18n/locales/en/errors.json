@@ -23,6 +23,7 @@
     "getStatusFailed": "Failed to get build pipeline status",
     "getConfigFailed": "Failed to get pipeline config",
     "saveConfigFailed": "Failed to save pipeline config",
+    "unknownNodeTypes": "Unknown pipeline node types: {types}",
     "configNotFound": "Pipeline config not found"
   },
   "dockerHub": {

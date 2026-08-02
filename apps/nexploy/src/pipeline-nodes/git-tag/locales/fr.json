@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "git-tag": {
+      "name": "Tag Git",
+      "description": "Crée et pousse un tag Git vers le dépôt distant"
+    }
+  }
+}

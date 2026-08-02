@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "check-container-logs": {
+      "name": "Check Container Logs",
+      "description": "Search container logs for a regex pattern"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "fetch-secrets-infisical": {
+      "name": "Secrets Infisical",
+      "description": "Récupère les secrets depuis Infisical (cloud ou auto-hébergé). Les variables s'accumulent tout au long du pipeline."
+    }
+  }
+}

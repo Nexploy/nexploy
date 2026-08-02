@@ -1,0 +1,10 @@
+{
+  "nodes": {
+    "condition": {
+      "name": "Condition",
+      "description": "Conditionne la pipeline sur les données de sortie d'un nœud précédent",
+      "outputTrue": "Vrai",
+      "outputFalse": "Faux"
+    }
+  }
+}

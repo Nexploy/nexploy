@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "http-request": {
+      "name": "Requête HTTP",
+      "description": "Effectue une requête HTTP vers une URL externe"
+    }
+  }
+}

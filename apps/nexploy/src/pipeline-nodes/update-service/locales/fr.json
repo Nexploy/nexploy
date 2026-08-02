@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "update-service": {
+      "name": "Mettre à jour un service",
+      "description": "Met à jour un service Docker Swarm vers une nouvelle image"
+    }
+  }
+}

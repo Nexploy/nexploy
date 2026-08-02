@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "cherry-pick-commit": {
+      "name": "Cherry-pick Commit",
+      "description": "Apply a specific commit to the current branch"
+    }
+  }
+}

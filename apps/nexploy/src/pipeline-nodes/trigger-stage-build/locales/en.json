@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "trigger-stage-build": {
+      "name": "Trigger Stage Build",
+      "description": "Start a build on another stage when this pipeline succeeds"
+    }
+  }
+}

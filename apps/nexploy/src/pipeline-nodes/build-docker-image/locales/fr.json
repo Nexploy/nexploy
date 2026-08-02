@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "build-docker-image": {
+      "name": "Construire l'image Docker",
+      "description": "Construire une image Docker depuis un Dockerfile"
+    }
+  }
+}

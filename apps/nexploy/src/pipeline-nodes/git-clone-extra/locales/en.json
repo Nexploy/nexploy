@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "git-clone-extra": {
+      "name": "Git Clone Extra",
+      "description": "Clone an additional repository into a work directory subdirectory"
+    }
+  }
+}

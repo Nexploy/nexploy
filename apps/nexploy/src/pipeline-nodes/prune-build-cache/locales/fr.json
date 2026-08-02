@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "prune-build-cache": {
+      "name": "Vider le cache de build",
+      "description": "Vide le cache de build Docker pour libérer de l'espace disque"
+    }
+  }
+}

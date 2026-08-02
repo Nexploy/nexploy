@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "run-command-in-container": {
+      "name": "Run Command in Container",
+      "description": "Execute a command inside a running Docker container"
+    }
+  }
+}

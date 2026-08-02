@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "push-to-registry": {
+      "name": "Pousser une image vers un registre",
+      "description": "Pousser une image Docker vers un registre privé ou public"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "backup-volume-bucket-storage": {
+      "name": "Sauvegarder le volume vers Bucket Storage",
+      "description": "Archive un volume Docker et l'envoie vers un bucket"
+    }
+  }
+}

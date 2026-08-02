@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "tag-image": {
+      "name": "Tagger l'image",
+      "description": "Ajoute un tag à une image Docker"
+    }
+  }
+}

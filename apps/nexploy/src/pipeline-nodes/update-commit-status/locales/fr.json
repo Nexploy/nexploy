@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "update-commit-status": {
+      "name": "Mettre à jour le statut du commit",
+      "description": "Met à jour le statut d'un commit GitHub ou GitLab"
+    }
+  }
+}

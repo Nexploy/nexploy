@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "validate-compose": {
+      "name": "Valider Compose",
+      "description": "Vérifier la syntaxe du fichier Docker Compose"
+    }
+  }
+}

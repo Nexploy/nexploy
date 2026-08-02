@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "save-version": {
+      "name": "Save Version",
+      "description": "Save the current build as a new version"
+    }
+  }
+}

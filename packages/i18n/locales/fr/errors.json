@@ -23,6 +23,7 @@
     "getStatusFailed": "Échec de la récupération du statut du pipeline de build",
     "getConfigFailed": "Échec de la récupération de la configuration du pipeline",
     "saveConfigFailed": "Échec de l'enregistrement de la configuration du pipeline",
+    "unknownNodeTypes": "Types de nœuds de pipeline inconnus : {types}",
     "configNotFound": "Configuration de pipeline introuvable"
   },
   "dockerHub": {

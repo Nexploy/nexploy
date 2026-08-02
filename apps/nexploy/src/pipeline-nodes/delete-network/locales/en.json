@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "delete-network": {
+      "name": "Delete Network",
+      "description": "Delete a Docker network by name or ID"
+    }
+  }
+}

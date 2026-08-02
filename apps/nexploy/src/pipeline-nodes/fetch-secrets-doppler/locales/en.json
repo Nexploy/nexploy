@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "fetch-secrets-doppler": {
+      "name": "Doppler Secrets",
+      "description": "Fetch secrets from Doppler. Variables accumulate throughout the pipeline."
+    }
+  }
+}

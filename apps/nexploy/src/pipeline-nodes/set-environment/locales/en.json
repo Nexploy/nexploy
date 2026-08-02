@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "set-environment": {
+      "name": "Set Environment",
+      "description": "Sets the deployment environment for all downstream nodes in this pipeline"
+    }
+  }
+}

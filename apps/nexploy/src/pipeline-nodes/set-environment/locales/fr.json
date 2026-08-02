@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "set-environment": {
+      "name": "Définir l'environnement",
+      "description": "Définit l'environnement de déploiement pour tous les nœuds en aval dans ce pipeline"
+    }
+  }
+}

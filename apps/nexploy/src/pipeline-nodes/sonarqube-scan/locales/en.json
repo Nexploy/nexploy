@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "sonarqube-scan": {
+      "name": "SonarQube Scan",
+      "description": "Analyze code quality with SonarQube or SonarCloud"
+    }
+  }
+}

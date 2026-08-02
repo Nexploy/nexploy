@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "compose-run": {
+      "name": "Compose Run",
+      "description": "Exécuter une commande ponctuelle dans un service Compose"
+    }
+  }
+}

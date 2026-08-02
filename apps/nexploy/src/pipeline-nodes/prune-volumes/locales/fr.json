@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "prune-volumes": {
+      "name": "Nettoyer les volumes",
+      "description": "Supprimer les volumes Docker inutilisés pour libérer de l'espace disque"
+    }
+  }
+}

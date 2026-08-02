@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "scale-service": {
+      "name": "Scale Service",
+      "description": "Change the number of replicas for a Swarm service"
+    }
+  }
+}

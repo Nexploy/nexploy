@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "add-ssl-certificate": {
+      "name": "Add SSL Certificate",
+      "description": "Provision an SSL certificate for a domain"
+    }
+  }
+}

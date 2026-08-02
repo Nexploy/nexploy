@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "pull-from-registry": {
+      "name": "Télécharger une image",
+      "description": "Télécharger une image Docker depuis Docker Hub ou un registre privé"
+    }
+  }
+}

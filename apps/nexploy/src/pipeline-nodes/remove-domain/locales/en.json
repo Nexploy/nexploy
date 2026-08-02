@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "remove-domain": {
+      "name": "Remove Domain",
+      "description": "Remove a domain from the repository"
+    }
+  }
+}

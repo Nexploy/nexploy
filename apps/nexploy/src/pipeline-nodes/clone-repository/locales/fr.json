@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "clone-repository": {
+      "name": "Cloner le dépôt",
+      "description": "Clone le dépôt Git lié dans l’espace de travail du build"
+    }
+  }
+}

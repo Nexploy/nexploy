@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "fetch-secrets-vault": {
+      "name": "Vault Secrets",
+      "description": "Fetch secrets from HashiCorp Vault KV engine. Variables accumulate throughout the pipeline."
+    }
+  }
+}

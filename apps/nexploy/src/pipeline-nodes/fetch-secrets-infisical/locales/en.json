@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "fetch-secrets-infisical": {
+      "name": "Infisical Secrets",
+      "description": "Fetch secrets from Infisical (cloud or self-hosted). Variables accumulate throughout the pipeline."
+    }
+  }
+}

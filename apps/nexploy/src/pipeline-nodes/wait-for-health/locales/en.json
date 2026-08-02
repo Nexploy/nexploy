@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "wait-for-health": {
+      "name": "Wait for Health",
+      "description": "Wait until a Docker container passes its healthcheck"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "download-file": {
+      "name": "Télécharger un fichier",
+      "description": "Télécharge un fichier depuis une URL dans le répertoire de travail"
+    }
+  }
+}

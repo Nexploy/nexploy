@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "merge-branch": {
+      "name": "Fusionner une branche",
+      "description": "Fusionner une branche dans la branche courante"
+    }
+  }
+}

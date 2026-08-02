@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "create-release": {
+      "name": "Create Release",
+      "description": "Create a new release on GitHub or GitLab"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "nodes": {
+    "condition": {
+      "name": "Condition",
+      "description": "Gate the pipeline on a value from a previous node output",
+      "outputTrue": "True",
+      "outputFalse": "False"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "nodes": {
+    "git-tag": {
+      "name": "Git Tag",
+      "description": "Create and push a git tag to the remote"
+    }
+  }
+}
