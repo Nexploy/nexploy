@@ -3,7 +3,7 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
-import { dockerService } from '@/inngest/pipeline/services/docker.service';
+import { createDockerService } from '@workspace/pipeline-core/dockerService';
 import { getRegistryWithPassword } from '@/services/registry.service';
 import { pushToRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
@@ -16,7 +16,8 @@ export class PushToRegistryExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof pushToRegistryConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { allOutputs, logger, nodeId, nodeConfig, abortSignal } = ctx;
+        const { allOutputs, logger, nodeId, nodeConfig, abortSignal, services } = ctx;
+        const dockerService = createDockerService(services.docker);
 
         const registry = await getRegistryWithPassword(nodeConfig.registryId);
         if (!registry) {

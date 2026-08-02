@@ -4,7 +4,7 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
-import { dockerService } from '@/inngest/pipeline/services/docker.service';
+import { createDockerService } from '@workspace/pipeline-core/dockerService';
 import { composeBuildConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -21,7 +21,8 @@ export class ComposeBuildExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof composeBuildConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { buildConfig, allOutputs, logger, nodeId, nodeConfig, abortSignal, edges } = ctx;
+        const { buildConfig, allOutputs, logger, nodeId, nodeConfig, abortSignal, edges, services } = ctx;
+        const dockerService = createDockerService(services.docker);
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 

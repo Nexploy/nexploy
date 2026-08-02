@@ -4,7 +4,7 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
-import { dockerService } from '@/inngest/pipeline/services/docker.service';
+import { createDockerService } from '@workspace/pipeline-core/dockerService';
 import { composeUpConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 import { requireComposeFileFromAncestor, resolveComposeEnvVars } from '@/inngest/pipeline/utils/composeContext';
@@ -14,7 +14,8 @@ export class ComposeUpExecutor implements INodeExecutor {
     readonly configSchema = composeUpConfigSchema;
 
     async execute(ctx: NodeExecutionContext<z.infer<typeof composeUpConfigSchema>>): Promise<NodeExecutionResult> {
-        const { allOutputs, logger, nodeId, nodeConfig, abortSignal, edges } = ctx;
+        const { allOutputs, logger, nodeId, nodeConfig, abortSignal, edges, services } = ctx;
+        const dockerService = createDockerService(services.docker);
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
 

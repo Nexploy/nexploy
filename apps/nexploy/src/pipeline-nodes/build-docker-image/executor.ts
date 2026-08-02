@@ -4,7 +4,7 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
-import { dockerService } from '@/inngest/pipeline/services/docker.service';
+import { createDockerService } from '@workspace/pipeline-core/dockerService';
 import { NEXPLOY_LABELS } from '@workspace/shared/nexployLabels';
 import { buildDockerImageConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -17,7 +17,8 @@ export class BuildDockerImageExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof buildDockerImageConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { buildConfig, allOutputs, logger, nodeId, abortSignal, nodeConfig, edges } = ctx;
+        const { buildConfig, allOutputs, logger, nodeId, abortSignal, nodeConfig, edges, services } = ctx;
+        const dockerService = createDockerService(services.docker);
 
         const workDir = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'workDir');
         if (!workDir) {
