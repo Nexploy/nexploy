@@ -2,7 +2,7 @@ import { prisma } from '../../prisma/prisma';
 import { decrypt, encrypt } from '@/lib/encryption';
 import type { CreateRegistryInput, UpdateRegistryInput } from '@workspace/schemas-zod/registry/registry.schema';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
-import type { RegistryInfo } from '@workspace/typescript-interface/registry/registry';
+import type { RegistryInfo } from '@nexploy/nodes/core/registryInfo';
 
 export type { RegistryInfo };
 

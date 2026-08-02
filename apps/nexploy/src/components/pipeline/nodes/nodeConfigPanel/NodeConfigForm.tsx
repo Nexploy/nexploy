@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeId } from '@nexploy/nodes/core/node';
 import { type Node } from '@xyflow/react';
 import { useIsViewingBuild, usePipelineActions, usePipelineStageId } from '@/stores/pipeline/usePipelineStore';
 import { Button } from '@workspace/ui/components/button';

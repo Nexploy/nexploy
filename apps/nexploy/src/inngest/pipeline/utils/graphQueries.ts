@@ -1,4 +1,4 @@
-import { NodeGraphData, PipelineGraph, PipelineNode } from '@workspace/typescript-interface/pipeline/node';
+import { NodeGraphData, PipelineGraph, PipelineNode } from '@nexploy/nodes/core/node';
 import { Edge, Node } from '@xyflow/react';
 
 export interface GraphAnalysis {

@@ -27,9 +27,16 @@ export interface GitRepositoryList {
     alreadyAddedCount: number;
 }
 
-export type { GitBranch } from '@nexploy/node-core/hostResponses';
+export interface GitBranch {
+    name: string;
+    protected: boolean;
+}
 
-export type { GitProviderToken } from '@nexploy/node-core/gitToken';
+export interface GitProviderToken {
+    accessToken: string | null;
+    refreshToken: string | null;
+    accessTokenExpiresAt: Date | null;
+}
 
 export interface GitLabCommit {
     id: string;

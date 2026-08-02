@@ -1,4 +1,4 @@
-import { type NodeClientServices } from '@workspace/typescript-interface/pipeline/nodeServices';
+import { type NodeClientServices } from '@nexploy/nodes/core/nodeServices';
 import { setupWebhookAction } from '@/actions/repository/pipeline/setupWebhook.action';
 import { teardownWebhookAction } from '@/actions/repository/pipeline/teardownWebhook.action';
 

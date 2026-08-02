@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useReactFlow } from '@xyflow/react';
-import { type NodeData } from '@nexploy/node-ui/nodeDefinition';
+import { type NodeData } from '@nexploy/nodes/ui/nodeDefinition';
 import { getNodeOutputFields } from '@nexploy/nodes/registry/descriptors';
 import { type NodeOutputFieldView } from '@nexploy/nodes/registry/descriptors';
 

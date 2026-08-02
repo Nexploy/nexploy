@@ -5,7 +5,7 @@
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
-@source "../../../../../nodes/packages/**/*.{ts,tsx}";
+@source "../../../../apps/nexploy/node_modules/@nexploy/nodes/dist/**/*.js";
 
 @custom-variant dark (&:is(.dark *));
 

@@ -178,15 +178,9 @@ importers:
       '@monaco-editor/react':
         specifier: ^4.7.0
         version: 4.7.0(monaco-editor@0.55.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@nexploy/node-core':
-        specifier: link:../../../nodes/packages/node-core
-        version: link:../../../nodes/packages/node-core
-      '@nexploy/node-ui':
-        specifier: link:../../../nodes/packages/node-ui
-        version: link:../../../nodes/packages/node-ui
       '@nexploy/nodes':
-        specifier: link:../../../nodes/packages/nodes
-        version: link:../../../nodes/packages/nodes
+        specifier: file:../../../nodes/nexploy-nodes-0.1.0.tgz
+        version: file:../nodes/nexploy-nodes-0.1.0.tgz(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(@xyflow/react@12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(dayjs@1.11.19)(dockerode@5.0.0)(lucide-react@1.17.0(react@19.2.3))(next-intl@4.9.1(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@7.0.2))(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)(zod@4.3.6)
       '@next-safe-action/adapter-react-hook-form':
         specifier: ^2.0.0
         version: 2.0.0(@hookform/resolvers@5.2.2(react-hook-form@7.68.0(react@19.2.3)))(next-safe-action@8.5.3(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)
@@ -383,9 +377,6 @@ importers:
 
   packages/schemas-zod:
     dependencies:
-      '@nexploy/node-core':
-        specifier: link:../../../nodes/packages/node-core
-        version: link:../../../nodes/packages/node-core
       '@workspace/typescript-interface':
         specifier: workspace:*
         version: link:../typescript-interface
@@ -402,9 +393,6 @@ importers:
 
   packages/shared:
     dependencies:
-      '@nexploy/node-core':
-        specifier: link:../../../nodes/packages/node-core
-        version: link:../../../nodes/packages/node-core
       '@workspace/typescript-interface':
         specifier: workspace:*
         version: link:../typescript-interface
@@ -420,9 +408,6 @@ importers:
 
   packages/typescript-interface:
     dependencies:
-      '@nexploy/node-core':
-        specifier: link:../../../nodes/packages/node-core
-        version: link:../../../nodes/packages/node-core
       '@xyflow/react':
         specifier: ^12.11.1
         version: 12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1964,6 +1949,22 @@ packages:
 
   '@mongodb-js/saslprep@1.4.6':
     resolution: {integrity: sha512-y+x3H1xBZd38n10NZF/rEBlvDOOMQ6LKUTHqr8R9VkJ+mmQOYtJFxIlkkK8fZrtOiL6VixbOBWMbZGBdal3Z1g==}
+
+  '@nexploy/nodes@file:../nodes/nexploy-nodes-0.1.0.tgz':
+    resolution: {integrity: sha512-RVR7YzuNwzx3VVfhCjWo1SQN4iK5/YZLrrwG+9Wlsm91ZjrSLw+E+ewPO9qy0BVZjWOoFNJ1zREzkQngBTQlDg==, tarball: file:../nodes/nexploy-nodes-0.1.0.tgz}
+    version: 0.1.0
+    engines: {node: '>=22.13'}
+    peerDependencies:
+      '@xyflow/react': ^12.11.1
+      dayjs: ^1.11.19
+      dockerode: ^5.0.0
+      lucide-react: ^1.17.0
+      next: 16.2.12
+      next-intl: ^4.9.1
+      react: ^19.2.3
+      react-dom: ^19.2.3
+      react-hook-form: ^7.68.0
+      zod: ^4.3.6
 
   '@next-safe-action/adapter-react-hook-form@2.0.0':
     resolution: {integrity: sha512-vp3KAd5NKnBBCF/3b8kDxEYj0+BUYVjlSZOWHikz/Y2O+yLheRmtj8Vcm379itlqGUKcLV5O2o/dwKHvH8pYog==}
@@ -9099,6 +9100,37 @@ snapshots:
     dependencies:
       sparse-bitfield: 3.0.3
     optional: true
+
+  '@nexploy/nodes@file:../nodes/nexploy-nodes-0.1.0.tgz(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(@xyflow/react@12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(dayjs@1.11.19)(dockerode@5.0.0)(lucide-react@1.17.0(react@19.2.3))(next-intl@4.9.1(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@7.0.2))(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)(zod@4.3.6)':
+    dependencies:
+      '@radix-ui/react-checkbox': 1.3.3(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@radix-ui/react-label': 2.1.8(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@radix-ui/react-popover': 1.1.15(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@radix-ui/react-scroll-area': 1.2.10(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@radix-ui/react-select': 2.2.6(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@radix-ui/react-slot': 1.2.4(@types/react@19.2.2)(react@19.2.3)
+      '@radix-ui/react-switch': 1.2.6(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@radix-ui/react-tooltip': 1.2.8(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@xyflow/react': 12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      class-variance-authority: 0.7.1
+      clsx: 2.1.1
+      cmdk: 1.1.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      dayjs: 1.11.19
+      dockerode: 5.0.0
+      ky: 1.14.1
+      lucide-react: 1.17.0(react@19.2.3)
+      next: 16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next-intl: 4.9.1(next@16.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@7.0.2)
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
+      react-hook-form: 7.68.0(react@19.2.3)
+      swr: 2.4.1(react@19.2.3)
+      tailwind-merge: 3.5.0
+      zod: 4.3.6
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
 
   '@next-safe-action/adapter-react-hook-form@2.0.0(@hookform/resolvers@5.2.2(react-hook-form@7.68.0(react@19.2.3)))(next-safe-action@8.5.3(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)':
     dependencies:

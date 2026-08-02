@@ -13,7 +13,7 @@ import { Button } from '@workspace/ui/components/button';
 import { useRealtime } from 'inngest/react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { type CommitInfo } from '@workspace/typescript-interface/pipeline/pipeline';
+import { type CommitInfo } from '@nexploy/nodes/core/pipeline';
 import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 import { isBuildLive } from '@/utils/buildStatus';
 import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';

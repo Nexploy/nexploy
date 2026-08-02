@@ -7,7 +7,6 @@
     "./*": "./src/*.ts"
   },
   "dependencies": {
-    "@nexploy/node-core": "link:../../../nodes/packages/node-core",
     "@workspace/typescript-interface": "workspace:*"
   },
   "devDependencies": {

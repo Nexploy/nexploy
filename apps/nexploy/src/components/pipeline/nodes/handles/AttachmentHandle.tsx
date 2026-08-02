@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Handle, Position, useConnection, useNodeConnections } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
-import { NodeDefinition } from '@nexploy/node-ui/nodeDefinition';
+import { NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
 
 interface AttachmentHandleProps {
     attach: NonNullable<NodeDefinition['handles']['attachments']>[number];

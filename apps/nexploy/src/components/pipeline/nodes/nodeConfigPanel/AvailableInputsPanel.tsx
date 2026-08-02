@@ -3,11 +3,11 @@
 import { useTranslations } from 'next-intl';
 import { Variable } from 'lucide-react';
 import { useAncestorInputFields } from '@/hooks/useAncestorInputFields';
-import { type NodeInputField } from '@nexploy/node-ui/nodeManifest';
+import { type NodeInputField } from '@nexploy/nodes/ui/nodeManifest';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import { NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef.ts';
+import { NodeFieldRef } from '@nexploy/nodes/core/nodeFieldRef';
 
 interface InputChipProps {
     nodeId: string;

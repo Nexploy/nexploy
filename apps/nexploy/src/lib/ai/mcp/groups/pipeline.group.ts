@@ -18,7 +18,7 @@ import {
     azureGetRootItems,
 } from '@/services/git/providers/azureRepos/azureRepos.client';
 import { getGitAdapter } from '@/services/git/core/registry';
-import type { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import type { PipelineGraph } from '@nexploy/nodes/core/node';
 import { getCompactCatalog, PIPELINE_NODE_CATALOG } from '@/lib/ai/pipelineNodeCatalog';
 import { analyzeRepositorySchema, savePipelineMcpSchema } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
 

@@ -8,7 +8,6 @@
     "./stores/*": "./src/stores/*.ts"
   },
   "dependencies": {
-    "@nexploy/node-core": "link:../../../nodes/packages/node-core",
     "@xyflow/react": "^12.11.1",
     "dockerode": "^5.0.0",
     "hono": "4.12.27",

@@ -1,6 +1,6 @@
-import { type NodeFieldRef } from '@workspace/typescript-interface/pipeline/nodeFieldRef';
-import { type LogLevel, type NodeOutputStore } from '@workspace/typescript-interface/pipeline/pipeline';
-import { isNodeFieldRef } from '@nexploy/node-core/nodeFieldRef';
+import { type NodeFieldRef } from '@nexploy/nodes/core/nodeFieldRef';
+import { type LogLevel, type NodeOutputStore } from '@nexploy/nodes/core/pipeline';
+import { isNodeFieldRef } from '@nexploy/nodes/core/nodeFieldRef';
 
 export function formatErrorDetails(error: unknown): string {
     if (!(error instanceof Error)) {

@@ -1,7 +1,7 @@
 'use client';
 
-import { NodeDefinition } from '@nexploy/node-ui/nodeDefinition';
-import { NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
+import { NodeId } from '@nexploy/nodes/core/node';
 import { cn } from '@workspace/ui/lib/utils';
 import { Plus } from 'lucide-react';
 import { CATEGORY_BG } from '@/components/pipeline/pipelineTheme';

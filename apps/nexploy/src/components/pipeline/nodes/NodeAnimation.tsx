@@ -2,7 +2,7 @@
 
 import { cn } from '@workspace/ui/lib/utils';
 import { CATEGORY_BORDER, CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
-import { type NodeData } from '@nexploy/node-ui/nodeDefinition';
+import { type NodeData } from '@nexploy/nodes/ui/nodeDefinition';
 import { PropsWithChildren } from 'react';
 import { AnimatedCircleX } from '@/components/pipeline/nodes/animations/AnimatedCircleX.tsx';
 import { AnimatedBan } from '@/components/pipeline/nodes/animations/AnimatedBan.tsx';

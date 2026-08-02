@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Position, useReactFlow } from '@xyflow/react';
 import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
-import { NodeDefinition } from '@nexploy/node-ui/nodeDefinition';
+import { NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
 import { useFitViewOptions } from '@/components/pipeline/utils/fitView';
 
 const H_GAP = 80;

@@ -11,7 +11,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { getLogLevelColor, getLogLevelColorGradiant, parseAnsiColors } from '@/utils/color';
 import { cn } from '@workspace/ui/lib/utils';
 import { fetcherApi } from '@/lib/api/fetcherApi';
-import { NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import { NodeRunStatus } from '@nexploy/nodes/core/pipeline';
 import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 import { useTranslations } from 'next-intl';
 import { LogsToolbar } from '@/components/shared/LogsToolbar';

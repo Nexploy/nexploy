@@ -9,7 +9,7 @@ import {
     type RegistryHostService,
     type SslHostService,
     type VersionHostService,
-} from '@workspace/typescript-interface/pipeline/nodeServices';
+} from '@nexploy/nodes/core/nodeServices';
 import type { BuildConfig } from '@workspace/typescript-interface/repository/build';
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { kyDocker } from '@/lib/api/kyDocker';

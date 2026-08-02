@@ -6,7 +6,7 @@ import { useRealtime } from 'inngest/react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { usePipelineStoreInstance } from '@/contexts/PipelineContext';
 import { isBuildLive } from '@/utils/buildStatus';
-import { type CommitInfo, type NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import { type CommitInfo, type NodeRunStatus } from '@nexploy/nodes/core/pipeline';
 import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 import type { PipelineBuildStatus } from '@workspace/typescript-interface/stores/pipelineStore';
 

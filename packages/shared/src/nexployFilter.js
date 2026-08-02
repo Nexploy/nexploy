@@ -2,7 +2,14 @@ export const BUILTIN_NETWORKS = ['bridge', 'host', 'none'];
 export function isBuiltinNetwork(name) {
     return BUILTIN_NETWORKS.includes(name);
 }
-export const NEXPLOY_INFRASTRUCTURE_CONTAINERS = ['nexploy_traefik', 'nexploy_postgres', 'nexploy_inngest'];
+export const NEXPLOY_INFRASTRUCTURE_CONTAINERS = [
+    'nexploy_traefik',
+    'nexploy_postgres',
+    'nexploy_inngest',
+    'nexploy_app',
+    'nexploy_docker_api',
+    'nexploy_upgrader',
+];
 export const NEXPLOY_INFRASTRUCTURE_NETWORKS = ['nexploy_network'];
 export function isNexployInfrastructureContainer(container) {
     const name = container.name.replace(/^\//, '');

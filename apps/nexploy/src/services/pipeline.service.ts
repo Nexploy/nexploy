@@ -1,8 +1,8 @@
 import { prisma } from '../../prisma/prisma';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
-import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import { PipelineGraph } from '@nexploy/nodes/core/node';
 import { SavePipelineInput } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
-import { type NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
+import { type NodeRunStatus } from '@nexploy/nodes/core/pipeline';
 import { decryptPipelineNodes, encryptPipelineNodes } from '@/lib/pipelineEncryption';
 import { getNodeDescriptor } from '@nexploy/nodes/registry/descriptors';
 

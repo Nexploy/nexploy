@@ -6,13 +6,22 @@ description: Creates a complete new pipeline node in the Nexploy node-based pipe
 # Create Pipeline Node
 
 Nodes live in the **`nexploy-nodes` repository**, next to this one on disk
-(`Monorepo-Mixte/nexploy/nodes/`). Nexploy consumes it through a pnpm `link:`, so edits are live —
-no build, no publish. All paths below are relative to that repository.
+(`Monorepo-Mixte/nexploy/nodes/`). It is published to npm as `@nexploy/nodes`; Nexploy installs it
+like any dependency. All paths below are relative to that repository.
 
-Every node is a single folder: `packages/nodes/src/<node-type>/`.
+To see a change in Nexploy before publishing:
+
+```bash
+cd nexploy && pnpm nodes:local    # builds, packs and installs the local checkout
+```
+
+`pnpm nodes:npm` restores the published version. Re-run `nodes:local` after each change, and never
+commit the `file:` line it writes.
+
+Every node is a single folder: `src/nodes/<node-type>/`.
 
 ```
-packages/nodes/src/my-action/
+src/nodes/my-action/
 ├── node.ts            ← descriptor: the single source of truth (isomorphic)
 ├── executor.ts        ← server-side logic
 ├── Config.tsx         ← client-side config panel
@@ -23,7 +32,7 @@ packages/nodes/src/my-action/
 ```
 
 A node never imports from the nexploy app. Everything it needs from the host arrives through
-`ctx.services.*` (executors) or the `@nexploy/node-ui` adapter hooks (panels).
+`ctx.services.*` (executors) or the `@nexploy/nodes/ui` adapter hooks (panels).
 
 The descriptor drives the UI definition, the theme (icon/colour/category), the AI catalogue and the
 drag-and-drop outputs panel. **Never restate any of that anywhere else** — it is all derived.
@@ -32,24 +41,24 @@ drag-and-drop outputs panel. **Never restate any of that anywhere else** — it 
 
 | # | File | Why |
 |---|------|-----|
-| 1 | `packages/node-core/src/schemas/nodeConfigs.schema.ts` | add the Zod config schema |
-| 2 | `packages/nodes/src/my-action/node.ts` | the descriptor |
-| 3 | `packages/nodes/src/my-action/executor.ts` | the executor |
-| 4 | `packages/nodes/src/my-action/Config.tsx` | the config panel |
-| 5 | `packages/nodes/src/my-action/locales/{en,fr}.json` | node name, description, own config labels |
-| 6 | `packages/nodes/src/registry/descriptors.ts` | 1 import + 1 array entry |
-| 7 | `packages/nodes/src/registry/server.ts` | 1 import + 1 array entry |
-| 8 | `packages/nodes/src/registry/client.ts` | 1 import + 1 map entry |
-| 9 | `packages/nodes/src/registry/messages.ts` | 2 imports + 2 array entries |
-| 10 | `packages/nodes/src/registry/locales/{en,fr}.json` | shared config labels + output labels |
+| 1 | `src/core/schemas/nodeConfigs.schema.ts` | add the Zod config schema |
+| 2 | `src/nodes/my-action/node.ts` | the descriptor |
+| 3 | `src/nodes/my-action/executor.ts` | the executor |
+| 4 | `src/nodes/my-action/Config.tsx` | the config panel |
+| 5 | `src/nodes/my-action/locales/{en,fr}.json` | node name, description, own config labels |
+| 6 | `src/nodes/registry/descriptors.ts` | 1 import + 1 array entry |
+| 7 | `src/nodes/registry/server.ts` | 1 import + 1 array entry |
+| 8 | `src/nodes/registry/client.ts` | 1 import + 1 map entry |
+| 9 | `src/nodes/registry/messages.ts` | 2 imports + 2 array entries |
+| 10 | `src/nodes/registry/locales/{en,fr}.json` | shared config labels + output labels |
 
 `NodeId` is an open `string` and `nodeTypeSchema` is `z.string()` — there is **no union or enum to update**.
 A node type is valid because a descriptor is registered for it; `savePipelineConfig` rejects graphs that
 reference an unregistered type.
 
 If the icon you want is not yet in the `NodeIconName` union, also add it to
-`packages/node-core/src/nodeDescriptor.ts` **and** to `ICON_NAME_MAP` in
-`packages/node-ui/src/theme.ts` — TypeScript enforces that both stay in sync.
+`src/core/nodeDescriptor.ts` **and** to `ICON_NAME_MAP` in
+`src/ui/theme.ts` — TypeScript enforces that both stay in sync.
 
 ---
 
@@ -70,7 +79,7 @@ Infer sensible defaults if unspecified and state your assumptions.
 
 ## Step 1 — Zod config schema
 
-`packages/node-core/src/schemas/nodeConfigs.schema.ts`
+`src/core/schemas/nodeConfigs.schema.ts`
 
 ```typescript
 import { refable } from './nodeFieldRef.schema.ts';
@@ -100,7 +109,7 @@ containerName: z.string().default(''),
 
 ## Step 2 — The descriptor
 
-`packages/nodes/src/my-action/node.ts`
+`src/nodes/my-action/node.ts`
 
 ```typescript
 import { NodeDescriptor } from '@workspace/typescript-interface/pipeline/nodeDescriptor';
@@ -156,7 +165,7 @@ Each non-internal key needs i18n (Step 8). Override the derived keys only when r
 
 ## Step 3 — The executor
 
-`packages/nodes/src/my-action/executor.ts`
+`src/nodes/my-action/executor.ts`
 
 ```typescript
 import { getFromInputs, getFromAllOutputs } from '@/helpers/pipeline.helpers';
@@ -248,7 +257,7 @@ If the executor needs a helper outside `execute()`, pass `ctx.services.docker` d
 
 ## Step 4 — The config panel
 
-`packages/nodes/src/my-action/Config.tsx`
+`src/nodes/my-action/Config.tsx`
 
 Panels are React form fragments driven by `useFormContext()` — **no props**. The export **must** be named
 `<PascalCaseType>Config`. Field names must match schema keys exactly.
@@ -437,14 +446,14 @@ file is for.
 ## Verify
 
 ```bash
-pnpm types                       # in nexploy-nodes: 3 packages, must be clean
+pnpm typecheck                   # in nexploy-nodes
+pnpm build                       # vendor + tsc, must be clean
 pnpm format
 ```
 
-Then, from the `nexploy` repository (it consumes the library through a `link:`):
+Then, from the `nexploy` repository, after `pnpm nodes:local`:
 
 ```bash
-pnpm check:nodes                 # shared dependency versions still in lockstep
 pnpm types
 ```
 

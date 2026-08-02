@@ -15,7 +15,7 @@ import {
     useReactFlow,
     useStore,
 } from '@xyflow/react';
-import { NodeDefinition } from '@nexploy/node-ui/nodeDefinition';
+import { NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
 import { Maximize, Minus, Paintbrush, Plus, SquareMousePointer } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
@@ -35,6 +35,7 @@ import { AttachNode } from '@/components/pipeline/nodes/types/AttachNode';
 import { BuildPreviewBanner } from '@/components/pipeline/BuildPreviewBanner';
 import { useFitViewOptions } from '@/components/pipeline/utils/fitView';
 import { PipelineSidePanel } from '@/components/pipeline/PipelineSidePanel.tsx';
+import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 
 const nodeTypes = {
     'base-node': BaseNode,
@@ -91,6 +92,7 @@ export function PipelineCanvas() {
     const fitViewOptions = useFitViewOptions();
 
     const { nodes, displayNodes, displayEdges, isViewingBuild } = usePipelineDisplay();
+    const isSidePanelOpen = usePipelinePanelStore((s) => s.activePanel !== null);
     const { builds } = usePipelineBuilds();
     const {
         onNodesChange,
@@ -292,7 +294,12 @@ export function PipelineCanvas() {
                     </Panel>
                 )}
                 {displayNodes.length === 0 && (
-                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
+                    <div
+                        className={cn(
+                            'pointer-events-none absolute inset-y-0 left-0 flex flex-col items-center justify-center gap-3 transition-[right] duration-200 ease-out',
+                            isSidePanelOpen ? 'right-[19rem]' : 'right-0',
+                        )}
+                    >
                         <div className="border-border bg-card flex size-12 items-center justify-center rounded-lg border">
                             <SquareMousePointer className={'text-muted-foreground'} />
                         </div>

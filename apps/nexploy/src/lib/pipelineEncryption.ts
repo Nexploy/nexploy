@@ -1,5 +1,5 @@
 import { decrypt, encrypt } from '@/lib/encryption';
-import type { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import type { PipelineGraph } from '@nexploy/nodes/core/node';
 
 const ENCRYPTED_NODE_FIELDS: Record<string, string[]> = {
     'set-env-vars': ['vars[].value'],

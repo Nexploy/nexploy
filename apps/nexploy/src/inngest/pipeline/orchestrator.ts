@@ -1,6 +1,6 @@
 import { NonRetriableError } from 'inngest';
 import { type BuildConfig } from '@workspace/typescript-interface/repository/build';
-import { type PipelineGraph, type PipelineNode } from '@workspace/typescript-interface/pipeline/node';
+import { type PipelineGraph, type PipelineNode } from '@nexploy/nodes/core/node';
 import {
     type InngestStepRunner,
     type InputNodeInfo,
@@ -11,7 +11,7 @@ import {
     type PipelineReporter,
     type PipelineResult,
     type PipelineStatus,
-} from '@workspace/typescript-interface/pipeline/pipeline';
+} from '@nexploy/nodes/core/pipeline';
 import { formatErrorDetails, resolveNodeConfig } from './utils';
 import { analyzeGraph } from '@/inngest/pipeline/utils/graphQueries';
 import { getNodeExecutor } from '@nexploy/nodes/registry/server';

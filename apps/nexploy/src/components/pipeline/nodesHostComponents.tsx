@@ -7,7 +7,7 @@ import type {
     NodeHostComponents,
     PermissionGateProps,
     WebhookSetup,
-} from '@nexploy/node-ui/adapter';
+} from '@nexploy/nodes/ui/adapter';
 import type { FieldValues, UseFormReturn } from 'react-hook-form';
 import { Can } from '@/components/permission/Can';
 import { CloudflareDomainSelector } from '@/components/domains/CloudflareDomainSelector';

@@ -1,4 +1,4 @@
-import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import { PipelineGraph } from '@nexploy/nodes/core/node';
 import { PipelineEditor } from '@/components/pipeline/PipelineEditor';
 import { PipelineProvider } from '@/providers/PipelineProvider';
 import { SSEProvider } from '@/providers/SSEProviders';

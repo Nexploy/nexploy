@@ -2,7 +2,7 @@
 
 import { createStore } from 'zustand';
 import { addEdge, applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
-import { type NodeId, type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
+import { type NodeId, type PipelineGraph } from '@nexploy/nodes/core/node';
 import { flowToGraph, graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { getNodeLifecycle } from '@/components/pipeline/nodeManifestRegistry';
 import { nodesClientServices } from '@/components/pipeline/nodesClientServices';

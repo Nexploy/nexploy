@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import type { NodesUIAdapter, ResourceResult } from '@nexploy/node-ui/adapter';
+import type { NodesUIAdapter, ResourceResult } from '@nexploy/nodes/ui/adapter';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers';
 import { useEnvironmentImages } from '@/hooks/sse/useEnvironmentImages';

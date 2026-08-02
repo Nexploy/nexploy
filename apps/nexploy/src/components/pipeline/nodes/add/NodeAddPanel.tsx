@@ -6,7 +6,7 @@ import { ArrowLeft, Boxes, ChevronRight, MousePointerClick, Search, SearchX, Wre
 import { cn } from '@workspace/ui/lib/utils';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@workspace/ui/components/input-group';
 import { useNodeRegistryStore } from '@/stores/useNodeRegistryStore';
-import { NodeId } from '@workspace/typescript-interface/pipeline/node';
+import { NodeId } from '@nexploy/nodes/core/node';
 import { NodeItem } from '@/components/pipeline/nodes/add/NodeItem';
 import { CATEGORY_BG, CATEGORY_BG_MUTED, CATEGORY_ICONS, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
 import { useReactFlow } from '@xyflow/react';

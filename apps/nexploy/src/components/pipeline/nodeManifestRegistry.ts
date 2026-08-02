@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { type NodeDefinition } from '@nexploy/node-ui/nodeDefinition';
-import { type NodeInputField, type NodeManifest } from '@nexploy/node-ui/nodeManifest';
+import { type NodeDefinition } from '@nexploy/nodes/ui/nodeDefinition';
+import { type NodeInputField, type NodeManifest } from '@nexploy/nodes/ui/nodeManifest';
 import { allBuiltinManifests } from '@nexploy/nodes/registry/client';
 
 const builtinRegistry = new Map<string, NodeManifest>(

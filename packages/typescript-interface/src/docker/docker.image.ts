@@ -39,7 +39,10 @@ export type ImageDeleteResult =
     | { type: 'deleted'; id: string }
     | { type: 'skipped'; id: string; name: string; reason: string };
 
-export type { ImageDeleteResponse } from '@nexploy/node-core/hostResponses';
+export interface ImageDeleteResponse {
+    deleted: string[];
+    skipped: { id: string; name: string; reason: string }[];
+}
 
 export interface ImageTool extends DropdownActionTool {
     disabled?: boolean;

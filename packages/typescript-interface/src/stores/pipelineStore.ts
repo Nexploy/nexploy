@@ -1,5 +1,6 @@
 import type { Connection, Edge, EdgeChange, Node, NodeChange } from '@xyflow/react';
-import type { NodeId, NodeRunStatus } from '../pipeline/node';
+export type NodeId = string;
+export type NodeRunStatus = 'running' | 'completed' | 'skipped' | 'failed' | 'cancelled' | 'not-configured';
 
 export type PipelineBuildStatus = 'QUEUED' | 'BUILDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
 

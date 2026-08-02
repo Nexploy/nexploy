@@ -8,14 +8,14 @@ import { Separator } from '@workspace/ui/components/separator';
 import { usePipelineActions, usePipelineDisplay } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { useTranslations } from 'next-intl';
-import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
-import { type NodeData } from '@nexploy/node-ui/nodeDefinition';
+import { type NodeId } from '@nexploy/nodes/core/node';
+import { type NodeData } from '@nexploy/nodes/ui/nodeDefinition';
 import { NodeConfigForm } from './NodeConfigForm';
 import { NodeLogsPanel } from './NodeLogsPanel';
 import { AvailableInputsPanel } from '@/components/pipeline/nodes/nodeConfigPanel/AvailableInputsPanel';
 import { NodeOutputsPanel } from '@/components/pipeline/nodes/nodeConfigPanel/NodeOutputsPanel';
-import { RefValidationProvider } from '@nexploy/node-ui/refValidation';
-import { NodesUIProvider } from '@nexploy/node-ui/adapter';
+import { RefValidationProvider } from '@nexploy/nodes/ui/refValidation';
+import { NodesUIProvider } from '@nexploy/nodes/ui/adapter';
 import { nodesUIAdapter } from '@/components/pipeline/nodesUIAdapter';
 import { cn } from '@workspace/ui/lib/utils';
 
