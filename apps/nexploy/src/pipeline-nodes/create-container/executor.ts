@@ -8,7 +8,6 @@ import { createContainerConfigSchema } from '@workspace/schemas-zod/pipeline/nod
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
 import { NEXPLOY_LABELS } from '@workspace/shared/nexployLabels';
 import { z } from 'zod';
-import { getAllEnvsBuild } from '@/services/repository/build.service';
 
 export class CreateContainerExecutor implements INodeExecutor {
     readonly type = 'create-container';
@@ -17,13 +16,13 @@ export class CreateContainerExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof createContainerConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, buildConfig, logger, nodeId, abortSignal, edges } = ctx;
+        const { nodeConfig, allOutputs, buildConfig, logger, nodeId, abortSignal, edges, services } = ctx;
 
         const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         const containerName = nodeConfig.containerName;
         const imageName = nodeConfig.imageName;
 
-        const repoEnvs = buildConfig.stageId ? await getAllEnvsBuild(buildConfig.stageId) : [];
+        const repoEnvs = buildConfig.stageId ? await services.build.getStageEnvVariables(buildConfig.stageId) : [];
         const envVarMap = Object.fromEntries(repoEnvs.map((e) => [e.key, e.value]));
         for (const e of [...(nodeConfig.envVarsSource ?? []), ...nodeConfig.envVars]) {
             envVarMap[e.key] = e.value;

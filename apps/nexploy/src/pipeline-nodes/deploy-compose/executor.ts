@@ -5,11 +5,14 @@ import {
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { createDockerService } from '@workspace/pipeline-core/dockerService';
-import { NEXPLOY_LABELS } from '@workspace/shared/nexployLabels';
+import {
+    getComposeProjectName,
+    resolveComposeEnvVars,
+    resolveComposeLabels,
+} from '@workspace/pipeline-core/composeContext';
 import { composeFileConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
-import { getAllEnvsBuild } from '@/services/repository/build.service';
 
 export class DeployComposeExecutor implements INodeExecutor {
     readonly type = 'deploy-compose';
@@ -32,28 +35,10 @@ export class DeployComposeExecutor implements INodeExecutor {
         const composePath = composeFilePath
             ? `${composeFilePath.replace(/\/$/, '')}/${composeFileName}`
             : composeFileName;
-        const projectName = `nexploy-${buildConfig.repositoryId}`;
+        const projectName = getComposeProjectName(buildConfig.repositoryId);
 
-        const repoEnvs = buildConfig.stageId ? await getAllEnvsBuild(buildConfig.stageId) : [];
-        const repoEnvMap = Object.fromEntries(repoEnvs.map((e) => [e.key, e.value]));
-
-        const ancestorEnvVarsArray =
-            getFromClosestAncestor<{ key: string; value: string }[]>(allOutputs, edges, nodeId, 'envVariables') ?? [];
-        const ancestorEnvMap = Object.fromEntries(ancestorEnvVarsArray.map((e) => [e.key, e.value]));
-
-        const envVars: Record<string, string> = { ...repoEnvMap, ...ancestorEnvMap };
-
-        const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
-        const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');
-        const commitMessage = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitMessage');
-
-        const labels: Record<string, string> = {
-            [NEXPLOY_LABELS.repositoryId]: buildConfig.repositoryId,
-            [NEXPLOY_LABELS.buildId]: buildConfig.buildId,
-            ...(branch && { [NEXPLOY_LABELS.branch]: branch }),
-            ...(commitHash && { [NEXPLOY_LABELS.commitHash]: commitHash }),
-            ...(commitMessage && { [NEXPLOY_LABELS.commitMessage]: commitMessage }),
-        };
+        const envVars = await resolveComposeEnvVars(ctx);
+        const labels = resolveComposeLabels(ctx);
 
         await logger.info(nodeId, `Deploying Docker Compose stack: ${projectName}`);
 

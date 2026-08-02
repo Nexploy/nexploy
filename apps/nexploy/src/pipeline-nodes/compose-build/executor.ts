@@ -12,7 +12,7 @@ import {
     getComposeProjectName,
     resolveComposeEnvVars,
     resolveComposeLabels,
-} from '@/inngest/pipeline/utils/composeContext';
+} from '@workspace/pipeline-core/composeContext';
 
 export class ComposeBuildExecutor implements INodeExecutor {
     readonly type = 'compose-build';

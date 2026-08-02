@@ -8,7 +8,7 @@ import { createDockerService } from '@workspace/pipeline-core/dockerService';
 import { composeRunConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
-import { requireComposeFileFromAncestor, resolveComposeEnvVars } from '@/inngest/pipeline/utils/composeContext';
+import { requireComposeFileFromAncestor, resolveComposeEnvVars } from '@workspace/pipeline-core/composeContext';
 
 export class ComposeRunExecutor implements INodeExecutor {
     readonly type = 'compose-run';

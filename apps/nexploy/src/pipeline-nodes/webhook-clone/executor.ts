@@ -4,7 +4,6 @@ import {
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { gitService } from '@/inngest/pipeline/services/git.service';
-import { updateBuildGitInfo } from '@/services/repository/build.service';
 import { webhookCloneConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { matchesWebhookTrigger } from '@/services/webhook/webhookTrigger';
 import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
@@ -22,7 +21,7 @@ export class WebhookCloneExecutor implements INodeExecutor {
     readonly configSchema = webhookCloneConfigSchema;
 
     async execute(ctx: NodeExecutionContext<z.infer<typeof webhookCloneConfigSchema>>): Promise<NodeExecutionResult> {
-        const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter } = ctx;
+        const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter, services } = ctx;
 
         const branch = buildConfig.gitBranch;
 
@@ -63,7 +62,7 @@ export class WebhookCloneExecutor implements INodeExecutor {
             const resolvedHash = commitInfo?.hash;
             const resolvedMessage = commitInfo?.message;
 
-            await updateBuildGitInfo(buildId, branch, resolvedHash, resolvedMessage);
+            await services.build.updateGitInfo(buildId, branch, resolvedHash, resolvedMessage);
             await reporter.publishCommitInfo({
                 branch,
                 commitHash: resolvedHash,

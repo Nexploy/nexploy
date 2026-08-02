@@ -4,7 +4,6 @@ import {
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { triggerStageBuildConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { startBuildRepository } from '@/services/repository/build.service';
 import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { z } from 'zod';
 
@@ -16,7 +15,7 @@ export class TriggerStageBuildExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof triggerStageBuildConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, buildConfig, logger, abortSignal, pipelineHasFailed } = ctx;
+        const { nodeId, nodeConfig, buildConfig, logger, abortSignal, pipelineHasFailed, services } = ctx;
 
         const { stageId: targetStageId, triggerOnFailure } = nodeConfig;
 
@@ -42,16 +41,13 @@ export class TriggerStageBuildExecutor implements INodeExecutor {
 
         await logger.info(nodeId, `Triggering build on stage "${targetStage.name}"`);
 
-        const triggered = await startBuildRepository(
-            {
-                repositoryId: buildConfig.repositoryId,
-                branch: buildConfig.gitBranch,
-                stageId: targetStage.id,
-            },
-            buildConfig.userId,
-            'manual',
-            buildConfig.stageId,
-        );
+        const triggered = await services.build.startStageBuild({
+            repositoryId: buildConfig.repositoryId,
+            branch: buildConfig.gitBranch,
+            stageId: targetStage.id,
+            userId: buildConfig.userId,
+            triggeredByStageId: buildConfig.stageId,
+        });
 
         if (!triggered) {
             throw new Error(`Build on stage "${targetStage.name}" was not started`);

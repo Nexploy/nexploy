@@ -7,7 +7,7 @@ import {
 import { createDockerService } from '@workspace/pipeline-core/dockerService';
 import { composeUpConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
-import { requireComposeFileFromAncestor, resolveComposeEnvVars } from '@/inngest/pipeline/utils/composeContext';
+import { requireComposeFileFromAncestor, resolveComposeEnvVars } from '@workspace/pipeline-core/composeContext';
 
 export class ComposeUpExecutor implements INodeExecutor {
     readonly type = 'compose-up';

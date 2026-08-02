@@ -1,16 +1,15 @@
-import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
-import { getAllEnvsBuild } from '@/services/repository/build.service';
 import { NEXPLOY_LABELS } from '@workspace/shared/nexployLabels';
-import { NodeExecutionContext } from '@workspace/typescript-interface/pipeline/pipeline';
+import type { NodeExecutionContext } from '@workspace/typescript-interface/pipeline/pipeline';
+import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
 
 export function getComposeProjectName(repositoryId: string): string {
     return `nexploy-${repositoryId}`;
 }
 
 export async function resolveComposeEnvVars(ctx: NodeExecutionContext<unknown>): Promise<Record<string, string>> {
-    const { buildConfig, allOutputs, edges, nodeId } = ctx;
+    const { buildConfig, allOutputs, edges, nodeId, services } = ctx;
 
-    const repoEnvs = buildConfig.stageId ? await getAllEnvsBuild(buildConfig.stageId) : [];
+    const repoEnvs = buildConfig.stageId ? await services.build.getStageEnvVariables(buildConfig.stageId) : [];
     const repoEnvMap = Object.fromEntries(repoEnvs.map((e) => [e.key, e.value]));
 
     const ancestorEnvVarsArray =

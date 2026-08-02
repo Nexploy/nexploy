@@ -4,7 +4,6 @@ import {
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { gitService } from '@/inngest/pipeline/services/git.service';
-import { updateBuildGitInfo } from '@/services/repository/build.service';
 import { cloneRepositoryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -15,7 +14,7 @@ export class CloneRepositoryExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof cloneRepositoryConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter } = ctx;
+        const { buildId, buildConfig, nodeConfig, logger, nodeId, reporter, services } = ctx;
 
         const effectiveBranch = nodeConfig.branch;
         const effectiveCommitHash = nodeConfig.commitHash;
@@ -49,7 +48,7 @@ export class CloneRepositoryExecutor implements INodeExecutor {
             const resolvedHash = commitInfo?.hash ?? effectiveCommitHash;
             const resolvedMessage = commitInfo?.message;
 
-            await updateBuildGitInfo(buildId, effectiveBranch, resolvedHash, resolvedMessage);
+            await services.build.updateGitInfo(buildId, effectiveBranch, resolvedHash, resolvedMessage);
             await reporter.publishCommitInfo({
                 branch: effectiveBranch,
                 commitHash: resolvedHash,

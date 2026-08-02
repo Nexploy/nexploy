@@ -374,6 +374,9 @@ importers:
 
   packages/pipeline-core:
     dependencies:
+      '@workspace/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@workspace/typescript-interface':
         specifier: workspace:*
         version: link:../typescript-interface
