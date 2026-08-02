@@ -374,6 +374,9 @@ importers:
 
   packages/pipeline-core:
     dependencies:
+      '@workspace/schemas-zod':
+        specifier: workspace:*
+        version: link:../schemas-zod
       '@workspace/shared':
         specifier: workspace:*
         version: link:../shared

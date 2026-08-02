@@ -4,7 +4,6 @@ import {
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { triggerStageBuildConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { z } from 'zod';
 
 export class TriggerStageBuildExecutor implements INodeExecutor {
@@ -32,7 +31,7 @@ export class TriggerStageBuildExecutor implements INodeExecutor {
             throw new Error('Trigger Stage Build cannot target the stage it is running in (would loop indefinitely)');
         }
 
-        const targetStage = await getFirstStage(buildConfig.repositoryId, targetStageId);
+        const targetStage = await services.build.findStage(buildConfig.repositoryId, targetStageId);
         if (!targetStage) {
             throw new Error(`Target stage ${targetStageId} not found in this repository — it may have been deleted`);
         }

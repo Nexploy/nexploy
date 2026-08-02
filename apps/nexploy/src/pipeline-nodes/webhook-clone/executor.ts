@@ -5,7 +5,7 @@ import {
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { createGitService } from '@workspace/pipeline-core/gitService';
 import { webhookCloneConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { matchesWebhookTrigger } from '@/services/webhook/webhookTrigger';
+import { matchesWebhookTrigger } from '@workspace/pipeline-core/webhookTrigger';
 import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
 import { z } from 'zod';
 

@@ -4,7 +4,6 @@ import {
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { addSslCertificateConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
-import { createCustomCertificate, createLetsEncryptCertificate } from '@/services/sslCertificate.service';
 import { z } from 'zod';
 
 export class AddSslCertificateExecutor implements INodeExecutor {
@@ -14,7 +13,7 @@ export class AddSslCertificateExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof addSslCertificateConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, buildConfig, logger, abortSignal } = ctx;
+        const { nodeId, nodeConfig, buildConfig, logger, abortSignal, services } = ctx;
         const { certType, name, domain, email, agreedToTos, certificate, privateKey } = nodeConfig;
 
         await logger.info(nodeId, `Adding SSL certificate: ${name} (${certType})`);
@@ -26,7 +25,7 @@ export class AddSslCertificateExecutor implements INodeExecutor {
             if (!email) throw new Error("Email is required for Let's Encrypt certificates");
             if (!agreedToTos) throw new Error("You must agree to Let's Encrypt Terms of Service");
 
-            const cert = await createLetsEncryptCertificate(name, domain, email);
+            const cert = await services.ssl.createLetsEncryptCertificate(name, domain, email);
             certificateId = cert.id;
             await logger.info(
                 nodeId,
@@ -36,7 +35,7 @@ export class AddSslCertificateExecutor implements INodeExecutor {
             if (!certificate) throw new Error('Certificate PEM is required for custom certificates');
             if (!privateKey) throw new Error('Private key is required for custom certificates');
 
-            const cert = await createCustomCertificate(name, domain, certificate, privateKey);
+            const cert = await services.ssl.createCustomCertificate(name, domain, certificate, privateKey);
             certificateId = cert.id;
             await logger.info(nodeId, `Custom certificate created for domain: ${domain}`);
         }

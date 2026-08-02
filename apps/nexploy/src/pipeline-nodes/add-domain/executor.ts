@@ -5,8 +5,6 @@ import {
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { addDomainConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
-import { generateTraefikConfig, getDomainKey, getDomains } from '@/services/traefik.service';
-import { provisionDomainDns } from '@/services/domainCloudflare.service';
 import { getFromClosestAncestor } from '@workspace/pipeline-core/helpers';
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { z } from 'zod';
@@ -18,7 +16,7 @@ export class AddDomainExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof addDomainConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, allOutputs, edges, logger, abortSignal } = ctx;
+        const { nodeId, nodeConfig, allOutputs, edges, logger, abortSignal, services } = ctx;
         const {
             host,
             path,
@@ -38,8 +36,8 @@ export class AddDomainExecutor implements INodeExecutor {
         await logger.info(nodeId, `Adding domain: ${host}`);
         if (abortSignal.aborted) throw new Error('Build cancelled');
 
-        const existingDomains = await getDomains();
-        const domainId = getDomainKey({ host });
+        const existingDomains = await services.domain.listDomains();
+        const domainId = services.domain.getDomainKey(host);
 
         const alreadyExists = existingDomains.some((d) => d.host === host);
         if (alreadyExists) {
@@ -64,12 +62,12 @@ export class AddDomainExecutor implements INodeExecutor {
 
         if (cloudflareZoneId && cloudflareZoneName && cloudflareCredentialId) {
             await logger.info(nodeId, `Provisioning Cloudflare DNS for: ${host}`);
-            newDomain.cloudflareDnsRecordId = await provisionDomainDns(newDomain, host);
+            newDomain.cloudflareDnsRecordId = await services.domain.provisionDns(newDomain, host);
         }
 
         const otherDomains = existingDomains.filter((d) => d.host !== host);
 
-        await generateTraefikConfig([...otherDomains, newDomain]);
+        await services.domain.applyDomains([...otherDomains, newDomain]);
 
         await logger.info(
             nodeId,

@@ -4,15 +4,13 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
-import { getNextVersionNumber, upsertVersion } from '@/services/repository/version.service';
-import { getDefaultEnvironment } from '@/services/environment/environment.service';
 
 export class SaveVersionExecutor implements INodeExecutor {
     readonly type = 'save-version';
     readonly isAttachNode = true;
 
     async execute(ctx: NodeExecutionContext): Promise<NodeExecutionResult> {
-        const { buildConfig, logger, nodeId, inputNodes, allOutputs, edges } = ctx;
+        const { buildConfig, logger, nodeId, inputNodes, allOutputs, edges, services } = ctx;
 
         await logger.info(nodeId, 'Saving version...');
 
@@ -29,17 +27,16 @@ export class SaveVersionExecutor implements INodeExecutor {
 
         let environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
         if (!environmentId) {
-            const defaultEnv = await getDefaultEnvironment();
-            environmentId = defaultEnv?.id;
+            environmentId = await services.environment.getDefaultEnvironmentId();
         }
 
         const branch = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'branch');
         const commitHash = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitHash');
         const commitMessage = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'commitMessage');
 
-        const versionNumber = await getNextVersionNumber(buildConfig.repositoryId, environmentId);
+        const versionNumber = await services.version.getNextVersionNumber(buildConfig.repositoryId, environmentId);
 
-        await upsertVersion({
+        await services.version.saveVersion({
             repositoryId: buildConfig.repositoryId,
             imageTag: buildConfig.buildId,
             versionNumber,

@@ -5,6 +5,7 @@ import { addEdge, applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
 import { type NodeId, type PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { flowToGraph, graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { getNodeLifecycle } from '@/components/pipeline/nodeManifestRegistry';
+import { nodesClientServices } from '@/components/pipeline/nodesClientServices';
 import { savePipelineAction } from '@/actions/repository/pipeline/savePipeline.action';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import type { PipelineBuild, PipelineStoreState, Snapshot } from '@workspace/typescript-interface/stores/pipelineStore';
@@ -95,7 +96,11 @@ export function createPipelineStore({
         handleNodeAdded: (nodeType: NodeId, _nodeId?) => {
             const lifecycle = getNodeLifecycle(nodeType);
             if (!lifecycle?.onAdd) return;
-            lifecycle.onAdd(get().repositoryId);
+            lifecycle.onAdd({
+                repositoryId: get().repositoryId,
+                remainingNodesOfType: get().nodes.filter((n) => n.data.nodeType === nodeType).length,
+                services: nodesClientServices,
+            });
         },
 
         triggerAutoSave: () => {
@@ -151,8 +156,11 @@ export function createPipelineStore({
                 seen.add(nodeType);
                 const lifecycle = getNodeLifecycle(nodeType);
                 if (lifecycle?.onRemove) {
-                    const count = remaining.filter((n) => n.data.nodeType === nodeType).length;
-                    lifecycle.onRemove(repoId, count);
+                    lifecycle.onRemove({
+                        repositoryId: repoId,
+                        remainingNodesOfType: remaining.filter((n) => n.data.nodeType === nodeType).length,
+                        services: nodesClientServices,
+                    });
                 }
             }
 

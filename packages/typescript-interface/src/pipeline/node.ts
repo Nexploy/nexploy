@@ -1,4 +1,5 @@
 import { NodeDefinition } from './nodeDefinition';
+import type { NodeClientServices } from './nodeServices';
 
 export type MinimalNode = { id: string; data: { disabled?: boolean } };
 export type MinimalEdge = { source: string; target: string };
@@ -135,7 +136,13 @@ export interface PipelineGraph {
     edges: PipelineEdge[];
 }
 
+export interface NodeLifecycleContext {
+    repositoryId: string;
+    remainingNodesOfType: number;
+    services: NodeClientServices;
+}
+
 export interface NodeLifecycleCallbacks {
-    onAdd?: (repositoryId: string) => Promise<void>;
-    onRemove?: (repositoryId: string, remainingNodesOfType: number) => Promise<void>;
+    onAdd?: (ctx: NodeLifecycleContext) => Promise<void>;
+    onRemove?: (ctx: NodeLifecycleContext) => Promise<void>;
 }

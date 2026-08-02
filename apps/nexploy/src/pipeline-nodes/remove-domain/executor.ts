@@ -5,7 +5,6 @@ import {
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { removeDomainConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
-import { generateTraefikConfig, getDomains } from '@/services/traefik.service';
 import { z } from 'zod';
 
 export class RemoveDomainExecutor implements INodeExecutor {
@@ -15,13 +14,13 @@ export class RemoveDomainExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<ResolveRefs<z.infer<typeof removeDomainConfigSchema>>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeId, nodeConfig, logger, abortSignal } = ctx;
+        const { nodeId, nodeConfig, logger, abortSignal, services } = ctx;
         const { host } = nodeConfig;
 
         await logger.info(nodeId, `Removing domain: ${host}`);
         if (abortSignal.aborted) throw new Error('Build cancelled');
 
-        const existingDomains = await getDomains();
+        const existingDomains = await services.domain.listDomains();
         const exists = existingDomains.some((d) => d.host === host);
 
         if (!exists) {
@@ -30,7 +29,7 @@ export class RemoveDomainExecutor implements INodeExecutor {
         }
 
         const remainingDomains = existingDomains.filter((d) => d.host !== host);
-        await generateTraefikConfig(remainingDomains);
+        await services.domain.applyDomains(remainingDomains);
 
         await logger.info(nodeId, `Domain removed: ${host}`);
 

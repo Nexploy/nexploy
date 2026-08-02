@@ -4,7 +4,6 @@ import {
     NodeExecutionContext,
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
-import { getRegistryWithPassword } from '@/services/registry.service';
 import { pullFromRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 
@@ -17,7 +16,7 @@ export class PullFromRegistryExecutor implements INodeExecutor {
     async execute(
         ctx: NodeExecutionContext<z.infer<typeof pullFromRegistryConfigSchema>>,
     ): Promise<NodeExecutionResult> {
-        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges } = ctx;
+        const { nodeConfig, allOutputs, logger, nodeId, abortSignal, edges, services } = ctx;
 
         const environmentId = getFromClosestAncestor<string>(allOutputs, edges, nodeId, 'environmentId');
 
@@ -28,7 +27,7 @@ export class PullFromRegistryExecutor implements INodeExecutor {
             fullImageName = nodeConfig.imageName;
             await logger.info(nodeId, `Pulling image ${fullImageName} from Docker Hub`);
         } else {
-            const registry = await getRegistryWithPassword(nodeConfig.registryId);
+            const registry = await services.registry.getCredentials(nodeConfig.registryId);
             if (!registry) {
                 throw new Error(
                     'Registry not found. Please select a valid registry in the node configuration or add one in Admin > Registry.',

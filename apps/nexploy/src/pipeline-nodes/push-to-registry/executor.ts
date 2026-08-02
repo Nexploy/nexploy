@@ -4,7 +4,6 @@ import {
     NodeExecutionResult,
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { createDockerService } from '@workspace/pipeline-core/dockerService';
-import { getRegistryWithPassword } from '@/services/registry.service';
 import { pushToRegistryConfigSchema } from '@workspace/schemas-zod/pipeline/nodeConfigs.schema';
 import { z } from 'zod';
 import { ResolveRefs } from '@workspace/schemas-zod/pipeline/nodeFieldRef.schema';
@@ -19,7 +18,7 @@ export class PushToRegistryExecutor implements INodeExecutor {
         const { allOutputs, logger, nodeId, nodeConfig, abortSignal, services } = ctx;
         const dockerService = createDockerService(services.docker);
 
-        const registry = await getRegistryWithPassword(nodeConfig.registryId);
+        const registry = await services.registry.getCredentials(nodeConfig.registryId);
         if (!registry) {
             throw new Error(
                 'No registry configured. Please select a registry in the node configuration or add one in Admin > Registry.',
