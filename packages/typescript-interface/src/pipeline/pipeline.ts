@@ -1,1 +1,1 @@
-export * from '@workspace/pipeline-core/pipeline';
+export * from '@nexploy/node-core/pipeline';

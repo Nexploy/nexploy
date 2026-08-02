@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "http-request": {
-      "name": "HTTP Request",
-      "description": "Make an HTTP request to an external URL"
-    }
-  }
-}

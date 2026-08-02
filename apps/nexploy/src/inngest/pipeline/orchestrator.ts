@@ -14,7 +14,7 @@ import {
 } from '@workspace/typescript-interface/pipeline/pipeline';
 import { formatErrorDetails, resolveNodeConfig } from './utils';
 import { analyzeGraph } from '@/inngest/pipeline/utils/graphQueries';
-import { getNodeExecutor } from '@/pipeline-nodes/registry/server';
+import { getNodeExecutor } from '@nexploy/nodes/registry/server';
 import { hostServices } from './hostServices';
 import { getBuildStatus } from '@/services/repository/build.service';
 

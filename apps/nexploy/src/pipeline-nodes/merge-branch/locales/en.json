@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "merge-branch": {
-      "name": "Merge Branch",
-      "description": "Merge a branch into the current branch"
-    }
-  }
-}

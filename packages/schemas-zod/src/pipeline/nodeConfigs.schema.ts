@@ -1,1 +1,1 @@
-export * from '@workspace/pipeline-core/schemas/nodeConfigs.schema';
+export * from '@nexploy/node-core/schemas/nodeConfigs.schema';

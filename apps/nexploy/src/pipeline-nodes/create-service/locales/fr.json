@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "create-service": {
-      "name": "Créer un service",
-      "description": "Créer un nouveau service Docker Swarm à partir d'une image"
-    }
-  }
-}

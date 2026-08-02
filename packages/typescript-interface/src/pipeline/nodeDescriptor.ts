@@ -1,1 +1,1 @@
-export * from '@workspace/pipeline-core/nodeDescriptor';
+export * from '@nexploy/node-core/nodeDescriptor';

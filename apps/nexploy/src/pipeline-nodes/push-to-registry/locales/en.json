@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "push-to-registry": {
-      "name": "Push an image to a registry",
-      "description": "Push a Docker image to a private or public registry"
-    }
-  }
-}

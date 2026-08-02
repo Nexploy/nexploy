@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "create-network": {
-      "name": "Créer un réseau",
-      "description": "Crée un réseau Docker"
-    }
-  }
-}

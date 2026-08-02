@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "clean-workdir": {
-      "name": "Clean Work Dir",
-      "description": "Removes the cloned repository directory"
-    }
-  }
-}

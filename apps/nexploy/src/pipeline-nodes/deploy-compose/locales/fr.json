@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "deploy-compose": {
-      "name": "Déployer Compose",
-      "description": "Déployer une stack Docker Compose"
-    }
-  }
-}

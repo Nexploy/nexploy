@@ -6,4 +6,4 @@ export interface BuildLogEntry {
     buildId: string;
 }
 
-export type { BuildConfig } from '@workspace/pipeline-core/buildConfig';
+export type { BuildConfig } from '@nexploy/node-core/buildConfig';

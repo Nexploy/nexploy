@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "download-file": {
-      "name": "Download File",
-      "description": "Download a file from a URL into the work directory"
-    }
-  }
-}

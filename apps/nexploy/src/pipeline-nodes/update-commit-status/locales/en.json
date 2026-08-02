@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "update-commit-status": {
-      "name": "Update Commit Status",
-      "description": "Update a GitHub or GitLab commit status"
-    }
-  }
-}

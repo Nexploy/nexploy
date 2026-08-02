@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "update-service": {
-      "name": "Update Service",
-      "description": "Update a Docker Swarm service to a new image"
-    }
-  }
-}

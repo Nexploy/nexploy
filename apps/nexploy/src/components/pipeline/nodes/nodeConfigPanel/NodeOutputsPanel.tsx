@@ -2,8 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { ArrowRightFromLine } from 'lucide-react';
-import { type NodeData } from '@workspace/pipeline-ui/nodeDefinition';
-import { getNodeOutputFields } from '@/pipeline-nodes/registry/descriptors';
+import { type NodeData } from '@nexploy/node-ui/nodeDefinition';
+import { getNodeOutputFields } from '@nexploy/nodes/registry/descriptors';
 import { type Node } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';

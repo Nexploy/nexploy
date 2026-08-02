@@ -1,4 +1,4 @@
-import { NodeDefinition } from '@workspace/pipeline-ui/nodeDefinition';
+import { NodeDefinition } from '@nexploy/node-ui/nodeDefinition';
 import { Handle, Position, useConnection, useNodeConnections } from '@xyflow/react';
 import { cn } from '@workspace/ui/lib/utils';
 

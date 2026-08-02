@@ -1,8 +1,8 @@
 import { FileCode2, Layers, type LucideIcon } from 'lucide-react';
-import { CATEGORY_BG_MUTED, CATEGORY_TEXT, ICON_NAME_MAP } from '@workspace/pipeline-ui/theme';
-import { ALL_NODE_DESCRIPTORS } from '@/pipeline-nodes/registry/descriptors';
+import { CATEGORY_BG_MUTED, CATEGORY_TEXT, ICON_NAME_MAP } from '@nexploy/node-ui/theme';
+import { ALL_NODE_DESCRIPTORS } from '@nexploy/nodes/registry/descriptors';
 
-export * from '@workspace/pipeline-ui/theme';
+export * from '@nexploy/node-ui/theme';
 
 export const NODE_BG_MUTED: Record<string, string> = Object.fromEntries(
     ALL_NODE_DESCRIPTORS.map((descriptor) => [descriptor.type, CATEGORY_BG_MUTED[descriptor.category]!]),

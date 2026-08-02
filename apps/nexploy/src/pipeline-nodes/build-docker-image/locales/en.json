@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "build-docker-image": {
-      "name": "Build Docker Image",
-      "description": "Build a Docker image from a Dockerfile"
-    }
-  }
-}

@@ -1,1 +1,1 @@
-export * from '@workspace/pipeline-core/webhook';
+export * from '@nexploy/node-core/webhook';

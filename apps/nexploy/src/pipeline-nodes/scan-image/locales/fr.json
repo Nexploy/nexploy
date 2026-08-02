@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "scan-image": {
-      "name": "Scanner l'image",
-      "description": "Analyse de sécurité d'une image Docker avec Trivy"
-    }
-  }
-}

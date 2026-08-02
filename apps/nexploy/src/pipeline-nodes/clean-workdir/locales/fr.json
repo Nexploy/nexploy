@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "clean-workdir": {
-      "name": "Nettoyer le répertoire de travail",
-      "description": "Supprime le répertoire du dépôt cloné"
-    }
-  }
-}

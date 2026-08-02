@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "cherry-pick-commit": {
-      "name": "Cherry-pick d'un commit",
-      "description": "Appliquer un commit spécifique sur la branche courante"
-    }
-  }
-}

@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "webhook-clone": {
-      "name": "Clonage via Webhook",
-      "description": "Clone le dépôt à la réception d’un événement push de webhook"
-    }
-  }
-}

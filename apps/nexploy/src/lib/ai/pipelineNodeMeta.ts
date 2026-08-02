@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ALL_NODE_DESCRIPTORS } from '@/pipeline-nodes/registry/descriptors';
+import { ALL_NODE_DESCRIPTORS } from '@nexploy/nodes/registry/descriptors';
 
 export interface NodeMeta {
     schema: z.ZodObject<z.ZodRawShape> | null;

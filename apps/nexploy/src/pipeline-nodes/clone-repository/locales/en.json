@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "clone-repository": {
-      "name": "Clone Repository",
-      "description": "Clone the linked Git repository into the build workspace"
-    }
-  }
-}

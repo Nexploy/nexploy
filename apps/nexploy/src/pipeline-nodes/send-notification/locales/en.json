@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "send-notification": {
-      "name": "Send Notification",
-      "description": "Send a webhook notification"
-    }
-  }
-}

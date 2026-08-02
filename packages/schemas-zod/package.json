@@ -8,7 +8,7 @@
     "./pipeline/*": "./src/pipeline/*.ts"
   },
   "dependencies": {
-    "@workspace/pipeline-core": "workspace:*",
+    "@nexploy/node-core": "link:../../../nodes/packages/node-core",
     "@workspace/typescript-interface": "workspace:*",
     "zod": "^4.3.6"
   },

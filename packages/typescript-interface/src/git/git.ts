@@ -27,9 +27,9 @@ export interface GitRepositoryList {
     alreadyAddedCount: number;
 }
 
-export type { GitBranch } from '@workspace/pipeline-core/hostResponses';
+export type { GitBranch } from '@nexploy/node-core/hostResponses';
 
-export type { GitProviderToken } from '@workspace/pipeline-core/gitToken';
+export type { GitProviderToken } from '@nexploy/node-core/gitToken';
 
 export interface GitLabCommit {
     id: string;

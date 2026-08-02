@@ -2,9 +2,9 @@
 
 import { useMemo } from 'react';
 import { useReactFlow } from '@xyflow/react';
-import { type NodeData } from '@workspace/pipeline-ui/nodeDefinition';
-import { getNodeOutputFields } from '@/pipeline-nodes/registry/descriptors';
-import { type NodeOutputFieldView } from '@/pipeline-nodes/registry/descriptors';
+import { type NodeData } from '@nexploy/node-ui/nodeDefinition';
+import { getNodeOutputFields } from '@nexploy/nodes/registry/descriptors';
+import { type NodeOutputFieldView } from '@nexploy/nodes/registry/descriptors';
 
 export interface AncestorWithInputs {
     nodeId: string;

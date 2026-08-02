@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "restart-container": {
-      "name": "Restart Container",
-      "description": "Restart a Docker container"
-    }
-  }
-}

@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "compose-run": {
-      "name": "Compose Run",
-      "description": "Run a one-off command in a Compose service"
-    }
-  }
-}

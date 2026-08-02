@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "prune-containers": {
-      "name": "Nettoyer les conteneurs",
-      "description": "Supprimer tous les conteneurs arrêtés pour libérer de l'espace disque"
-    }
-  }
-}

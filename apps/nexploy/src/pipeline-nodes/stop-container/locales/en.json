@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "stop-container": {
-      "name": "Stop Container",
-      "description": "Stop a running Docker container"
-    }
-  }
-}

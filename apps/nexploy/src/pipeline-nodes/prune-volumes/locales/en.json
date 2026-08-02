@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "prune-volumes": {
-      "name": "Prune Volumes",
-      "description": "Remove unused Docker volumes to free disk space"
-    }
-  }
-}

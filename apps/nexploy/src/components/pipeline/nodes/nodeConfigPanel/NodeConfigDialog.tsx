@@ -9,13 +9,13 @@ import { usePipelineActions, usePipelineDisplay } from '@/stores/pipeline/usePip
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { useTranslations } from 'next-intl';
 import { type NodeId } from '@workspace/typescript-interface/pipeline/node';
-import { type NodeData } from '@workspace/pipeline-ui/nodeDefinition';
+import { type NodeData } from '@nexploy/node-ui/nodeDefinition';
 import { NodeConfigForm } from './NodeConfigForm';
 import { NodeLogsPanel } from './NodeLogsPanel';
 import { AvailableInputsPanel } from '@/components/pipeline/nodes/nodeConfigPanel/AvailableInputsPanel';
 import { NodeOutputsPanel } from '@/components/pipeline/nodes/nodeConfigPanel/NodeOutputsPanel';
-import { RefValidationProvider } from '@workspace/pipeline-ui/refValidation';
-import { NodesUIProvider } from '@workspace/pipeline-ui/adapter';
+import { RefValidationProvider } from '@nexploy/node-ui/refValidation';
+import { NodesUIProvider } from '@nexploy/node-ui/adapter';
 import { nodesUIAdapter } from '@/components/pipeline/nodesUIAdapter';
 import { cn } from '@workspace/ui/lib/utils';
 

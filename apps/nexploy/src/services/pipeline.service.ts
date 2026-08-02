@@ -4,7 +4,7 @@ import { PipelineGraph } from '@workspace/typescript-interface/pipeline/node';
 import { SavePipelineInput } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
 import { type NodeRunStatus } from '@workspace/typescript-interface/pipeline/pipeline';
 import { decryptPipelineNodes, encryptPipelineNodes } from '@/lib/pipelineEncryption';
-import { getNodeDescriptor } from '@/pipeline-nodes/registry/descriptors';
+import { getNodeDescriptor } from '@nexploy/nodes/registry/descriptors';
 
 export interface BuildPipelineStatus {
     nodeStatuses: Record<string, NodeRunStatus>;

@@ -15,7 +15,7 @@ import {
     useReactFlow,
     useStore,
 } from '@xyflow/react';
-import { NodeDefinition } from '@workspace/pipeline-ui/nodeDefinition';
+import { NodeDefinition } from '@nexploy/node-ui/nodeDefinition';
 import { Maximize, Minus, Paintbrush, Plus, SquareMousePointer } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';

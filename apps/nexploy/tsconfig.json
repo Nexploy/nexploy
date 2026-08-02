@@ -6,6 +6,9 @@
     "allowImportingTsExtensions": true,
     "paths": {
       "@/*": ["./src/*"],
+      "@nexploy/node-core/*": ["../../../nodes/packages/node-core/src/*"],
+      "@nexploy/node-ui/*": ["../../../nodes/packages/node-ui/src/*"],
+      "@nexploy/nodes/*": ["../../../nodes/packages/nodes/src/*"],
       "@workspace/i18n/*": ["../../packages/i18n/src/*"],
       "@workspace/typescript-interface/*": ["../../packages/typescript-interface/src/*"],
       "@workspace/ui/*": ["../../packages/ui/src/*"],

@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "add-domain": {
-      "name": "Add Domain",
-      "description": "Add a domain to the repository"
-    }
-  }
-}

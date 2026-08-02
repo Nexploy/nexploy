@@ -1,1 +1,1 @@
-export type { NodeFieldRef } from '@workspace/pipeline-core/nodeFieldRef';
+export type { NodeFieldRef } from '@nexploy/node-core/nodeFieldRef';

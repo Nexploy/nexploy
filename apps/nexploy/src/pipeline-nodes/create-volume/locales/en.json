@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "create-volume": {
-      "name": "Create Volume",
-      "description": "Create a Docker volume"
-    }
-  }
-}

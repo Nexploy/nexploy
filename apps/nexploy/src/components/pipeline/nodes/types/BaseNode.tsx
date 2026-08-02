@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
-import { type NodeData } from '@workspace/pipeline-ui/nodeDefinition';
+import { type NodeData } from '@nexploy/node-ui/nodeDefinition';
 import { NodeWrapper } from '@/components/pipeline/nodes/NodeWrapper';
 import { NodeAnimation } from '@/components/pipeline/nodes/NodeAnimation';
 import { useTranslations } from 'next-intl';

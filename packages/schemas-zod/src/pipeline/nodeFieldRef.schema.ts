@@ -1,1 +1,1 @@
-export * from '@workspace/pipeline-core/schemas/nodeFieldRef.schema';
+export * from '@nexploy/node-core/schemas/nodeFieldRef.schema';

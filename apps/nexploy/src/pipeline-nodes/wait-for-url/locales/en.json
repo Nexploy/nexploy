@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "wait-for-url": {
-      "name": "Wait for URL",
-      "description": "Poll a URL until it returns the expected HTTP status"
-    }
-  }
-}

@@ -13,7 +13,7 @@ import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
 import { PipelineNode } from '@workspace/typescript-interface/pipeline/node';
-import { matchesWebhookTrigger, WebhookCloneFilters } from '@workspace/pipeline-core/webhookTrigger';
+import { matchesWebhookTrigger, WebhookCloneFilters } from '@nexploy/node-core/webhookTrigger';
 
 function pipelineAcceptsWebhookTrigger(nodes: unknown, trigger: WebhookTrigger, branch?: string): boolean {
     const webhookNodes = (Array.isArray(nodes) ? (nodes as PipelineNode[]) : []).filter(

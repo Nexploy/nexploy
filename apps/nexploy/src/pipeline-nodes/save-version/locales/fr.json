@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "save-version": {
-      "name": "Sauvegarder la version",
-      "description": "Enregistrer le build actuel comme nouvelle version"
-    }
-  }
-}

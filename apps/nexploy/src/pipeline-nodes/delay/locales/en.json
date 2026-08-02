@@ -1,8 +1,0 @@
-{
-  "nodes": {
-    "delay": {
-      "name": "Delay",
-      "description": "Pause the pipeline for a fixed number of seconds"
-    }
-  }
-}

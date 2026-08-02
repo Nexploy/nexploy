@@ -1,1 +1,1 @@
-export * from '@workspace/pipeline-core/registryInfo';
+export * from '@nexploy/node-core/registryInfo';
