@@ -10,6 +10,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { formatBytes } from '@/utils/formatBytes';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { runCleanupAction } from '@/actions/admin/cleanup/runCleanup.action';
 import type { CleanupResult, DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 import type { CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
@@ -26,13 +27,22 @@ const ICONS = {
 export function DiskUsageCard() {
     const t = useTranslations('docker.diskUsage');
     const tCommon = useTranslations('common');
+    const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
 
     const {
         data: usage,
         isLoading,
         isValidating: refreshing,
         mutate,
-    } = useSWR<DiskUsage | null>({ url: '/api/system/disk-usage', disableToast: true }, fetcherApi);
+    } = useSWR<DiskUsage | null>(
+        {
+            url: selectedEnvironmentId
+                ? `/api/system/disk-usage?environment=${selectedEnvironmentId}`
+                : '/api/system/disk-usage',
+            disableToast: true,
+        },
+        fetcherApi,
+    );
 
     const { executeAsync } = useAction(runCleanupAction);
     const { openAlertDialog, closeAlertDialog } = useAlertConfirmationDialogStore();
