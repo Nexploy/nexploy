@@ -42,7 +42,6 @@ export function SearchNavigationList() {
         { href: '/monitoring', icon: Activity, label: tNav('monitoring') },
         { href: '/requests', icon: Send, label: tNav('requests') },
         { href: '/swarm', icon: Network, label: tNav('swarm') },
-        { href: '/registry', icon: Warehouse, label: tNav('registry') },
     ].filter((item) => matchesQuery(item.label, inputValue));
 
     const dockerItems: NavItem[] = [
@@ -52,6 +51,7 @@ export function SearchNavigationList() {
         { href: '/docker/networks', icon: EthernetPort, label: tNav('networks') },
         { href: '/docker/events', icon: Bug, label: tNav('events') },
         { href: '/docker/disk-usage', icon: PieChart, label: tNav('diskUsage') },
+        { href: '/docker/registry', icon: Warehouse, label: tNav('registry') },
     ].filter((item) => matchesQuery(item.label, inputValue));
 
     const showAccount = matchesQuery(t('account'), inputValue);

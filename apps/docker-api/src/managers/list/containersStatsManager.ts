@@ -11,7 +11,7 @@ import {
     ContainerStatsSample,
 } from '@workspace/typescript-interface/docker/docker.containers.stats';
 
-const MAX_CONCURRENT_STATS_CALLS = 8;
+const MAX_CONCURRENT_STATS_CALLS = 24;
 const CONTAINER_STATES: ContainerState[] = ['created', 'running', 'restarting', 'paused', 'exited', 'dead'];
 
 interface CounterSample {
@@ -67,7 +67,7 @@ export class ContainersStatsManager extends EventEmitter {
         if (this.monitoring) return;
         this.monitoring = true;
 
-        await this.poll('initial-state');
+        void this.poll('initial-state');
 
         this.pollInterval = setInterval(() => {
             void this.poll('stats-update');
@@ -203,7 +203,7 @@ export class ContainersStatsManager extends EventEmitter {
         }
 
         try {
-            const raw: any = await this.docker.getContainer(container.Id).stats({ stream: false });
+            const raw: any = await this.docker.getContainer(container.Id).stats({ stream: false, 'one-shot': true });
             return this.parseStats(base, raw);
         } catch (err) {
             logger.debug({ err, containerId: container.Id }, 'Failed to read container stats');
@@ -219,12 +219,18 @@ export class ContainersStatsManager extends EventEmitter {
         const systemCpuUsage = raw.cpu_stats?.system_cpu_usage ?? 0;
         const onlineCpus = raw.cpu_stats?.online_cpus || raw.cpu_stats?.cpu_usage?.percpu_usage?.length || 1;
 
-        let cpuDelta = cpuUsage - (raw.precpu_stats?.cpu_usage?.total_usage ?? 0);
-        let systemDelta = systemCpuUsage - (raw.precpu_stats?.system_cpu_usage ?? 0);
+        const previousCycleCpuUsage = raw.precpu_stats?.cpu_usage?.total_usage ?? 0;
+        const previousCycleSystemCpuUsage = raw.precpu_stats?.system_cpu_usage ?? 0;
 
-        if (systemDelta <= 0 && previous) {
+        let cpuDelta = 0;
+        let systemDelta = 0;
+
+        if (previous) {
             cpuDelta = cpuUsage - previous.cpuUsage;
             systemDelta = systemCpuUsage - previous.systemCpuUsage;
+        } else if (previousCycleSystemCpuUsage > 0) {
+            cpuDelta = cpuUsage - previousCycleCpuUsage;
+            systemDelta = systemCpuUsage - previousCycleSystemCpuUsage;
         }
 
         const cpuPercent = systemDelta > 0 && cpuDelta > 0 ? (cpuDelta / systemDelta) * onlineCpus * 100 : 0;

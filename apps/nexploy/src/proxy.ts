@@ -15,7 +15,7 @@ const SIMPLE_REDIRECTS: Record<string, string> = {
     '/admin/ai': '/admin/ai/models',
     '/admin/traefik': '/traefik',
     '/admin/ssl-certificates': '/ssl-certificates',
-    '/admin/registry': '/registry',
+    '/admin/registry': '/docker/registry',
 };
 
 const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: string }[] = [
@@ -32,7 +32,7 @@ const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: s
     { path: '/admin/ai', resource: 'ai', action: 'manage' },
     { path: '/admin/backups', resource: 'backup', action: 'read' },
     { path: '/ssl-certificates', resource: 'ssl', action: 'manage' },
-    { path: '/registry', resource: 'registry', action: 'read' },
+    { path: '/docker/registry', resource: 'registry', action: 'read' },
     { path: '/admin/settings', resource: 'setting', action: 'manage' },
     { path: '/traefik', resource: 'traefik', action: 'manage' },
 ];
