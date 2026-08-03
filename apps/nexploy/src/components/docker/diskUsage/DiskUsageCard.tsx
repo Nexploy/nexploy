@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useAction } from 'next-safe-action/hooks';
@@ -46,18 +47,22 @@ export function DiskUsageCard() {
 
     const { executeAsync } = useAction(runCleanupAction);
     const { openAlertDialog, closeAlertDialog } = useAlertConfirmationDialogStore();
+    const [cleaningTarget, setCleaningTarget] = useState<CleanupTarget | null>(null);
 
     const refresh = () => mutate();
 
     const runClean = async (target: CleanupTarget) => {
         try {
             closeAlertDialog();
+            setCleaningTarget(target);
             const result = await executeAsync({ target });
             const reclaimed = (result?.data as CleanupResult | undefined)?.reclaimedSpace ?? 0;
             toast.success(t('cleanupDone', { space: formatBytes(reclaimed) }));
             await refresh();
         } catch {
             toast.error(t('cleanupFailed'));
+        } finally {
+            setCleaningTarget(null);
         }
     };
 
@@ -141,8 +146,13 @@ export function DiskUsageCard() {
                                     {t('ofTotal', { total: formatBytes(usage.totalSize) })}
                                 </span>
                             </div>
-                            <Button variant="destructive" onClick={() => handleClean('all')}>
-                                <Trash2 />
+                            <Button
+                                variant="destructive"
+                                icon={Trash2}
+                                isLoading={cleaningTarget === 'all'}
+                                disabled={cleaningTarget !== null}
+                                onClick={() => handleClean('all')}
+                            >
                                 {t('cleanAll')}
                             </Button>
                         </div>
@@ -171,8 +181,14 @@ export function DiskUsageCard() {
                                                 </span>
                                             </div>
                                         </div>
-                                        <Button variant="outline" size="sm" onClick={() => handleClean(row.key)}>
-                                            <Trash2 />
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            icon={Trash2}
+                                            isLoading={cleaningTarget === row.key}
+                                            disabled={cleaningTarget !== null}
+                                            onClick={() => handleClean(row.key)}
+                                        >
                                             {t('clean')}
                                         </Button>
                                     </div>
