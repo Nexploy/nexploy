@@ -40,7 +40,9 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
         [history],
     );
 
-    const details = container
+    const imageHref = container?.imageId ? `/docker/images/${container.imageId}` : null;
+
+    const details: { label: string; value: string; href?: string }[] = container
         ? [
               { label: t('table.cpu'), value: formatPercent(container.cpuPercent, 2) },
               {
@@ -57,7 +59,7 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
               { label: t('containers.blockWriteTotal'), value: formatBytes(container.blockWrite) },
               { label: t('table.pids'), value: `${container.pidsCount}` },
               { label: t('containers.onlineCpus'), value: `${container.onlineCpus}` },
-              { label: t('containers.image'), value: container.image },
+              { label: t('containers.image'), value: container.image, ...(imageHref ? { href: imageHref } : {}) },
           ]
         : [];
 
@@ -81,7 +83,15 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
                                     </Status>
                                     {container.stack ? <Badge variant="secondary">{container.stack}</Badge> : null}
                                 </SheetTitle>
-                                <SheetDescription className="truncate">{container.image}</SheetDescription>
+                                <SheetDescription className="truncate">
+                                    {imageHref ? (
+                                        <Link href={imageHref} className="hover:text-foreground hover:underline">
+                                            {container.image}
+                                        </Link>
+                                    ) : (
+                                        container.image
+                                    )}
+                                </SheetDescription>
                             </div>
                             <Button asChild size="sm" variant="outline" className="shrink-0">
                                 <Link href={`/docker/containers/${container.containerId}`}>
@@ -94,17 +104,33 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
                         <ScrollAreaWithShadow bottomShadow className="h-full overflow-hidden">
                             <div className="space-y-4 px-4 pb-6">
                                 <div className="grid grid-cols-2 gap-2">
-                                    {details.map((detail) => (
-                                        <div key={detail.label} className="bg-muted/40 rounded-md px-3 py-2">
-                                            <p className="text-muted-foreground text-xs">{detail.label}</p>
-                                            <p
-                                                className="truncate text-sm font-medium tabular-nums"
-                                                title={detail.value}
+                                    {details.map((detail) =>
+                                        detail.href ? (
+                                            <Link
+                                                key={detail.label}
+                                                href={detail.href}
+                                                className="bg-muted/40 hover:bg-muted/70 block rounded-md px-3 py-2 transition-colors"
                                             >
-                                                {detail.value}
-                                            </p>
-                                        </div>
-                                    ))}
+                                                <p className="text-muted-foreground text-xs">{detail.label}</p>
+                                                <p
+                                                    className="truncate text-sm font-medium tabular-nums underline-offset-2 hover:underline"
+                                                    title={detail.value}
+                                                >
+                                                    {detail.value}
+                                                </p>
+                                            </Link>
+                                        ) : (
+                                            <div key={detail.label} className="bg-muted/40 rounded-md px-3 py-2">
+                                                <p className="text-muted-foreground text-xs">{detail.label}</p>
+                                                <p
+                                                    className="truncate text-sm font-medium tabular-nums"
+                                                    title={detail.value}
+                                                >
+                                                    {detail.value}
+                                                </p>
+                                            </div>
+                                        ),
+                                    )}
                                 </div>
 
                                 <MetricAreaChart

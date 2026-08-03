@@ -17,7 +17,6 @@ import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
 import { Button } from '@workspace/ui/components/button';
-import { Input } from '@workspace/ui/components/input';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
@@ -38,15 +37,15 @@ import { ContainerTableActions } from './ContainerTableActions';
 interface TableDockerContainersProps {
     containers: Containers[];
     isLoading: boolean;
+    search?: string;
 }
 
 function getSelectedContainers(rows: ContainerTableRow[], selectedIds: string[]): ContainerTableRow[] {
     return rows.flatMap((r) => (r.isGroup ? (r.subRows ?? []) : [r])).filter((r) => selectedIds.includes(r.id));
 }
 
-export function TableDockerContainers({ containers, isLoading }: TableDockerContainersProps) {
+export function TableDockerContainers({ containers, isLoading, search = '' }: TableDockerContainersProps) {
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [globalFilter, setGlobalFilter] = useState('');
     const [expanded, setExpanded] = useState<ExpandedState>({});
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
@@ -60,7 +59,6 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
         columns: getColumnsDockerContainers(t, tCommon),
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
-        onGlobalFilterChange: setGlobalFilter,
         onExpandedChange: setExpanded,
         onRowSelectionChange: setRowSelection,
         globalFilterFn: containerTableGlobalFilterFn,
@@ -71,7 +69,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
         getRowId: (row) => row.id,
         getSubRows: (row) => row.subRows,
         initialState: { pagination: { pageSize: PAGE_SIZE_DEFAULT } },
-        state: { sorting, globalFilter, expanded, rowSelection },
+        state: { sorting, globalFilter: search, expanded, rowSelection },
     });
 
     const selectedIds = Object.keys(rowSelection);
@@ -85,13 +83,7 @@ export function TableDockerContainers({ containers, isLoading }: TableDockerCont
 
     return (
         <div className="mx-5 space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-                <Input
-                    className="w-56 shadow-xs"
-                    placeholder={tCommon('searchPlaceholder')}
-                    value={globalFilter}
-                    onChange={(e) => setGlobalFilter(e.target.value)}
-                />
+            <div className="flex flex-wrap items-center justify-end gap-3 pt-1">
                 <ContainerTableActions
                     selectedContainers={selectedContainers}
                     onResetSelection={() => table.resetRowSelection()}

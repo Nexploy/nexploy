@@ -18,25 +18,42 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { cn } from '@workspace/ui/lib/utils';
 import { useLocalStorage } from 'usehooks-ts';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
+import { useMemo, useState } from 'react';
+import { Input } from '@workspace/ui/components/input';
+import { filterContainersBySearch, groupContainersByStack } from './containerTableUtils';
 
 export default function ContainersPage() {
     const t = useTranslations('docker');
     const tNav = useTranslations('navigation');
+    const tCommon = useTranslations('common');
 
     const [viewMode, setViewMode] = useLocalStorage<'grid' | 'table'>('container-viewMode', 'grid');
+    const [search, setSearch] = useState('');
 
     const statusDocker = useDockerStore((state) => state.status);
 
     const lastUpdate = useContainersStore((state) => state.lastUpdate);
     const containers = useContainersStore((state) => state.containers);
-    const getOrganizedContainers = useContainersStore((state) => state.getOrganizedContainers);
-    const { stacks, standaloneContainers } = getOrganizedContainers();
+
+    const isSearching = search.trim().length > 0;
+    const filteredContainers = useMemo(() => filterContainersBySearch(containers, search), [containers, search]);
+
+    const { stacks, standaloneContainers } = useMemo(
+        () => groupContainersByStack(filteredContainers),
+        [filteredContainers],
+    );
     const stacksSize = stacks.size;
     const standaloneContainersLenght = standaloneContainers.length;
 
     const numberOfStackAndStandaloneContainer = stacksSize + standaloneContainersLenght;
 
-    const allStackContainers = Array.from(stacks.values()).flat();
+    const stacksEntries = Array.from(stacks.entries());
+
+    const allGroups = useMemo(() => groupContainersByStack(containers), [containers]);
+    const allStackContainers = Array.from(allGroups.stacks.values()).flat();
+    const allStandaloneContainers = allGroups.standaloneContainers;
+    const totalStacksSize = allGroups.stacks.size;
+    const totalStandaloneContainers = allStandaloneContainers.length;
 
     const tabs = [
         {
@@ -75,12 +92,12 @@ export default function ContainersPage() {
                             <Skeleton className={'my-1 h-3 w-40'} />
                         ) : (
                             <p className="text-muted-foreground text-sm">
-                                {numberOfStackAndStandaloneContainer === 0 ? (
+                                {totalStacksSize + totalStandaloneContainers === 0 ? (
                                     t('noContainers')
                                 ) : (
                                     <>
-                                        {standaloneContainersLenght} {t('container')}
-                                        {stacksSize > 0 && ` · ${stacksSize} ${t('stack.title')}`}
+                                        {totalStandaloneContainers} {t('container')}
+                                        {totalStacksSize > 0 && ` · ${totalStacksSize} ${t('stack.title')}`}
                                     </>
                                 )}
                             </p>
@@ -144,33 +161,41 @@ export default function ContainersPage() {
                             ))}
                         </TabsList>
 
-                        <div className="flex items-center gap-1 rounded-lg border p-1">
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className={cn('size-7', viewMode === 'grid' && 'bg-muted')}
-                                        onClick={() => setViewMode('grid')}
-                                    >
-                                        <LayoutGrid className="size-4" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>{t('viewGrid')}</TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className={cn('size-7', viewMode === 'table' && 'bg-muted')}
-                                        onClick={() => setViewMode('table')}
-                                    >
-                                        <Table2 className="size-4" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>{t('viewTable')}</TooltipContent>
-                            </Tooltip>
+                        <div className="flex items-center gap-3">
+                            <Input
+                                className="w-56 shadow-xs"
+                                placeholder={tCommon('searchPlaceholder')}
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                            <div className="flex items-center gap-1 rounded-lg border p-1">
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className={cn('size-7', viewMode === 'grid' && 'bg-muted')}
+                                            onClick={() => setViewMode('grid')}
+                                        >
+                                            <LayoutGrid className="size-4" />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>{t('viewGrid')}</TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className={cn('size-7', viewMode === 'table' && 'bg-muted')}
+                                            onClick={() => setViewMode('table')}
+                                        >
+                                            <Table2 className="size-4" />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>{t('viewTable')}</TooltipContent>
+                                </Tooltip>
+                            </div>
                         </div>
                     </div>
 
@@ -179,28 +204,47 @@ export default function ContainersPage() {
                             {viewMode === 'grid' ? (
                                 <>
                                     <TabsContent value="all" className="flex flex-col space-y-4">
-                                        {stacksSize ? <ContainersStack /> : null}
-                                        <ContainersStandalone />
+                                        {stacksSize ? (
+                                            <ContainersStack stacks={stacksEntries} isSearching={isSearching} />
+                                        ) : null}
+                                        <ContainersStandalone
+                                            containers={standaloneContainers}
+                                            keepEmpty={isSearching && !stacksSize}
+                                            isSearching={isSearching}
+                                        />
                                     </TabsContent>
                                     <TabsContent value="stacks">
-                                        <ContainersStack />
+                                        <ContainersStack stacks={stacksEntries} isSearching={isSearching} />
                                     </TabsContent>
                                     <TabsContent value="containers">
-                                        <ContainersStandalone keepEmpty />
+                                        <ContainersStandalone
+                                            containers={standaloneContainers}
+                                            keepEmpty
+                                            isSearching={isSearching}
+                                        />
                                     </TabsContent>
                                 </>
                             ) : (
                                 <>
                                     <TabsContent value="all">
-                                        <TableDockerContainers containers={containers} isLoading={isLoading} />
+                                        <TableDockerContainers
+                                            containers={containers}
+                                            isLoading={isLoading}
+                                            search={search}
+                                        />
                                     </TabsContent>
                                     <TabsContent value="stacks">
-                                        <TableDockerContainers containers={allStackContainers} isLoading={isLoading} />
+                                        <TableDockerContainers
+                                            containers={allStackContainers}
+                                            isLoading={isLoading}
+                                            search={search}
+                                        />
                                     </TabsContent>
                                     <TabsContent value="containers">
                                         <TableDockerContainers
-                                            containers={standaloneContainers}
+                                            containers={allStandaloneContainers}
                                             isLoading={isLoading}
+                                            search={search}
                                         />
                                     </TabsContent>
                                 </>

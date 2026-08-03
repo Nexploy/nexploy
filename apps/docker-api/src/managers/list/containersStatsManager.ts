@@ -166,10 +166,12 @@ export class ContainersStatsManager extends EventEmitter {
     private async buildSample(container: ContainerInfo): Promise<ContainerStatsSample> {
         const name = container.Names?.[0]?.replace(/^\//, '') || 'unknown';
         const state = this.normalizeState(container.State);
+        const imageId = container.ImageID?.includes(':') ? container.ImageID.split(':')[1] : container.ImageID;
         const base: ContainerStatsSample = {
             containerId: container.Id,
             name,
             image: container.Image,
+            imageId,
             state,
             stack: container.Labels?.['com.docker.compose.project'],
             timestamp: Date.now(),

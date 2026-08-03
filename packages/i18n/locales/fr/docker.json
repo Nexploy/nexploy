@@ -487,6 +487,7 @@
     "customNetwork": "Réseau personnalisé",
     "stacks": "Stacks",
     "noStacks": "Aucun Stack Docker",
+    "noStacksMatchSearch": "Aucun stack ne correspond à votre recherche.",
     "noStacksDescription": "Aucun stack de conteneurs trouvé. Déployez un stack Docker Compose pour le voir ici.",
     "removeImages": "Supprimer les images",
     "confirmRemoveImages": "Êtes-vous sûr de vouloir supprimer {count} image(s) ?",

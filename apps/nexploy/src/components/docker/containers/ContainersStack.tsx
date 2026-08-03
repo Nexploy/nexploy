@@ -2,14 +2,16 @@
 
 import { Badge } from '@workspace/ui/components/badge';
 import { StackGroup } from '@/components/docker/containers/StackGroup';
-import { useContainersStore } from '@/stores/docker/useContainersStore';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@workspace/ui/components/empty';
 import { useTranslations } from 'next-intl';
+import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
 
-export function ContainersStack() {
-    const getOrganizedContainers = useContainersStore((state) => state.getOrganizedContainers);
-    const stacksMap = getOrganizedContainers().stacks;
-    const stacks = Array.from(stacksMap.entries());
+interface ContainersStackProps {
+    stacks: [string, Containers[]][];
+    isSearching?: boolean;
+}
+
+export function ContainersStack({ stacks, isSearching = false }: ContainersStackProps) {
     const t = useTranslations('docker.tables');
 
     return (
@@ -22,8 +24,8 @@ export function ContainersStack() {
             {stacks.length === 0 ? (
                 <Empty>
                     <EmptyHeader>
-                        <EmptyTitle>{t('noStacks')}</EmptyTitle>
-                        <EmptyDescription>{t('noStacksDescription')}</EmptyDescription>
+                        <EmptyTitle>{isSearching ? t('noStacksMatchSearch') : t('noStacks')}</EmptyTitle>
+                        {!isSearching && <EmptyDescription>{t('noStacksDescription')}</EmptyDescription>}
                     </EmptyHeader>
                 </Empty>
             ) : (

@@ -57,6 +57,44 @@ export function buildContainerRows(containers: Containers[]): ContainerTableRow[
     return rows;
 }
 
+export function groupContainersByStack(containers: Containers[]): {
+    stacks: Map<string, Containers[]>;
+    standaloneContainers: Containers[];
+} {
+    const stacks = new Map<string, Containers[]>();
+    const standaloneContainers: Containers[] = [];
+
+    containers.forEach((container) => {
+        const stackName = container.labels?.['com.docker.compose.project'];
+        if (stackName) {
+            if (!stacks.has(stackName)) stacks.set(stackName, []);
+            stacks.get(stackName)!.push(container);
+        } else {
+            standaloneContainers.push(container);
+        }
+    });
+
+    return { stacks, standaloneContainers };
+}
+
+export function matchesContainerSearch(container: Containers, search: string): boolean {
+    const term = search.trim().toLowerCase();
+    if (!term) return true;
+
+    const stackName = container.labels?.['com.docker.compose.project'];
+
+    return (
+        container.name.toLowerCase().includes(term) ||
+        (container.image?.toLowerCase().includes(term) ?? false) ||
+        (stackName?.toLowerCase().includes(term) ?? false)
+    );
+}
+
+export function filterContainersBySearch(containers: Containers[], search: string): Containers[] {
+    if (!search.trim()) return containers;
+    return containers.filter((container) => matchesContainerSearch(container, search));
+}
+
 export const containerTableGlobalFilterFn: FilterFn<ContainerTableRow> = (row, _, value) => {
     const search = value.toLowerCase();
     if (row.original.isGroup) {
