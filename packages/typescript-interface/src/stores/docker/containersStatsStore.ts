@@ -39,5 +39,6 @@ export interface ContainersStatsState {
     reconnect: () => void;
     setError: (error: Error | null) => void;
     clearStats: () => void;
+    reset: () => void;
     exportStats: () => void;
 }

@@ -2,10 +2,10 @@ import { zValidator } from '@hono/zod-validator';
 import type { Context, MiddlewareHandler, ValidationTargets } from 'hono';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import type { AnySchema, HandleOpts, SchemaRecord, TypedContext } from '@workspace/typescript-interface/hono';
-import { HttpError } from '@workspace/shared/http-error';
+import { HttpError } from '@nexploy/shared/http-error';
 import { logger } from '@/utils/logger';
 
-export { HttpError } from '@workspace/shared/http-error';
+export { HttpError } from '@nexploy/shared/http-error';
 export type { TypedContext } from '@workspace/typescript-interface/hono';
 
 interface ResolvedError {

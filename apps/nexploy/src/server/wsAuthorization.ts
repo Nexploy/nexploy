@@ -4,7 +4,7 @@ import { hasPermission } from '@/lib/auth/permissions';
 import { hasOrgPermission } from '@/lib/auth/orgPermissions';
 import { getCallerOrgRoleForProxy, resolveOrganizationIdForContainerId } from '@/lib/auth/resolveContainerOrgForProxy';
 import { extractContainerId } from '@/server/wsRoutes';
-import type { Actor } from '@workspace/shared/actor';
+import type { Actor } from '@nexploy/shared/actor';
 
 const EXEC_USER_PATTERN = /^[a-zA-Z0-9_.-]+(:[a-zA-Z0-9_.-]+)?$/;
 

@@ -1,6 +1,6 @@
 import { docker } from '@/utils/dockerClient';
 import { networksStateManager } from '@/managers/list/networksStateManager';
-import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
+import { isBuiltinNetwork } from '@nexploy/shared/nexployFilter';
 
 export async function deleteNetworks(
     networkIds: string[],

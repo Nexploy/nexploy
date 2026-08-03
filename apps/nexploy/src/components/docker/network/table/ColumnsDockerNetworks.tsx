@@ -14,7 +14,7 @@ import { Can } from '@/components/permission/Can';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import Link from 'next/link';
-import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
+import { isBuiltinNetwork } from '@nexploy/shared/nexployFilter';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 
 export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Network>[] => [

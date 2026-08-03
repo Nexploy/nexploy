@@ -1,7 +1,7 @@
 import { cache } from 'react';
 import { getUserSession } from '@/services/auth/auth.service';
 import { resolveActiveOrganizationId } from '@/lib/auth/resolveOrgContext';
-import { type Actor, SYSTEM_ACTOR } from '@workspace/shared/actor';
+import { type Actor, SYSTEM_ACTOR } from '@nexploy/shared/actor';
 
 export const getCurrentActor = cache(async (): Promise<Actor> => {
     try {

@@ -25,7 +25,8 @@ export function MonitoringTabs() {
     const containersConnectionState = useContainersStatsStore((state) => state.connectionState);
 
     const isHostLoading = hostConnectionState === 'connecting' || !metrics;
-    const isContainersLoading = containersConnectionState === 'connecting' && !containerTotals;
+    const isContainersLoading =
+        containersConnectionState !== 'error' && (containersConnectionState !== 'connected' || !containerTotals);
 
     return (
         <Tabs defaultValue="overview" className="flex flex-1 flex-col overflow-hidden">

@@ -23,7 +23,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { VOLUME_DRIVERS } from '@workspace/shared/dockerConstants';
+import { VOLUME_DRIVERS } from '@nexploy/shared/dockerConstants';
 
 export function VolumeBasicConfig() {
     const t = useTranslations('docker.createVolumePage');

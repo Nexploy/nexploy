@@ -5,7 +5,7 @@ import { NetworkState } from '@workspace/typescript-interface/stores/docker/netw
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { clientT } from '@/lib/i18n/clientTranslations';
 import { notifyDocker } from '@/lib/notifications/notifyDocker';
-import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
+import { isBuiltinNetwork } from '@nexploy/shared/nexployFilter';
 
 export const useNetworksStore = create<NetworkState>((set, get) => ({
     networks: [],

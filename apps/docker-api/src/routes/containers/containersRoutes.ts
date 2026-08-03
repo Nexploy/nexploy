@@ -1,7 +1,7 @@
 import { route } from '@/utils/route';
 import { Hono } from 'hono';
 import { containersStateManager } from '@/managers/list/containersStateManager';
-import { filterNexployContainers } from '@workspace/shared/nexployFilter';
+import { filterNexployContainers } from '@nexploy/shared/nexployFilter';
 import { docker } from '@/utils/dockerClient';
 import { containerPruneSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { z } from 'zod';

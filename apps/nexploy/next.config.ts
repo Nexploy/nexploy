@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
         useTypeScriptCli: true,
     },
     reactStrictMode: true,
-    transpilePackages: ['@workspace/ui', '@workspace/i18n', '@workspace/shared'],
+    transpilePackages: ['@workspace/ui', '@workspace/i18n'],
     serverExternalPackages: [
         'better-auth',
         '@better-auth/api-key',

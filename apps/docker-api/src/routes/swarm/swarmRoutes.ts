@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
 import { swarmStateManager } from '@/managers/list/swarmStateManager';
-import { HttpError } from '@workspace/shared/http-error';
+import { HttpError } from '@nexploy/shared/http-error';
 import { initActionSchema } from '@workspace/schemas-zod/docker/swarm/init.schema';
 import { swarmJoinSchema } from '@workspace/schemas-zod/docker/swarm/join.schema';
 import { swarmLeaveSchema } from '@workspace/schemas-zod/docker/swarm/leave.schema';

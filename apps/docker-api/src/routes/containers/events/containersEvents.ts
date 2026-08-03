@@ -3,7 +3,7 @@ import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { ContainersEvent } from '@workspace/typescript-interface/docker/docker.containers';
 import { getContainersStateManager } from '@/managers/list/containersStateManager';
-import { filterNexployContainers, isNexployInfrastructureContainer } from '@workspace/shared/nexployFilter';
+import { filterNexployContainers, isNexployInfrastructureContainer } from '@nexploy/shared/nexployFilter';
 import { createInitialStateGate } from '@/utils/initialStateGate';
 import { ContainersStatsManager } from '@/managers/list/containersStatsManager';
 import { ContainersStatsEvent } from '@workspace/typescript-interface/docker/docker.containers.stats';

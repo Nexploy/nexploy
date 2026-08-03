@@ -54,12 +54,12 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.8.0
         version: 0.8.0(hono@4.12.27)(zod@4.3.6)
+      '@nexploy/shared':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@workspace/schemas-zod':
         specifier: workspace:*
         version: link:../../packages/schemas-zod
-      '@workspace/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@workspace/typescript-interface':
         specifier: workspace:*
         version: link:../../packages/typescript-interface
@@ -181,6 +181,9 @@ importers:
       '@nexploy/nodes':
         specifier: ^0.1.5
         version: 0.1.5(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(@xyflow/react@12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(dayjs@1.11.19)(dockerode@5.0.0)(lucide-react@1.17.0(react@19.2.3))(next-intl@4.9.1(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@7.0.2))(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)(zod@4.3.6)
+      '@nexploy/shared':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@next-safe-action/adapter-react-hook-form':
         specifier: ^2.0.0
         version: 2.0.0(@hookform/resolvers@5.2.2(react-hook-form@7.68.0(react@19.2.3)))(next-safe-action@8.5.3(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)
@@ -217,9 +220,6 @@ importers:
       '@workspace/schemas-zod':
         specifier: workspace:*
         version: link:../../packages/schemas-zod
-      '@workspace/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@workspace/typescript-interface':
         specifier: workspace:*
         version: link:../../packages/typescript-interface
@@ -383,19 +383,6 @@ importers:
       zod:
         specifier: ^4.3.6
         version: 4.3.6
-    devDependencies:
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      typescript:
-        specifier: 7.0.2
-        version: 7.0.2
-
-  packages/shared:
-    dependencies:
-      '@workspace/typescript-interface':
-        specifier: workspace:*
-        version: link:../typescript-interface
     devDependencies:
       '@workspace/typescript-config':
         specifier: workspace:*
@@ -1964,6 +1951,10 @@ packages:
       react-dom: ^19.2.3
       react-hook-form: ^7.68.0
       zod: ^4.3.6
+
+  '@nexploy/shared@0.1.0':
+    resolution: {integrity: sha512-XpYNqbzp5L+Ho9zP7/VsZds4aAfx2qRWm2uo5tMmsIDpKgTh02DNmSNXQ9B7LnG32oS7gNN3hY4e/F6NMfNi5Q==}
+    engines: {node: '>=22.13'}
 
   '@next-safe-action/adapter-react-hook-form@2.0.0':
     resolution: {integrity: sha512-vp3KAd5NKnBBCF/3b8kDxEYj0+BUYVjlSZOWHikz/Y2O+yLheRmtj8Vcm379itlqGUKcLV5O2o/dwKHvH8pYog==}
@@ -9130,6 +9121,8 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
       - '@types/react-dom'
+
+  '@nexploy/shared@0.1.0': {}
 
   '@next-safe-action/adapter-react-hook-form@2.0.0(@hookform/resolvers@5.2.2(react-hook-form@7.68.0(react@19.2.3)))(next-safe-action@8.5.3(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)':
     dependencies:

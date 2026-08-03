@@ -2,7 +2,7 @@ import { docker } from '@/utils/dockerClient';
 import { logger } from '@/utils/logger';
 import { ensureImage } from '@/utils/ensureImage';
 import { parseDockerLogs } from '@/utils/parseDockerLogs';
-import { safeResolvePath } from '@workspace/shared/pathSafety';
+import { safeResolvePath } from '@nexploy/shared/pathSafety';
 
 const CACHE_IMAGE = 'alpine';
 

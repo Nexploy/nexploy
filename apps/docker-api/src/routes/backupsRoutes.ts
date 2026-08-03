@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { HttpError } from '@workspace/shared/http-error';
+import { HttpError } from '@nexploy/shared/http-error';
 import { createVolumeBackup } from '@/services/backupService';
 
 const app = new Hono();
