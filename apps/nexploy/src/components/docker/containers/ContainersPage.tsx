@@ -16,18 +16,18 @@ import { Can } from '@/components/permission/Can';
 import { useTranslations } from 'next-intl';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { cn } from '@workspace/ui/lib/utils';
-import { useLocalStorage } from 'usehooks-ts';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 import { useMemo, useState } from 'react';
 import { Input } from '@workspace/ui/components/input';
 import { filterContainersBySearch, groupContainersByStack } from './containerTableUtils';
+import { useQueryState } from 'nuqs';
 
 export default function ContainersPage() {
     const t = useTranslations('docker');
     const tNav = useTranslations('navigation');
     const tCommon = useTranslations('common');
 
-    const [viewMode, setViewMode] = useLocalStorage<'grid' | 'table'>('container-viewMode', 'grid');
+    const [viewMode, setViewMode] = useQueryState('mode', { defaultValue: 'grid', history: 'push' });
     const [search, setSearch] = useState('');
 
     const statusDocker = useDockerStore((state) => state.status);
@@ -80,7 +80,7 @@ export default function ContainersPage() {
     const isEmpty = !containers.length && lastUpdate;
 
     return (
-        <div className="flex h-full flex-1 flex-col gap-5">
+        <div className="flex h-full flex-1 flex-col gap-4">
             <div className="flex justify-between gap-2 px-5">
                 <div className={'flex gap-3'}>
                     <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
@@ -145,7 +145,7 @@ export default function ContainersPage() {
             )}
 
             {!isLoading && !isEmpty && (
-                <Tabs className="flex flex-1 flex-col overflow-hidden" defaultValue="all">
+                <Tabs className="flex flex-1 flex-col overflow-hidden pt-1" defaultValue="all">
                     <div className="mx-5 mb-2 flex items-center justify-between gap-2">
                         <TabsList>
                             {tabs.map((tab) => (

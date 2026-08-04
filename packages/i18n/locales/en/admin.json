@@ -44,6 +44,7 @@
     "upgradeCheckFailed": "Failed to check for updates",
     "upgradeCheckButton": "Check for updates",
     "upgradeConfirmTitle": "Upgrade Nexploy?",
+    "upgradePatchNotes": "Read the patch notes for {version}",
     "upgradeActiveBuildsWarning": "The following builds are currently running and will be cancelled if you upgrade now:"
   },
   "users": "Users",

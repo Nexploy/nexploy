@@ -44,6 +44,7 @@
     "upgradeCheckFailed": "Échec de la vérification des mises à jour",
     "upgradeCheckButton": "Vérifier les mises à jour",
     "upgradeConfirmTitle": "Mettre à niveau Nexploy ?",
+    "upgradePatchNotes": "Voir les notes de version {version}",
     "upgradeActiveBuildsWarning": "Les builds suivants sont actuellement en cours et seront annulés si vous effectuez la mise à niveau maintenant :"
   },
   "users": "Utilisateurs",

@@ -22,7 +22,10 @@
     "notFoundDescription": "This container no longer exists or has been removed.",
     "backToContainers": "Back to containers",
     "swarmManagedBadge": "Managed by Swarm",
-    "swarmManagedDescription": "This container is managed by Docker Swarm. To modify it, use the Swarm services interface."
+    "swarmManagedDescription": "This container is managed by Docker Swarm. To modify it, use the Swarm services interface.",
+    "moveEnvironment": "Move",
+    "moveEnvironmentTitle": "Move to another environment",
+    "moveEnvironmentDescription": "Recreate this container on another Docker environment with the same configuration."
   },
   "renameContainer": {
     "nameLabel": "Container Name",
@@ -918,5 +921,37 @@
       "volumes": "Unused volumes",
       "build": "Build cache"
     }
+  },
+  "moveContainer": {
+    "moveWarning": "\"{name}\" will be recreated on the target environment with the same image, configuration, ports and networks.",
+    "targetLabel": "Target environment",
+    "targetPlaceholder": "Select an environment",
+    "targetDescription": "The Docker environment the container will be recreated on.",
+    "registryLabel": "Registry",
+    "registryNone": "Public (no authentication)",
+    "registryDescription": "Used to pull the image on the target environment. If the image is unavailable there, it is streamed directly from the source environment.",
+    "volumeDataLabel": "Migrate volume data",
+    "volumeDataDescription": "Copy the content of the named volumes to the target environment. Can take a while on large volumes.",
+    "startLabel": "Start after the move",
+    "startDescription": "Start the container as soon as it has been created on the target environment.",
+    "sourceActionLabel": "Source container",
+    "sourceAction": {
+      "stop": {
+        "label": "Stop and keep",
+        "description": "The container stays on the source environment, stopped."
+      },
+      "remove": {
+        "label": "Remove",
+        "description": "The container is deleted from the source environment once the move succeeds."
+      },
+      "keep": {
+        "label": "Leave running",
+        "description": "The container keeps running on the source environment."
+      }
+    },
+    "noTargetEnvironment": "No other environment is configured. Add a second Docker environment to move containers.",
+    "successTitle": "\"{name}\" has been moved to the target environment.",
+    "cancel": "Cancel",
+    "move": "Move"
   }
 }

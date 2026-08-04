@@ -3,7 +3,7 @@ import ky from 'ky';
 import { Hono } from 'hono';
 import { docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
-import { wait, waitForContainerHealthy, waitForFile } from '@/utils/wait';
+import { waitForFile } from '@/utils/wait';
 import { logger } from '@/utils/logger';
 import { HttpError } from '@nexploy/shared/http-error';
 import { buildCachePruneSchema, type CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
@@ -14,14 +14,13 @@ import {
     DOCKER_API_IMAGE_REPOSITORY,
     DOCKER_SOCKET_PATH,
     NEXPLOY_APP_CONTAINER_NAME,
-    NEXPLOY_APP_HEALTHCHECK,
-    NEXPLOY_APP_NETWORK_ALIAS,
     NEXPLOY_GITHUB_REPO,
     NEXPLOY_IMAGE_REPOSITORY,
     TRAEFIK_CONTAINER_NAME,
     TRAEFIK_STATIC_CONFIG_PATH,
+    UPGRADER_CONTAINER_NAME,
 } from '@/lib/config';
-import { recreateContainerWithImage } from '@/utils/recreateWithImage';
+import { pullImage } from '@/utils/pullImage';
 
 const app = new Hono();
 
@@ -290,38 +289,8 @@ app.post(
     }),
 );
 
-async function monitorSelfUpgradeHelper(helperName: string, timeoutMs: number): Promise<void> {
-    const helperContainer = docker.getContainer(helperName);
-
-    try {
-        const result = (await Promise.race([
-            helperContainer.wait(),
-            wait(timeoutMs).then(() => {
-                throw new Error(`Timed out after ${timeoutMs}ms waiting for ${helperName} to exit`);
-            }),
-        ])) as { StatusCode?: number };
-
-        if (result.StatusCode !== 0) {
-            logger.error(
-                { helper: helperName, exitCode: result.StatusCode },
-                'docker-api self-upgrade failed — docker-api remains on the previous version. Check: docker logs nexploy_upgrader',
-            );
-        }
-    } catch (error) {
-        logger.error(
-            { helper: helperName, error },
-            'docker-api self-upgrade could not be confirmed — it may still be on the previous version. Check: docker logs nexploy_upgrader',
-        );
-    }
-}
-
-async function pullImage(image: string): Promise<void> {
-    await new Promise<void>((resolve, reject) => {
-        docker.pull(image, (err: Error | null, stream: NodeJS.ReadableStream) => {
-            if (err) return reject(err);
-            docker.modem.followProgress(stream, (pullErr: Error | null) => (pullErr ? reject(pullErr) : resolve()));
-        });
-    });
+function buildReleaseUrl(tag: string): string {
+    return `https://github.com/${NEXPLOY_GITHUB_REPO}/releases/tag/${tag}`;
 }
 
 app.get(
@@ -331,18 +300,28 @@ app.get(
         const current = appInfo.Config.Image.split(':').pop() ?? 'unknown';
 
         let latest = current;
+        let releaseUrl: string | null = null;
         try {
             const data = await ky
                 .get(`https://api.github.com/repos/${NEXPLOY_GITHUB_REPO}/releases/latest`, {
                     headers: { Accept: 'application/vnd.github+json' },
                 })
-                .json<{ tag_name?: string }>();
-            if (data.tag_name) latest = data.tag_name.replace(/^v/, '');
+                .json<{ tag_name?: string; html_url?: string }>();
+            if (data.tag_name) {
+                latest = data.tag_name.replace(/^v/, '');
+                releaseUrl = data.html_url ?? buildReleaseUrl(data.tag_name);
+            }
         } catch (error) {
             logger.warn({ error }, 'Failed to check latest Nexploy release');
         }
 
-        return { current, latest, updateAvailable: latest !== current };
+        return {
+            current,
+            latest,
+            updateAvailable: latest !== current,
+            releaseUrl,
+            releasesUrl: `https://github.com/${NEXPLOY_GITHUB_REPO}/releases`,
+        };
     }),
 );
 
@@ -353,42 +332,26 @@ app.post(
         const appImage = `${NEXPLOY_IMAGE_REPOSITORY}:${version}`;
         const dockerApiImage = `${DOCKER_API_IMAGE_REPOSITORY}:${version}`;
 
-        await pullImage(appImage);
-        await pullImage(dockerApiImage);
+        await pullImage(docker, dockerApiImage);
 
-        await recreateContainerWithImage(docker, NEXPLOY_APP_CONTAINER_NAME, appImage, {
-            aliases: [NEXPLOY_APP_NETWORK_ALIAS],
-            healthcheck: NEXPLOY_APP_HEALTHCHECK,
-        });
-
-        const appReady = await waitForContainerHealthy(docker, NEXPLOY_APP_CONTAINER_NAME, 180_000);
-        if (!appReady) {
-            logger.warn(
-                { container: NEXPLOY_APP_CONTAINER_NAME },
-                'Nexploy did not report healthy in time after upgrade, restarting docker-api anyway',
-            );
-        }
-
-        const helperName = 'nexploy_upgrader';
         try {
-            await docker.getContainer(helperName).remove({ force: true });
+            await docker.getContainer(UPGRADER_CONTAINER_NAME).remove({ force: true });
         } catch {}
 
         const currentDockerApiInfo = await docker.getContainer(DOCKER_API_CONTAINER_NAME).inspect();
         const inheritedEnv = (currentDockerApiInfo.Config.Env ?? []).filter(
-            (entry) =>
-                !entry.startsWith('SELF_UPGRADE_TARGET_IMAGE=') &&
-                !entry.startsWith('SELF_UPGRADE_CONTAINER_NAME=') &&
-                !entry.startsWith('DOCKER_SOCKET='),
+            (entry) => !entry.startsWith('SELF_UPGRADE_') && !entry.startsWith('DOCKER_SOCKET='),
         );
 
-        const helper = await docker.createContainer({
-            name: helperName,
+        const upgrader = await docker.createContainer({
+            name: UPGRADER_CONTAINER_NAME,
             Image: dockerApiImage,
             Env: [
                 ...inheritedEnv,
                 `SELF_UPGRADE_TARGET_IMAGE=${dockerApiImage}`,
                 `SELF_UPGRADE_CONTAINER_NAME=${DOCKER_API_CONTAINER_NAME}`,
+                `SELF_UPGRADE_APP_TARGET_IMAGE=${appImage}`,
+                `SELF_UPGRADE_APP_CONTAINER_NAME=${NEXPLOY_APP_CONTAINER_NAME}`,
                 `DOCKER_SOCKET=${DOCKER_SOCKET_PATH}`,
             ],
             HostConfig: {
@@ -401,9 +364,9 @@ app.post(
                 ),
             },
         });
-        await helper.start();
 
-        monitorSelfUpgradeHelper(helperName, 120_000).catch(() => {});
+        logger.info({ appImage, dockerApiImage }, 'Handing the upgrade over to the upgrader container');
+        await upgrader.start();
 
         return { status: 'upgrading', version };
     }),

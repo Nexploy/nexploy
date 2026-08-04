@@ -22,7 +22,10 @@
     "notFoundDescription": "Ce conteneur n'existe plus ou a été supprimé.",
     "backToContainers": "Retour aux conteneurs",
     "swarmManagedBadge": "Géré par Swarm",
-    "swarmManagedDescription": "Ce conteneur est géré par Docker Swarm. Pour le modifier, utilisez l'interface des services Swarm."
+    "swarmManagedDescription": "Ce conteneur est géré par Docker Swarm. Pour le modifier, utilisez l'interface des services Swarm.",
+    "moveEnvironment": "Déplacer",
+    "moveEnvironmentTitle": "Déplacer vers un autre environnement",
+    "moveEnvironmentDescription": "Recréer ce conteneur sur un autre environnement Docker avec la même configuration."
   },
   "renameContainer": {
     "nameLabel": "Nom du conteneur",
@@ -918,5 +921,37 @@
       "volumes": "Volumes inutilisés",
       "build": "Cache de build"
     }
+  },
+  "moveContainer": {
+    "moveWarning": "« {name} » sera recréé sur l'environnement cible avec la même image, configuration, ports et réseaux.",
+    "targetLabel": "Environnement cible",
+    "targetPlaceholder": "Sélectionner un environnement",
+    "targetDescription": "L'environnement Docker sur lequel le conteneur sera recréé.",
+    "registryLabel": "Registry",
+    "registryNone": "Public (sans authentification)",
+    "registryDescription": "Utilisé pour récupérer l'image sur l'environnement cible. Si l'image y est indisponible, elle est transférée directement depuis l'environnement source.",
+    "volumeDataLabel": "Migrer les données des volumes",
+    "volumeDataDescription": "Copier le contenu des volumes nommés vers l'environnement cible. Peut être long sur de gros volumes.",
+    "startLabel": "Démarrer après le déplacement",
+    "startDescription": "Démarrer le conteneur dès qu'il a été créé sur l'environnement cible.",
+    "sourceActionLabel": "Conteneur source",
+    "sourceAction": {
+      "stop": {
+        "label": "Arrêter et conserver",
+        "description": "Le conteneur reste sur l'environnement source, à l'arrêt."
+      },
+      "remove": {
+        "label": "Supprimer",
+        "description": "Le conteneur est supprimé de l'environnement source une fois le déplacement réussi."
+      },
+      "keep": {
+        "label": "Laisser tourner",
+        "description": "Le conteneur continue de tourner sur l'environnement source."
+      }
+    },
+    "noTargetEnvironment": "Aucun autre environnement n'est configuré. Ajoutez un second environnement Docker pour déplacer des conteneurs.",
+    "successTitle": "« {name} » a été déplacé vers l'environnement cible.",
+    "cancel": "Annuler",
+    "move": "Déplacer"
   }
 }

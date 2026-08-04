@@ -2,6 +2,8 @@ export interface VersionInfo {
     current: string;
     latest: string;
     updateAvailable: boolean;
+    releaseUrl: string | null;
+    releasesUrl: string | null;
 }
 
 export interface ActiveBuildInfo {

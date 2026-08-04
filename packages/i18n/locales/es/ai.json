@@ -1,0 +1,257 @@
+{
+  "admin": {
+    "title": "IA",
+    "description": "Configura el acceso externo de la IA al servidor MCP",
+    "settings": {
+      "title": "Ajustes",
+      "description": "Configura el comportamiento del asistente de IA",
+      "saveFailed": "No se han podido guardar los ajustes",
+      "generalSection": "General",
+      "generalSectionDescription": "Controla la disponibilidad global del asistente de IA.",
+      "aiEnabled": "Activar el asistente de IA",
+      "aiEnabledDescription": "Si está desactivado, el panel de IA y la API de chat no están disponibles para ningún usuario.",
+      "mcpEnabled": "Activar el servidor MCP",
+      "mcpEnabledDescription": "Si está desactivado, el endpoint externo de la API MCP rechaza todas las peticiones, dejando fuera a Cursor, Claude Desktop y otros clientes MCP.",
+      "chatBehavior": "Comportamiento del chat",
+      "chatBehaviorDescription": "Controla cómo se comporta el asistente de IA durante las conversaciones.",
+      "requireConfirmation": "Requerir confirmación para las acciones destructivas",
+      "requireConfirmationDescription": "Si está activado, la IA pedirá una confirmación explícita antes de ejecutar cualquier operación de eliminación, retirada, parada o limpieza.",
+      "maxSteps": "Número máximo de llamadas a herramientas",
+      "maxStepsDescription": "Número máximo de llamadas a herramientas que la IA puede encadenar en una sola respuesta. Valores bajos reducen el coste; valores altos permiten tareas más complejas.",
+      "mcpPermissions": "Permisos de las herramientas MCP",
+      "mcpPermissionsDescription": "Elige qué grupos de herramientas puede usar el asistente de IA.",
+      "mcpSectionDocker": "Docker",
+      "mcpSectionNexploy": "Nexploy",
+      "allowExecInContainer": "Ejecución en contenedor",
+      "allowExecInContainerDescription": "Permite a la IA ejecutar comandos de shell arbitrarios dentro de los contenedores.",
+      "allowImagesGroup": "Imágenes",
+      "allowImagesGroupDescription": "Permite a la IA listar, descargar, etiquetar, eliminar y limpiar imágenes.",
+      "allowVolumesGroup": "Volúmenes",
+      "allowVolumesGroupDescription": "Permite a la IA listar, crear, eliminar y limpiar volúmenes.",
+      "allowNetworksGroup": "Redes",
+      "allowNetworksGroupDescription": "Permite a la IA listar, crear y eliminar redes.",
+      "allowComposeGroup": "Stacks de Compose",
+      "allowComposeGroupDescription": "Permite a la IA listar, desplegar y gestionar stacks de Compose.",
+      "allowSwarmOperations": "Swarm",
+      "allowSwarmOperationsDescription": "Permite a la IA listar y gestionar nodos y servicios de Docker Swarm.",
+      "allowRepositoriesGroup": "Repositorios",
+      "allowRepositoriesGroupDescription": "Permite a la IA listar repositorios, lanzar builds, gestionar variables de entorno y eliminar repositorios.",
+      "allowRegistriesGroup": "Registries",
+      "allowRegistriesGroupDescription": "Permite a la IA listar, crear, actualizar y eliminar registries de contenedores.",
+      "allowSslGroup": "Certificados SSL",
+      "allowSslGroupDescription": "Permite a la IA listar, emitir y eliminar certificados SSL.",
+      "allowEnvironmentsGroup": "Entornos",
+      "allowEnvironmentsGroupDescription": "Permite a la IA listar, crear, actualizar y eliminar entornos Docker.",
+      "customPrompt": "Prompt de sistema personalizado",
+      "customPromptDescription": "Añade instrucciones adicionales al prompt de sistema base. Útil para reglas o restricciones propias de tu organización.",
+      "customPromptPlaceholder": "p. ej. Etiqueta siempre las imágenes con el prefijo prod- antes de publicarlas…"
+    },
+    "models": {
+      "title": "Modelos",
+      "description": "Configura las claves API de los proveedores de IA",
+      "apiKey": "Clave API",
+      "apiKeyPlaceholder": "sk-…",
+      "statusConfigured": "Configurada",
+      "statusNotConfigured": "Sin configurar",
+      "changeKey": "Cambiar clave",
+      "getApiKey": "Obtener una clave API",
+      "saveSuccess": "Configuración guardada",
+      "saveFailed": "No se ha podido guardar la configuración",
+      "deleteSuccess": "Clave API eliminada",
+      "deleteFailed": "No se ha podido eliminar la clave API",
+      "deleteConfirmTitle": "Eliminar clave API",
+      "deleteConfirmDescription": "¿Seguro que quieres eliminar la clave API de {provider}? Esta acción no se puede deshacer.",
+      "deleteConfirmAction": "Eliminar"
+    },
+    "mcp": {
+      "title": "Servidor MCP",
+      "description": "El servidor Model Context Protocol permite que herramientas externas (Cursor, Claude Desktop, etc.) interactúen con tu infraestructura de Nexploy.",
+      "endpoint": "Endpoint MCP",
+      "endpointDescription": "Usa esta URL en la configuración de tu cliente MCP.",
+      "generateKey": "Generar clave API",
+      "keyNameLabel": "Nombre de la clave",
+      "keyNamePlaceholder": "p. ej. Cursor, Claude Desktop…",
+      "generatedWarning": "Copia esta clave ahora: no se volverá a mostrar.",
+      "copyKey": "Copiar",
+      "noKeys": "Aún no hay claves API. Genera una para conectar un cliente MCP externo.",
+      "keyName": "Clave",
+      "createdAt": "Creada",
+      "expiresAt": "Caduca",
+      "never": "Nunca",
+      "revokeKey": "Revocar",
+      "confirmRevoke": "¿Seguro que quieres revocar esta clave API? Las herramientas externas que la usen perderán el acceso.",
+      "keyCreatedSuccess": "Clave API generada",
+      "keyRevokedSuccess": "Clave API revocada",
+      "keyRevokedFailed": "No se ha podido revocar la clave API",
+      "keyCreatedFailed": "No se ha podido generar la clave API"
+    }
+  },
+  "commandGroups": {
+    "navigation": "Navegación",
+    "containers": "Contenedores",
+    "images": "Imágenes",
+    "volumes": "Volúmenes",
+    "stacks": "Stacks"
+  },
+  "command": {
+    "searchPlaceholder": "Escribe un comando o busca...",
+    "askAi": "Preguntar a la IA: {query}",
+    "aiAssistant": "Asistente de IA",
+    "quickActions": "Acciones rápidas",
+    "system": "Sistema",
+    "createContainer": "Crear un contenedor",
+    "pullImage": "Descargar una imagen",
+    "createVolume": "Crear un volumen",
+    "startAll": "Iniciar todos los contenedores",
+    "stopAll": "Detener todos los contenedores",
+    "removeStopped": "Eliminar los contenedores detenidos",
+    "viewStacks": "Ver los stacks",
+    "settings": "Ajustes",
+    "openTerminal": "Abrir la terminal",
+    "noResults": "Sin resultados para \"{query}\"",
+    "open": "Abrir",
+    "navigate": "Ir a",
+    "startBuild": "Iniciar build",
+    "account": "Cuenta",
+    "types": {
+      "repository": "Repositorio",
+      "container": "Contenedor",
+      "image": "Imagen",
+      "volume": "Volumen",
+      "network": "Red"
+    }
+  },
+  "chat": {
+    "panelTitle": "Nexploy AI",
+    "close": "Cerrar",
+    "openPanel": "Abrir el panel de IA",
+    "closePanel": "Cerrar el panel de IA",
+    "newChat": "Nueva conversación",
+    "disabled": "Asistente de IA desactivado",
+    "disabledDescription": "El administrador ha desactivado el asistente de IA.",
+    "noProvider": "No hay ningún modelo de IA configurado",
+    "noProviderDescription": "Un administrador debe configurar un proveedor de IA antes de que puedas usar el asistente.",
+    "confirmation": {
+      "title": "Confirmar la acción destructiva",
+      "target": "Destino",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    },
+    "toolCall": {
+      "running": "En ejecución",
+      "done": "Hecho",
+      "error": "Error",
+      "pending": "Pendiente",
+      "partialError": "Error parcial",
+      "toolsCount": "{count, plural, one {# herramienta} other {# herramientas}}"
+    },
+    "stopGenerating": "Detener la generación",
+    "generationStopped": "Respuesta interrumpida",
+    "inputPlaceholder": "Pregunta lo que quieras...",
+    "thinking": "Pensando...",
+    "keyboardHint": "Intro para enviar · Mayús+Intro para nueva línea",
+    "selectModel": "Seleccionar modelo",
+    "fullscreen": "Pantalla completa",
+    "exitFullscreen": "Salir de pantalla completa",
+    "fullscreenActive": "El asistente está abierto en pantalla completa.",
+    "modelSelector": {
+      "title": "Selecciona un modelo",
+      "search": "Buscar modelos…",
+      "noResults": "Ningún modelo coincide con tu búsqueda.",
+      "loading": "Cargando modelos…",
+      "select": "Seleccionar",
+      "allProviders": "Todos"
+    }
+  },
+  "context": {
+    "suggestions": {
+      "containers": {
+        "listRunning": "¿Qué contenedores están en ejecución ahora mismo?",
+        "showLogs": "Muestra los logs de un contenedor",
+        "execCommand": "Ejecuta un comando dentro de un contenedor en ejecución",
+        "cleanupStopped": "Elimina todos los contenedores detenidos"
+      },
+      "images": {
+        "listWithSizes": "Lista todas las imágenes y el espacio que ocupan",
+        "pullImage": "Descarga una imagen de un registry",
+        "scanVulnerabilities": "Analiza una imagen en busca de vulnerabilidades",
+        "pruneDangling": "Elimina todas las imágenes sin usar para liberar espacio en disco"
+      },
+      "volumes": {
+        "listVolumes": "Lista todos los volúmenes",
+        "createVolume": "Crea un nuevo volumen",
+        "pruneUnused": "Elimina todos los volúmenes que no use ningún contenedor"
+      },
+      "networks": {
+        "listNetworks": "Lista todas las redes y sus drivers",
+        "createBridge": "Crea una nueva red bridge",
+        "inspectNetwork": "Inspecciona una red y los contenedores conectados a ella"
+      },
+      "compose": {
+        "listContainers": "Lista los contenedores que pertenecen a un stack",
+        "restartStack": "Reinicia un stack de Compose",
+        "teardownStack": "Detén y elimina un stack de Compose"
+      },
+      "repositories": {
+        "listWithStatus": "Lista todos los repositorios y el estado de su última build",
+        "showFailing": "¿Qué repositorios tienen una build fallida?",
+        "triggerBuild": "Lanza una build para un repositorio",
+        "showEnvVars": "Lista las variables de entorno de un repositorio"
+      },
+      "repository": {
+        "triggerBuild": "Lanza una nueva build para este repositorio",
+        "showBuildLogs": "Muestra los logs de la última build",
+        "cancelBuild": "Cancela la build actualmente en curso",
+        "setEnvVar": "Añade o actualiza una variable de entorno"
+      },
+      "build": {
+        "whyFailed": "¿Por qué ha fallado esta build?",
+        "showNodeLogs": "Muestra los logs de un paso concreto de la pipeline",
+        "cancelBuild": "Cancela esta build",
+        "listBuilds": "Lista todas las builds de este repositorio"
+      },
+      "ssl": {
+        "listCertificates": "Lista todos los certificados SSL y sus fechas de caducidad",
+        "issueLetsEncrypt": "Emite un certificado Let's Encrypt para un dominio",
+        "deleteExpired": "Elimina un certificado caducado"
+      },
+      "registries": {
+        "listRegistries": "Lista todos los registries configurados",
+        "addRegistry": "Añade un nuevo registry de contenedores",
+        "deleteRegistry": "Elimina un registry"
+      },
+      "environments": {
+        "listEnvironments": "Lista todos los entornos Docker configurados",
+        "addRemoteHost": "Añade un host Docker remoto",
+        "setDefault": "Cambia el entorno Docker predeterminado"
+      },
+      "swarm": {
+        "listNodes": "Lista todos los nodos del swarm y su estado",
+        "listServices": "Lista todos los servicios del swarm y su número de réplicas",
+        "scaleService": "Cambia el número de réplicas de un servicio",
+        "drainNode": "Vacía un nodo para tareas de mantenimiento"
+      },
+      "pipeline": {
+        "generate": "Genera una pipeline de despliegue para este repositorio",
+        "listNodes": "¿Qué nodos de pipeline hay disponibles?",
+        "analyzeStack": "Analiza el stack tecnológico de mi repositorio y sugiere una pipeline",
+        "showCurrent": "Muéstrame la configuración actual de la pipeline"
+      },
+      "categories": {
+        "containers": "Contenedores",
+        "images": "Imágenes",
+        "volumes": "Volúmenes",
+        "networks": "Redes",
+        "compose": "Compose",
+        "repositories": "Repositorios",
+        "repository": "Este repositorio",
+        "build": "Esta build",
+        "ssl": "Certificados SSL",
+        "registries": "Registries",
+        "environments": "Entornos",
+        "swarm": "Swarm",
+        "pipeline": "Pipeline"
+      }
+    }
+  }
+}

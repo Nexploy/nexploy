@@ -65,7 +65,7 @@ export function UpdateBanner() {
                             className="relative mt-2 h-7 w-full text-xs transition-shadow"
                             style={{ boxShadow: `0 0 12px ${neonAlpha(45)}` }}
                             disabled={isBusy}
-                            onClick={() => version && openUpgradeDialog(version.latest)}
+                            onClick={() => openUpgradeDialog()}
                         >
                             {isBusy ? <Loader2 className="size-3.5 animate-spin" /> : t('update')}
                         </Button>

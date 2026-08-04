@@ -97,7 +97,9 @@
     "title": "Language",
     "selectLanguage": "Select a language",
     "en": "English (US)",
-    "fr": "Français"
+    "fr": "Français",
+    "it": "Italiano",
+    "es": "Español"
   },
   "theme": {
     "title": "Theme",

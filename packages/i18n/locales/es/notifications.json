@@ -1,0 +1,11 @@
+{
+  "success": "Éxito",
+  "error": "Error",
+  "warning": "Advertencia",
+  "info": "Info",
+  "saved": "Cambios guardados",
+  "deleted": "Eliminado correctamente",
+  "created": "Creado correctamente",
+  "updated": "Actualizado correctamente",
+  "reconnecting": "Reconectando..."
+}

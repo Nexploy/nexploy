@@ -2,12 +2,7 @@ import { NextResponse } from 'next/server';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
-
-interface VersionInfo {
-    current: string;
-    latest: string;
-    updateAvailable: boolean;
-}
+import type { VersionInfo } from '@workspace/typescript-interface/stores/updateStore';
 
 export const GET = route
     .use(authRouteServer)
@@ -18,6 +13,8 @@ export const GET = route
                 current: 'dev',
                 latest: 'dev',
                 updateAvailable: false,
+                releaseUrl: null,
+                releasesUrl: null,
             } satisfies VersionInfo);
         }
 

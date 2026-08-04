@@ -19,6 +19,8 @@ import {
 } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
+import { containerMigrateApiSchema } from '@workspace/schemas-zod/docker/container/containerMigrate.schema';
+import { migrateContainer } from '@/services/containerMigrationService';
 import { containersStateManager } from '@/managers/list/containersStateManager';
 import { pullImage as pullImageService } from '@/services/imageService';
 import { networksStateManager } from '@/managers/list/networksStateManager';
@@ -26,6 +28,8 @@ import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 import { assertSafeBindPath } from '@/utils/hostBindGuard';
 
 const DEFAULT_PIDS_LIMIT = 512;
+
+const MIGRATION_TIMEOUT_MS = 30 * 60 * 1000;
 
 const NAMED_VOLUME_REGEX = /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/;
 
@@ -415,6 +419,17 @@ app.post(
         await newContainer.start();
         return { id: newContainer.id };
     }),
+);
+
+app.post(
+    '/migrate',
+    route(
+        { json: containerMigrateApiSchema },
+        async (c) => {
+            return migrateContainer(c.req.valid('json'));
+        },
+        { timeoutMs: MIGRATION_TIMEOUT_MS },
+    ),
 );
 
 app.post(
