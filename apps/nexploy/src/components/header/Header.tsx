@@ -3,6 +3,7 @@ import { Separator } from '@workspace/ui/components/separator';
 import { BreadcrumbPath } from '@/components/header/BreadcrumbPath';
 import { AIPanelToggle } from '@/components/ai/AIPanelToggle';
 import { SearchCommand } from '@/components/search/SearchCommand.tsx';
+import { TasksIndicator } from '@/components/tasks/TasksIndicator';
 
 export function Header() {
     return (
@@ -13,6 +14,7 @@ export function Header() {
                 <BreadcrumbPath />
             </div>
             <div className="flex items-center">
+                <TasksIndicator />
                 <SearchCommand />
                 <AIPanelToggle />
             </div>

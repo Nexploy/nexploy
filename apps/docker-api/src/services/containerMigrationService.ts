@@ -10,6 +10,7 @@ import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { loadEnvironmentByIdFromAPI } from '@/lib/loadEnvironments';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+import { StartedTask, TaskContext, runAsTask } from '@/lib/taskRunner';
 import { logger } from '@/utils/logger';
 
 type RegistryAuth = { username: string; password: string; serveraddress?: string };
@@ -17,6 +18,8 @@ type RegistryAuth = { username: string; password: string; serveraddress?: string
 type VolumeMount = { name: string; destination: string; readOnly: boolean };
 
 const PREDEFINED_NETWORKS = new Set(['bridge', 'host', 'none']);
+
+const MIGRATION_STEPS = ['image', 'networks', 'create', 'volumes', 'start', 'source'] as const;
 
 async function resolveTargetClient(targetEnvironmentId: string): Promise<Docker> {
     const registered = dockerClientRegistry.getClientSafe(targetEnvironmentId);
@@ -96,7 +99,7 @@ async function ensureNetworksOnTarget(
     source: Docker,
     target: Docker,
     info: ContainerInspectInfo,
-    warnings: string[],
+    warn: (message: string) => void,
 ): Promise<Record<string, EndpointSettings>> {
     const endpoints: Record<string, EndpointSettings> = {};
     const sourceNetworks = info.NetworkSettings.Networks ?? {};
@@ -130,19 +133,19 @@ async function ensureNetworksOnTarget(
             });
             endpoints[name] = endpointConfig;
         } catch (err: any) {
-            warnings.push(`Network "${name}" could not be created on the target environment: ${err.message}`);
+            warn(`Network "${name}" could not be created on the target environment: ${err.message}`);
         }
     }
 
     return endpoints;
 }
 
-function collectVolumeMounts(info: ContainerInspectInfo, warnings: string[]): VolumeMount[] {
+function collectVolumeMounts(info: ContainerInspectInfo, warn: (message: string) => void): VolumeMount[] {
     const mounts: VolumeMount[] = [];
 
     for (const mount of info.Mounts ?? []) {
         if (mount.Type === 'bind') {
-            warnings.push(
+            warn(
                 `Bind mount "${mount.Source}" is not transferred, the host path must exist on the target environment.`,
             );
             continue;
@@ -204,7 +207,7 @@ async function connectRemainingNetworks(
     target: Docker,
     containerId: string,
     endpoints: Record<string, EndpointSettings>,
-    warnings: string[],
+    warn: (message: string) => void,
 ): Promise<void> {
     const [, ...remaining] = Object.entries(endpoints);
 
@@ -212,7 +215,7 @@ async function connectRemainingNetworks(
         try {
             await target.getNetwork(name).connect({ Container: containerId, EndpointConfig: config });
         } catch (err: any) {
-            warnings.push(`Container could not be attached to network "${name}": ${err.message}`);
+            warn(`Container could not be attached to network "${name}": ${err.message}`);
         }
     }
 }
@@ -221,13 +224,13 @@ async function copyVolumeData(
     sourceContainer: Docker.Container,
     targetContainer: Docker.Container,
     mounts: VolumeMount[],
-    warnings: string[],
+    warn: (message: string) => void,
 ): Promise<string[]> {
     const migrated: string[] = [];
 
     for (const mount of mounts) {
         if (mount.readOnly) {
-            warnings.push(`Volume "${mount.name}" is mounted read-only, its data was not copied.`);
+            warn(`Volume "${mount.name}" is mounted read-only, its data was not copied.`);
             continue;
         }
 
@@ -236,43 +239,58 @@ async function copyVolumeData(
             await targetContainer.putArchive(archive, { path: mount.destination });
             migrated.push(mount.name);
         } catch (err: any) {
-            warnings.push(`Data of volume "${mount.name}" could not be copied: ${err.message}`);
+            warn(`Data of volume "${mount.name}" could not be copied: ${err.message}`);
         }
     }
 
     return migrated;
 }
 
-export async function migrateContainer({
+interface RunMigrationInput extends ContainerMigrateApi {
+    context: TaskContext;
+    source: Docker;
+    info: ContainerInspectInfo;
+}
+
+async function runMigration({
+    context,
+    source,
+    info,
     containerId,
     targetEnvironmentId,
     migrateVolumeData,
     sourceAction,
     startAfterMigration,
     auth,
-}: ContainerMigrateApi): Promise<ContainerMigrationResult> {
-    const sourceEnvironmentId = getCurrentEnvironmentId();
-
-    if (sourceEnvironmentId === targetEnvironmentId) {
-        throw new HttpError('The container already runs on this environment.', 400);
-    }
-
-    const source = getCurrentDockerClient();
-    const target = await resolveTargetClient(targetEnvironmentId);
-
-    const sourceContainer = source.getContainer(containerId);
-    const info = await sourceContainer.inspect();
+}: RunMigrationInput): Promise<ContainerMigrationResult> {
+    const { step, completeStep, warn, assertNotCancelled, lockCancellation } = context;
     const containerName = info.Name.replace(/^\//, '');
-
-    logger.info({ containerId, containerName, sourceEnvironmentId, targetEnvironmentId }, 'Migrating container');
-
+    const sourceContainer = source.getContainer(containerId);
     const warnings: string[] = [];
+
+    const collectWarning = (message: string) => {
+        warnings.push(message);
+        warn(message);
+    };
+
+    step('image');
+    const target = await resolveTargetClient(targetEnvironmentId);
     const imageTransfer = await ensureImageOnTarget(source, target, info.Config.Image, auth);
-    const endpoints = await ensureNetworksOnTarget(source, target, info, warnings);
-    const volumeMounts = migrateVolumeData ? collectVolumeMounts(info, warnings) : [];
+    completeStep('image');
+    assertNotCancelled();
+
+    step('networks');
+    const endpoints = await ensureNetworksOnTarget(source, target, info, collectWarning);
+    completeStep('networks');
+    assertNotCancelled();
+
+    const volumeMounts = migrateVolumeData ? collectVolumeMounts(info, collectWarning) : [];
 
     const wasRunning = info.State.Running;
     const mustStopSource = wasRunning && (sourceAction !== 'keep' || migrateVolumeData);
+
+    step('create');
+    lockCancellation();
 
     if (mustStopSource) {
         await sourceContainer.stop();
@@ -285,45 +303,53 @@ export async function migrateContainer({
         if (mustStopSource && sourceAction === 'keep') {
             await sourceContainer.start().catch(() => {});
         }
+        completeStep('create', 'failed');
         throw new HttpError(
             `Container "${containerName}" could not be created on the target environment: ${err.message}`,
             502,
         );
     }
 
-    await connectRemainingNetworks(target, targetContainer.id, endpoints, warnings);
+    await connectRemainingNetworks(target, targetContainer.id, endpoints, collectWarning);
+    completeStep('create');
 
+    step('volumes');
     const migratedVolumes = migrateVolumeData
-        ? await copyVolumeData(sourceContainer, targetContainer, volumeMounts, warnings)
+        ? await copyVolumeData(sourceContainer, targetContainer, volumeMounts, collectWarning)
         : [];
+    completeStep('volumes', migrateVolumeData ? 'done' : 'skipped');
 
+    step('start');
     let started = false;
     if (startAfterMigration) {
         try {
             await targetContainer.start();
             started = true;
         } catch (err: any) {
-            warnings.push(`Container was created on the target environment but failed to start: ${err.message}`);
+            collectWarning(`Container was created on the target environment but failed to start: ${err.message}`);
         }
     }
+    completeStep('start', startAfterMigration ? 'done' : 'skipped');
 
+    step('source');
     const targetIsHealthy = !startAfterMigration || started;
 
     if (sourceAction === 'remove' && !targetIsHealthy) {
-        warnings.push('Source container was kept because the migrated container failed to start.');
+        collectWarning('Source container was kept because the migrated container failed to start.');
     } else if (sourceAction === 'remove') {
         try {
             await sourceContainer.remove({ force: true });
         } catch (err: any) {
-            warnings.push(`Source container could not be removed: ${err.message}`);
+            collectWarning(`Source container could not be removed: ${err.message}`);
         }
     } else if (sourceAction === 'keep' && wasRunning && mustStopSource) {
         try {
             await sourceContainer.start();
         } catch (err: any) {
-            warnings.push(`Source container could not be restarted: ${err.message}`);
+            collectWarning(`Source container could not be restarted: ${err.message}`);
         }
     }
+    completeStep('source');
 
     logger.info(
         { containerId, targetContainerId: targetContainer.id, targetEnvironmentId, imageTransfer, warnings },
@@ -339,4 +365,26 @@ export async function migrateContainer({
         migratedVolumes,
         warnings,
     };
+}
+
+export async function startContainerMigration(input: ContainerMigrateApi): Promise<StartedTask> {
+    const sourceEnvironmentId = getCurrentEnvironmentId();
+
+    if (sourceEnvironmentId === input.targetEnvironmentId) {
+        throw new HttpError('The container already runs on this environment.', 400);
+    }
+
+    const source = getCurrentDockerClient();
+    const info = await source.getContainer(input.containerId).inspect();
+
+    return runAsTask({
+        kind: 'container-migrate',
+        subjectName: info.Name.replace(/^\//, ''),
+        stepKeys: [...MIGRATION_STEPS],
+        environmentId: sourceEnvironmentId,
+        targetEnvironmentId: input.targetEnvironmentId,
+        cancellable: true,
+        run: (context) => runMigration({ ...input, context, source, info }),
+        resultHref: (result) => `/docker/containers/${result.id}`,
+    });
 }

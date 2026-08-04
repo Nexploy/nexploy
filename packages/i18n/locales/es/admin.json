@@ -194,7 +194,8 @@
     "selectRegistry": "Selecciona un registry",
     "mirror": "Replicar",
     "mirrorSuccess": "Imagen replicada en {target}",
-    "mirrorFailed": "La réplica ha fallado"
+    "mirrorFailed": "La réplica ha fallado",
+    "mirrorStarted": "Replicación hacia {target} iniciada. Sigue el progreso desde el menú de acciones en curso."
   },
   "errors": {
     "cannotChangeOwnRole": "No puedes cambiar tu propio rol",

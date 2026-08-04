@@ -194,7 +194,8 @@
     "selectRegistry": "Select a registry",
     "mirror": "Mirror",
     "mirrorSuccess": "Image mirrored to {target}",
-    "mirrorFailed": "Mirror failed"
+    "mirrorFailed": "Mirror failed",
+    "mirrorStarted": "Mirroring to {target} started. Follow its progress from the running actions menu."
   },
   "errors": {
     "cannotChangeOwnRole": "You cannot change your own role",

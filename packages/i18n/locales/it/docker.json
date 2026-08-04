@@ -43,7 +43,9 @@
     "refetchLabel": "Riscarica l'immagine",
     "refetchDescription": "Scarica l'immagine dal registry prima di ricreare il container, anche se esiste già localmente.",
     "cancel": "Annulla",
-    "apply": "Applica"
+    "apply": "Applica",
+    "changeStarted": "Cambio immagine di «{name}» avviato",
+    "changeStartedDescription": "Il container verrà ricreato. Segui l'avanzamento dal menu delle azioni in corso."
   },
   "configuration": "Configurazione",
   "popularImages": "Immagini popolari",
@@ -737,7 +739,9 @@
     "sortRelevance": "Pertinenza",
     "sourceLabel": "Origine",
     "sourceAll": "Tutte le origini",
-    "sourceOfficial": "Solo ufficiali"
+    "sourceOfficial": "Solo ufficiali",
+    "pullStarted": "Download di «{name}» avviato",
+    "pullStartedDescription": "Segui l'avanzamento dal menu delle azioni in corso nell'header."
   },
   "createNetworkPage": {
     "driver": "Driver",
@@ -950,8 +954,48 @@
       }
     },
     "noTargetEnvironment": "Nessun altro ambiente è configurato. Aggiungi un secondo ambiente Docker per spostare i container.",
-    "successTitle": "«{name}» è stato spostato sull'ambiente di destinazione.",
     "cancel": "Annulla",
-    "move": "Sposta"
+    "move": "Sposta",
+    "startedTitle": "Spostamento di «{name}» avviato",
+    "startedDescription": "Segui l'avanzamento dal menu delle azioni in corso nell'header."
+  },
+  "tasks": {
+    "title": "Azioni in corso",
+    "runningCount": "{count} azione/i in corso",
+    "clearFinished": "Cancella",
+    "cancel": "Annulla",
+    "dismiss": "Nascondi",
+    "openResult": "Apri il container",
+    "kinds": {
+      "container-migrate": "Spostamento di {name}",
+      "container-recreate": "Ricreazione di {name}",
+      "image-pull": "Download di {name}",
+      "image-mirror": "Mirroring di {name}"
+    },
+    "status": {
+      "running": "In corso",
+      "succeeded": "Completato",
+      "failed": "Fallito",
+      "cancelled": "Annullato"
+    },
+    "steps": {
+      "image": "Trasferimento dell'immagine",
+      "networks": "Preparazione delle reti",
+      "create": "Creazione del container",
+      "volumes": "Copia dei dati dei volumi",
+      "start": "Avvio del container",
+      "source": "Finalizzazione del container di origine",
+      "pull": "Download dell'immagine",
+      "stop": "Arresto del container",
+      "recreate": "Ricreazione del container",
+      "tag": "Tag dell'immagine",
+      "push": "Invio al registry",
+      "cleanup": "Pulizia"
+    },
+    "toasts": {
+      "succeeded": "«{name}» è stato spostato sull'ambiente di destinazione.",
+      "failed": "Lo spostamento di «{name}» non è riuscito.",
+      "cancelled": "Lo spostamento di «{name}» è stato annullato."
+    }
   }
 }

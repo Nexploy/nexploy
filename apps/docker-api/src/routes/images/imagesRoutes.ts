@@ -12,7 +12,7 @@ import {
     imageTagBodySchema,
 } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { scanImage } from '@/services/trivyRunner';
-import { deleteImages, mirrorImage, pullImage } from '@/services/imageService';
+import { deleteImages, startImageMirror, startImagePull } from '@/services/imageService';
 import { docker } from '@/utils/dockerClient';
 
 const app = new Hono();
@@ -60,7 +60,7 @@ app.post(
             if (err.statusCode !== 404) throw err;
         }
 
-        return await pullImage(imageName, auth);
+        return startImagePull(imageName, auth);
     }),
 );
 
@@ -85,7 +85,7 @@ app.post(
     '/mirror',
     route({ json: imageMirrorSchema }, async (c) => {
         const { sourceImage, sourceAuth, targetName, targetAuth } = c.req.valid('json');
-        return await mirrorImage(sourceImage, sourceAuth, targetName, targetAuth);
+        return startImageMirror(sourceImage, sourceAuth, targetName, targetAuth);
     }),
 );
 

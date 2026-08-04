@@ -5,7 +5,6 @@ import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { containerMigrateFormSchema } from '@workspace/schemas-zod/docker/container/containerMigrate.schema';
-import { ContainerMigrationResult } from '@workspace/typescript-interface/docker/docker.container';
 import { getRegistryWithPassword } from '@/services/registry.service';
 import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
@@ -47,9 +46,8 @@ export const onContainerMigrateAction = authActionServer
                             startAfterMigration,
                             auth,
                         },
-                        timeout: false,
                     })
-                    .json<ContainerMigrationResult>();
+                    .json<{ taskId: string; name: string }>();
             } catch (err: unknown) {
                 if (err instanceof HTTPError) {
                     await setToastServer({

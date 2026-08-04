@@ -43,7 +43,9 @@
     "refetchLabel": "Volver a descargar la imagen",
     "refetchDescription": "Descarga la imagen del registry antes de recrear el contenedor, aunque ya exista localmente.",
     "cancel": "Cancelar",
-    "apply": "Aplicar"
+    "apply": "Aplicar",
+    "changeStarted": "Cambio de imagen de «{name}» iniciado",
+    "changeStartedDescription": "El contenedor será recreado. Sigue el progreso desde el menú de acciones en curso."
   },
   "configuration": "Configuración",
   "popularImages": "Imágenes populares",
@@ -737,7 +739,9 @@
     "sortRelevance": "Relevancia",
     "sourceLabel": "Origen",
     "sourceAll": "Todos los orígenes",
-    "sourceOfficial": "Solo oficiales"
+    "sourceOfficial": "Solo oficiales",
+    "pullStarted": "Descarga de «{name}» iniciada",
+    "pullStartedDescription": "Sigue su progreso desde el menú de acciones en curso en la cabecera."
   },
   "createNetworkPage": {
     "driver": "Driver",
@@ -950,8 +954,48 @@
       }
     },
     "noTargetEnvironment": "No hay ningún otro entorno configurado. Añade un segundo entorno Docker para mover contenedores.",
-    "successTitle": "«{name}» se ha movido al entorno de destino.",
     "cancel": "Cancelar",
-    "move": "Mover"
+    "move": "Mover",
+    "startedTitle": "Traslado de «{name}» iniciado",
+    "startedDescription": "Sigue su progreso desde el menú de acciones en curso en la cabecera."
+  },
+  "tasks": {
+    "title": "Acciones en curso",
+    "runningCount": "{count} acción(es) en curso",
+    "clearFinished": "Borrar",
+    "cancel": "Cancelar",
+    "dismiss": "Ocultar",
+    "openResult": "Abrir el contenedor",
+    "kinds": {
+      "container-migrate": "Moviendo {name}",
+      "container-recreate": "Recreando {name}",
+      "image-pull": "Descargando {name}",
+      "image-mirror": "Replicando {name}"
+    },
+    "status": {
+      "running": "En curso",
+      "succeeded": "Completado",
+      "failed": "Fallido",
+      "cancelled": "Cancelado"
+    },
+    "steps": {
+      "image": "Transfiriendo la imagen",
+      "networks": "Preparando las redes",
+      "create": "Creando el contenedor",
+      "volumes": "Copiando los datos de los volúmenes",
+      "start": "Iniciando el contenedor",
+      "source": "Finalizando el contenedor de origen",
+      "pull": "Descargando la imagen",
+      "stop": "Deteniendo el contenedor",
+      "recreate": "Recreando el contenedor",
+      "tag": "Etiquetando la imagen",
+      "push": "Enviando al registro",
+      "cleanup": "Limpieza"
+    },
+    "toasts": {
+      "succeeded": "«{name}» se ha movido al entorno de destino.",
+      "failed": "El traslado de «{name}» ha fallado.",
+      "cancelled": "El traslado de «{name}» se ha cancelado."
+    }
   }
 }

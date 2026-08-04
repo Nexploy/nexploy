@@ -6,7 +6,6 @@ import { route } from '@/utils/route';
 import { Hono } from 'hono';
 import { ContainerCreateOptions } from 'dockerode';
 import { logger } from '@/utils/logger';
-import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 import { HttpError } from '@nexploy/shared/http-error';
 import {
     containerActionsSchema,
@@ -20,18 +19,14 @@ import {
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { containerMigrateApiSchema } from '@workspace/schemas-zod/docker/container/containerMigrate.schema';
-import { migrateContainer } from '@/services/containerMigrationService';
+import { startContainerMigration } from '@/services/containerMigrationService';
+import { recreateContainer, startContainerRecreate } from '@/services/containerRecreateService';
 import { containersStateManager } from '@/managers/list/containersStateManager';
-import { pullImage as pullImageService } from '@/services/imageService';
 import { networksStateManager } from '@/managers/list/networksStateManager';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 import { assertSafeBindPath } from '@/utils/hostBindGuard';
 
 const DEFAULT_PIDS_LIMIT = 512;
-
-const MIGRATION_TIMEOUT_MS = 30 * 60 * 1000;
-
-const NAMED_VOLUME_REGEX = /\/var\/lib\/docker\/volumes\/([^/]+)\/_data/;
 
 const app = new Hono();
 
@@ -253,183 +248,24 @@ app.post(
 app.post(
     '/recreate',
     route({ json: ContainerRecreateFormSchema }, async (c) => {
-        const { ports, envVars, volumes, networks, containerId, image, pullImage, auth } = c.req.valid('json');
+        const payload = c.req.valid('json');
 
-        const container = docker.getContainer(containerId);
-        const containerInfo = await container.inspect();
+        const containerInfo = await docker.getContainer(payload.containerId).inspect();
+        const containerName = containerInfo.Name.replace(/^\//, '');
 
-        const targetImage = image?.trim() || containerInfo.Config.Image;
-        const imageChanged = targetImage !== containerInfo.Config.Image;
-
-        if (pullImage || imageChanged) {
-            await pullImageService(targetImage, auth);
+        if (payload.async) {
+            return startContainerRecreate(payload, containerName);
         }
 
-        if (containerInfo.State.Running) await container.stop();
-
-        const exposedPorts = { ...containerInfo.Config.ExposedPorts };
-        const portBindings = { ...containerInfo.HostConfig.PortBindings };
-
-        const removePort = (privatePort: number, type: PortType, publicPort: number) => {
-            const key = `${privatePort}/${type}`;
-            delete exposedPorts[key];
-            if (portBindings[key]) {
-                portBindings[key] = portBindings[key].filter((b: any) => b.HostPort !== String(publicPort));
-                if (portBindings[key].length === 0) delete portBindings[key];
-            }
-        };
-
-        const addPort = (privatePort: number, type: PortType, publicPort: number) => {
-            const key = `${privatePort}/${type}`;
-            exposedPorts[key] = {};
-            portBindings[key] = portBindings[key] || [];
-            portBindings[key].push({ HostPort: String(publicPort) });
-        };
-
-        for (const port of ports) {
-            if (port.typeAction === 'delete' || port.typeAction === 'edit') {
-                if (port.currentPrivatePort && port.currentType) {
-                    if (port.currentPublicPort) {
-                        removePort(port.currentPrivatePort, port.currentType, port.currentPublicPort);
-                    } else {
-                        const key = `${port.currentPrivatePort}/${port.currentType}`;
-                        delete exposedPorts[key];
-                        delete portBindings[key];
-                    }
-                }
-            }
-            if (port.typeAction === 'add' || port.typeAction === 'edit') {
-                if (port.privatePort && port.type && port.publicPort) {
-                    addPort(port.privatePort, port.type, port.publicPort);
-                } else if (port.typeAction === 'edit' && port.privatePort && port.type) {
-                    exposedPorts[`${port.privatePort}/${port.type}`] = {};
-                }
-            }
-        }
-
-        const envMap = new Map(
-            (containerInfo.Config.Env || []).map((e) => {
-                const [key, ...valueParts] = e.split('=');
-                return [key, valueParts.join('=')];
-            }),
-        );
-
-        for (const envVar of envVars) {
-            if (envVar.typeAction === 'delete' && envVar.currentKey) {
-                envMap.delete(envVar.currentKey);
-            } else if (envVar.typeAction === 'edit') {
-                if (envVar.currentKey) envMap.delete(envVar.currentKey);
-                if (envVar.key && envVar.value !== undefined) {
-                    envMap.set(envVar.key, envVar.value);
-                }
-            } else if (envVar.typeAction === 'add' && envVar.key && envVar.value !== undefined) {
-                envMap.set(envVar.key, envVar.value);
-            }
-        }
-
-        const env = Array.from(envMap.entries()).map(([k, v]) => `${k}=${v}`);
-
-        const bindsSet = new Set(containerInfo.HostConfig.Binds || []);
-        const volumesConfig = { ...(containerInfo.Config.Volumes || {}) };
-
-        const getBindString = (hostPath: string, containerPath: string, readOnly: boolean) =>
-            `${hostPath}:${containerPath}${readOnly ? ':ro' : ''}`;
-
-        for (const volume of volumes) {
-            if (volume.typeAction === 'delete') {
-                if (volume.currentHostPath && volume.currentContainerPath) {
-                    let hostPath = volume.currentHostPath;
-                    const namedVolumeMatch = hostPath.match(NAMED_VOLUME_REGEX);
-                    if (namedVolumeMatch) {
-                        hostPath = namedVolumeMatch[1];
-                    }
-
-                    const bindWithSuffix = getBindString(
-                        hostPath,
-                        volume.currentContainerPath,
-                        volume.currentReadOnly || false,
-                    );
-                    const bindWithoutSuffix = `${hostPath}:${volume.currentContainerPath}`;
-                    const bindWithRW = `${hostPath}:${volume.currentContainerPath}:rw`;
-                    const bindWithRO = `${hostPath}:${volume.currentContainerPath}:ro`;
-
-                    bindsSet.delete(bindWithSuffix) ||
-                        bindsSet.delete(bindWithoutSuffix) ||
-                        bindsSet.delete(bindWithRW) ||
-                        bindsSet.delete(bindWithRO);
-
-                    delete volumesConfig[volume.currentContainerPath];
-                }
-            }
-            if (volume.typeAction === 'add') {
-                if (volume.hostPath && volume.containerPath) {
-                    let hostPath = volume.hostPath;
-                    const namedVolumeMatch = hostPath.match(NAMED_VOLUME_REGEX);
-                    if (namedVolumeMatch) {
-                        hostPath = namedVolumeMatch[1];
-                    }
-
-                    if (!namedVolumeMatch) {
-                        assertSafeBindPath(hostPath);
-                    }
-
-                    bindsSet.add(getBindString(hostPath, volume.containerPath, volume.readOnly || false));
-                    volumesConfig[volume.containerPath] = {};
-                }
-            }
-        }
-
-        const networksSet = new Set(Object.keys(containerInfo.NetworkSettings.Networks || {}));
-
-        for (const network of networks) {
-            if (network.typeAction === 'delete') {
-                if (network.currentName) networksSet.delete(network.currentName);
-            }
-            if (network.typeAction === 'add') {
-                if (network.name) networksSet.add(network.name);
-            }
-        }
-
-        const networksConfig = Object.fromEntries(Array.from(networksSet).map((name) => [name, {}]));
-
-        await container.remove();
-
-        const newContainer = await docker.createContainer({
-            name: containerInfo.Name.replace('/', ''),
-            Image: targetImage,
-            Hostname: containerInfo.Config.Hostname,
-            Env: env,
-            Cmd: containerInfo.Config.Cmd,
-            Entrypoint: containerInfo.Config.Entrypoint,
-            Volumes: volumesConfig,
-            WorkingDir: containerInfo.Config.WorkingDir,
-            User: containerInfo.Config.User,
-            Labels: containerInfo.Config.Labels,
-            ExposedPorts: exposedPorts,
-            HostConfig: {
-                ...containerInfo.HostConfig,
-                PortBindings: portBindings,
-                Binds: Array.from(bindsSet),
-            },
-            NetworkingConfig: {
-                EndpointsConfig: networksConfig,
-            },
-        });
-
-        await newContainer.start();
-        return { id: newContainer.id };
+        return recreateContainer(docker, payload);
     }),
 );
 
 app.post(
     '/migrate',
-    route(
-        { json: containerMigrateApiSchema },
-        async (c) => {
-            return migrateContainer(c.req.valid('json'));
-        },
-        { timeoutMs: MIGRATION_TIMEOUT_MS },
-    ),
+    route({ json: containerMigrateApiSchema }, async (c) => {
+        return startContainerMigration(c.req.valid('json'));
+    }),
 );
 
 app.post(

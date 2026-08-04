@@ -76,8 +76,9 @@ export function MoveContainerForm({ containerId, containerName }: MoveContainerF
                     if (!data) return;
 
                     closeDialog();
-                    toast.success(t('successTitle', { name: data.name }));
-                    data.warnings.forEach((warning) => toast.warning(warning));
+                    toast.info(t('startedTitle', { name: data.name }), {
+                        description: t('startedDescription'),
+                    });
                 },
             },
         },

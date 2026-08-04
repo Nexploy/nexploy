@@ -1,6 +1,9 @@
 import { docker } from '@/utils/dockerClient';
+import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { imagesStateManager } from '@/managers/list/imagesStateManager';
 import { ImageDeleteResponse, ImageDeleteResult } from '@workspace/typescript-interface/docker/docker.image';
+import { StartedTask, runAsTask } from '@/lib/taskRunner';
+import { RegistryAuth, pullWithProgress } from '@/utils/pullProgress';
 
 export async function deleteImages(imageIds: string[], force: boolean): Promise<ImageDeleteResponse> {
     const results = await Promise.all(
@@ -32,81 +35,91 @@ export async function deleteImages(imageIds: string[], force: boolean): Promise<
     return { deleted, skipped };
 }
 
-export async function pullImage(
-    imageName: string,
-    auth?: { username: string; password: string; serveraddress?: string },
-): Promise<{ imageName: string; imageId: string }> {
-    await new Promise((resolve, reject) => {
-        const options: Record<string, unknown> = {};
-        if (auth) options.authconfig = auth;
-        (docker.pull as any)(imageName, options, (err: any, stream: NodeJS.ReadableStream) => {
-            if (err) return reject(err);
-            docker.modem.followProgress(stream, (error: any, output: any) => {
-                if (error) return reject(error);
-                resolve(output);
-            });
-        });
-    });
+export function startImagePull(imageName: string, auth?: RegistryAuth): StartedTask {
+    const client = getCurrentDockerClient();
+    const environmentId = getCurrentEnvironmentId();
 
-    const inspect = await docker.getImage(imageName).inspect();
-    return { imageName, imageId: inspect.Id };
+    return runAsTask<{ imageName: string; imageId: string }>({
+        kind: 'image-pull',
+        subjectName: imageName,
+        stepKeys: ['pull'],
+        environmentId,
+        run: async ({ step, completeStep, setProgress }) => {
+            step('pull');
+            await pullWithProgress(client, imageName, auth, setProgress);
+            completeStep('pull');
+
+            const inspect = await client.getImage(imageName).inspect();
+            return { imageName, imageId: inspect.Id };
+        },
+        resultHref: (result) => `/docker/images/${encodeURIComponent(result.imageId)}`,
+    });
 }
 
-export async function mirrorImage(
+export function startImageMirror(
     sourceImage: string,
-    sourceAuth: Record<string, unknown> | undefined,
+    sourceAuth: RegistryAuth | undefined,
     targetName: string,
     targetAuth: Record<string, unknown>,
-): Promise<{ success: true; targetName: string }> {
+): StartedTask {
+    const client = getCurrentDockerClient();
+    const environmentId = getCurrentEnvironmentId();
     const sourceExistedBefore = !!imagesStateManager.getByName(sourceImage);
-
-    await new Promise((resolve, reject) => {
-        const pullOptions: Record<string, unknown> = {};
-        if (sourceAuth) pullOptions.authconfig = sourceAuth;
-        (docker.pull as any)(sourceImage, pullOptions, (err: any, stream: any) => {
-            if (err) return reject(err);
-            docker.modem.followProgress(stream, (error: any, output: any) => {
-                if (error) return reject(error);
-                resolve(output);
-            });
-        });
-    });
 
     const lastColon = targetName.lastIndexOf(':');
     const targetRepo = lastColon !== -1 ? targetName.slice(0, lastColon) : targetName;
     const targetTag = lastColon !== -1 ? targetName.slice(lastColon + 1) : 'latest';
-    await new Promise((resolve, reject) => {
-        docker.getImage(sourceImage).tag({ repo: targetRepo, tag: targetTag }, (err: any) => {
-            if (err) return reject(err);
-            resolve(null);
-        });
+
+    return runAsTask({
+        kind: 'image-mirror',
+        subjectName: `${sourceImage} → ${targetName}`,
+        stepKeys: ['pull', 'tag', 'push', 'cleanup'],
+        environmentId,
+        cancellable: false,
+        run: async ({ step, completeStep, setProgress, warn }) => {
+            step('pull');
+            await pullWithProgress(client, sourceImage, sourceAuth, (percent) => setProgress(percent / 2));
+            completeStep('pull');
+
+            step('tag');
+            await client.getImage(sourceImage).tag({ repo: targetRepo, tag: targetTag });
+            completeStep('tag');
+
+            step('push');
+            await new Promise<void>((resolve, reject) => {
+                (client.getImage(targetName).push as any)(
+                    { authconfig: targetAuth },
+                    (err: Error | null, stream: NodeJS.ReadableStream) => {
+                        if (err) return reject(err);
+                        client.modem.followProgress(
+                            stream,
+                            (progressErr: Error | null) => (progressErr ? reject(progressErr) : resolve()),
+                            (event: any) => {
+                                if (event.error) reject(new Error(event.error));
+                            },
+                        );
+                    },
+                );
+            });
+            setProgress(100);
+            completeStep('push');
+
+            step('cleanup');
+            try {
+                await client.getImage(targetName).remove();
+            } catch (err: any) {
+                warn(`Local tag "${targetName}" could not be removed: ${err.message}`);
+            }
+            if (!sourceExistedBefore) {
+                try {
+                    await client.getImage(sourceImage).remove();
+                } catch (err: any) {
+                    warn(`Pulled image "${sourceImage}" could not be removed: ${err.message}`);
+                }
+            }
+            completeStep('cleanup');
+
+            return { success: true as const, targetName };
+        },
     });
-
-    await new Promise((resolve, reject) => {
-        const taggedImage = docker.getImage(targetName);
-        (taggedImage.push as any)({ authconfig: targetAuth }, (err: any, stream: any) => {
-            if (err) return reject(err);
-            docker.modem.followProgress(
-                stream,
-                (error: any, output: any) => {
-                    if (error) return reject(error);
-                    resolve(output);
-                },
-                (event: any) => {
-                    if (event.error) reject(new Error(event.error));
-                },
-            );
-        });
-    });
-
-    try {
-        await docker.getImage(targetName).remove();
-    } catch {}
-    if (!sourceExistedBefore) {
-        try {
-            await docker.getImage(sourceImage).remove();
-        } catch {}
-    }
-
-    return { success: true, targetName };
 }

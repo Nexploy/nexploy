@@ -43,7 +43,9 @@
     "refetchLabel": "Re-fetch image",
     "refetchDescription": "Pull the image from the registry before recreating, even if it already exists locally.",
     "cancel": "Cancel",
-    "apply": "Apply"
+    "apply": "Apply",
+    "changeStarted": "Image change for \"{name}\" started",
+    "changeStartedDescription": "The container will be recreated. Follow its progress from the running actions menu."
   },
   "configuration": "Configuration",
   "popularImages": "Popular Images",
@@ -737,7 +739,9 @@
     "sortRelevance": "Relevance",
     "sourceLabel": "Source",
     "sourceAll": "All sources",
-    "sourceOfficial": "Official only"
+    "sourceOfficial": "Official only",
+    "pullStarted": "Pull of \"{name}\" started",
+    "pullStartedDescription": "Follow its progress from the running actions menu in the header."
   },
   "createNetworkPage": {
     "driver": "Driver",
@@ -950,8 +954,48 @@
       }
     },
     "noTargetEnvironment": "No other environment is configured. Add a second Docker environment to move containers.",
-    "successTitle": "\"{name}\" has been moved to the target environment.",
     "cancel": "Cancel",
-    "move": "Move"
+    "move": "Move",
+    "startedTitle": "Move of \"{name}\" started",
+    "startedDescription": "Follow its progress from the running actions menu in the header."
+  },
+  "tasks": {
+    "title": "Running actions",
+    "runningCount": "{count} action(s) in progress",
+    "clearFinished": "Clear",
+    "cancel": "Cancel",
+    "dismiss": "Dismiss",
+    "openResult": "Open the container",
+    "kinds": {
+      "container-migrate": "Moving {name}",
+      "container-recreate": "Recreating {name}",
+      "image-pull": "Pulling {name}",
+      "image-mirror": "Mirroring {name}"
+    },
+    "status": {
+      "running": "In progress",
+      "succeeded": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "steps": {
+      "image": "Transferring the image",
+      "networks": "Preparing the networks",
+      "create": "Creating the container",
+      "volumes": "Copying the volume data",
+      "start": "Starting the container",
+      "source": "Finalising the source container",
+      "pull": "Downloading the image",
+      "stop": "Stopping the container",
+      "recreate": "Recreating the container",
+      "tag": "Tagging the image",
+      "push": "Pushing to the registry",
+      "cleanup": "Cleaning up"
+    },
+    "toasts": {
+      "succeeded": "\"{name}\" has been moved to the target environment.",
+      "failed": "The move of \"{name}\" failed.",
+      "cancelled": "The move of \"{name}\" was cancelled."
+    }
   }
 }

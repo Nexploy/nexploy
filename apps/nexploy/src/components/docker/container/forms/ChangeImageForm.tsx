@@ -27,7 +27,7 @@ import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
 import { Info } from 'lucide-react';
 import useSWR from 'swr';
 import { useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { useImagesStore } from '@/stores/docker/useImagesStore';
 import { containerChangeImageSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
@@ -43,7 +43,6 @@ interface ChangeImageFormProps {
 
 export function ChangeImageForm({ containerId, currentImage }: ChangeImageFormProps) {
     const t = useTranslations('docker.changeImage');
-    const router = useRouter();
     const { closeDialog } = useConfirmationDialogStore();
 
     const { data: registries = [] } = useSWR<RegistryInfo[]>({ url: '/api/registries' }, fetcherApi);
@@ -77,8 +76,12 @@ export function ChangeImageForm({ containerId, currentImage }: ChangeImageFormPr
             },
             actionProps: {
                 onSuccess: ({ data }) => {
+                    if (!data) return;
+
                     closeDialog();
-                    if (data) router.replace(`/docker/containers/${data.id}`);
+                    toast.info(t('changeStarted', { name: data.name }), {
+                        description: t('changeStartedDescription'),
+                    });
                 },
             },
         },

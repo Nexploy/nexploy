@@ -43,7 +43,9 @@
     "refetchLabel": "Re-télécharger l'image",
     "refetchDescription": "Récupère l'image depuis le registre avant la recréation, même si elle existe déjà localement.",
     "cancel": "Annuler",
-    "apply": "Appliquer"
+    "apply": "Appliquer",
+    "changeStarted": "Changement d'image de « {name} » lancé",
+    "changeStartedDescription": "Le conteneur va être recréé. Suivez la progression depuis le menu des actions en cours."
   },
   "configuration": "Configuration",
   "popularImages": "Images populaires",
@@ -737,7 +739,9 @@
     "sortRelevance": "Pertinence",
     "sourceLabel": "Source",
     "sourceAll": "Toutes les sources",
-    "sourceOfficial": "Officielles uniquement"
+    "sourceOfficial": "Officielles uniquement",
+    "pullStarted": "Téléchargement de « {name} » lancé",
+    "pullStartedDescription": "Suivez sa progression depuis le menu des actions en cours dans le header."
   },
   "createNetworkPage": {
     "driver": "Driver",
@@ -950,8 +954,48 @@
       }
     },
     "noTargetEnvironment": "Aucun autre environnement n'est configuré. Ajoutez un second environnement Docker pour déplacer des conteneurs.",
-    "successTitle": "« {name} » a été déplacé vers l'environnement cible.",
     "cancel": "Annuler",
-    "move": "Déplacer"
+    "move": "Déplacer",
+    "startedTitle": "Déplacement de « {name} » lancé",
+    "startedDescription": "Suivez sa progression depuis le menu des actions en cours dans le header."
+  },
+  "tasks": {
+    "title": "Actions en cours",
+    "runningCount": "{count} action(s) en cours",
+    "clearFinished": "Effacer",
+    "cancel": "Annuler",
+    "dismiss": "Masquer",
+    "openResult": "Ouvrir le conteneur",
+    "kinds": {
+      "container-migrate": "Déplacement de {name}",
+      "container-recreate": "Recréation de {name}",
+      "image-pull": "Téléchargement de {name}",
+      "image-mirror": "Mise en miroir de {name}"
+    },
+    "status": {
+      "running": "En cours",
+      "succeeded": "Terminé",
+      "failed": "Échec",
+      "cancelled": "Annulé"
+    },
+    "steps": {
+      "image": "Transfert de l'image",
+      "networks": "Préparation des réseaux",
+      "create": "Création du conteneur",
+      "volumes": "Copie des données des volumes",
+      "start": "Démarrage du conteneur",
+      "source": "Finalisation du conteneur source",
+      "pull": "Téléchargement de l'image",
+      "stop": "Arrêt du conteneur",
+      "recreate": "Recréation du conteneur",
+      "tag": "Étiquetage de l'image",
+      "push": "Envoi vers le registry",
+      "cleanup": "Nettoyage"
+    },
+    "toasts": {
+      "succeeded": "« {name} » a été déplacé vers l'environnement cible.",
+      "failed": "Le déplacement de « {name} » a échoué.",
+      "cancelled": "Le déplacement de « {name} » a été annulé."
+    }
   }
 }

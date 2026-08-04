@@ -194,7 +194,8 @@
     "selectRegistry": "Sélectionner un registre",
     "mirror": "Miroir",
     "mirrorSuccess": "Image dupliquée vers {target}",
-    "mirrorFailed": "Échec du miroir"
+    "mirrorFailed": "Échec du miroir",
+    "mirrorStarted": "Mise en miroir vers {target} lancée. Suivez la progression depuis le menu des actions en cours."
   },
   "errors": {
     "cannotChangeOwnRole": "Vous ne pouvez pas modifier votre propre rôle",
