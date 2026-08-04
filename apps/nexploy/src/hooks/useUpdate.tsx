@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
+import useSWR from 'swr';
 import { useAction } from 'next-safe-action/hooks';
 import { useTranslations } from 'next-intl';
+import { ExternalLink, FileText } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import type { ActiveBuildInfo } from '@workspace/typescript-interface/stores/updateStore';
@@ -34,6 +36,13 @@ export function useUpdate({ enabled = true, refreshInterval }: UseUpdateOptions 
 
     const { openDialog, closeDialog } = useConfirmationDialogStore();
 
+    const updateAvailable = version?.updateAvailable === true;
+
+    const { data: activeBuilds } = useSWR<{ builds: ActiveBuildInfo[] }>(
+        enabled && updateAvailable ? { url: '/api/admin/active-builds', disableToast: true } : null,
+        fetcherApi,
+    );
+
     const { execute: upgrade } = useAction(triggerUpgradeAction, {
         onExecute: () => setUpgrading(true),
         onSettled: () => {
@@ -53,22 +62,36 @@ export function useUpdate({ enabled = true, refreshInterval }: UseUpdateOptions 
         return () => clearInterval(timer);
     }, [enabled, refreshInterval, checkForUpdate, fetchVersion]);
 
-    const openUpgradeDialog = async (targetVersion: string) => {
-        const activeBuilds = await fetcherApi<{ builds: ActiveBuildInfo[] }>({
-            url: '/api/admin/active-builds',
-            disableToast: true,
-        }).catch(() => ({ builds: [] }));
+    const openUpgradeDialog = async () => {
+        if (!version) return;
+
+        const targetVersion = version.latest;
+        const patchNotesUrl = version.releaseUrl ?? version.releasesUrl;
+
+        const builds = activeBuilds?.builds ?? [];
 
         openDialog({
             title: t('upgradeConfirmTitle'),
             description: t('upgradeWarning'),
             content: (
                 <>
-                    {activeBuilds.builds.length > 0 && (
+                    {patchNotesUrl && (
+                        <a
+                            href={patchNotesUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1.5 text-sm underline underline-offset-4 transition-colors"
+                        >
+                            <FileText className="size-3.5" />
+                            {t('upgradePatchNotes', { version: targetVersion })}
+                            <ExternalLink className="size-3" />
+                        </a>
+                    )}
+                    {builds.length > 0 && (
                         <div className="border-destructive/30 bg-destructive/10 mb-4 rounded-lg border p-3 text-sm">
                             <p className="text-destructive font-medium">{t('upgradeActiveBuildsWarning')}</p>
                             <ul className="text-destructive/90 mt-1.5 list-disc pl-4">
-                                {activeBuilds.builds.map((build) => (
+                                {builds.map((build) => (
                                     <li key={build.id}>{build.repositoryName}</li>
                                 ))}
                             </ul>
@@ -91,8 +114,6 @@ export function useUpdate({ enabled = true, refreshInterval }: UseUpdateOptions 
             ),
         });
     };
-
-    const updateAvailable = version?.updateAvailable === true;
 
     return {
         version,

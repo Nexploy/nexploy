@@ -20,6 +20,7 @@ import { useVolumesStore } from '@/stores/docker/useVolumesStore.ts';
 import { useNetworkStore } from '../stores/docker/useNetworkStore';
 import { useSwarmServiceStore } from '../stores/docker/useSwarmServiceStore';
 import { useSwarmNodeStore } from '../stores/docker/useSwarmNodeStore';
+import { useTasksStore } from '@/stores/useTasksStore';
 
 type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
 
@@ -42,6 +43,7 @@ type SSEParams = {
     swarm?: ExtractConnectParams<ReturnType<typeof useSwarmStore.getState>['connect']>;
     traefik?: ExtractConnectParams<ReturnType<typeof useRequestsStore.getState>['connect']>;
     monitoring?: ExtractConnectParams<ReturnType<typeof useMonitoringStore.getState>['connect']>;
+    tasks?: ExtractConnectParams<ReturnType<typeof useTasksStore.getState>['connect']>;
 };
 
 interface SSEProviderProps extends PropsWithChildren {
@@ -114,6 +116,9 @@ export function SSEProvider({
     const monitoringConnect = useMonitoringStore((s) => s.connect);
     const monitoringDisconnect = useMonitoringStore((s) => s.disconnect);
 
+    const tasksConnect = useTasksStore((s) => s.connect);
+    const tasksDisconnect = useTasksStore((s) => s.disconnect);
+
     useEffect(() => {
         const connectFns: Record<SSEChannel, (...args: any[]) => void> = {
             containers: containersConnect,
@@ -134,6 +139,7 @@ export function SSEProvider({
             swarm: swarmConnect,
             traefik: traefikConnect,
             monitoring: monitoringConnect,
+            tasks: tasksConnect,
         };
 
         const disconnectFns: Record<SSEChannel, (...args: any[]) => void> = {
@@ -155,6 +161,7 @@ export function SSEProvider({
             swarm: swarmDisconnect,
             traefik: traefikDisconnect,
             monitoring: monitoringDisconnect,
+            tasks: tasksDisconnect,
         };
 
         memoizedConnections.forEach((conn) => {

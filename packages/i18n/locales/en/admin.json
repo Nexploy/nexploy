@@ -44,6 +44,7 @@
     "upgradeCheckFailed": "Failed to check for updates",
     "upgradeCheckButton": "Check for updates",
     "upgradeConfirmTitle": "Upgrade Nexploy?",
+    "upgradePatchNotes": "Read the patch notes for {version}",
     "upgradeActiveBuildsWarning": "The following builds are currently running and will be cancelled if you upgrade now:"
   },
   "users": "Users",
@@ -193,7 +194,8 @@
     "selectRegistry": "Select a registry",
     "mirror": "Mirror",
     "mirrorSuccess": "Image mirrored to {target}",
-    "mirrorFailed": "Mirror failed"
+    "mirrorFailed": "Mirror failed",
+    "mirrorStarted": "Mirroring to {target} started. Follow its progress from the running actions menu."
   },
   "errors": {
     "cannotChangeOwnRole": "You cannot change your own role",

@@ -7,7 +7,7 @@ import {
     networkDeleteSchema,
     networkIdParamSchema,
 } from '@workspace/schemas-zod/docker/network/networkAction.schema';
-import { filterNexployNetworks } from '@workspace/shared/nexployFilter';
+import { filterNexployNetworks } from '@nexploy/shared/nexployFilter';
 import { deleteNetworks } from '@/services/networkService';
 
 const app = new Hono();

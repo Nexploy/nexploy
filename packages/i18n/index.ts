@@ -30,6 +30,38 @@ import frRequests from './locales/fr/requests.json';
 import frErrors from './locales/fr/errors.json';
 import frOrganization from './locales/fr/organization.json';
 
+import itCommon from './locales/it/common.json';
+import itAuth from './locales/it/auth.json';
+import itNavigation from './locales/it/navigation.json';
+import itSwarm from './locales/it/swarm.json';
+import itDocker from './locales/it/docker.json';
+import itAdmin from './locales/it/admin.json';
+import itIntegrations from './locales/it/integrations.json';
+import itNotifications from './locales/it/notifications.json';
+import itRepository from './locales/it/repository.json';
+import itAccount from './locales/it/account.json';
+import itMonitoring from './locales/it/monitoring.json';
+import itAi from './locales/it/ai.json';
+import itRequests from './locales/it/requests.json';
+import itErrors from './locales/it/errors.json';
+import itOrganization from './locales/it/organization.json';
+
+import esCommon from './locales/es/common.json';
+import esAuth from './locales/es/auth.json';
+import esNavigation from './locales/es/navigation.json';
+import esSwarm from './locales/es/swarm.json';
+import esDocker from './locales/es/docker.json';
+import esAdmin from './locales/es/admin.json';
+import esIntegrations from './locales/es/integrations.json';
+import esNotifications from './locales/es/notifications.json';
+import esRepository from './locales/es/repository.json';
+import esAccount from './locales/es/account.json';
+import esMonitoring from './locales/es/monitoring.json';
+import esAi from './locales/es/ai.json';
+import esRequests from './locales/es/requests.json';
+import esErrors from './locales/es/errors.json';
+import esOrganization from './locales/es/organization.json';
+
 export const locales = {
     en: {
         common: enCommon,
@@ -65,9 +97,43 @@ export const locales = {
         errors: frErrors,
         organization: frOrganization,
     },
+    it: {
+        common: itCommon,
+        auth: itAuth,
+        navigation: itNavigation,
+        swarm: itSwarm,
+        docker: itDocker,
+        admin: itAdmin,
+        integrations: itIntegrations,
+        notifications: itNotifications,
+        repository: itRepository,
+        account: itAccount,
+        monitoring: itMonitoring,
+        ai: itAi,
+        requests: itRequests,
+        errors: itErrors,
+        organization: itOrganization,
+    },
+    es: {
+        common: esCommon,
+        auth: esAuth,
+        navigation: esNavigation,
+        swarm: esSwarm,
+        docker: esDocker,
+        admin: esAdmin,
+        integrations: esIntegrations,
+        notifications: esNotifications,
+        repository: esRepository,
+        account: esAccount,
+        monitoring: esMonitoring,
+        ai: esAi,
+        requests: esRequests,
+        errors: esErrors,
+        organization: esOrganization,
+    },
 };
 
-export const appLocales = ['en', 'fr'] as const;
+export const appLocales = ['en', 'fr', 'it', 'es'] as const;
 export type AppLocale = (typeof appLocales)[number];
 export const defaultLocale: AppLocale = 'en';
 

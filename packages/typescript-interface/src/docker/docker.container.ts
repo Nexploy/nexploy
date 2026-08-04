@@ -163,3 +163,15 @@ export interface ContainerStateChanges {
     networkPorts?: boolean;
     mounts?: boolean;
 }
+
+export type ContainerImageTransfer = 'present' | 'pulled' | 'streamed';
+
+export interface ContainerMigrationResult {
+    id: string;
+    name: string;
+    targetEnvironmentId: string;
+    imageTransfer: ContainerImageTransfer;
+    started: boolean;
+    migratedVolumes: string[];
+    warnings: string[];
+}

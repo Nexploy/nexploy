@@ -24,7 +24,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { NETWORK_DRIVERS, NETWORK_SCOPES } from '@workspace/shared/dockerConstants';
+import { NETWORK_DRIVERS, NETWORK_SCOPES } from '@nexploy/shared/dockerConstants';
 
 export function NetworkBasicConfig() {
     const t = useTranslations('docker.createNetworkPage');

@@ -2,6 +2,7 @@ export const TRAEFIK_CONTAINER_NAME = process.env.TRAEFIK_CONTAINER_NAME ?? 'nex
 export const TRAEFIK_NETWORK_NAME = process.env.TRAEFIK_NETWORK_NAME ?? 'nexploy_traefik_network';
 export const NEXPLOY_APP_CONTAINER_NAME = process.env.NEXPLOY_APP_CONTAINER_NAME ?? 'nexploy_app';
 export const DOCKER_API_CONTAINER_NAME = process.env.DOCKER_API_CONTAINER_NAME ?? 'nexploy_docker_api';
+export const UPGRADER_CONTAINER_NAME = process.env.UPGRADER_CONTAINER_NAME ?? 'nexploy_upgrader';
 export const TRAEFIK_STATIC_CONFIG_PATH = process.env.TRAEFIK_STATIC_CONFIG_PATH ?? '/etc/nexploy/traefik/traefik.yml';
 export const DOCKER_SOCKET_PATH = process.env.DOCKER_SOCKET ?? '/var/run/docker.sock';
 export const NEXPLOY_IMAGE_REPOSITORY = process.env.NEXPLOY_IMAGE_REPOSITORY ?? 'nexploy/nexploy';

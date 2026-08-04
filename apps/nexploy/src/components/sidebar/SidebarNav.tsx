@@ -90,7 +90,7 @@ const groups: PermissionedSidebarNavGroup[] = [
                     {
                         titleKey: 'registry',
                         icon: Warehouse,
-                        href: '/registry',
+                        href: '/docker/registry',
                         permission: { resource: 'registry', action: 'read' },
                     },
                 ],

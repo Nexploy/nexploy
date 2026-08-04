@@ -22,7 +22,10 @@
     "notFoundDescription": "This container no longer exists or has been removed.",
     "backToContainers": "Back to containers",
     "swarmManagedBadge": "Managed by Swarm",
-    "swarmManagedDescription": "This container is managed by Docker Swarm. To modify it, use the Swarm services interface."
+    "swarmManagedDescription": "This container is managed by Docker Swarm. To modify it, use the Swarm services interface.",
+    "moveEnvironment": "Move",
+    "moveEnvironmentTitle": "Move to another environment",
+    "moveEnvironmentDescription": "Recreate this container on another Docker environment with the same configuration."
   },
   "renameContainer": {
     "nameLabel": "Container Name",
@@ -40,7 +43,9 @@
     "refetchLabel": "Re-fetch image",
     "refetchDescription": "Pull the image from the registry before recreating, even if it already exists locally.",
     "cancel": "Cancel",
-    "apply": "Apply"
+    "apply": "Apply",
+    "changeStarted": "Image change for \"{name}\" started",
+    "changeStartedDescription": "The container will be recreated. Follow its progress from the running actions menu."
   },
   "configuration": "Configuration",
   "popularImages": "Popular Images",
@@ -487,6 +492,7 @@
     "customNetwork": "Custom network",
     "stacks": "Stacks",
     "noStacks": "No Docker Stacks",
+    "noStacksMatchSearch": "No stacks match your search.",
     "noStacksDescription": "No container stacks found. Deploy a Docker Compose stack to see it here.",
     "removeImages": "Remove Images",
     "confirmRemoveImages": "Are you sure you want to remove {count} image(s)?",
@@ -733,7 +739,9 @@
     "sortRelevance": "Relevance",
     "sourceLabel": "Source",
     "sourceAll": "All sources",
-    "sourceOfficial": "Official only"
+    "sourceOfficial": "Official only",
+    "pullStarted": "Pull of \"{name}\" started",
+    "pullStartedDescription": "Follow its progress from the running actions menu in the header."
   },
   "createNetworkPage": {
     "driver": "Driver",
@@ -916,6 +924,78 @@
       "containers": "Stopped containers",
       "volumes": "Unused volumes",
       "build": "Build cache"
+    }
+  },
+  "moveContainer": {
+    "moveWarning": "\"{name}\" will be recreated on the target environment with the same image, configuration, ports and networks.",
+    "targetLabel": "Target environment",
+    "targetPlaceholder": "Select an environment",
+    "targetDescription": "The Docker environment the container will be recreated on.",
+    "registryLabel": "Registry",
+    "registryNone": "Public (no authentication)",
+    "registryDescription": "Used to pull the image on the target environment. If the image is unavailable there, it is streamed directly from the source environment.",
+    "volumeDataLabel": "Migrate volume data",
+    "volumeDataDescription": "Copy the content of the named volumes to the target environment. Can take a while on large volumes.",
+    "startLabel": "Start after the move",
+    "startDescription": "Start the container as soon as it has been created on the target environment.",
+    "sourceActionLabel": "Source container",
+    "sourceAction": {
+      "stop": {
+        "label": "Stop and keep",
+        "description": "The container stays on the source environment, stopped."
+      },
+      "remove": {
+        "label": "Remove",
+        "description": "The container is deleted from the source environment once the move succeeds."
+      },
+      "keep": {
+        "label": "Leave running",
+        "description": "The container keeps running on the source environment."
+      }
+    },
+    "noTargetEnvironment": "No other environment is configured. Add a second Docker environment to move containers.",
+    "cancel": "Cancel",
+    "move": "Move",
+    "startedTitle": "Move of \"{name}\" started",
+    "startedDescription": "Follow its progress from the running actions menu in the header."
+  },
+  "tasks": {
+    "title": "Running actions",
+    "runningCount": "{count} action(s) in progress",
+    "clearFinished": "Clear",
+    "cancel": "Cancel",
+    "dismiss": "Dismiss",
+    "openResult": "Open the container",
+    "kinds": {
+      "container-migrate": "Moving {name}",
+      "container-recreate": "Recreating {name}",
+      "image-pull": "Pulling {name}",
+      "image-mirror": "Mirroring {name}"
+    },
+    "status": {
+      "running": "In progress",
+      "succeeded": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "steps": {
+      "image": "Transferring the image",
+      "networks": "Preparing the networks",
+      "create": "Creating the container",
+      "volumes": "Copying the volume data",
+      "start": "Starting the container",
+      "source": "Finalising the source container",
+      "pull": "Downloading the image",
+      "stop": "Stopping the container",
+      "recreate": "Recreating the container",
+      "tag": "Tagging the image",
+      "push": "Pushing to the registry",
+      "cleanup": "Cleaning up"
+    },
+    "toasts": {
+      "succeeded": "\"{name}\" has been moved to the target environment.",
+      "failed": "The move of \"{name}\" failed.",
+      "cancelled": "The move of \"{name}\" was cancelled."
     }
   }
 }

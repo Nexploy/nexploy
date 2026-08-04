@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useAction } from 'next-safe-action/hooks';
@@ -10,6 +11,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { formatBytes } from '@/utils/formatBytes';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { runCleanupAction } from '@/actions/admin/cleanup/runCleanup.action';
 import type { CleanupResult, DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
 import type { CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
@@ -26,28 +28,41 @@ const ICONS = {
 export function DiskUsageCard() {
     const t = useTranslations('docker.diskUsage');
     const tCommon = useTranslations('common');
+    const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
 
     const {
         data: usage,
         isLoading,
         isValidating: refreshing,
         mutate,
-    } = useSWR<DiskUsage | null>({ url: '/api/system/disk-usage', disableToast: true }, fetcherApi);
+    } = useSWR<DiskUsage | null>(
+        {
+            url: selectedEnvironmentId
+                ? `/api/system/disk-usage?environment=${selectedEnvironmentId}`
+                : '/api/system/disk-usage',
+            disableToast: true,
+        },
+        fetcherApi,
+    );
 
     const { executeAsync } = useAction(runCleanupAction);
     const { openAlertDialog, closeAlertDialog } = useAlertConfirmationDialogStore();
+    const [cleaningTarget, setCleaningTarget] = useState<CleanupTarget | null>(null);
 
     const refresh = () => mutate();
 
     const runClean = async (target: CleanupTarget) => {
         try {
             closeAlertDialog();
+            setCleaningTarget(target);
             const result = await executeAsync({ target });
             const reclaimed = (result?.data as CleanupResult | undefined)?.reclaimedSpace ?? 0;
             toast.success(t('cleanupDone', { space: formatBytes(reclaimed) }));
             await refresh();
         } catch {
             toast.error(t('cleanupFailed'));
+        } finally {
+            setCleaningTarget(null);
         }
     };
 
@@ -131,8 +146,13 @@ export function DiskUsageCard() {
                                     {t('ofTotal', { total: formatBytes(usage.totalSize) })}
                                 </span>
                             </div>
-                            <Button variant="destructive" onClick={() => handleClean('all')}>
-                                <Trash2 />
+                            <Button
+                                variant="destructive"
+                                icon={Trash2}
+                                isLoading={cleaningTarget === 'all'}
+                                disabled={cleaningTarget !== null}
+                                onClick={() => handleClean('all')}
+                            >
                                 {t('cleanAll')}
                             </Button>
                         </div>
@@ -161,8 +181,14 @@ export function DiskUsageCard() {
                                                 </span>
                                             </div>
                                         </div>
-                                        <Button variant="outline" size="sm" onClick={() => handleClean(row.key)}>
-                                            <Trash2 />
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            icon={Trash2}
+                                            isLoading={cleaningTarget === row.key}
+                                            disabled={cleaningTarget !== null}
+                                            onClick={() => handleClean(row.key)}
+                                        >
                                             {t('clean')}
                                         </Button>
                                     </div>

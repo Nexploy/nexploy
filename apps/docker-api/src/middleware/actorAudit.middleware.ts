@@ -1,6 +1,6 @@
 import { Context, Next } from 'hono';
 import { logger } from '@/utils/logger';
-import { describeActor } from '@workspace/shared/actor';
+import { describeActor } from '@nexploy/shared/actor';
 import { getActor } from '@/middleware/auth.middleware';
 
 const AUDITED_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);

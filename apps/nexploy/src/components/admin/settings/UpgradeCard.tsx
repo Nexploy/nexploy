@@ -71,7 +71,7 @@ export function UpgradeCard() {
                                     disabled={isUpgrading}
                                     isLoading={isUpgrading}
                                     className="self-end"
-                                    onClick={() => openUpgradeDialog(version.latest)}
+                                    onClick={() => openUpgradeDialog()}
                                 >
                                     {t('upgradeButton', { version: version.latest })}
                                 </Button>

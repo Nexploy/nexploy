@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { isBuiltinNetwork } from '@workspace/shared/nexployFilter';
+import { isBuiltinNetwork } from '@nexploy/shared/nexployFilter';
 
 export function CardInfoNetworks() {
     const t = useTranslations('docker');

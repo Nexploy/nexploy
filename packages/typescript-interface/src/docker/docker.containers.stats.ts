@@ -4,6 +4,7 @@ import { ContainerStats } from './docker.container.stats';
 export interface ContainerStatsSample extends ContainerStats {
     name: string;
     image: string;
+    imageId?: string;
     state: ContainerState;
     stack?: string;
     networkRxRate: number;

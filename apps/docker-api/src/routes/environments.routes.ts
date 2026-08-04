@@ -5,7 +5,7 @@ import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import { environmentIdSchema, environmentSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
 import { route } from '@/utils/route';
 import { createDockerClient } from '@/utils/dockerClient';
-import { HttpError } from '@workspace/shared/http-error';
+import { HttpError } from '@nexploy/shared/http-error';
 
 const app = new Hono();
 

@@ -6,12 +6,15 @@ import { useContainersStore } from '@/stores/docker/useContainersStore';
 import { useImagesStore } from '@/stores/docker/useImagesStore';
 import { useVolumesStore } from '@/stores/docker/useVolumesStore';
 import { useNetworksStore } from '@/stores/docker/useNetworksStore';
+import { useContainersStatsStore } from '@/stores/docker/useContainersStatsStore';
 
 const resetDockerStores = () => {
     const stores = [useDockerStore, useContainersStore, useImagesStore, useVolumesStore, useNetworksStore];
 
     stores.forEach((store) => store.getState().reset());
     stores.forEach((store) => store.getState().connect());
+
+    useContainersStatsStore.getState().reset();
 };
 
 export interface EnvironmentState {

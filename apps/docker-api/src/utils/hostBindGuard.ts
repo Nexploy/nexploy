@@ -1,4 +1,4 @@
-import { HttpError } from '@workspace/shared/http-error';
+import { HttpError } from '@nexploy/shared/http-error';
 
 const DENIED_HOST_PATHS = ['/var/run/docker.sock', '/var/lib/docker', '/etc', '/root', '/boot', '/proc', '/sys'];
 

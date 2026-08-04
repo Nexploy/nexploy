@@ -407,14 +407,17 @@ maintenance page shown on the wrong entrypoint).
 | `TRAEFIK_NETWORK_NAME` | `nexploy_traefik_network` | Edge network shared with Traefik |
 | `TRAEFIK_STATIC_CONFIG_PATH` | `/etc/nexploy/traefik/traefik.yml` | Path to Traefik's static config (read to detect available entrypoints) |
 | `NEXPLOY_APP_CONTAINER_NAME` | `nexploy_app` | Container recreated on every app upgrade |
-| `DOCKER_API_CONTAINER_NAME` | `nexploy_docker_api` | docker-api's own container name, used by its self-upgrade helper |
+| `DOCKER_API_CONTAINER_NAME` | `nexploy_docker_api` | docker-api's own container name, recreated by the upgrader on every upgrade |
+| `UPGRADER_CONTAINER_NAME` | `nexploy_upgrader` | Helper container that recreates both `nexploy_app` and `nexploy_docker_api` during an upgrade |
 | `NEXPLOY_IMAGE_REPOSITORY` | `nexploy/nexploy` | Image repository pulled when upgrading the app |
 | `DOCKER_API_IMAGE_REPOSITORY` | `nexploy/docker-api` | Image repository pulled when upgrading docker-api |
 | `NEXPLOY_GITHUB_REPO` | `Nexploy/nexploy` | Repository checked for the latest available release/version |
 | `NEXPLOY_APP_NETWORK_ALIAS` | `nexploy` | Network alias re-applied to `nexploy_app` on every recreation — lets docker-api resolve it as `http://nexploy:3000` |
 | `DOCKER_API_NETWORK_ALIAS` | `docker-api` | Network alias re-applied to `nexploy_docker_api` on every recreation — lets the app resolve it as `http://docker-api:3300` |
-| `SELF_UPGRADE_TARGET_IMAGE` | *(unset)* | Set only on the ephemeral `nexploy_upgrader` helper container — never set manually |
-| `SELF_UPGRADE_CONTAINER_NAME` | *(unset)* | Set only on the ephemeral `nexploy_upgrader` helper container — never set manually |
+| `SELF_UPGRADE_TARGET_IMAGE` | *(unset)* | docker-api image the upgrader recreates `nexploy_docker_api` with. Set only on the `nexploy_upgrader` container — never set manually |
+| `SELF_UPGRADE_CONTAINER_NAME` | *(unset)* | docker-api container the upgrader recreates. Set only on the `nexploy_upgrader` container — never set manually |
+| `SELF_UPGRADE_APP_TARGET_IMAGE` | *(unset)* | App image the upgrader recreates `nexploy_app` with. Set only on the `nexploy_upgrader` container — never set manually |
+| `SELF_UPGRADE_APP_CONTAINER_NAME` | *(unset)* | App container the upgrader recreates. Set only on the `nexploy_upgrader` container — never set manually |
 
 ### `nexploy` app
 

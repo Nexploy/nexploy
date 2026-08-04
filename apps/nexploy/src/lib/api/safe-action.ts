@@ -9,7 +9,7 @@ import { hasOrgPermission, type OrgPermissionResource } from '@/lib/auth/orgPerm
 import { isOrgScopedResource, type OrgScopedResource } from '@/lib/auth/orgScopedResources';
 import { getCallerOrgRole, HOST_SCOPED, type OrgScopeResolver } from '@/lib/auth/resolveOrgContext';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { isNexployInfrastructureNetworkName } from '@workspace/shared/nexployFilter';
+import { isNexployInfrastructureNetworkName } from '@nexploy/shared/nexployFilter';
 
 export const actionServer = createSafeActionClient({
     handleServerError(error) {

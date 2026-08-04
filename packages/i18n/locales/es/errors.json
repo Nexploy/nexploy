@@ -1,0 +1,237 @@
+{
+  "repository": {
+    "createFailed": "No se ha podido crear el repositorio",
+    "getFailed": "No se ha podido obtener el repositorio",
+    "getWithEnvFailed": "No se ha podido obtener el repositorio con sus variables de entorno",
+    "getBuildLogsFailed": "No se han podido obtener los logs de build del repositorio",
+    "getActiveBuildsFailed": "No se han podido obtener las builds activas",
+    "notFound": "Repositorio no encontrado",
+    "notAuthorizedDelete": "El usuario no está autorizado a eliminar este repositorio",
+    "confirmationFailed": "Confirmación fallida: se esperaba \"{name}\"",
+    "deleteFailed": "No se ha podido eliminar el repositorio",
+    "noDeploymentStage": "No se ha encontrado ninguna fase de despliegue para este repositorio",
+    "updateEnvFailed": "No se han podido actualizar las variables de entorno",
+    "fetchWebhookStatusFailed": "No se ha podido obtener el estado del webhook del repositorio",
+    "notAuthorizedRelink": "El usuario no está autorizado a revincular este repositorio",
+    "relinkFailed": "No se ha podido revincular la cuenta Git",
+    "alreadyInOrganization": "El repositorio ya está en esta organización",
+    "alreadyExistsInTargetOrganization": "Este repositorio ya se ha añadido a la organización de destino",
+    "moveFailed": "No se ha podido mover el repositorio a la organización",
+    "workDirNotConfigured": "DEPLOYER_WORK_DIR no está configurado"
+  },
+  "pipeline": {
+    "getStatusFailed": "No se ha podido obtener el estado de la pipeline de build",
+    "getConfigFailed": "No se ha podido obtener la configuración de la pipeline",
+    "saveConfigFailed": "No se ha podido guardar la configuración de la pipeline",
+    "unknownNodeTypes": "Tipos de nodo de pipeline desconocidos: {types}",
+    "configNotFound": "Configuración de pipeline no encontrada"
+  },
+  "dockerHub": {
+    "searchFailed": "La búsqueda en Docker Hub ha fallado con estado {status}"
+  },
+  "aiConfig": {
+    "getKeyFailed": "No se ha podido obtener la clave API del proveedor",
+    "upsertKeyFailed": "No se ha podido guardar la clave API del proveedor",
+    "deleteKeyFailed": "No se ha podido eliminar la clave API del proveedor",
+    "getProvidersFailed": "No se han podido obtener los proveedores configurados",
+    "getKeyStatusFailed": "No se ha podido obtener el estado de las claves de los proveedores"
+  },
+  "bucketStorage": {
+    "getAccountsFailed": "No se han podido obtener las cuentas de almacenamiento en bucket",
+    "saveAccountFailed": "No se ha podido guardar la cuenta de almacenamiento en bucket",
+    "deleteAccountFailed": "No se ha podido eliminar la cuenta de almacenamiento en bucket",
+    "accountNotFound": "Cuenta de almacenamiento en bucket no encontrada",
+    "retrieveCredentialsFailed": "No se han podido recuperar las credenciales del almacenamiento en bucket"
+  },
+  "domain": {
+    "originNotFound": "Dominio original no encontrado para el ID: {id}",
+    "createDnsFailed": "No se ha podido crear el DNS para {host}: {error}",
+    "updateDnsFailed": "No se ha podido actualizar el DNS para {host}: {error}",
+    "notFound": "Dominio no encontrado"
+  },
+  "user": {
+    "getUsersFailed": "No se han podido obtener los usuarios"
+  },
+  "cleanupSettings": {
+    "getFailed": "No se han podido obtener los ajustes de limpieza",
+    "updateFailed": "No se han podido actualizar los ajustes de limpieza",
+    "markRanFailed": "No se ha podido marcar la limpieza como ejecutada"
+  },
+  "sslCertificate": {
+    "invalidCertificate": "Certificado no válido: no es un certificado PEM válido",
+    "invalidPrivateKey": "Clave privada no válida: no es una clave privada PEM válida",
+    "keyMismatch": "La clave privada no coincide con el certificado",
+    "createLetsEncryptFailed": "No se ha podido crear el certificado LetsEncrypt",
+    "writeFilesFailed": "No se han podido escribir los archivos del certificado para Traefik",
+    "fetchFailed": "No se han podido obtener los certificados SSL"
+  },
+  "cloudflare": {
+    "saveCredentialFailed": "Error de Cloudflare al guardar la credencial",
+    "deleteCredentialFailed": "Error de Cloudflare al eliminar la credencial",
+    "fetchAccountsFailed": "Error de Cloudflare al obtener las cuentas",
+    "credentialNotFound": "Credencial de Cloudflare no encontrada",
+    "getCredentialByIdFailed": "Error de Cloudflare al obtener la credencial por ID",
+    "listZonesFailed": "Error de Cloudflare al listar las zonas",
+    "createDnsFailed": "Error de Cloudflare al crear el registro DNS",
+    "deleteDnsFailed": "Error de Cloudflare al eliminar el registro DNS",
+    "updateDnsFailed": "Error de Cloudflare al actualizar el registro DNS",
+    "getServerIpFailed": "No se ha podido obtener la IP del servidor"
+  },
+  "backupSchedule": {
+    "getForVolumeFailed": "No se han podido obtener las programaciones de copia de seguridad del volumen",
+    "getForVolumesFailed": "No se han podido obtener las programaciones de copia de seguridad de los volúmenes",
+    "createFailed": "No se ha podido crear la programación de copia de seguridad",
+    "deleteFailed": "No se ha podido eliminar la programación de copia de seguridad",
+    "deleteForVolumeFailed": "No se han podido eliminar las programaciones de copia de seguridad del volumen",
+    "markRanFailed": "No se ha podido marcar la programación como ejecutada"
+  },
+  "aiSettings": {
+    "getFailed": "No se han podido obtener los ajustes de IA",
+    "updateFailed": "No se han podido actualizar los ajustes de IA"
+  },
+  "oauthProvider": {
+    "getProvidersFailed": "No se han podido obtener los proveedores Git",
+    "getCredentialsFailed": "No se han podido obtener las credenciales del proveedor Git",
+    "saveGithubAppFailed": "No se ha podido guardar la GitHub App",
+    "saveGitlabFailed": "No se ha podido guardar el proveedor GitLab",
+    "saveGiteaFailed": "No se ha podido guardar el proveedor Gitea",
+    "deleteProviderFailed": "No se ha podido eliminar el proveedor Git",
+    "saveBitbucketFailed": "No se ha podido guardar el proveedor Bitbucket",
+    "saveAzureReposFailed": "No se ha podido guardar el proveedor Azure Repos"
+  },
+  "registry": {
+    "getFailed": "No se han podido obtener los registries",
+    "createFailed": "No se ha podido crear el registry",
+    "updateFailed": "No se ha podido actualizar el registry",
+    "deleteFailed": "No se ha podido eliminar el registry",
+    "retrieveWithPasswordFailed": "No se ha podido recuperar el registry con la contraseña",
+    "notFound": "Registry no encontrado"
+  },
+  "webhook": {
+    "unsupportedProvider": "Proveedor Git no compatible: {provider}",
+    "repositoryNotFound": "Repositorio no encontrado",
+    "invalidRepositoryName": "Nombre de repositorio no válido: {name}",
+    "unknownError": "Error desconocido",
+    "gitlabBaseNotFound": "No se ha encontrado la URL base de GitLab",
+    "teardownFailed": "No se ha podido eliminar el webhook del repositorio"
+  },
+  "log": {
+    "createFailed": "No se ha podido crear el log",
+    "createManyFailed": "No se han podido crear los logs"
+  },
+  "version": {
+    "getNextNumberFailed": "No se ha podido obtener el siguiente número de versión",
+    "upsertFailed": "No se ha podido guardar la versión",
+    "deleteByImageTagFailed": "No se han podido eliminar las versiones por etiqueta de imagen"
+  },
+  "deploymentStage": {
+    "getFailed": "No se han podido obtener las fases de despliegue",
+    "resolveFailed": "No se ha podido resolver la fase de despliegue",
+    "createFailed": "No se ha podido crear la fase de despliegue",
+    "notFound": "Fase de despliegue no encontrada",
+    "cannotRequireItself": "Una fase no puede requerirse a sí misma",
+    "updateFailed": "No se ha podido actualizar la fase de despliegue",
+    "cannotDeleteProduction": "No se puede eliminar la fase de despliegue de producción",
+    "cannotDeleteLast": "No se puede eliminar la última fase de despliegue",
+    "deleteFailed": "No se ha podido eliminar la fase de despliegue"
+  },
+  "build": {
+    "repositoryNotFound": "Repositorio no encontrado",
+    "noGitAccount": "No hay ninguna cuenta Git vinculada a este repositorio. Vincula una cuenta Git antes de iniciar una build.",
+    "noDeploymentStage": "No se ha encontrado ninguna fase de despliegue. Crea una fase antes de iniciar una build.",
+    "noPipelineConfig": "No se ha encontrado configuración de pipeline para esta fase. Configura una pipeline antes de iniciar una build.",
+    "removeFailed": "No se ha podido eliminar la build",
+    "createFailed": "No se ha podido crear la build",
+    "updateGitInfoFailed": "No se ha podido actualizar la información Git de la build",
+    "getStatusFailed": "No se ha podido obtener el estado de la build",
+    "updateStatusFailed": "No se ha podido actualizar el estado de la build",
+    "updateNodeStatusFailed": "No se ha podido actualizar el estado del nodo",
+    "notFound": "Build no encontrada",
+    "cannotBeCancelled": "La build no se puede cancelar",
+    "getPageFailed": "No se ha podido obtener la página de builds",
+    "stageProtected": "Esta fase está protegida: solo puede construirla la fase \"{stage}\" mediante su nodo \"Trigger Stage Build\".",
+    "getBuildsFailed": "No se han podido obtener las builds",
+    "getActiveBuildsFailed": "No se han podido obtener las builds activas",
+    "noStageAssociated": "No hay ninguna fase de despliegue asociada a esta build"
+  },
+  "dockerVersion": {
+    "repositoryNotFound": "Repositorio no encontrado",
+    "imageNotFound": "Imagen no encontrada: {name}",
+    "deleteFailed": "No se ha podido eliminar la versión"
+  },
+  "gitProvider": {
+    "oauthTokenExpired": "Tu token OAuth de {provider} ha caducado o ha sido revocado. Vuelve a conectar tu cuenta desde los ajustes de integraciones.",
+    "gitlabOauthExpired": "Tu token OAuth de GitLab ha caducado o ha sido revocado. Vuelve a conectar tu cuenta de GitLab desde los ajustes de integraciones.",
+    "unknownProvider": "Proveedor desconocido: {provider}",
+    "fetchCommitsFailed": "No se han podido obtener los commits: {error}",
+    "invalidGitlabUrl": "URL de repositorio GitLab no válida: {url}",
+    "noRefreshTokenGitlab": "No hay refresh token disponible para GitLab",
+    "gitlabNotConfigured": "Proveedor GitLab no configurado",
+    "refreshTokenFailedStatus": "No se ha podido renovar el token. Estado {status}. Mensaje: {message}",
+    "noRefreshTokenGithub": "No hay refresh token disponible para GitHub",
+    "githubNotConfigured": "Proveedor GitHub no configurado",
+    "githubTokenRefreshFailed": "No se ha podido renovar el token de GitHub: {error}",
+    "noRefreshToken": "No hay refresh token disponible para {provider}",
+    "providerNotConfigured": "Proveedor {provider} no configurado"
+  },
+  "git": {
+    "invalidGithubUrl": "URL de repositorio GitHub no válida: {url}",
+    "invalidGitlabUrl": "URL de repositorio GitLab no válida: {url}",
+    "unauthorized": "No autorizado",
+    "noAccessToken": "No se ha encontrado ningún access token para {provider}",
+    "fetchGitlabReposFailed": "No se han podido obtener los repositorios de GitLab",
+    "unsupportedProvider": "Proveedor no compatible: {provider}",
+    "fetchGithubBranchesFailed": "No se han podido obtener las ramas de GitHub",
+    "fetchGitlabBranchesFailed": "No se han podido obtener las ramas de GitLab",
+    "noAccountForUser": "No se ha encontrado ninguna cuenta de {provider} para el usuario",
+    "updateTokenFailed": "No se ha podido actualizar el token del proveedor Git",
+    "listAccountsFailed": "No se han podido listar las cuentas Git",
+    "gitAccountNotFound": "Cuenta Git no encontrada",
+    "disconnectFailed": "No se ha podido desconectar la cuenta Git",
+    "fetchReposFailed": "No se han podido obtener los repositorios",
+    "fetchBranchesFailed": "No se han podido obtener las ramas"
+  },
+  "oauth": {
+    "invalidState": "Estado OAuth no válido",
+    "stateExpired": "Estado OAuth caducado"
+  },
+  "environment": {
+    "getUserEnvironmentsFailed": "No se han podido obtener los entornos del usuario",
+    "getEnvironmentFailed": "No se ha podido obtener el entorno",
+    "setDefaultFailed": "No se ha podido establecer el entorno predeterminado. ¿Está el entorno Docker configurado correctamente?",
+    "getDefaultFailed": "No se ha podido obtener el entorno predeterminado",
+    "notAccessible": "Este entorno no es accesible. Comprueba la conexión.",
+    "registerFailed": "No se ha podido registrar el entorno en docker-api: {error}",
+    "notFound": "Entorno no encontrado",
+    "dockerApiNotAccessible": "docker-api no es accesible. Asegúrate de que el servicio esté en ejecución.",
+    "updateDbFailed": "No se ha podido actualizar el entorno en la base de datos",
+    "updateDockerApiFailed": "No se ha podido actualizar el entorno en docker-api: {error}",
+    "deleteDbFailed": "No se ha podido eliminar el entorno de la base de datos",
+    "unregisterFailed": "No se ha podido cancelar el registro del entorno en docker-api: {error}"
+  },
+  "api": {
+    "repositoriesFetchFailed": "No se han podido obtener los repositorios",
+    "repositoryFetchFailed": "No se ha podido obtener el repositorio",
+    "repositoryNotFound": "Repositorio no encontrado",
+    "certificatesFetchFailed": "No se han podido obtener los certificados SSL",
+    "environmentsFetchFailed": "No se han podido obtener los entornos",
+    "organizationsFetchFailed": "No se han podido obtener las organizaciones",
+    "organizationNotFound": "Organización no encontrada",
+    "organizationMembersFetchFailed": "No se han podido obtener los miembros de la organización",
+    "environmentFetchFailed": "No se ha podido obtener el entorno",
+    "environmentNotFound": "Entorno no encontrado",
+    "diskUsageFetchFailed": "No se ha podido obtener el uso del disco",
+    "versionCheckFailed": "No se han podido comprobar las actualizaciones",
+    "stagesFetchFailed": "No se han podido obtener las fases",
+    "pipelineConfigFetchFailed": "No se ha podido obtener la configuración de la pipeline",
+    "envVariablesFetchFailed": "No se han podido obtener las variables de entorno",
+    "buildNotFound": "Build no encontrada",
+    "publicIpFailed": "No se ha podido detectar la IP pública",
+    "invalidFilename": "Nombre de archivo no válido",
+    "fileAlreadyExists": "El archivo ya existe",
+    "fileNotFound": "Archivo no encontrado",
+    "unknownProvider": "Proveedor desconocido",
+    "providerNotConfigured": "Proveedor no configurado",
+    "unsupportedProvider": "Proveedor no compatible"
+  }
+}

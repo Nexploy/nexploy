@@ -22,7 +22,10 @@
     "notFoundDescription": "Ce conteneur n'existe plus ou a été supprimé.",
     "backToContainers": "Retour aux conteneurs",
     "swarmManagedBadge": "Géré par Swarm",
-    "swarmManagedDescription": "Ce conteneur est géré par Docker Swarm. Pour le modifier, utilisez l'interface des services Swarm."
+    "swarmManagedDescription": "Ce conteneur est géré par Docker Swarm. Pour le modifier, utilisez l'interface des services Swarm.",
+    "moveEnvironment": "Déplacer",
+    "moveEnvironmentTitle": "Déplacer vers un autre environnement",
+    "moveEnvironmentDescription": "Recréer ce conteneur sur un autre environnement Docker avec la même configuration."
   },
   "renameContainer": {
     "nameLabel": "Nom du conteneur",
@@ -40,7 +43,9 @@
     "refetchLabel": "Re-télécharger l'image",
     "refetchDescription": "Récupère l'image depuis le registre avant la recréation, même si elle existe déjà localement.",
     "cancel": "Annuler",
-    "apply": "Appliquer"
+    "apply": "Appliquer",
+    "changeStarted": "Changement d'image de « {name} » lancé",
+    "changeStartedDescription": "Le conteneur va être recréé. Suivez la progression depuis le menu des actions en cours."
   },
   "configuration": "Configuration",
   "popularImages": "Images populaires",
@@ -487,6 +492,7 @@
     "customNetwork": "Réseau personnalisé",
     "stacks": "Stacks",
     "noStacks": "Aucun Stack Docker",
+    "noStacksMatchSearch": "Aucun stack ne correspond à votre recherche.",
     "noStacksDescription": "Aucun stack de conteneurs trouvé. Déployez un stack Docker Compose pour le voir ici.",
     "removeImages": "Supprimer les images",
     "confirmRemoveImages": "Êtes-vous sûr de vouloir supprimer {count} image(s) ?",
@@ -733,7 +739,9 @@
     "sortRelevance": "Pertinence",
     "sourceLabel": "Source",
     "sourceAll": "Toutes les sources",
-    "sourceOfficial": "Officielles uniquement"
+    "sourceOfficial": "Officielles uniquement",
+    "pullStarted": "Téléchargement de « {name} » lancé",
+    "pullStartedDescription": "Suivez sa progression depuis le menu des actions en cours dans le header."
   },
   "createNetworkPage": {
     "driver": "Driver",
@@ -916,6 +924,78 @@
       "containers": "Conteneurs arrêtés",
       "volumes": "Volumes inutilisés",
       "build": "Cache de build"
+    }
+  },
+  "moveContainer": {
+    "moveWarning": "« {name} » sera recréé sur l'environnement cible avec la même image, configuration, ports et réseaux.",
+    "targetLabel": "Environnement cible",
+    "targetPlaceholder": "Sélectionner un environnement",
+    "targetDescription": "L'environnement Docker sur lequel le conteneur sera recréé.",
+    "registryLabel": "Registry",
+    "registryNone": "Public (sans authentification)",
+    "registryDescription": "Utilisé pour récupérer l'image sur l'environnement cible. Si l'image y est indisponible, elle est transférée directement depuis l'environnement source.",
+    "volumeDataLabel": "Migrer les données des volumes",
+    "volumeDataDescription": "Copier le contenu des volumes nommés vers l'environnement cible. Peut être long sur de gros volumes.",
+    "startLabel": "Démarrer après le déplacement",
+    "startDescription": "Démarrer le conteneur dès qu'il a été créé sur l'environnement cible.",
+    "sourceActionLabel": "Conteneur source",
+    "sourceAction": {
+      "stop": {
+        "label": "Arrêter et conserver",
+        "description": "Le conteneur reste sur l'environnement source, à l'arrêt."
+      },
+      "remove": {
+        "label": "Supprimer",
+        "description": "Le conteneur est supprimé de l'environnement source une fois le déplacement réussi."
+      },
+      "keep": {
+        "label": "Laisser tourner",
+        "description": "Le conteneur continue de tourner sur l'environnement source."
+      }
+    },
+    "noTargetEnvironment": "Aucun autre environnement n'est configuré. Ajoutez un second environnement Docker pour déplacer des conteneurs.",
+    "cancel": "Annuler",
+    "move": "Déplacer",
+    "startedTitle": "Déplacement de « {name} » lancé",
+    "startedDescription": "Suivez sa progression depuis le menu des actions en cours dans le header."
+  },
+  "tasks": {
+    "title": "Actions en cours",
+    "runningCount": "{count} action(s) en cours",
+    "clearFinished": "Effacer",
+    "cancel": "Annuler",
+    "dismiss": "Masquer",
+    "openResult": "Ouvrir le conteneur",
+    "kinds": {
+      "container-migrate": "Déplacement de {name}",
+      "container-recreate": "Recréation de {name}",
+      "image-pull": "Téléchargement de {name}",
+      "image-mirror": "Mise en miroir de {name}"
+    },
+    "status": {
+      "running": "En cours",
+      "succeeded": "Terminé",
+      "failed": "Échec",
+      "cancelled": "Annulé"
+    },
+    "steps": {
+      "image": "Transfert de l'image",
+      "networks": "Préparation des réseaux",
+      "create": "Création du conteneur",
+      "volumes": "Copie des données des volumes",
+      "start": "Démarrage du conteneur",
+      "source": "Finalisation du conteneur source",
+      "pull": "Téléchargement de l'image",
+      "stop": "Arrêt du conteneur",
+      "recreate": "Recréation du conteneur",
+      "tag": "Étiquetage de l'image",
+      "push": "Envoi vers le registry",
+      "cleanup": "Nettoyage"
+    },
+    "toasts": {
+      "succeeded": "« {name} » a été déplacé vers l'environnement cible.",
+      "failed": "Le déplacement de « {name} » a échoué.",
+      "cancelled": "Le déplacement de « {name} » a été annulé."
     }
   }
 }

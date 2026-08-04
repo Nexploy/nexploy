@@ -46,7 +46,7 @@ export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
             },
             actionProps: {
                 onSuccess: ({ data }) => {
-                    toast.success(t('mirrorSuccess', { target: data?.targetName ?? '' }));
+                    toast.info(t('mirrorStarted', { target: data?.targetName ?? '' }));
                     resetFormAndAction();
                     setPrivateSource(false);
                 },

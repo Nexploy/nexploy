@@ -28,10 +28,9 @@ export const onContainerChangeImageAction = authActionServer
         try {
             return await kyDocker
                 .post('container/recreate', {
-                    json: { containerId, image, pullImage, auth },
-                    timeout: false,
+                    json: { containerId, image, pullImage, auth, async: true },
                 })
-                .json<{ id: string }>();
+                .json<{ taskId: string; name: string }>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

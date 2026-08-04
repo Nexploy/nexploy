@@ -38,9 +38,8 @@ export const mirrorImageAction = authActionServer
                             password: registry.password || '',
                         },
                     },
-                    timeout: false,
                 })
-                .json<{ success: boolean; targetName: string }>();
+                .json<{ taskId: string; name: string }>();
 
             return { targetName };
         } catch (err: any) {

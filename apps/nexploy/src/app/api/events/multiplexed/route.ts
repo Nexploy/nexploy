@@ -1,6 +1,6 @@
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { HOST_SCOPED, resolveActiveOrganizationId } from '@/lib/auth/resolveOrgContext';
-import { actorToHeaders } from '@workspace/shared/actor';
+import { actorToHeaders } from '@nexploy/shared/actor';
 import dayjs from 'dayjs';
 import ky from 'ky';
 import { NextResponse } from 'next/server';
@@ -28,6 +28,7 @@ const CHANNEL_ENDPOINTS: Record<SSEChannel, string> = {
     swarm: '/api/swarm/events/stream',
     traefik: '/api/traefik/events/stream',
     monitoring: '',
+    tasks: '/api/tasks/events/stream',
 };
 
 const CONFIG = {

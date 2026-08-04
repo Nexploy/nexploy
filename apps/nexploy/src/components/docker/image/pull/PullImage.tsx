@@ -37,13 +37,13 @@ export function PullImage({ registries }: PullImageProps) {
                 },
             },
             actionProps: {
-                onExecute: ({ input }) => {
-                    toast.loading(t('downloadingImage', { name: input.imageName }), {
-                        id: 'downloadingImage',
-                    });
-                },
                 onSuccess: ({ data }) => {
-                    if (data) router.push(`/docker/images/${data.imageId.split(':')[1]}`);
+                    if (!data) return;
+
+                    toast.info(t('pullStarted', { name: data.name }), {
+                        description: t('pullStartedDescription'),
+                    });
+                    router.push('/docker/images');
                 },
             },
         },

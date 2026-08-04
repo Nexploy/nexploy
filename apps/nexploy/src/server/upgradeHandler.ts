@@ -4,7 +4,7 @@ import { isDev } from '@/server/config';
 import { getDockerApiProxy, getInngestProxy } from '@/server/proxies';
 import { WS_PROXY_PREFIX, matchAndTransformWsUrl } from '@/server/wsRoutes';
 import { authorizeContainerUpgrade } from '@/server/wsAuthorization';
-import { actorToHeaders } from '@workspace/shared/actor';
+import { actorToHeaders } from '@nexploy/shared/actor';
 
 function denyUpgrade(socket: Socket, status: number, reason: string): void {
     socket.write(`HTTP/1.1 ${status} ${reason}\r\n\r\n`);

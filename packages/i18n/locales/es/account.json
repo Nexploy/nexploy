@@ -1,0 +1,119 @@
+{
+  "title": "Cuenta",
+  "description": "Gestiona tu perfil de usuario y tus preferencias",
+  "profile": "Perfil",
+  "security": "Seguridad",
+  "profileInfo": {
+    "title": "Información del perfil",
+    "description": "Gestiona tu información personal y los datos de la cuenta",
+    "name": "Nombre",
+    "username": "Nombre de usuario",
+    "namePlaceholder": "Tu nombre",
+    "email": "Email",
+    "emailPlaceholder": "tu@email.com",
+    "updateProfile": "Actualizar perfil",
+    "updating": "Actualizando...",
+    "profileUpdated": "Nombre de usuario actualizado correctamente"
+  },
+  "errors": {
+    "failedToCreateApiKey": "No se ha podido crear la clave API"
+  },
+  "securitySettings": {
+    "title": "Ajustes de seguridad",
+    "description": "Gestiona la seguridad de tu cuenta y las preferencias de autenticación",
+    "password": "Contraseña",
+    "passwordDescription": "Cambia tu contraseña para mantener tu cuenta segura",
+    "change": "Cambiar"
+  },
+  "integrations": {
+    "title": "Integraciones",
+    "description": "Conecta tu cuenta con servicios y herramientas externas"
+  },
+  "notifications": {
+    "title": "Preferencias de notificación",
+    "description": "Controla cuándo recibes notificaciones",
+    "badges": {
+      "title": "Insignias de la interfaz",
+      "description": "Muestra un contador en la interfaz cuando un elemento requiere tu atención",
+      "invitations": "Invitaciones a organizaciones",
+      "invitationsDescription": "Muestra una insignia en el menú de la cuenta cuando tengas invitaciones pendientes"
+    }
+  },
+  "regional": {
+    "title": "Ajustes regionales",
+    "description": "Configura tus preferencias de idioma y zona horaria",
+    "language": "Idioma"
+  },
+  "password": {
+    "title": "Cambiar contraseña",
+    "description": "Introduce tu contraseña actual y elige una nueva",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "changePassword": "Cambiar contraseña",
+    "passwordChanged": "Contraseña cambiada correctamente",
+    "changeFailed": "No se ha podido cambiar la contraseña"
+  },
+  "twoFactor": {
+    "title": "Autenticación de dos factores",
+    "description": "Añade una capa extra de seguridad a tu cuenta",
+    "enabled": "Activada",
+    "disabled": "Desactivada",
+    "enable": "Activar 2FA",
+    "disable": "Desactivar 2FA",
+    "settings": "Configuración 2FA",
+    "settingsTitle": "Ajustes de la autenticación de dos factores",
+    "settingsDescription": "Gestiona los ajustes de tu autenticación de dos factores.",
+    "enableTitle": "Activar 2FA",
+    "enableDescription": "Protege tu cuenta activando la autenticación de dos factores.",
+    "disableTitle": "Desactivar la autenticación de dos factores",
+    "disableDescription": "¿Seguro que quieres desactivar la autenticación de dos factores? Tu cuenta será menos segura.",
+    "disableButton": "Desactivar la autenticación de dos factores",
+    "cantScan": "¿No puedes escanear? Puedes introducir manualmente la clave secreta en tu aplicación de autenticación",
+    "verifTotp": "Verificar TOTP",
+    "verifTotpDescription": "Escanea el código QR con tu aplicación de autenticación para completar la configuración de la autenticación de dos factores.",
+    "enterVerificationCode": "Introduce el código de verificación:",
+    "backupCodes": "Códigos de respaldo",
+    "backupCodesDescription": "Guarda estos códigos de respaldo en un lugar seguro. Cada código solo se puede usar una vez.",
+    "downloadCodes": "Descargar códigos",
+    "close": "Cerrar",
+    "useBackupCode": "Usar un código de respaldo",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Introduce tu contraseña"
+  },
+  "alerts": {
+    "containerAlerts": "Alertas de contenedores",
+    "containerStatusChanges": "Recibe una notificación cuando los contenedores se inicien, se detengan o fallen",
+    "imageAlerts": "Alertas de imágenes",
+    "imageStatusChanges": "Recibe una notificación cuando se descarguen, construyan o eliminen imágenes",
+    "volumeAlerts": "Alertas de volúmenes",
+    "volumeStatusChanges": "Recibe una notificación cuando se creen o eliminen volúmenes",
+    "networkAlerts": "Alertas de redes",
+    "networkStatusChanges": "Recibe una notificación cuando se creen o eliminen redes",
+    "swarmAlerts": "Alertas de Swarm",
+    "swarmStatusChanges": "Recibe notificaciones sobre nodos, servicios y tareas de Swarm"
+  },
+  "language": {
+    "title": "Idioma",
+    "selectLanguage": "Selecciona un idioma",
+    "en": "English (US)",
+    "fr": "Français",
+    "it": "Italiano",
+    "es": "Español"
+  },
+  "theme": {
+    "title": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  },
+  "dangerZone": {
+    "title": "Zona peligrosa",
+    "description": "Acciones irreversibles y destructivas",
+    "signOut": "Cerrar sesión",
+    "confirmSignOut": "¿Seguro que quieres cerrar sesión? Tendrás que volver a iniciar sesión para acceder a tu cuenta.",
+    "logOut": "Salir",
+    "clear": "Vaciar",
+    "confirmDelete": "¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer."
+  }
+}

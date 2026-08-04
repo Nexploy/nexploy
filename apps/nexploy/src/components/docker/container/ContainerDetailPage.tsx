@@ -1,6 +1,14 @@
 'use client';
 
-import { Activity, Container as IconContainer, FileText, PencilLine, Replace, Terminal } from 'lucide-react';
+import {
+    Activity,
+    ArrowRightLeft,
+    Container as IconContainer,
+    FileText,
+    PencilLine,
+    Replace,
+    Terminal,
+} from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { CardInfoDetail } from '@/components/docker/container/cards/CardInfoDetail';
@@ -31,6 +39,7 @@ import { CardSecurity } from '@/components/docker/container/cards/CardSecurity';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { RenameContainerForm } from '@/components/docker/container/forms/RenameContainerForm';
 import { ChangeImageForm } from '@/components/docker/container/forms/ChangeImageForm';
+import { MoveContainerForm } from '@/components/docker/container/forms/MoveContainerForm';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
 import { Badge } from '@workspace/ui/components/badge.tsx';
@@ -59,6 +68,15 @@ export function ContainerDetailPage() {
             title: t('changeImageTitle'),
             description: t('changeImageDescription'),
             content: <ChangeImageForm containerId={container.id} currentImage={container.image ?? ''} />,
+        });
+    };
+
+    const handleMoveEnvironment = () => {
+        if (!container) return;
+        openDialog({
+            title: t('moveEnvironmentTitle'),
+            description: t('moveEnvironmentDescription'),
+            content: <MoveContainerForm containerId={container.id} containerName={container.name} />,
         });
     };
 
@@ -152,6 +170,13 @@ export function ContainerDetailPage() {
                                                 icon={Replace}
                                                 label={t('changeImage')}
                                                 onClick={handleChangeImage}
+                                            />
+                                        )}
+                                        {!isSwarmContainer && (
+                                            <ToolbarButton
+                                                icon={ArrowRightLeft}
+                                                label={t('moveEnvironment')}
+                                                onClick={handleMoveEnvironment}
                                             />
                                         )}
                                     </ButtonGroup>

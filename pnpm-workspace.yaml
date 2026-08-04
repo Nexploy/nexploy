@@ -23,3 +23,4 @@ minimumReleaseAgeExclude:
   - '@better-auth/telemetry@1.6.25'
   - better-auth@1.6.25
   - '@nexploy/nodes@0.1.5'
+  - '@nexploy/shared@0.1.0'

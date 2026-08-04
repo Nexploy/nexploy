@@ -14,7 +14,7 @@ import { formatBytes } from '@/utils/formatBytes';
 
 const defaultValue: Omit<
     ContainersStatsState,
-    'connect' | 'disconnect' | 'reconnect' | 'setError' | 'clearStats' | 'exportStats'
+    'connect' | 'disconnect' | 'reconnect' | 'setError' | 'clearStats' | 'reset' | 'exportStats'
 > = {
     stats: [],
     totals: null,
@@ -216,6 +216,20 @@ export const useContainersStatsStore = create<ContainersStatsState>((set, get) =
 
     clearStats: () => {
         set({ stats: [], totals: null, history: {}, totalsHistory: [] });
+    },
+
+    reset: () => {
+        set({
+            stats: [],
+            totals: null,
+            history: {},
+            totalsHistory: [],
+            error: null,
+            lastUpdate: null,
+            isLoading: true,
+            isConnected: false,
+            connectionState: 'connecting',
+        });
     },
 
     exportStats: () => {

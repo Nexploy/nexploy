@@ -1,0 +1,119 @@
+{
+  "title": "Account",
+  "description": "Gestisci il tuo profilo utente e le tue preferenze",
+  "profile": "Profilo",
+  "security": "Sicurezza",
+  "profileInfo": {
+    "title": "Informazioni del profilo",
+    "description": "Gestisci le tue informazioni personali e i dettagli dell'account",
+    "name": "Nome",
+    "username": "Nome utente",
+    "namePlaceholder": "Il tuo nome",
+    "email": "Email",
+    "emailPlaceholder": "tua@email.com",
+    "updateProfile": "Aggiorna profilo",
+    "updating": "Aggiornamento in corso...",
+    "profileUpdated": "Nome utente aggiornato con successo"
+  },
+  "errors": {
+    "failedToCreateApiKey": "Creazione della chiave API non riuscita"
+  },
+  "securitySettings": {
+    "title": "Impostazioni di sicurezza",
+    "description": "Gestisci la sicurezza del tuo account e le preferenze di autenticazione",
+    "password": "Password",
+    "passwordDescription": "Cambia la tua password per mantenere sicuro il tuo account",
+    "change": "Cambia"
+  },
+  "integrations": {
+    "title": "Integrazioni",
+    "description": "Collega il tuo account a servizi e strumenti esterni"
+  },
+  "notifications": {
+    "title": "Preferenze di notifica",
+    "description": "Controlla quando ricevi le notifiche",
+    "badges": {
+      "title": "Badge dell'interfaccia",
+      "description": "Mostra un contatore nell'interfaccia quando un elemento richiede la tua attenzione",
+      "invitations": "Inviti alle organizzazioni",
+      "invitationsDescription": "Mostra un badge nel menu dell'account quando hai inviti in sospeso"
+    }
+  },
+  "regional": {
+    "title": "Impostazioni regionali",
+    "description": "Configura le preferenze di lingua e fuso orario",
+    "language": "Lingua"
+  },
+  "password": {
+    "title": "Cambia password",
+    "description": "Inserisci la password attuale e scegli una nuova password",
+    "currentPassword": "Password attuale",
+    "newPassword": "Nuova password",
+    "confirmPassword": "Conferma password",
+    "changePassword": "Cambia password",
+    "passwordChanged": "Password cambiata con successo",
+    "changeFailed": "Cambio della password non riuscito"
+  },
+  "twoFactor": {
+    "title": "Autenticazione a due fattori",
+    "description": "Aggiungi un ulteriore livello di sicurezza al tuo account",
+    "enabled": "Attivata",
+    "disabled": "Disattivata",
+    "enable": "Attiva 2FA",
+    "disable": "Disattiva 2FA",
+    "settings": "Configurazione 2FA",
+    "settingsTitle": "Impostazioni dell'autenticazione a due fattori",
+    "settingsDescription": "Gestisci le impostazioni della tua autenticazione a due fattori.",
+    "enableTitle": "Attiva 2FA",
+    "enableDescription": "Proteggi il tuo account attivando l'autenticazione a due fattori.",
+    "disableTitle": "Disattiva l'autenticazione a due fattori",
+    "disableDescription": "Sei sicuro di voler disattivare l'autenticazione a due fattori? Il tuo account sarà meno sicuro.",
+    "disableButton": "Disattiva l'autenticazione a due fattori",
+    "cantScan": "Non riesci a scansionare? Puoi inserire manualmente la chiave segreta nella tua app di autenticazione",
+    "verifTotp": "Verifica TOTP",
+    "verifTotpDescription": "Scansiona il codice QR con la tua app di autenticazione per completare la configurazione dell'autenticazione a due fattori.",
+    "enterVerificationCode": "Inserisci il codice di verifica:",
+    "backupCodes": "Codici di backup",
+    "backupCodesDescription": "Conserva questi codici di backup in un luogo sicuro. Ogni codice può essere usato una sola volta.",
+    "downloadCodes": "Scarica i codici",
+    "close": "Chiudi",
+    "useBackupCode": "Usa un codice di backup",
+    "password": "Password",
+    "passwordPlaceholder": "Inserisci la tua password"
+  },
+  "alerts": {
+    "containerAlerts": "Avvisi sui container",
+    "containerStatusChanges": "Ricevi una notifica quando i container si avviano, si arrestano o si bloccano",
+    "imageAlerts": "Avvisi sulle immagini",
+    "imageStatusChanges": "Ricevi una notifica quando le immagini vengono scaricate, create o rimosse",
+    "volumeAlerts": "Avvisi sui volumi",
+    "volumeStatusChanges": "Ricevi una notifica quando i volumi vengono creati o eliminati",
+    "networkAlerts": "Avvisi sulle reti",
+    "networkStatusChanges": "Ricevi una notifica quando le reti vengono create o eliminate",
+    "swarmAlerts": "Avvisi Swarm",
+    "swarmStatusChanges": "Ricevi notifiche su nodi, servizi e task Swarm"
+  },
+  "language": {
+    "title": "Lingua",
+    "selectLanguage": "Seleziona una lingua",
+    "en": "English (US)",
+    "fr": "Français",
+    "it": "Italiano",
+    "es": "Español"
+  },
+  "theme": {
+    "title": "Tema",
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "system": "Sistema"
+  },
+  "dangerZone": {
+    "title": "Zona pericolosa",
+    "description": "Azioni irreversibili e distruttive",
+    "signOut": "Disconnetti",
+    "confirmSignOut": "Sei sicuro di volerti disconnettere? Dovrai accedere di nuovo per usare il tuo account.",
+    "logOut": "Esci",
+    "clear": "Svuota",
+    "confirmDelete": "Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata."
+  }
+}

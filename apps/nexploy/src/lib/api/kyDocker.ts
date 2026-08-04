@@ -1,6 +1,6 @@
 import { cookies, headers } from 'next/headers';
 import ky, { type Options } from 'ky';
-import { actorToHeaders } from '@workspace/shared/actor';
+import { actorToHeaders } from '@nexploy/shared/actor';
 import { getCurrentActor } from '@/lib/api/currentActor';
 
 export interface KyDockerOptions extends Options {

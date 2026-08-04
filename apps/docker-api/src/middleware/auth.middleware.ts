@@ -2,7 +2,7 @@ import { Context, Next } from 'hono';
 import { HTTPError } from 'ky';
 import { logger } from '@/utils/logger';
 import { kyNexploy } from '@/lib/kyNexploy';
-import { type Actor, actorFromHeaders, SYSTEM_ACTOR } from '@workspace/shared/actor';
+import { type Actor, actorFromHeaders, SYSTEM_ACTOR } from '@nexploy/shared/actor';
 
 const VERIFY_CACHE_TTL_MS = 60_000;
 const VERIFY_INVALID_CACHE_TTL_MS = 3_000;

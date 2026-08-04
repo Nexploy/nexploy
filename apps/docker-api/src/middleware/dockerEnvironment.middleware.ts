@@ -6,7 +6,7 @@ import { loadEnvironmentByIdFromAPI } from '@/lib/loadEnvironments';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
 export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
-    if (c.req.path.startsWith('/api/environments')) {
+    if (c.req.path.startsWith('/api/environments') || c.req.path.startsWith('/api/tasks')) {
         return next();
     }
 

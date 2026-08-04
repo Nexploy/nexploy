@@ -1,0 +1,31 @@
+{
+  "title": "Solicitudes",
+  "environment": "Entorno",
+  "waitingForRequests": "Esperando solicitudes...",
+  "noRequests": "Sin solicitudes",
+  "requestsCaptured": "{count, plural, one {# solicitud capturada por Traefik} other {# solicitudes capturadas por Traefik}}",
+  "searchPlaceholder": "Buscar por ruta, host...",
+  "method": "Método",
+  "allMethods": "Todos",
+  "status": "Estado",
+  "allStatuses": "Todos",
+  "success2xx": "2xx Éxito",
+  "redirect3xx": "3xx Redirección",
+  "clientError4xx": "4xx Error de cliente",
+  "serverError5xx": "5xx Error de servidor",
+  "service": "Servicio",
+  "allServices": "Todos",
+  "table": {
+    "timestamp": "Marca de tiempo",
+    "method": "Método",
+    "path": "Ruta",
+    "status": "Estado",
+    "duration": "Duración",
+    "size": "Tamaño",
+    "service": "Servicio"
+  },
+  "noMatchingRequests": "Ninguna solicitud coincide con los filtros.",
+  "requestsPerPage": "Solicitudes por página:",
+  "perPage": "Por página",
+  "all": "Todas"
+}

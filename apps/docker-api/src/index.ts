@@ -36,6 +36,8 @@ import environmentsRoutes from '@/routes/environments.routes';
 import backupsRoutes from '@/routes/backupsRoutes';
 import registriesRoutes from '@/routes/registriesRoutes';
 import systemRoutes from '@/routes/system/systemRoutes';
+import tasksRoutes from '@/routes/tasks/tasksRoutes';
+import tasksEvents from '@/routes/tasks/events/tasksEvents';
 import { dockerEnvironmentMiddleware } from '@/middleware/dockerEnvironment.middleware';
 import { authMiddleware } from '@/middleware/auth.middleware';
 import { actorAuditMiddleware } from '@/middleware/actorAudit.middleware';
@@ -109,6 +111,9 @@ app.route('/api/traefik/events', traefikEvents);
 app.route('/api/events/events', eventsEvents);
 
 app.route('/api/environments', environmentsRoutes);
+
+app.route('/api/tasks/events', tasksEvents);
+app.route('/api/tasks', tasksRoutes);
 
 app.route('/api/backups', backupsRoutes);
 app.route('/api/registries', registriesRoutes);

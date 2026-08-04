@@ -49,6 +49,7 @@ export const ContainerRecreateFormSchema = z.object({
     image: z.string().optional(),
     pullImage: z.boolean().optional(),
     auth: recreateAuthSchema.optional(),
+    async: z.boolean().optional(),
 });
 
 export type ContainerRecreateForm = z.infer<typeof ContainerRecreateFormSchema>;

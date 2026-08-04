@@ -1,0 +1,79 @@
+{
+  "title": "Organizzazioni",
+  "createOrganization": "Crea organizzazione",
+  "createOrganizationDescription": "I repository creati in questa organizzazione saranno visibili ai suoi membri",
+  "name": "Nome",
+  "namePlaceholder": "Acme Inc.",
+  "roles": {
+    "owner": "Proprietario",
+    "admin": "Amministratore",
+    "member": "Membro"
+  },
+  "members": {
+    "title": "Membri",
+    "member": "Membro",
+    "role": "Ruolo",
+    "you": "(tu)",
+    "email": "Email",
+    "invite": "Invita membro",
+    "inviteDescription": "L'utente invitato deve già avere un account Nexploy",
+    "remove": "Rimuovi membro",
+    "confirmRemove": "Rimuovere {name} da questa organizzazione?",
+    "transferOwnership": "Trasferisci la proprietà",
+    "confirmTransferOwnership": "Rendere {name} proprietario di questa organizzazione? I proprietari hanno il controllo completo, inclusa l'eliminazione."
+  },
+  "invitations": {
+    "pending": "Inviti in sospeso",
+    "pendingDescription": "Organizzazioni a cui sei stato invitato",
+    "noPendingInvitations": "Nessun invito in sospeso",
+    "accept": "Accetta",
+    "reject": "Rifiuta",
+    "invitedBy": "Invitato da"
+  },
+  "settings": {
+    "rename": "Rinomina organizzazione",
+    "renameDescription": "Cambia il nome visualizzato di \"{name}\"",
+    "save": "Salva",
+    "deleteOrganization": "Elimina organizzazione",
+    "confirmDelete": "Eliminare \"{name}\"? L'operazione non può essere annullata.",
+    "leaveOrganization": "Abbandona l'organizzazione",
+    "confirmLeave": "Abbandonare \"{name}\"? Perderai l'accesso ai suoi repository."
+  },
+  "errors": {
+    "guestCannotCreate": "Il tuo ruolo non consente di creare organizzazioni",
+    "userNotFound": "Nessun account Nexploy trovato per questa email",
+    "alreadyMember": "Questo utente è già membro dell'organizzazione",
+    "notFound": "Organizzazione non trovata",
+    "cannotRemoveLastOwner": "Impossibile rimuovere l'ultimo proprietario dell'organizzazione",
+    "cannotDemoteLastOwner": "Impossibile modificare il ruolo dell'ultimo proprietario",
+    "onlyOwnerCanTransferOwnership": "Solo un proprietario può trasferire la proprietà",
+    "cannotLeaveAsSoleOwner": "Sei l'unico proprietario: elimina l'organizzazione prima di abbandonarla",
+    "hasRepositories": "Questa organizzazione possiede ancora dei repository. Riassegnali o eliminali prima",
+    "createFailed": "Creazione dell'organizzazione non riuscita",
+    "updateFailed": "Aggiornamento dell'organizzazione non riuscito",
+    "inviteFailed": "Invito del membro non riuscito",
+    "acceptFailed": "Accettazione dell'invito non riuscita",
+    "rejectFailed": "Rifiuto dell'invito non riuscito",
+    "cancelFailed": "Annullamento dell'invito non riuscito",
+    "removeMemberFailed": "Rimozione del membro non riuscita",
+    "updateRoleFailed": "Aggiornamento del ruolo del membro non riuscito",
+    "leaveFailed": "Abbandono dell'organizzazione non riuscito",
+    "deleteFailed": "Eliminazione dell'organizzazione non riuscita",
+    "setActiveFailed": "Cambio di organizzazione non riuscito",
+    "cannotDeletePersonal": "La tua organizzazione personale non può essere eliminata",
+    "cannotRenamePersonal": "La tua organizzazione personale non può essere rinominata",
+    "cannotInvitePersonal": "La tua organizzazione personale non può avere altri membri"
+  },
+  "success": {
+    "created": "Organizzazione creata",
+    "renamed": "Organizzazione aggiornata",
+    "invited": "Invito inviato",
+    "accepted": "Invito accettato",
+    "rejected": "Invito rifiutato",
+    "cancelled": "Invito annullato",
+    "removed": "Membro rimosso",
+    "roleUpdated": "Ruolo del membro aggiornato",
+    "left": "Hai abbandonato l'organizzazione",
+    "deleted": "Organizzazione eliminata"
+  }
+}

@@ -105,14 +105,16 @@ export function TableDockerImages() {
         },
     });
 
-    const selectedRows = table.getSelectedRowModel().rows;
-    const selectedRow = selectedRows[0];
-    const selectedImage = selectedRow?.original;
+    const selectedImages = table
+        .getSelectedRowModel()
+        .flatRows.filter((row) => !row.original.isGroup)
+        .map((row) => row.original);
 
-    const numberOfSelectedRows = Object.keys(rowSelection).length;
+    const selectedImage = selectedImages[0];
+    const numberOfSelectedRows = selectedImages.length;
 
     const handleDeleteAction = () => {
-        const imageIds = Object.keys(rowSelection);
+        const imageIds = selectedImages.map((image) => image.id);
         forceRef.current = false;
         openAlertDialog({
             title: t('removeImages'),
