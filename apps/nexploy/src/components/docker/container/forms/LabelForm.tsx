@@ -12,6 +12,7 @@ import {
     containerLabelSchema,
 } from '@workspace/schemas-zod/docker/container/containerLabel.schema';
 import { useTranslations } from 'next-intl';
+import { isProtectedLabelKey } from '@nexploy/shared/protectedLabels';
 
 type Label = { key: string; value: string };
 
@@ -27,7 +28,12 @@ export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps)
     const t = useTranslations('docker.forms');
 
     const form = useForm<ContainerLabelForm>({
-        resolver: zodResolver(containerLabelSchema),
+        resolver: zodResolver(
+            containerLabelSchema.refine((label) => !isProtectedLabelKey(label.key), {
+                path: ['key'],
+                message: 'This label key is reserved by Nexploy and cannot be set manually',
+            }),
+        ),
         defaultValues: {
             key: defaultLabel?.key ?? '',
             value: defaultLabel?.value ?? '',

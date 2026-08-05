@@ -865,6 +865,7 @@
     "edit": "Modifier",
     "delete": "Supprimer",
     "cancelDelete": "Annuler la suppression",
+    "protected": "Label réservé géré par Nexploy, il ne peut pas être modifié",
     "empty": "(vide)"
   },
   "toasts": {

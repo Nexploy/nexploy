@@ -10,6 +10,7 @@ import { BackButton } from '@/components/shared/BackButton';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
+import { withEditableLabels } from '@/lib/protectedLabels';
 import { onContainerCreateAction } from '@/actions/docker/container/containerCreate.action';
 import { useTranslations } from 'next-intl';
 import { ContainerBasicConfig } from '@/components/docker/containers/create/ContainerBasicConfig';
@@ -27,7 +28,7 @@ export default function CreateContainerPage() {
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onContainerCreateAction,
-        zodResolver(containerCreateFormSchema),
+        zodResolver(withEditableLabels(containerCreateFormSchema)),
         {
             formProps: {
                 defaultValues: {

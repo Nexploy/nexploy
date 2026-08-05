@@ -11,6 +11,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { onNetworkCreateAction } from '@/actions/docker/network/networkCreate.action';
 import { toast } from 'sonner';
 import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
+import { withEditableLabels } from '@/lib/protectedLabels';
 import { NetworkBasicConfig } from '@/components/docker/network/create/NetworkBasicConfig';
 import { NetworkIpamConfig } from '@/components/docker/network/create/NetworkIpamConfig';
 import { NetworkConfigFromExisting } from '@/components/docker/network/create/NetworkConfigFromExisting';
@@ -24,7 +25,7 @@ export default function CreateNetworkPage() {
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onNetworkCreateAction,
-        zodResolver(networkCreateSchema),
+        zodResolver(withEditableLabels(networkCreateSchema)),
         {
             formProps: {
                 defaultValues: {

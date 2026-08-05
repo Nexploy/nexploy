@@ -26,6 +26,7 @@ import { containersStateManager } from '@/managers/list/containersStateManager';
 import { networksStateManager } from '@/managers/list/networksStateManager';
 import { currentViewer } from '@/lib/containerOwnership';
 import { NEXPLOY_ORGANIZATION_LABEL } from '@nexploy/shared/ownership';
+import { stripProtectedLabelEntries } from '@nexploy/shared/protectedLabels';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 import { assertSafeBindPath } from '@/utils/hostBindGuard';
 import { TrackedTaskContext, runTrackedTask } from '@/lib/taskRunner';
@@ -242,7 +243,7 @@ app.post(
                 ];
             });
         }
-        createOptions.Labels = Object.fromEntries(labels.map((l) => [l.key, l.value]));
+        createOptions.Labels = Object.fromEntries(stripProtectedLabelEntries(labels).map((l) => [l.key, l.value]));
 
         const ownerOrganization = currentViewer().organizationId;
         if (ownerOrganization) {

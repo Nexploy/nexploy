@@ -1,6 +1,6 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
-import { Pencil, X } from 'lucide-react';
+import { Lock, Pencil, X } from 'lucide-react';
 import { Label } from '@workspace/typescript-interface/docker/docker.label';
 import { useTranslations } from 'next-intl';
 
@@ -9,12 +9,22 @@ interface LabelItemProps {
     isEdited: boolean;
     isDeleted: boolean;
     isNew?: boolean;
+    isProtected?: boolean;
     displayLabel: Label;
     onEdit?: (label: Label, originalLabel?: Label) => void;
     onCancelDelete?: () => void;
 }
 
-export function LabelItem({ label, isEdited, isDeleted, isNew, displayLabel, onEdit, onCancelDelete }: LabelItemProps) {
+export function LabelItem({
+    label,
+    isEdited,
+    isDeleted,
+    isNew,
+    isProtected,
+    displayLabel,
+    onEdit,
+    onCancelDelete,
+}: LabelItemProps) {
     const t = useTranslations('docker.labels');
     const statusIndicator = isNew ? (
         <span className="text-green-500">+</span>
@@ -40,7 +50,16 @@ export function LabelItem({ label, isEdited, isDeleted, isNew, displayLabel, onE
                 {statusIndicator}
             </div>
             <div className="flex shrink-0 gap-1">
-                {isDeleted && onCancelDelete ? (
+                {isProtected ? (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="text-muted-foreground flex size-6 shrink-0 items-center justify-center">
+                                <Lock className="size-4" />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>{t('protected')}</TooltipContent>
+                    </Tooltip>
+                ) : isDeleted && onCancelDelete ? (
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button size="icon" variant="ghost" className="h-6 w-6 shrink-0" onClick={onCancelDelete}>

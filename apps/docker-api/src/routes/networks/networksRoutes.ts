@@ -7,6 +7,7 @@ import {
     networkDeleteSchema,
     networkIdParamSchema,
 } from '@workspace/schemas-zod/docker/network/networkAction.schema';
+import { stripProtectedLabelEntries } from '@nexploy/shared/protectedLabels';
 import { filterNexployNetworks } from '@nexploy/shared/nexployFilter';
 import { deleteNetworks } from '@/services/networkService';
 import { runTrackedTask } from '@/lib/taskRunner';
@@ -45,7 +46,10 @@ app.post(
         } = c.req.valid('json');
 
         const options = rawOptions.length ? Object.fromEntries(rawOptions.map((o) => [o.key, o.value])) : undefined;
-        const labels = rawLabels.length ? Object.fromEntries(rawLabels.map((l) => [l.key, l.value])) : undefined;
+        const editableLabels = stripProtectedLabelEntries(rawLabels);
+        const labels = editableLabels.length
+            ? Object.fromEntries(editableLabels.map((l) => [l.key, l.value]))
+            : undefined;
         const configFrom = rawConfigFrom?.network ? { Network: rawConfigFrom.network } : undefined;
 
         const operatorFields = rest.configOnly

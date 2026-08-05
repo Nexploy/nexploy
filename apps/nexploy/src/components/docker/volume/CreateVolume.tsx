@@ -10,6 +10,7 @@ import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { onVolumeCreateAction } from '@/actions/docker/volume/volumeCreate.action';
 import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
+import { withEditableLabels } from '@/lib/protectedLabels';
 import { useTranslations } from 'next-intl';
 import { VolumeBasicConfig } from '@/components/docker/volume/create/VolumeBasicConfig';
 import { VolumeDriverOptions } from '@/components/docker/volume/create/VolumeDriverOptions';
@@ -21,7 +22,7 @@ export default function CreateVolume() {
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onVolumeCreateAction,
-        zodResolver(volumeCreateSchema),
+        zodResolver(withEditableLabels(volumeCreateSchema)),
         {
             formProps: {
                 defaultValues: {

@@ -273,6 +273,7 @@
       "action": "Azione",
       "actor": "Autore",
       "target": "Destinazione",
+      "role": "Ruolo",
       "status": "Stato",
       "duration": "Durata",
       "source": "Origine"

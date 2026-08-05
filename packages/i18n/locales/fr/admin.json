@@ -276,6 +276,7 @@
       "action": "Action",
       "actor": "Auteur",
       "target": "Cible",
+      "role": "Rôle",
       "status": "Statut",
       "duration": "Durée",
       "source": "Source"

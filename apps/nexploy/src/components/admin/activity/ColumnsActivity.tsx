@@ -56,14 +56,17 @@ export function getColumnsActivity(t: TranslationFunction): ColumnDef<ActivityLo
             ),
         },
         {
-            id: 'target',
-            accessorFn: (entry) => entry.targetName ?? entry.targetId ?? '',
-            header: sortableHeader(t('columns.target')),
-            cell: ({ row }) => (
-                <span className="text-muted-foreground block max-w-60 truncate font-mono text-sm">
-                    {row.original.targetName ?? row.original.targetId ?? '—'}
-                </span>
-            ),
+            id: 'role',
+            accessorFn: (entry) => entry.actorRole ?? '',
+            header: sortableHeader(t('columns.role')),
+            cell: ({ row }) =>
+                row.original.actorRole ? (
+                    <Badge variant="outline" className="whitespace-nowrap capitalize">
+                        {row.original.actorRole}
+                    </Badge>
+                ) : (
+                    <span className="text-muted-foreground text-sm">—</span>
+                ),
         },
         {
             id: 'source',

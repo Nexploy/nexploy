@@ -10,6 +10,7 @@ import { BackButton } from '@/components/shared/BackButton';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { createServiceFormSchema } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
+import { withEditableLabels } from '@/lib/protectedLabels';
 import { onCreateServiceAction } from '@/actions/docker/swarm/createService.action';
 import { useTranslations } from 'next-intl';
 import { ServiceBasicConfig } from './ServiceBasicConfig';
@@ -28,7 +29,7 @@ export default function CreateService() {
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         onCreateServiceAction,
-        zodResolver(createServiceFormSchema),
+        zodResolver(withEditableLabels(createServiceFormSchema)),
         {
             formProps: {
                 defaultValues: {

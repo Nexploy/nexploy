@@ -10,6 +10,7 @@ import {
     volumePruneSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { cacheRestoreSchema, cacheSaveSchema } from '@workspace/schemas-zod/docker/volume/volumeCache.schema';
+import { stripProtectedLabelEntries } from '@nexploy/shared/protectedLabels';
 import { restoreCache, saveCache } from '@/services/cacheService';
 import { deleteVolumes } from '@/services/volumeService';
 import { runTrackedTask } from '@/lib/taskRunner';
@@ -65,7 +66,7 @@ app.post(
                     Name: name,
                     Driver: driver,
                     DriverOpts: toRecord(driverOpts),
-                    Labels: toRecord(labels),
+                    Labels: toRecord(stripProtectedLabelEntries(labels)),
                 });
 
                 return { volumeName: name };

@@ -20,6 +20,7 @@ import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { currentViewer, getRepositoryOrganizations } from '@/lib/containerOwnership';
 import { COMPOSE_PROJECT_LABEL, isVisibleToViewer, NEXPLOY_ORGANIZATION_LABEL } from '@nexploy/shared/ownership';
+import { isNexployManagedLabelKey, stripNexployManagedLabels } from '@nexploy/shared/protectedLabels';
 
 const app = new Hono();
 
@@ -42,8 +43,6 @@ function runStackAction(project: string, action: ComposesAction, force = false) 
 }
 
 function withOwnershipLabels(yaml: string, organizationId: string | null): string {
-    if (!organizationId) return yaml;
-
     let parsed: any;
     try {
         parsed = parseYaml(yaml);
@@ -59,11 +58,14 @@ function withOwnershipLabels(yaml: string, organizationId: string | null): strin
 
         if (Array.isArray(service.labels)) {
             service.labels = service.labels.filter(
-                (label: unknown) => typeof label !== 'string' || !label.startsWith(`${NEXPLOY_ORGANIZATION_LABEL}=`),
+                (label: unknown) => typeof label !== 'string' || !isNexployManagedLabelKey(label.split('=')[0] ?? ''),
             );
-            service.labels.push(`${NEXPLOY_ORGANIZATION_LABEL}=${organizationId}`);
+            if (organizationId) service.labels.push(`${NEXPLOY_ORGANIZATION_LABEL}=${organizationId}`);
         } else {
-            service.labels = { ...(service.labels ?? {}), [NEXPLOY_ORGANIZATION_LABEL]: organizationId };
+            const editableLabels = stripNexployManagedLabels(service.labels ?? {});
+            service.labels = organizationId
+                ? { ...editableLabels, [NEXPLOY_ORGANIZATION_LABEL]: organizationId }
+                : editableLabels;
         }
     }
 

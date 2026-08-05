@@ -9,6 +9,7 @@ import {
     serviceIdParamSchema,
     updateServiceImageSchema,
 } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
+import { stripProtectedLabelEntries } from '@nexploy/shared/protectedLabels';
 
 const app = new Hono();
 
@@ -65,7 +66,10 @@ app.post(
         } = c.req.valid('json');
 
         const env = envVars.filter((e) => e.key).map((e) => `${e.key}=${e.value}`);
-        const labelsRecord = labels.length ? Object.fromEntries(labels.map((l) => [l.key, l.value])) : undefined;
+        const editableLabels = stripProtectedLabelEntries(labels);
+        const labelsRecord = editableLabels.length
+            ? Object.fromEntries(editableLabels.map((l) => [l.key, l.value]))
+            : undefined;
 
         const resourceLimits =
             cpuLimit || memoryLimit

@@ -865,6 +865,7 @@
     "edit": "Edit",
     "delete": "Delete",
     "cancelDelete": "Cancel delete",
+    "protected": "Reserved label managed by Nexploy, it cannot be edited",
     "empty": "(empty)"
   },
   "toasts": {

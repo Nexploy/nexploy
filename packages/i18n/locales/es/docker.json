@@ -865,6 +865,7 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "cancelDelete": "Cancelar la eliminación",
+    "protected": "Etiqueta reservada gestionada por Nexploy, no se puede editar",
     "empty": "(vacío)"
   },
   "toasts": {

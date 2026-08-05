@@ -865,6 +865,7 @@
     "edit": "Modifica",
     "delete": "Elimina",
     "cancelDelete": "Annulla l'eliminazione",
+    "protected": "Etichetta riservata gestita da Nexploy, non può essere modificata",
     "empty": "(vuoto)"
   },
   "toasts": {

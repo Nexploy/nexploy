@@ -12,6 +12,7 @@ import { LabelForm } from '@/components/docker/container/forms/LabelForm';
 import { Label } from '@workspace/typescript-interface/docker/docker.label';
 import { LabelItem } from '@/components/docker/container/cards/label/LabelItem';
 import { useTranslations } from 'next-intl';
+import { isProtectedLabelKey } from '@nexploy/shared/protectedLabels';
 
 export function CardLabels() {
     const t = useTranslations('docker.labels');
@@ -89,6 +90,7 @@ export function CardLabels() {
                                 const label = { key, value };
                                 const { isEdited, isDeleted, editedLabel } = getLabelChangeStatus(label);
                                 const displayLabel = editedLabel || label;
+                                const isProtected = isProtectedLabelKey(key);
 
                                 return (
                                     <LabelItem
@@ -96,10 +98,15 @@ export function CardLabels() {
                                         label={label}
                                         isEdited={isEdited}
                                         isDeleted={isDeleted}
+                                        isProtected={isProtected}
                                         displayLabel={displayLabel}
-                                        onEdit={isSwarmContainer ? undefined : handleOpenDialog.bind(null, 'edit')}
+                                        onEdit={
+                                            isSwarmContainer || isProtected
+                                                ? undefined
+                                                : handleOpenDialog.bind(null, 'edit')
+                                        }
                                         onCancelDelete={
-                                            isSwarmContainer
+                                            isSwarmContainer || isProtected
                                                 ? undefined
                                                 : () =>
                                                       onLabelChange({
