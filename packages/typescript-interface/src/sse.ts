@@ -28,7 +28,8 @@ export type SSEChannel =
     | 'swarm'
     | 'traefik'
     | 'monitoring'
-    | 'tasks';
+    | 'tasks'
+    | 'activity';
 
 export type SSEEventHandler = (event: MessageEvent) => void;
 

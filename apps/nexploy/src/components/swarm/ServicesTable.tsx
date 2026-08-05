@@ -2,7 +2,6 @@
 
 import {
     FilterFn,
-    flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
@@ -11,28 +10,19 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ChevronLeft, ChevronRight, Layers } from 'lucide-react';
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@workspace/ui/components/empty';
 import { useSwarmStore } from '@/stores/docker/useSwarmStore';
-import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { getColumnsSwarmServices } from './ColumnsSwarmServices';
 import { ServiceTableActions } from './ServiceTableActions';
+import { TableShell } from '@/components/table/TableShell';
+import { TablePagination } from '@/components/table/TablePagination';
+import { useClientTablePagination } from '@/hooks/useClientTablePagination';
 
 const globalFilterFn: FilterFn<SwarmService> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -55,13 +45,14 @@ export function ServicesTable() {
 
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState('');
-    const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
     const getRunningTasksCount = useMemo(
         () => (serviceId: string) => getTasksByService(serviceId).filter((task) => task.state === 'running').length,
         [getTasksByService],
     );
+
+    const pagination = useClientTablePagination();
 
     const table = useReactTable({
         data: services,
@@ -75,16 +66,17 @@ export function ServicesTable() {
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        initialState: { pagination: { pageSize: PAGE_SIZE_DEFAULT } },
-        state: { sorting, globalFilter, rowSelection },
+        onPaginationChange: pagination.onPaginationChange,
+        state: { sorting, globalFilter, rowSelection, pagination: pagination.state },
     });
+
+    pagination.clampToPageCount(table.getPageCount());
 
     const selectedIds = Object.keys(rowSelection);
     const selectedServices = services.filter((s) => selectedIds.includes(s.id));
 
     const isLoading = services.length === 0 && !lastUpdate;
     const isEmpty = services.length === 0 && !!lastUpdate;
-    const isShowingAll = pageSize === 'all';
     const noMatch = !isEmpty && services.length > 0 && table.getRowModel().rows.length === 0;
 
     if (isEmpty) {
@@ -118,120 +110,15 @@ export function ServicesTable() {
                 />
             </div>
 
-            <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((hg) => (
-                            <TableRow key={hg.id}>
-                                {hg.headers.map((header) => (
-                                    <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(header.column.columnDef.header, header.getContext())}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading &&
-                            Array.from({ length: 3 }).map((_, i) => (
-                                <TableRow key={i} className="h-12">
-                                    {table.getAllColumns().map((_, ci) => (
-                                        <TableCell key={ci}>
-                                            <Skeleton className="h-6 w-full" />
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
+            <TableShell table={table} isLoading={isLoading} skeletonRows={3} emptyLabel={tCommon('noMatchSearch')} />
 
-                        {noMatch && (
-                            <TableRow>
-                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
-                                    {tCommon('noMatchSearch')}
-                                </TableCell>
-                            </TableRow>
-                        )}
-
-                        {!isLoading &&
-                            !noMatch &&
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} className="h-12" data-state={row.getIsSelected() && 'selected'}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-                    </TableBody>
-                </Table>
-            </div>
-
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground text-sm">{t('servicesPerPage')}:</span>
-                    <Select
-                        value={pageSize === 'all' ? 'all' : `${pageSize}`}
-                        onValueChange={(value) => {
-                            if (value === 'all') {
-                                setPageSize('all');
-                                table.setPageSize(services.length || 1);
-                            } else {
-                                const size = Number(value);
-                                setPageSize(size);
-                                table.setPageSize(size);
-                            }
-                        }}
-                    >
-                        <SelectTrigger size="sm" className="w-24">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>{tCommon('size')}</SelectLabel>
-                                {PAGE_SIZE_OPTIONS.map((size) => (
-                                    <SelectItem key={size} value={`${size}`}>
-                                        {size}
-                                    </SelectItem>
-                                ))}
-                                <SelectItem value="all">{tCommon('all')}</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {!isShowingAll && (
-                    <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">
-                            {tCommon('pageOf', {
-                                current: table.getState().pagination.pageIndex + 1,
-                                total: table.getPageCount(),
-                            })}
-                        </span>
-                        <div className="flex gap-1">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => table.previousPage()}
-                                disabled={!table.getCanPreviousPage()}
-                            >
-                                <ChevronLeft className="h-4 w-4" />
-                                {tCommon('previous')}
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => table.nextPage()}
-                                disabled={!table.getCanNextPage()}
-                            >
-                                {tCommon('next')}
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-                )}
-            </div>
+            <TablePagination
+                table={table}
+                pageSize={pagination.pageSize}
+                onPageSizeChange={pagination.setPageSize}
+                perPageLabel={t('servicesPerPage')}
+                allowAllPageSize
+            />
         </div>
     );
 }

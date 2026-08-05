@@ -4,21 +4,14 @@ import { Badge } from '@workspace/ui/components/badge';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Activity } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import type { SwarmTask, SwarmTaskState } from '@workspace/typescript-interface/docker/swarm';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useSwarmServiceStore } from '@/stores/docker/useSwarmServiceStore.ts';
 import { Skeleton } from '@workspace/ui/components/skeleton.tsx';
-import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    SortingState,
-    useReactTable,
-} from '@tanstack/react-table';
+import { ColumnDef, getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
+import { TableShell } from '@/components/table/TableShell';
 
 function taskStateToStatus(state: SwarmTaskState): 'online' | 'offline' | 'maintenance' | 'degraded' | 'waiting' {
     switch (state) {
@@ -50,6 +43,7 @@ export function ServiceDetailTasks() {
         () => [
             {
                 id: 'slot',
+                size: 80,
                 accessorFn: (row) => row.slot ?? 0,
                 header: () => t('detail.taskSlot'),
                 cell: ({ row }) => (
@@ -133,33 +127,7 @@ export function ServiceDetailTasks() {
                         {t('detail.noTasks')}
                     </div>
                 ) : (
-                    <Table>
-                        <TableHeader>
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => (
-                                        <TableHead
-                                            key={header.id}
-                                            className={header.id === 'slot' ? 'w-20' : undefined}
-                                        >
-                                            {flexRender(header.column.columnDef.header, header.getContext())}
-                                        </TableHead>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableHeader>
-                        <TableBody>
-                            {table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} className="h-11">
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                    <TableShell bare table={table} rowClassName="h-11" emptyLabel={t('detail.noTasks')} />
                 )}
             </CardContent>
         </Card>

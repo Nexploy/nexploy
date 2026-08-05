@@ -1,9 +1,7 @@
 import { z } from 'zod';
+import { paginationQuerySchema } from '../table/pagination.schema';
 
-export const activityQuerySchema = z.object({
-    page: z.coerce.number().int().min(1).optional(),
-    pageSize: z.coerce.number().int().min(1).max(500).optional(),
-    search: z.string().trim().min(1).optional(),
+export const activityQuerySchema = paginationQuerySchema.extend({
     name: z.string().trim().min(1).optional(),
     resource: z.string().trim().min(1).optional(),
     status: z.enum(['SUCCESS', 'FAILURE', 'DENIED']).optional(),
@@ -11,7 +9,6 @@ export const activityQuerySchema = z.object({
     actorId: z.string().trim().min(1).optional(),
     from: z.coerce.date().optional(),
     to: z.coerce.date().optional(),
-    before: z.coerce.date().optional(),
 });
 
 export type ActivityQueryInput = z.infer<typeof activityQuerySchema>;

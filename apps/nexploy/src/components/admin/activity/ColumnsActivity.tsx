@@ -30,7 +30,7 @@ export function getColumnsActivity(t: TranslationFunction): ColumnDef<ActivityLo
 
     return [
         {
-            id: 'date',
+            id: 'createdAt',
             accessorFn: (entry) => dayjs(entry.createdAt).valueOf(),
             header: sortableHeader(t('columns.date')),
             cell: ({ row }) => (
@@ -40,7 +40,7 @@ export function getColumnsActivity(t: TranslationFunction): ColumnDef<ActivityLo
             ),
         },
         {
-            id: 'action',
+            id: 'name',
             accessorFn: (entry) => entry.name,
             header: sortableHeader(t('columns.action')),
             cell: ({ row }) => <span className="block max-w-60 truncate text-sm font-medium">{row.original.name}</span>,
@@ -56,7 +56,7 @@ export function getColumnsActivity(t: TranslationFunction): ColumnDef<ActivityLo
             ),
         },
         {
-            id: 'role',
+            id: 'actorRole',
             accessorFn: (entry) => entry.actorRole ?? '',
             header: sortableHeader(t('columns.role')),
             cell: ({ row }) =>
@@ -85,7 +85,7 @@ export function getColumnsActivity(t: TranslationFunction): ColumnDef<ActivityLo
             cell: ({ row }) => <ActivityStatusBadge status={row.original.status} />,
         },
         {
-            id: 'duration',
+            id: 'durationMs',
             accessorFn: (entry) => entry.durationMs ?? -1,
             header: sortableHeader(t('columns.duration')),
             cell: ({ row }) => (

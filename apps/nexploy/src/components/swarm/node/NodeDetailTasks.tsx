@@ -4,22 +4,15 @@ import { Badge } from '@workspace/ui/components/badge';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Activity } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import type { SwarmTask, SwarmTaskState } from '@workspace/typescript-interface/docker/swarm';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useSwarmNodeStore } from '@/stores/docker/useSwarmNodeStore.ts';
 import { Skeleton } from '@workspace/ui/components/skeleton.tsx';
 import { useRouter } from 'next/navigation';
-import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    getSortedRowModel,
-    SortingState,
-    useReactTable,
-} from '@tanstack/react-table';
+import { ColumnDef, getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
+import { TableShell } from '@/components/table/TableShell';
 
 function taskStateToStatus(state: SwarmTaskState): 'online' | 'offline' | 'maintenance' | 'degraded' | 'waiting' {
     switch (state) {
@@ -52,6 +45,7 @@ export function NodeDetailTasks() {
         () => [
             {
                 id: 'slot',
+                size: 80,
                 accessorFn: (row) => row.slot ?? row.id,
                 header: () => t('detail.taskSlot'),
                 cell: ({ row }) => (
@@ -121,7 +115,7 @@ export function NodeDetailTasks() {
     const table = useReactTable({
         data: tasks ?? [],
         columns,
-        state: { sorting },
+        state: { sorting, columnVisibility: { updatedAt: false } },
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -140,50 +134,14 @@ export function NodeDetailTasks() {
                         {t('node.noTasks')}
                     </div>
                 ) : (
-                    <Table>
-                        <TableHeader>
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers
-                                        .filter((h) => h.id !== 'updatedAt')
-                                        .map((header) => (
-                                            <TableHead
-                                                key={header.id}
-                                                className={header.id === 'slot' ? 'w-20' : undefined}
-                                            >
-                                                {flexRender(header.column.columnDef.header, header.getContext())}
-                                            </TableHead>
-                                        ))}
-                                </TableRow>
-                            ))}
-                        </TableHeader>
-                        <TableBody>
-                            {table.getRowModel().rows.map((row) => {
-                                const containerId = row.original.containerStatus?.containerId;
-                                const isClickable = !!containerId && row.original.state === 'running';
-                                return (
-                                    <TableRow
-                                        key={row.id}
-                                        className={`h-11 ${isClickable ? 'cursor-pointer' : ''}`}
-                                        onClick={
-                                            isClickable
-                                                ? () => router.push(`/docker/containers/${containerId}`)
-                                                : undefined
-                                        }
-                                    >
-                                        {row
-                                            .getVisibleCells()
-                                            .filter((c) => c.column.id !== 'updatedAt')
-                                            .map((cell) => (
-                                                <TableCell key={cell.id}>
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </TableCell>
-                                            ))}
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
+                    <TableShell
+                        bare
+                        table={table}
+                        rowClassName="h-11"
+                        emptyLabel={t('node.noTasks')}
+                        isRowClickable={(task) => !!task.containerStatus?.containerId && task.state === 'running'}
+                        onRowClick={(task) => router.push(`/docker/containers/${task.containerStatus?.containerId}`)}
+                    />
                 )}
             </CardContent>
         </Card>

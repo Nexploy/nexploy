@@ -269,7 +269,6 @@
     "live": "En direct",
     "connecting": "Connexion…",
     "disconnected": "Déconnecté",
-    "loadMore": "Charger les entrées plus anciennes",
     "total": "{count} entrées",
     "columns": {
       "date": "Date",

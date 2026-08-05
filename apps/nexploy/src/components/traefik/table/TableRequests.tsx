@@ -1,21 +1,15 @@
 'use client';
 
-import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import {
-    flexRender,
     getCoreRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Skeleton } from '@workspace/ui/components/skeleton';
 import { Input } from '@workspace/ui/components/input';
-import { Button } from '@workspace/ui/components/button';
 import {
     Select,
     SelectContent,
@@ -27,6 +21,9 @@ import {
 } from '@workspace/ui/components/select';
 import { useRequestsStore } from '@/stores/traefik/useRequestsStore';
 import { getColumnsTableRequests } from '@/components/traefik/table/ColumnsRequests';
+import { TableShell } from '@/components/table/TableShell';
+import { TablePagination } from '@/components/table/TablePagination';
+import { useClientTablePagination } from '@/hooks/useClientTablePagination';
 
 export function TableRequests() {
     const t = useTranslations('requests');
@@ -47,7 +44,6 @@ export function TableRequests() {
     } = useRequestsStore();
 
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
     const columns = useMemo(() => getColumnsTableRequests(t), [t]);
 
@@ -64,6 +60,8 @@ export function TableRequests() {
     const isLoading = !lastUpdate;
     const isEmpty = requests.length === 0;
 
+    const pagination = useClientTablePagination();
+
     const table = useReactTable({
         data: filteredRequests,
         columns,
@@ -72,17 +70,14 @@ export function TableRequests() {
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        initialState: {
-            pagination: {
-                pageSize: pageSize === 'all' ? filteredRequests.length || 1 : pageSize,
-            },
-        },
+        onPaginationChange: pagination.onPaginationChange,
         state: {
             sorting,
+            pagination: pagination.state,
         },
     });
 
-    const isShowingAll = pageSize === 'all';
+    pagination.clampToPageCount(table.getPageCount());
 
     return (
         <div className="mx-5 space-y-3">
@@ -144,122 +139,22 @@ export function TableRequests() {
                 </div>
             </div>
 
-            <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(header.column.columnDef.header, header.getContext())}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading &&
-                            Array.from({ length: 10 }).map((_, rowIndex) => (
-                                <TableRow key={rowIndex} className="h-12">
-                                    {columns.map((_, index) => (
-                                        <TableCell key={index}>
-                                            <Skeleton className="h-6 w-full" />
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-
-                        {!isLoading && table.getRowModel().rows.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} className="py-6 text-center">
-                                    <span className="text-muted-foreground text-sm">
-                                        {isEmpty ? t('noRequests') : t('noMatchingRequests')}
-                                    </span>
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            !isLoading &&
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} className="h-12">
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+            <TableShell
+                table={table}
+                isLoading={isLoading}
+                emptyLabel={t('noRequests')}
+                noResultsLabel={t('noMatchingRequests')}
+                hasActiveFilters={!isEmpty}
+            />
 
             {!isLoading && !!filteredRequests.length && (
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">{t('requestsPerPage')}</span>
-                        <Select
-                            value={pageSize === 'all' ? 'all' : `${pageSize}`}
-                            onValueChange={(value) => {
-                                if (value === 'all') {
-                                    setPageSize('all');
-                                    table.setPageSize(filteredRequests.length || 1);
-                                } else {
-                                    const size = Number(value);
-                                    setPageSize(size);
-                                    table.setPageSize(size);
-                                }
-                            }}
-                        >
-                            <SelectTrigger size="sm" className="min-w-24">
-                                <SelectValue placeholder={t('perPage')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>{tCommon('size')}</SelectLabel>
-                                    {PAGE_SIZE_OPTIONS.map((size) => (
-                                        <SelectItem key={size} value={`${size}`}>
-                                            {size}
-                                        </SelectItem>
-                                    ))}
-                                    <SelectItem value="all">{t('all')}</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {!isShowingAll && (
-                        <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground text-sm">
-                                {tCommon('pageOf', {
-                                    current: table.getState().pagination.pageIndex + 1,
-                                    total: table.getPageCount(),
-                                })}
-                            </span>
-                            <div className="flex gap-1">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => table.previousPage()}
-                                    disabled={!table.getCanPreviousPage()}
-                                >
-                                    <ChevronLeft className="h-4 w-4" />
-                                    {tCommon('previous')}
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => table.nextPage()}
-                                    disabled={!table.getCanNextPage()}
-                                >
-                                    {tCommon('next')}
-                                    <ChevronRight className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                </div>
+                <TablePagination
+                    table={table}
+                    pageSize={pagination.pageSize}
+                    onPageSizeChange={pagination.setPageSize}
+                    perPageLabel={t('requestsPerPage')}
+                    allowAllPageSize
+                />
             )}
         </div>
     );

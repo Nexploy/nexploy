@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
+import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { TableShell } from '@/components/table/TableShell';
 import { Mail } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import type {
@@ -37,10 +37,12 @@ function DataTable<TData>({
     data,
     columns,
     rowClassName,
+    emptyLabel,
 }: {
     data: TData[];
     columns: ColumnDef<TData>[];
     rowClassName: string;
+    emptyLabel: string;
 }) {
     const table = useReactTable({
         data,
@@ -48,43 +50,7 @@ function DataTable<TData>({
         getCoreRowModel: getCoreRowModel(),
     });
 
-    return (
-        <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-            <Table>
-                <TableHeader>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
-                                <TableHead
-                                    key={header.id}
-                                    style={
-                                        header.column.columnDef.size
-                                            ? { width: header.column.columnDef.size }
-                                            : undefined
-                                    }
-                                >
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(header.column.columnDef.header, header.getContext())}
-                                </TableHead>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableHeader>
-                <TableBody>
-                    {table.getRowModel().rows.map((row) => (
-                        <TableRow key={row.id} className={rowClassName}>
-                            {row.getVisibleCells().map((cell) => (
-                                <TableCell key={cell.id}>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </div>
-    );
+    return <TableShell table={table} rowClassName={rowClassName} emptyLabel={emptyLabel} />;
 }
 
 export function MembersSection({
@@ -190,7 +156,12 @@ export function MembersSection({
 
     return (
         <div className="flex flex-col gap-8">
-            <DataTable data={visibleMembers} columns={membersColumns} rowClassName="h-14" />
+            <DataTable
+                data={visibleMembers}
+                columns={membersColumns}
+                rowClassName="h-14"
+                emptyLabel={tCommon('noResults')}
+            />
 
             {canManageMembers && visibleInvitations.length > 0 && (
                 <div className="flex flex-col gap-3">
@@ -198,7 +169,12 @@ export function MembersSection({
                         <Mail className="size-4" />
                         {t('invitations.pending')}
                     </h2>
-                    <DataTable data={visibleInvitations} columns={invitationsColumns} rowClassName="h-12" />
+                    <DataTable
+                        data={visibleInvitations}
+                        columns={invitationsColumns}
+                        rowClassName="h-12"
+                        emptyLabel={tCommon('noResults')}
+                    />
                 </div>
             )}
         </div>

@@ -1,38 +1,33 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Loader2, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import type { SortingState } from '@tanstack/react-table';
 import type { ActivityLogEntry } from '@workspace/typescript-interface/activity';
-import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useActivityStore } from '@/stores/admin/useActivityStore';
-import { ActivityTable } from '@/components/admin/activity/ActivityTable';
+import { ServerTable } from '@/components/table/ServerTable';
+import { getColumnsActivity } from '@/components/admin/activity/ColumnsActivity';
 import { ActivityDetailSheet } from '@/components/admin/activity/ActivityDetailSheet';
+
+const ACTIVITY_ENDPOINT = '/api/admin/activity';
+const ACTIVITY_SORTING: SortingState = [{ id: 'createdAt', desc: true }];
 
 export function ActivitySection() {
     const t = useTranslations('admin.activity');
     const tCommon = useTranslations('common');
 
-    const entries = useActivityStore((state) => state.entries);
-    const hasMore = useActivityStore((state) => state.hasMore);
-    const isLoading = useActivityStore((state) => state.isLoading);
-    const isLoadingMore = useActivityStore((state) => state.isLoadingMore);
-    const connect = useActivityStore((state) => state.connect);
-    const disconnect = useActivityStore((state) => state.disconnect);
-    const loadMore = useActivityStore((state) => state.loadMore);
+    const revision = useActivityStore((state) => state.revision);
 
     const [search, setSearch] = useState('');
     const [selected, setSelected] = useState<ActivityLogEntry | null>(null);
 
     const debouncedSearch = useDebouncedValue(search);
+    const debouncedRevision = useDebouncedValue(revision, 1000);
 
-    useEffect(() => {
-        connect();
-
-        return () => disconnect();
-    }, [connect, disconnect]);
+    const columns = useMemo(() => getColumnsActivity(t), [t]);
 
     return (
         <div className="flex flex-col gap-4">
@@ -46,23 +41,19 @@ export function ActivitySection() {
                 />
             </div>
 
-            <ActivityTable
-                entries={entries}
+            <ServerTable<ActivityLogEntry>
+                endpoint={ACTIVITY_ENDPOINT}
+                columns={columns}
                 search={debouncedSearch}
-                isLoading={isLoading && entries.length === 0}
+                initialSorting={ACTIVITY_SORTING}
+                revalidateToken={debouncedRevision}
+                allowAllPageSize
                 emptyLabel={t('empty')}
                 noResultsLabel={tCommon('noResults')}
-                onSelect={setSelected}
+                renderTotalLabel={(total) => t('total', { count: total })}
+                getRowId={(entry) => entry.id}
+                onRowClick={setSelected}
             />
-
-            {hasMore && (
-                <div className="flex justify-center">
-                    <Button variant="outline" size="sm" onClick={() => loadMore()} disabled={isLoadingMore}>
-                        {isLoadingMore && <Loader2 className="size-4 animate-spin" />}
-                        {t('loadMore')}
-                    </Button>
-                </div>
-            )}
 
             <ActivityDetailSheet entry={selected} onOpenChange={(open) => !open && setSelected(null)} />
         </div>

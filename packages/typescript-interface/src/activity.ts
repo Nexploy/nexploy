@@ -1,3 +1,5 @@
+import type { PaginatedResult } from './table';
+
 export type ActivitySource = 'SERVER_ACTION' | 'API_ROUTE';
 
 export type ActivityStatus = 'SUCCESS' | 'FAILURE' | 'DENIED';
@@ -29,13 +31,7 @@ export interface ActivityLogEntry {
     metadata: unknown;
 }
 
-export interface ActivityLogPage {
-    entries: ActivityLogEntry[];
-    total: number;
-    page: number;
-    pageSize: number;
-    pageCount: number;
-}
+export type ActivityLogPage = PaginatedResult<ActivityLogEntry>;
 
 export interface ActivityPurgeResult {
     purged: number;
@@ -49,7 +45,7 @@ export interface ActivitySettings {
 }
 
 export type ActivityStreamEvent =
-    | { type: 'initial-state'; entries: ActivityLogEntry[]; hasMore: boolean; timestamp: number }
+    | { type: 'ready'; timestamp: number }
     | { type: 'activity-created'; entry: ActivityLogEntry; timestamp: number }
     | { type: 'activity-purged'; purged: number; purgedBefore: string | null; timestamp: number }
     | { type: 'heartbeat'; timestamp: number }

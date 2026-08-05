@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { ActivitySection } from '@/components/admin/activity/ActivitySection';
+import { SSEProvider } from '@/providers/SSEProviders.tsx';
 
 export const metadata: Metadata = {
     title: 'Activity',
@@ -28,7 +29,9 @@ export default async function ActivityPage() {
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-5 px-5 pb-5">
-                        <ActivitySection />
+                        <SSEProvider connections={['activity']}>
+                            <ActivitySection />
+                        </SSEProvider>
                     </div>
                 </ScrollAreaWithShadow>
             </div>

@@ -17,7 +17,6 @@ import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { purgeActivityLogsAction } from '@/actions/admin/activity/purgeActivityLogs.action';
 import { updateActivityRetentionAction } from '@/actions/admin/activity/updateActivityRetention.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
-import { useActivityStore } from '@/stores/admin/useActivityStore';
 
 export function ActivityRetentionCard({ settings }: { settings: ActivitySettings }) {
     const t = useTranslations('admin.settings');
@@ -49,10 +48,6 @@ export function ActivityRetentionCard({ settings }: { settings: ActivitySettings
         if (result?.serverError) {
             toast.error(result.serverError);
             return;
-        }
-
-        if (result?.data?.purged) {
-            useActivityStore.getState().applyPurge(result.data.purgedBefore);
         }
 
         setLastPurgeAt(dayjs().toISOString());

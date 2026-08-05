@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
-    flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
@@ -13,25 +11,16 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
-import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import { deleteDomain } from '@/actions/domains/deleteDomain.action';
 import { DomainForm } from '@/components/domains/DomainForm';
 import { getColumnsDomains } from '@/components/domains/ColumnsDomains';
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { TableShell } from '@/components/table/TableShell';
+import { TablePagination } from '@/components/table/TablePagination';
+import { useClientTablePagination } from '@/hooks/useClientTablePagination';
 
 interface DomainsTableProps {
     domains: Domain[];
@@ -47,7 +36,6 @@ export function TableDomains({ domains }: DomainsTableProps) {
 
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState('');
-    const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
     const handleEdit = (domain: Domain) => {
         openDialog({
@@ -73,6 +61,8 @@ export function TableDomains({ domains }: DomainsTableProps) {
         });
     };
 
+    const pagination = useClientTablePagination();
+
     const table = useReactTable({
         data: domains,
         columns: getColumnsDomains((key, values) => t(key, values), {
@@ -87,13 +77,11 @@ export function TableDomains({ domains }: DomainsTableProps) {
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        initialState: {
-            pagination: { pageSize: pageSize === 'all' ? domains.length || 1 : pageSize },
-        },
-        state: { sorting, globalFilter },
+        onPaginationChange: pagination.onPaginationChange,
+        state: { sorting, globalFilter, pagination: pagination.state },
     });
 
-    const isShowingAll = pageSize === 'all';
+    pagination.clampToPageCount(table.getPageCount());
 
     return (
         <div className="space-y-3">
@@ -106,109 +94,20 @@ export function TableDomains({ domains }: DomainsTableProps) {
                 />
             </div>
 
-            <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(header.column.columnDef.header, header.getContext())}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={table.getAllColumns().length} className="py-8 text-center">
-                                    <span className="text-muted-foreground text-sm">
-                                        {domains.length === 0 ? t('noDomains') : t('noMatchingDomains')}
-                                    </span>
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow key={row.id} className="h-12">
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+            <TableShell
+                table={table}
+                emptyLabel={t('noDomains')}
+                noResultsLabel={t('noMatchingDomains')}
+                hasActiveFilters={domains.length > 0}
+            />
 
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground text-sm">{t('perPage')}</span>
-                    <Select
-                        value={pageSize === 'all' ? 'all' : `${pageSize}`}
-                        onValueChange={(value) => {
-                            if (value === 'all') {
-                                setPageSize('all');
-                                table.setPageSize(domains.length || 1);
-                            } else {
-                                const size = Number(value);
-                                setPageSize(size);
-                                table.setPageSize(size);
-                            }
-                        }}
-                    >
-                        <SelectTrigger size="sm" className="min-w-24">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>{tCommon('size')}</SelectLabel>
-                                {PAGE_SIZE_OPTIONS.map((size) => (
-                                    <SelectItem key={size} value={`${size}`}>
-                                        {size}
-                                    </SelectItem>
-                                ))}
-                                <SelectItem value="all">{tCommon('all')}</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {!isShowingAll && table.getPageCount() > 1 && (
-                    <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-sm">
-                            {tCommon('pageOf', {
-                                current: table.getState().pagination.pageIndex + 1,
-                                total: table.getPageCount(),
-                            })}
-                        </span>
-                        <div className="flex gap-1">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => table.previousPage()}
-                                disabled={!table.getCanPreviousPage()}
-                            >
-                                <ChevronLeft className="h-4 w-4" />
-                                {tCommon('previous')}
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => table.nextPage()}
-                                disabled={!table.getCanNextPage()}
-                            >
-                                {tCommon('next')}
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-                )}
-            </div>
+            <TablePagination
+                table={table}
+                pageSize={pagination.pageSize}
+                onPageSizeChange={pagination.setPageSize}
+                perPageLabel={t('perPage')}
+                allowAllPageSize
+            />
         </div>
     );
 }

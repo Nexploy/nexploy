@@ -1,9 +1,7 @@
 'use client';
 
-import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import {
     FilterFn,
-    flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
@@ -11,7 +9,6 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import React, { useState } from 'react';
 import { getColumnsTableVolumes } from '@/components/docker/volume/table/ColumnsDockerVolumes';
 import { useTranslations } from 'next-intl';
@@ -19,22 +16,15 @@ import { useVolumesStore } from '@/stores/docker/useVolumesStore.ts';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import { Badge } from '@workspace/ui/components/badge';
-import { Skeleton } from '@workspace/ui/components/skeleton';
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
+import { TableShell } from '@/components/table/TableShell';
+import { TablePagination } from '@/components/table/TablePagination';
+import { useClientTablePagination } from '@/hooks/useClientTablePagination';
 
 const globalFilterFn: FilterFn<Volume> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -54,7 +44,6 @@ export function TableDockerVolumes() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [rowSelection, setRowSelection] = useState({});
-    const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
@@ -68,6 +57,8 @@ export function TableDockerVolumes() {
     const isLoading = !volumes.length && !lastUpdate;
     const isEmpty = !volumes.length && !!lastUpdate;
 
+    const pagination = useClientTablePagination();
+
     const table = useReactTable({
         data: volumes,
         columns: getColumnsTableVolumes(t),
@@ -80,17 +71,16 @@ export function TableDockerVolumes() {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onRowSelectionChange: setRowSelection,
-        initialState: {
-            pagination: {
-                pageSize: pageSize === 'all' ? volumes.length : pageSize,
-            },
-        },
+        onPaginationChange: pagination.onPaginationChange,
         state: {
             sorting,
             globalFilter,
             rowSelection,
+            pagination: pagination.state,
         },
     });
+
+    pagination.clampToPageCount(table.getPageCount());
 
     const numberOfSelectedRows = Object.keys(rowSelection).length;
 
@@ -109,8 +99,6 @@ export function TableDockerVolumes() {
             },
         });
     };
-
-    const isShowingAll = pageSize === 'all';
 
     return (
         <div className={'mx-5 space-y-3'}>
@@ -137,121 +125,21 @@ export function TableDockerVolumes() {
                     </Button>
                 </div>
             </div>
-            <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(header.column.columnDef.header, header.getContext())}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading &&
-                            Array.from({ length: 5 }).map((_, rowIndex) => (
-                                <TableRow key={rowIndex} className="h-12">
-                                    {table.getAllColumns().map((column) => (
-                                        <TableCell key={column.id}>
-                                            <Skeleton className="h-6 w-full" />
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
+            <TableShell
+                table={table}
+                isLoading={isLoading}
+                skeletonRows={5}
+                emptyLabel={t('noVolumesFound')}
+                hasActiveFilters={!isEmpty}
+            />
 
-                        {!isLoading && isEmpty ? (
-                            <TableRow>
-                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
-                                    {t('noVolumesFound')}
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    className={'h-12'}
-                                    data-state={row.getIsSelected() && 'selected'}
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
-            <div className={'flex items-center justify-between'}>
-                <div className={'flex items-center gap-2'}>
-                    <span className="text-muted-foreground text-sm">{t('volumesPerPage')}:</span>
-                    <Select
-                        value={pageSize === 'all' ? 'all' : `${pageSize}`}
-                        onValueChange={(value) => {
-                            if (value === 'all') {
-                                setPageSize('all');
-                                table.setPageSize(volumes.length);
-                            } else {
-                                const size = Number(value);
-                                setPageSize(size);
-                                table.setPageSize(size);
-                            }
-                        }}
-                    >
-                        <SelectTrigger size={'sm'} className="min-w-24">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>{tCommon('size')}</SelectLabel>
-                                {PAGE_SIZE_OPTIONS.map((size) => (
-                                    <SelectItem key={size} value={`${size}`}>
-                                        {size}
-                                    </SelectItem>
-                                ))}
-                                <SelectItem value="all">{tCommon('all')}</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {!isShowingAll && (
-                    <div className={'flex items-center gap-2'}>
-                        <span className="text-muted-foreground text-sm">
-                            {tCommon('pageOf', {
-                                current: table.getState().pagination.pageIndex + 1,
-                                total: table.getPageCount(),
-                            })}
-                        </span>
-                        <div className={'flex gap-1'}>
-                            <Button
-                                variant={'outline'}
-                                size={'sm'}
-                                onClick={() => table.previousPage()}
-                                disabled={!table.getCanPreviousPage()}
-                            >
-                                <ChevronLeft className={'h-4 w-4'} />
-                                {tCommon('previous')}
-                            </Button>
-                            <Button
-                                variant={'outline'}
-                                size={'sm'}
-                                onClick={() => table.nextPage()}
-                                disabled={!table.getCanNextPage()}
-                            >
-                                {tCommon('next')}
-                                <ChevronRight className={'h-4 w-4'} />
-                            </Button>
-                        </div>
-                    </div>
-                )}
-            </div>
+            <TablePagination
+                table={table}
+                pageSize={pagination.pageSize}
+                onPageSizeChange={pagination.setPageSize}
+                perPageLabel={t('volumesPerPage')}
+                allowAllPageSize
+            />
         </div>
     );
 }

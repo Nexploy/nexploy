@@ -5,25 +5,16 @@ import type {
 } from '@workspace/typescript-interface/activity';
 import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { subscribeActivityCreated, subscribeActivityPurged } from '@/lib/activity/activityBus';
-import { getRecentActivityLogs } from '@/services/activityLog.service';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const DEFAULT_LIMIT = 200;
-const MAX_LIMIT = 500;
 const HEARTBEAT_INTERVAL = 30_000;
 
 export const GET = route
     .use(authRouteServer)
     .use(requirePermission('activity', 'read'))
     .handler(async (request: Request) => {
-        const { searchParams } = new URL(request.url);
-        const requestedLimit = Number.parseInt(searchParams.get('limit') ?? '', 10);
-        const limit = Number.isFinite(requestedLimit)
-            ? Math.min(MAX_LIMIT, Math.max(1, requestedLimit))
-            : DEFAULT_LIMIT;
-
         const encoder = new TextEncoder();
 
         const stream = new ReadableStream({
@@ -40,13 +31,7 @@ export const GET = route
                     }
                 };
 
-                try {
-                    const { entries, hasMore } = await getRecentActivityLogs(limit);
-                    send({ type: 'initial-state', entries, hasMore, timestamp: Date.now() });
-                } catch (error) {
-                    console.error('[ACTIVITY STREAM] Failed to load initial state', error);
-                    send({ type: 'error', error: 'Failed to load activity', timestamp: Date.now() });
-                }
+                send({ type: 'ready', timestamp: Date.now() });
 
                 const unsubscribeCreated = subscribeActivityCreated((entry: ActivityLogEntry) => {
                     send({ type: 'activity-created', entry, timestamp: Date.now() });

@@ -1,10 +1,8 @@
 'use client';
 
-import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import {
     ExpandedState,
     FilterFn,
-    flexRender,
     getCoreRowModel,
     getExpandedRowModel,
     getFilteredRowModel,
@@ -13,7 +11,6 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import React, { useMemo, useRef, useState } from 'react';
 import { getColumnsTableImages } from '@/components/docker/image/table/ColumnsDockerImages';
 import { useTranslations } from 'next-intl';
@@ -22,19 +19,9 @@ import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import { groupImagesByRepository, matchesSearch } from './imageTableUtils';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { ChevronLeft, ChevronRight, Play, Trash2 } from 'lucide-react';
+import { Play, Trash2 } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
-import { Skeleton } from '@workspace/ui/components/skeleton';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useRouter } from '@/i18n/navigation';
@@ -42,6 +29,9 @@ import { Switch } from '@workspace/ui/components/switch';
 import { Label } from '@workspace/ui/components/label';
 import { cn } from '@workspace/ui/lib/utils';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
+import { TableShell } from '@/components/table/TableShell';
+import { TablePagination } from '@/components/table/TablePagination';
+import { useClientTablePagination } from '@/hooks/useClientTablePagination';
 
 const globalFilterFn: FilterFn<ImageRow> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -60,7 +50,6 @@ export function TableDockerImages() {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [expanded, setExpanded] = useState<ExpandedState>({});
     const [rowSelection, setRowSelection] = useState({});
-    const [pageSize, setPageSize] = useState<number | 'all'>(PAGE_SIZE_DEFAULT);
 
     const router = useRouter();
     const t = useTranslations('docker.tables');
@@ -77,6 +66,8 @@ export function TableDockerImages() {
     const isLoading = !images.length && !lastUpdate;
     const isEmpty = !images.length && !!lastUpdate;
 
+    const pagination = useClientTablePagination();
+
     const table = useReactTable({
         data: groupedImages,
         columns: getColumnsTableImages(t),
@@ -92,18 +83,17 @@ export function TableDockerImages() {
         onRowSelectionChange: setRowSelection,
         onExpandedChange: setExpanded,
         getSubRows: (row) => row.subRows,
-        initialState: {
-            pagination: {
-                pageSize: pageSize === 'all' ? images.length : pageSize,
-            },
-        },
+        onPaginationChange: pagination.onPaginationChange,
         state: {
             sorting,
             globalFilter,
             rowSelection,
             expanded,
+            pagination: pagination.state,
         },
     });
+
+    pagination.clampToPageCount(table.getPageCount());
 
     const selectedImages = table
         .getSelectedRowModel()
@@ -158,7 +148,6 @@ export function TableDockerImages() {
         router.push(`/docker/containers/create?image=${selectedImage?.repoTags[0]}`);
     };
 
-    const isShowingAll = pageSize === 'all';
     const isUseDisabled = numberOfSelectedRows !== 1 || !selectedImage?.repoTags.length;
 
     const getUseTooltipContent = () => {
@@ -213,127 +202,23 @@ export function TableDockerImages() {
                     </Button>
                 </div>
             </div>
-            <div className="bg-card overflow-hidden rounded-md border shadow-sm">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(header.column.columnDef.header, header.getContext())}
-                                    </TableHead>
-                                ))}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading &&
-                            Array.from({ length: 5 }).map((_, rowIndex) => (
-                                <TableRow key={rowIndex} className="h-12">
-                                    {table.getAllColumns().map((column) => (
-                                        <TableCell key={column.id}>
-                                            <Skeleton className="h-6 w-full" />
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
+            <TableShell
+                table={table}
+                isLoading={isLoading}
+                skeletonRows={5}
+                emptyLabel={t('noImagesFound')}
+                noResultsLabel={t('noImagesMatchSearch')}
+                hasActiveFilters={!isEmpty}
+                rowClassName={(row) => cn('h-12', row.original.isGroup && 'bg-muted/30')}
+            />
 
-                        {!isLoading && isEmpty ? (
-                            <TableRow>
-                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
-                                    {t('noImagesFound')}
-                                </TableCell>
-                            </TableRow>
-                        ) : !isLoading && table.getRowModel().rows.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={table.getAllColumns().length} className="py-6 text-center">
-                                    {t('noImagesMatchSearch')}
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    className={cn('h-12', row.original.isGroup && 'bg-muted/30')}
-                                    data-state={row.getIsSelected() && 'selected'}
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
-            <div className={'flex items-center justify-between'}>
-                <div className={'flex items-center gap-2'}>
-                    <span className="text-muted-foreground text-sm">{t('imagesPerPage')}:</span>
-                    <Select
-                        value={pageSize === 'all' ? 'all' : `${pageSize}`}
-                        onValueChange={(value) => {
-                            if (value === 'all') {
-                                setPageSize('all');
-                                table.setPageSize(images.length);
-                            } else {
-                                const size = Number(value);
-                                setPageSize(size);
-                                table.setPageSize(size);
-                            }
-                        }}
-                    >
-                        <SelectTrigger size={'sm'} className="w-24">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>{tCommon('size')}</SelectLabel>
-                                {PAGE_SIZE_OPTIONS.map((size) => (
-                                    <SelectItem key={size} value={`${size}`}>
-                                        {size}
-                                    </SelectItem>
-                                ))}
-                                <SelectItem value="all">{tCommon('all')}</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {!isShowingAll && (
-                    <div className={'flex items-center gap-2'}>
-                        <span className="text-muted-foreground text-sm">
-                            {tCommon('pageOf', {
-                                current: table.getState().pagination.pageIndex + 1,
-                                total: table.getPageCount(),
-                            })}
-                        </span>
-                        <div className={'flex gap-1'}>
-                            <Button
-                                variant={'outline'}
-                                size={'sm'}
-                                onClick={() => table.previousPage()}
-                                disabled={!table.getCanPreviousPage()}
-                            >
-                                <ChevronLeft className={'h-4 w-4'} />
-                                {tCommon('previous')}
-                            </Button>
-                            <Button
-                                variant={'outline'}
-                                size={'sm'}
-                                onClick={() => table.nextPage()}
-                                disabled={!table.getCanNextPage()}
-                            >
-                                {tCommon('next')}
-                                <ChevronRight className={'h-4 w-4'} />
-                            </Button>
-                        </div>
-                    </div>
-                )}
-            </div>
+            <TablePagination
+                table={table}
+                pageSize={pagination.pageSize}
+                onPageSizeChange={pagination.setPageSize}
+                perPageLabel={t('imagesPerPage')}
+                allowAllPageSize
+            />
         </div>
     );
 }

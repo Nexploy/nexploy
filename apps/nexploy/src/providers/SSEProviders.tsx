@@ -21,6 +21,7 @@ import { useNetworkStore } from '../stores/docker/useNetworkStore';
 import { useSwarmServiceStore } from '../stores/docker/useSwarmServiceStore';
 import { useSwarmNodeStore } from '../stores/docker/useSwarmNodeStore';
 import { useTasksStore } from '@/stores/useTasksStore';
+import { useActivityStore } from '@/stores/admin/useActivityStore.ts';
 
 type ExtractConnectParams<T> = T extends (params: infer P) => void ? P : never;
 
@@ -119,6 +120,9 @@ export function SSEProvider({
     const tasksConnect = useTasksStore((s) => s.connect);
     const tasksDisconnect = useTasksStore((s) => s.disconnect);
 
+    const activityDisconnect = useActivityStore((state) => state.disconnect);
+    const activityConnect = useActivityStore((state) => state.connect);
+
     useEffect(() => {
         const connectFns: Record<SSEChannel, (...args: any[]) => void> = {
             containers: containersConnect,
@@ -140,6 +144,7 @@ export function SSEProvider({
             traefik: traefikConnect,
             monitoring: monitoringConnect,
             tasks: tasksConnect,
+            activity: activityConnect,
         };
 
         const disconnectFns: Record<SSEChannel, (...args: any[]) => void> = {
@@ -162,6 +167,7 @@ export function SSEProvider({
             traefik: traefikDisconnect,
             monitoring: monitoringDisconnect,
             tasks: tasksDisconnect,
+            activity: activityDisconnect,
         };
 
         memoizedConnections.forEach((conn) => {

@@ -4,19 +4,32 @@ import type {
     ActivityPurgeResult,
     ActivitySettings,
 } from '@workspace/typescript-interface/activity';
+import type { PageSize, SortDirection } from '@workspace/typescript-interface/table';
 import type { Prisma } from '../../generated/client';
 import { prisma } from '../../prisma/prisma';
 import { publishActivityPurged } from '@/lib/activity/activityBus';
+import { resolveOrderBy, resolvePagination, toPaginatedResult } from '@/lib/pagination';
 
 const DEFAULT_PAGE_SIZE = 50;
-const MAX_PAGE_SIZE = 500;
+
+const ACTIVITY_ORDER_BY: Record<string, (direction: SortDirection) => Prisma.ActivityLogOrderByWithRelationInput> = {
+    createdAt: (direction) => ({ createdAt: direction }),
+    name: (direction) => ({ name: direction }),
+    actor: (direction) => ({ actorEmail: direction }),
+    actorRole: (direction) => ({ actorRole: direction }),
+    source: (direction) => ({ source: direction }),
+    status: (direction) => ({ status: direction }),
+    durationMs: (direction) => ({ durationMs: direction }),
+};
 
 export const ACTIVITY_ACTOR_INCLUDE = { actor: { select: { name: true } } } as const;
 
 export interface ActivityLogQuery {
     page?: number;
-    pageSize?: number;
+    pageSize?: PageSize;
     search?: string;
+    sortBy?: string;
+    sortOrder?: SortDirection;
     name?: string;
     resource?: string;
     status?: ActivityLogEntry['status'];
@@ -24,7 +37,6 @@ export interface ActivityLogQuery {
     actorId?: string;
     from?: Date;
     to?: Date;
-    before?: Date;
 }
 
 type ActivityLogRow = Prisma.ActivityLogGetPayload<{ include: typeof ACTIVITY_ACTOR_INCLUDE }>;
@@ -65,7 +77,6 @@ function buildWhere({
     actorId,
     from,
     to,
-    before,
 }: ActivityLogQuery): Prisma.ActivityLogWhereInput {
     const where: Prisma.ActivityLogWhereInput = {};
 
@@ -75,11 +86,10 @@ function buildWhere({
     if (source) where.source = source;
     if (actorId) where.actorId = actorId;
 
-    if (from || to || before) {
+    if (from || to) {
         where.createdAt = {};
         if (from) where.createdAt.gte = from;
         if (to) where.createdAt.lte = to;
-        if (before) where.createdAt.lt = before;
     }
 
     if (search) {
@@ -96,43 +106,20 @@ function buildWhere({
 }
 
 export async function queryActivityLogs(query: ActivityLogQuery): Promise<ActivityLogPage> {
-    const page = Math.max(1, query.page ?? 1);
-    const pageSize = Math.min(MAX_PAGE_SIZE, Math.max(1, query.pageSize ?? DEFAULT_PAGE_SIZE));
     const where = buildWhere(query);
 
-    const [rows, total] = await Promise.all([
-        prisma.activityLog.findMany({
-            where,
-            include: ACTIVITY_ACTOR_INCLUDE,
-            orderBy: { createdAt: 'desc' },
-            skip: query.before ? 0 : (page - 1) * pageSize,
-            take: pageSize,
-        }),
-        prisma.activityLog.count({ where }),
-    ]);
-
-    return {
-        entries: rows.map(toActivityLogEntry),
-        total,
-        page,
-        pageSize,
-        pageCount: Math.max(1, Math.ceil(total / pageSize)),
-    };
-}
-
-export async function getRecentActivityLogs(limit: number): Promise<{ entries: ActivityLogEntry[]; hasMore: boolean }> {
-    const take = Math.min(MAX_PAGE_SIZE, Math.max(1, limit));
+    const total = await prisma.activityLog.count({ where });
+    const { page, pageSize, skip, take } = resolvePagination(query, total, DEFAULT_PAGE_SIZE);
 
     const rows = await prisma.activityLog.findMany({
+        where,
         include: ACTIVITY_ACTOR_INCLUDE,
-        orderBy: { createdAt: 'desc' },
-        take: take + 1,
+        orderBy: [resolveOrderBy(query, ACTIVITY_ORDER_BY, 'createdAt'), { id: 'desc' }],
+        skip,
+        take,
     });
 
-    return {
-        entries: rows.slice(0, take).map(toActivityLogEntry),
-        hasMore: rows.length > take,
-    };
+    return toPaginatedResult(rows.map(toActivityLogEntry), { total, page, pageSize });
 }
 
 export async function getActivitySettings(): Promise<ActivitySettings> {
