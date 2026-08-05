@@ -4,6 +4,7 @@ import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { hasPermission, PermissionActions, PermissionResource, Role } from '@/lib/auth/permissions';
 import { hasOrgPermission, type OrgPermissionActions, type OrgPermissionResource } from '@/lib/auth/orgPermissions';
 import { isOrgScopedResource } from '@/lib/auth/orgScopedResources';
+import { canOnOwnedResource } from '@/lib/auth/canOnOwnedResource';
 import { NEXPLOY_ORGANIZATION_LABEL } from '@nexploy/shared/ownership';
 
 export type NavPermission = {
@@ -46,14 +47,13 @@ export function PermissionProvider({ children, role, orgRole, organizationId }: 
                 }
                 return hasPermission(role ?? '', resource, action as string);
             },
-            canOnContainer: (labels, action) => {
-                if (role === 'admin') return true;
-
-                const owner = labels?.[NEXPLOY_ORGANIZATION_LABEL] ?? null;
-                if (!owner) return hasPermission(role ?? '', 'container', action);
-
-                return !!orgRole && hasOrgPermission(orgRole, 'container', action);
-            },
+            canOnContainer: (labels, action) =>
+                canOnOwnedResource(
+                    { role: role ?? '', orgRole: orgRole ?? null, organizationId: organizationId ?? null },
+                    'container',
+                    action,
+                    labels?.[NEXPLOY_ORGANIZATION_LABEL] ?? null,
+                ),
         }),
         [role, orgRole, organizationId],
     );

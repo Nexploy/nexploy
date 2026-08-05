@@ -1,8 +1,5 @@
 import type { Task, TaskKind, TaskResource } from '@workspace/typescript-interface/task';
-import { isPrivilegedViewer } from '@nexploy/shared/ownership';
-import { hasPermission } from '@/lib/auth/permissions';
-import { hasOrgPermission, type OrgPermissionResource } from '@/lib/auth/orgPermissions';
-import { isOrgScopedResource } from '@/lib/auth/orgScopedResources';
+import { canOnOwnedResource, type ResourceViewer } from '@/lib/auth/canOnOwnedResource';
 
 const TASK_KIND_RESOURCE: Record<TaskKind, TaskResource> = {
     'container-migrate': 'container',
@@ -39,33 +36,16 @@ export function getTaskResource(kind: TaskKind): TaskResource {
     return TASK_KIND_RESOURCE[kind];
 }
 
-export interface TaskViewer {
-    role: string;
-    orgRole: string | null;
-    organizationId: string | null;
-}
+export type TaskViewer = ResourceViewer;
 
-export function ownsTask(viewer: TaskViewer, task: Task): boolean {
-    if (isPrivilegedViewer({ role: viewer.role, organizationId: viewer.organizationId })) return true;
-    if (!task.ownerOrganizationId) return true;
-
-    return task.ownerOrganizationId === viewer.organizationId;
-}
-
-export function canOnTaskResource(viewer: TaskViewer, resource: TaskResource, action: string): boolean {
-    if (hasPermission(viewer.role, resource, action)) return true;
-
-    return (
-        isOrgScopedResource(resource) &&
-        !!viewer.orgRole &&
-        hasOrgPermission(viewer.orgRole, resource as OrgPermissionResource, action)
-    );
+export function canOnTask(viewer: TaskViewer, task: Task, action: string): boolean {
+    return canOnOwnedResource(viewer, getTaskResource(task.kind), action, task.ownerOrganizationId);
 }
 
 export function canReadTask(viewer: TaskViewer, task: Task): boolean {
-    return ownsTask(viewer, task) && canOnTaskResource(viewer, getTaskResource(task.kind), 'read');
+    return canOnTask(viewer, task, 'read');
 }
 
 export function canManageTask(viewer: TaskViewer, task: Task): boolean {
-    return ownsTask(viewer, task) && canOnTaskResource(viewer, getTaskResource(task.kind), 'manage');
+    return canOnTask(viewer, task, 'manage');
 }

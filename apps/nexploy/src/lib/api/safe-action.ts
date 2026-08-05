@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
 import { hasPermission, type PermissionActions, type PermissionResource } from '@/lib/auth/permissions';
-import { hasOrgPermission, type OrgPermissionResource } from '@/lib/auth/orgPermissions';
+import { canOnOwnedResource } from '@/lib/auth/canOnOwnedResource';
 import { isOrgScopedResource, type OrgScopedResource } from '@/lib/auth/orgScopedResources';
 import { getCallerOrgRole, HOST_OWNED, HOST_SCOPED, type OrgScopeResolver } from '@/lib/auth/resolveOrgContext';
 import { kyDocker } from '@/lib/api/kyDocker';
@@ -109,13 +109,10 @@ export const requirePermission = <R extends PermissionResource>(
                 if (organizationIds.length === 0) throw await deny();
 
                 for (const organizationId of organizationIds) {
-                    if (organizationId === HOST_OWNED) {
-                        if (!hasPermission(role, resource, action)) throw await deny();
-                        continue;
-                    }
+                    const owner = organizationId === HOST_OWNED ? null : organizationId;
+                    const orgRole = owner ? await getCallerOrgRole(ctx.session.user.id, owner) : null;
 
-                    const orgRole = await getCallerOrgRole(ctx.session.user.id, organizationId);
-                    if (!orgRole || !hasOrgPermission(orgRole, resource as OrgPermissionResource, action as string)) {
+                    if (!canOnOwnedResource({ role, orgRole, organizationId: owner }, resource, action, owner)) {
                         throw await deny();
                     }
                 }

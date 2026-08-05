@@ -4,7 +4,7 @@ import { getUserSession } from '@/services/auth/auth.service';
 import { setToastServer } from '@/lib/toastServer';
 import { auth, Session } from '@/lib/auth/auth';
 import { hasPermission, type PermissionActions, type PermissionResource } from '@/lib/auth/permissions';
-import { hasOrgPermission, type OrgPermissionResource } from '@/lib/auth/orgPermissions';
+import { canOnOwnedResource } from '@/lib/auth/canOnOwnedResource';
 import { isOrgScopedResource, type OrgScopedResource } from '@/lib/auth/orgScopedResources';
 import { getCallerOrgRole, HOST_OWNED, HOST_SCOPED, type RequestOrgScopeResolver } from '@/lib/auth/resolveOrgContext';
 import { prisma } from '../../../prisma/prisma.ts';
@@ -148,15 +148,10 @@ export const requirePermission =
             }
 
             for (const organizationId of organizationIds) {
-                if (organizationId === HOST_OWNED) {
-                    if (!hasPermission(role, resource, action as string)) {
-                        throw new ForbiddenError(`Forbidden: missing permission ${resource}.${action as string}`);
-                    }
-                    continue;
-                }
+                const owner = organizationId === HOST_OWNED ? null : organizationId;
+                const orgRole = owner ? await getCallerOrgRole(ctx.session.user.id, owner) : null;
 
-                const orgRole = await getCallerOrgRole(ctx.session.user.id, organizationId);
-                if (!orgRole || !hasOrgPermission(orgRole, resource as OrgPermissionResource, action as string)) {
+                if (!canOnOwnedResource({ role, orgRole, organizationId: owner }, resource, action as string, owner)) {
                     throw new ForbiddenError(`Forbidden: missing permission ${resource}.${action as string}`);
                 }
             }
