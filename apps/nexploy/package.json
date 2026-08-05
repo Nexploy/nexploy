@@ -48,7 +48,7 @@
     "@thesvg/react": "^3.0.10",
     "@workspace/i18n": "workspace:*",
     "@workspace/schemas-zod": "workspace:*",
-    "@nexploy/shared": "^0.2.0",
+    "@nexploy/shared": "^0.3.0",
     "@workspace/typescript-interface": "workspace:*",
     "@workspace/ui": "workspace:*",
     "@wrksz/themes": "^0.9.3",
