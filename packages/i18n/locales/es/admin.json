@@ -45,7 +45,17 @@
     "upgradeCheckButton": "Comprobar actualizaciones",
     "upgradeConfirmTitle": "¿Actualizar Nexploy?",
     "upgradePatchNotes": "Lee las notas de la versión {version}",
-    "upgradeActiveBuildsWarning": "Las siguientes builds están en curso y se cancelarán si actualizas ahora:"
+    "upgradeActiveBuildsWarning": "Las siguientes builds están en curso y se cancelarán si actualizas ahora:",
+    "retentionTitle": "Retención de la actividad",
+    "retentionDescription": "Las entradas más antiguas que el periodo de retención se eliminan automáticamente cada noche.",
+    "retentionDays": "Retención (días)",
+    "retentionDaysDescription": "Ponga 0 para conservar todas las entradas indefinidamente.",
+    "retentionSaved": "Retención actualizada.",
+    "retentionPurgeTitle": "Purga manual",
+    "retentionPurgeNow": "Purgar ahora",
+    "retentionPurgeNowDescription": "Elimine las entradas caducadas de inmediato sin esperar a la ejecución nocturna.",
+    "retentionPurged": "{count} entradas eliminadas.",
+    "retentionLastPurge": "Última purga: {date}"
   },
   "users": "Usuarios",
   "user": "Usuario",
@@ -247,5 +257,53 @@
     "editorView": "Volver al editor",
     "saving": "Guardando...",
     "saved": "Guardado"
+  },
+  "activity": {
+    "title": "Actividad",
+    "description": "Historial completo de todas las acciones realizadas en esta instancia.",
+    "empty": "Todavía no hay actividad registrada.",
+    "refresh": "Actualizar",
+    "live": "En directo",
+    "connecting": "Conectando…",
+    "disconnected": "Desconectado",
+    "loadMore": "Cargar entradas anteriores",
+    "total": "{count} entradas",
+    "columns": {
+      "date": "Fecha",
+      "action": "Acción",
+      "actor": "Autor",
+      "target": "Destino",
+      "status": "Estado",
+      "duration": "Duración",
+      "source": "Origen"
+    },
+    "status": {
+      "SUCCESS": "Correcta",
+      "FAILURE": "Fallida",
+      "DENIED": "Denegada"
+    },
+    "source": {
+      "SERVER_ACTION": "Server action",
+      "API_ROUTE": "Ruta API"
+    },
+    "actorType": {
+      "USER": "Usuario",
+      "API_KEY": "Clave API",
+      "SYSTEM": "Sistema"
+    },
+    "filters": {
+      "searchPlaceholder": "Buscar una acción, un destino, un autor…"
+    },
+    "detail": {
+      "actorRole": "Rol",
+      "actorType": "Tipo de autor",
+      "targetId": "Identificador del destino",
+      "organization": "Organización",
+      "environment": "Entorno",
+      "ipAddress": "Dirección IP",
+      "userAgent": "Agente de usuario",
+      "error": "Error",
+      "metadata": "Carga útil"
+    }
   }
 }

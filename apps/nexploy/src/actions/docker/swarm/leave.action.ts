@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { swarmLeaveSchema } from '@workspace/schemas-zod/docker/swarm/leave.schema';
 
 export const onSwarmLeaveAction = authActionServer
+    .metadata({ name: 'swarm.leave' })
     .use(requirePermission('swarm', 'manage'))
     .inputSchema(swarmLeaveSchema)
     .action(async ({ parsedInput: { force } }) => {

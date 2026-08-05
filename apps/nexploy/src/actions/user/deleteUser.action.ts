@@ -7,6 +7,7 @@ import { deleteUserSchema } from '@workspace/schemas-zod/user/deleteUser.schema'
 import { getTranslations } from 'next-intl/server';
 
 export const deleteUser = authActionServer
+    .metadata({ name: 'user.delete' })
     .use(requirePermission('user', 'delete'))
     .inputSchema(deleteUserSchema)
     .action(async ({ parsedInput: { userId }, ctx: { session } }) => {

@@ -2,6 +2,7 @@ import { ContainerInspectInfo } from 'dockerode';
 import {
     Container,
     ContainerEvent,
+    ContainerRestartPolicyName,
     ContainerState,
     ContainerStateChanges,
     ContainerStateEvents,
@@ -21,6 +22,7 @@ const CONTAINER_STATE_CHANGE_EVENTS = new Set<ContainerStateEvents>([
     'destroy',
     'health_status',
     'rename',
+    'update',
 ]);
 
 export class ContainerStateManager extends BaseSingleResourceStateManager<Container> {
@@ -65,6 +67,8 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
             oldState.exitCode !== newState.exitCode ||
             oldState.error !== newState.error ||
             oldState.restartCount !== newState.restartCount ||
+            oldState.restartPolicy?.name !== newState.restartPolicy?.name ||
+            oldState.restartPolicy?.maximumRetryCount !== newState.restartPolicy?.maximumRetryCount ||
             JSON.stringify(oldState.network?.ports) !== JSON.stringify(newState.network?.ports) ||
             JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts)
         );
@@ -123,6 +127,8 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
         if (oldState.error !== newState.error) changes.error = { from: oldState.error, to: newState.error };
         if (oldState.restartCount !== newState.restartCount)
             changes.restartCount = { from: oldState.restartCount, to: newState.restartCount };
+        if (oldState.restartPolicy?.name !== newState.restartPolicy?.name)
+            changes.restartPolicy = { from: oldState.restartPolicy?.name, to: newState.restartPolicy?.name };
         if (JSON.stringify(oldState.network?.ports) !== JSON.stringify(newState.network?.ports))
             changes.networkPorts = true;
         if (JSON.stringify(oldState.mounts) !== JSON.stringify(newState.mounts)) changes.mounts = true;
@@ -216,6 +222,11 @@ export class ContainerStateManager extends BaseSingleResourceStateManager<Contai
             startedAt: container.State.StartedAt,
             finishedAt: container.State.FinishedAt,
             restartCount: container.RestartCount,
+            restartPolicy: {
+                name: (container.HostConfig?.RestartPolicy?.Name || 'no') as ContainerRestartPolicyName,
+                maximumRetryCount: container.HostConfig?.RestartPolicy?.MaximumRetryCount ?? 0,
+            },
+            autoRemove: container.HostConfig?.AutoRemove ?? false,
             health,
             path: container.Path,
             args: container.Args,

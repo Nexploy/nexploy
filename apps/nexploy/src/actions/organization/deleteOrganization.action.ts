@@ -12,6 +12,7 @@ import { isPersonalOrganization } from '@/services/organization.service';
 import { revalidatePath } from 'next/cache';
 
 export const deleteOrganizationAction = authActionServer
+    .metadata({ name: 'organization.delete' })
     .inputSchema(organizationIdSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('organization');

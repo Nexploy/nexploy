@@ -1,4 +1,4 @@
-import { Network } from '../../docker/docker.network';
+import { Network } from '../../docker/docker.network.js';
 
 export interface NetworkDetailState {
     networkId: string | null;

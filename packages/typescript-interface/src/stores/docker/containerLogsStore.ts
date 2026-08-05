@@ -1,4 +1,4 @@
-import { LogEntry } from '../../docker/docker.container.logs';
+import { LogEntry } from '../../docker/docker.container.logs.js';
 
 export interface ContainerLogsState {
     containerId: string | null;

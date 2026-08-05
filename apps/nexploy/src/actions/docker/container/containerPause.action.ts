@@ -8,6 +8,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
 export const onContainerPauseAction = authActionServer
+    .metadata({ name: 'container.pause' })
     .use(requirePermission('container', 'manage', byContainerIds))
     .inputSchema(containerActionsSchema)
     .action(async ({ parsedInput: { containerIds } }) => {

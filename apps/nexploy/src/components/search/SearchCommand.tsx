@@ -15,8 +15,6 @@ import { ContainerSeachGroup } from './groups/ContainerSeachGroup.tsx';
 import { ImageResultsSearchGroup } from './groups/ImageResultsSearchGroup.tsx';
 import { VolumeResultsSearchGroup } from '@/components/search/groups/VolumeResultsSearchGroup.tsx';
 import { NetworkResultsSearchGroup } from '@/components/search/groups/NetworkResultsSearchGroup.tsx';
-import { useTasksStore } from '@/stores/useTasksStore';
-import { cn } from '@workspace/ui/lib/utils';
 
 export function SearchCommand() {
     const t = useTranslations('ai.command');
@@ -28,7 +26,6 @@ export function SearchCommand() {
     const closeDialog = useSearchStore((s) => s.closeDialog);
     const setInputValue = useSearchStore((s) => s.setInputValue);
     const setCommandValue = useSearchStore((s) => s.setCommandValue);
-    const hasTasks = useTasksStore((s) => s.tasks.length > 0);
 
     useHotkeys(
         ['meta+k', 'ctrl+k'],
@@ -44,10 +41,7 @@ export function SearchCommand() {
             <Button
                 variant="outline"
                 onClick={openDialog}
-                className={cn(
-                    'hover:bg-muted hover:text-foreground text-muted-foreground flex h-8 flex-1 justify-between px-2.5 text-sm font-normal shadow-none md:flex-none',
-                    hasTasks ? 'rounded-none' : 'rounded-r-none',
-                )}
+                className="hover:bg-muted hover:text-foreground text-muted-foreground flex h-8 flex-1 justify-between px-2.5 text-sm font-normal shadow-none md:flex-none"
             >
                 <span className="truncate">{t('searchPlaceholder')}</span>
             </Button>

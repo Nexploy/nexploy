@@ -11,6 +11,7 @@ import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerCon
 import { loadEnvironmentByIdFromAPI } from '@/lib/loadEnvironments';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import { StartedTask, TaskContext, runAsTask } from '@/lib/taskRunner';
+import { resolveContainersOwner } from '@/lib/taskOwnership';
 import { logger } from '@/utils/logger';
 
 type RegistryAuth = { username: string; password: string; serveraddress?: string };
@@ -383,6 +384,7 @@ export async function startContainerMigration(input: ContainerMigrateApi): Promi
         stepKeys: [...MIGRATION_STEPS],
         environmentId: sourceEnvironmentId,
         targetEnvironmentId: input.targetEnvironmentId,
+        ownerOrganizationId: await resolveContainersOwner([input.containerId]),
         cancellable: true,
         run: (context) => runMigration({ ...input, context, source, info }),
         resultHref: (result) => `/docker/containers/${result.id}`,

@@ -47,6 +47,17 @@ export const containerRenameBodySchema = z.object({
     name: z.string().min(1),
 });
 
+export const containerRestartPolicySchema = z
+    .object({
+        containerId: z.string().min(1),
+        policy: z.enum(['no', 'always', 'on-failure', 'unless-stopped']),
+        maximumRetryCount: z.number().int().min(0).max(100).default(0),
+    })
+    .refine((value) => value.policy === 'on-failure' || value.maximumRetryCount === 0, {
+        message: 'Maximum retry count is only allowed with the on-failure policy',
+        path: ['maximumRetryCount'],
+    });
+
 export const containerExecBodySchema = z.object({
     command: z.string().min(1),
     workdir: z

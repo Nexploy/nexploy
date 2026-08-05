@@ -33,6 +33,23 @@
     "cancel": "Annulla",
     "rename": "Rinomina"
   },
+  "restartPolicy": {
+    "title": "Politica di riavvio",
+    "subtitle": "Applicata a caldo",
+    "autoRemove": "Non disponibile: questo container è impostato per la rimozione automatica.",
+    "selectPolicy": "Seleziona una politica",
+    "never": "Mai",
+    "always": "Sempre",
+    "onFailure": "In caso di errore",
+    "unlessStopped": "A meno che non sia fermato",
+    "description": {
+      "no": "Il container non viene mai riavviato automaticamente.",
+      "always": "Il container viene sempre riavviato, anche dopo il riavvio del demone Docker.",
+      "on-failure": "Il container viene riavviato solo quando termina con un codice di uscita diverso da zero.",
+      "unless-stopped": "Il container viene sempre riavviato, a meno che non sia stato fermato manualmente."
+    },
+    "updated": "Politica di riavvio aggiornata"
+  },
   "changeImage": {
     "recreateWarning": "Il container verrà arrestato, rimosso e ricreato con la nuova immagine. Tutta la sua configurazione viene mantenuta.",
     "imageLabel": "Immagine",
@@ -965,12 +982,47 @@
     "clearFinished": "Cancella",
     "cancel": "Annulla",
     "dismiss": "Nascondi",
-    "openResult": "Apri il container",
+    "openResult": {
+      "container": "Apri il container",
+      "image": "Apri l'immagine",
+      "network": "Apri la rete",
+      "volume": "Apri il volume"
+    },
+    "openResultIn": {
+      "container": "Apri il container ({environment})",
+      "image": "Apri l'immagine ({environment})",
+      "network": "Apri la rete ({environment})",
+      "volume": "Apri il volume ({environment})"
+    },
     "kinds": {
       "container-migrate": "Spostamento di {name}",
       "container-recreate": "Ricreazione di {name}",
       "image-pull": "Download di {name}",
-      "image-mirror": "Mirroring di {name}"
+      "image-mirror": "Mirroring di {name}",
+      "container-create": "Creazione di {name}",
+      "container-rename": "Rinomina di {name}",
+      "container-restart-policy": "Aggiornamento della politica di riavvio di {name}",
+      "container-start": "Avvio di {name}",
+      "container-stop": "Arresto di {name}",
+      "container-restart": "Riavvio di {name}",
+      "container-pause": "Sospensione di {name}",
+      "container-unpause": "Ripresa di {name}",
+      "container-remove": "Rimozione di {name}",
+      "container-prune": "Pulizia dei container arrestati",
+      "image-tag": "Tag di {name}",
+      "image-remove": "Rimozione dell'immagine {name}",
+      "image-prune": "Pulizia delle immagini inutilizzate",
+      "network-create": "Creazione della rete {name}",
+      "network-remove": "Rimozione della rete {name}",
+      "volume-create": "Creazione del volume {name}",
+      "volume-remove": "Rimozione del volume {name}",
+      "volume-prune": "Pulizia dei volumi inutilizzati",
+      "stack-start": "Avvio dello stack {name}",
+      "stack-stop": "Arresto dello stack {name}",
+      "stack-restart": "Riavvio dello stack {name}",
+      "stack-pause": "Sospensione dello stack {name}",
+      "stack-unpause": "Ripresa dello stack {name}",
+      "stack-remove": "Rimozione dello stack {name}"
     },
     "status": {
       "running": "In corso",
@@ -993,9 +1045,9 @@
       "cleanup": "Pulizia"
     },
     "toasts": {
-      "succeeded": "«{name}» è stato spostato sull'ambiente di destinazione.",
-      "failed": "Lo spostamento di «{name}» non è riuscito.",
-      "cancelled": "Lo spostamento di «{name}» è stato annullato."
+      "succeeded": "«{name}» è stato completato.",
+      "failed": "«{name}» non è riuscito.",
+      "cancelled": "«{name}» è stato annullato."
     }
   }
 }

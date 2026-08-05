@@ -1,5 +1,5 @@
-import { DropdownActionTool } from '../commun';
-import { ContainerPorts } from './docker.port';
+import { DropdownActionTool } from '../commun.js';
+import { ContainerPorts } from './docker.port.js';
 
 export type ContainerStateEvents =
     | 'start'
@@ -12,13 +12,21 @@ export type ContainerStateEvents =
     | 'create'
     | 'destroy'
     | 'health_status'
-    | 'rename';
+    | 'rename'
+    | 'update';
 
 export type ContainerType = 'initial' | 'added' | 'updated' | 'removed' | 'heartbeat' | 'state-change';
 
 export type Event = 'state-change' | 'initial-state' | 'container-added' | 'container-removed' | 'container-updated';
 
 export type ContainerState = 'created' | 'running' | 'restarting' | 'paused' | 'exited' | 'dead';
+
+export type ContainerRestartPolicyName = 'no' | 'always' | 'on-failure' | 'unless-stopped';
+
+export interface ContainerRestartPolicy {
+    name: ContainerRestartPolicyName;
+    maximumRetryCount: number;
+}
 
 export interface ContainerTool extends DropdownActionTool {
     disabledStates: ContainerState[];
@@ -46,6 +54,8 @@ export interface Container {
     startedAt: string;
     finishedAt: string;
     restartCount: number;
+    restartPolicy: ContainerRestartPolicy;
+    autoRemove: boolean;
 
     health?: {
         status: string;
@@ -159,6 +169,10 @@ export interface ContainerStateChanges {
     restartCount?: {
         from: number | undefined;
         to: number | undefined;
+    };
+    restartPolicy?: {
+        from: ContainerRestartPolicyName | undefined;
+        to: ContainerRestartPolicyName | undefined;
     };
     networkPorts?: boolean;
     mounts?: boolean;

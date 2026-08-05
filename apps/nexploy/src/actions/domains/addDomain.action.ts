@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer.ts';
 import { byDomainContainerName } from '@/lib/auth/resolveOrgContext';
 
 export const addDomain = authActionServer
+    .metadata({ name: 'domains.addDomain' })
     .use(requirePermission('domain', 'manage', byDomainContainerName))
     .inputSchema(domainFormSchema)
     .action(async ({ parsedInput: { domain } }) => {

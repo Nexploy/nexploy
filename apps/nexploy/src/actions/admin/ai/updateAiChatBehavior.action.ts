@@ -6,6 +6,7 @@ import { updateAISettingsPart } from '@/services/aiSettings.service';
 import { setToastServer } from '@/lib/toastServer';
 
 export const updateAIChatBehaviorAction = authActionServer
+    .metadata({ name: 'ai.updateChatBehavior' })
     .use(requirePermission('ai', 'manage'))
     .inputSchema(updateAIChatBehaviorSchema)
     .action(async ({ parsedInput }) => {

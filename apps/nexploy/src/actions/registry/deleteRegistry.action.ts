@@ -9,6 +9,7 @@ import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const deleteRegistryAction = authActionServer
+    .metadata({ name: 'registry.delete' })
     .use(requirePermission('registry', 'delete'))
     .inputSchema(deleteRegistrySchema)
     .action(async ({ parsedInput }) => {

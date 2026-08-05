@@ -33,6 +33,7 @@ const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: s
     { path: '/admin/backups', resource: 'backup', action: 'read' },
     { path: '/ssl-certificates', resource: 'ssl', action: 'manage' },
     { path: '/docker/registry', resource: 'registry', action: 'read' },
+    { path: '/admin/activity', resource: 'activity', action: 'read' },
     { path: '/admin/settings', resource: 'setting', action: 'manage' },
     { path: '/traefik', resource: 'traefik', action: 'manage' },
 ];

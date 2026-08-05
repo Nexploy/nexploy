@@ -8,6 +8,7 @@ import { getTranslations } from 'next-intl/server';
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const savePipelineAction = authActionServer
+    .metadata({ name: 'pipeline.save' })
     .use(requirePermission('pipeline', 'update', byRepositoryId))
     .inputSchema(savePipelineSchema)
     .action(async ({ parsedInput }) => {

@@ -245,7 +245,7 @@ cd ../docs && pnpm typecheck && pnpm build
 
 # Propagation — getting the new node translations into the app
 
-Part B changes a package the app consumes as a **published version** (`"@nexploy/nodes": "^0.1.5"` in `apps/nexploy/package.json`, pinned in `pnpm-workspace.yaml`). Node translations do not reach the app until a new version ships.
+Part B changes a package the app consumes as a **published version** (`"@nexploy/nodes"` in `apps/nexploy/package.json`, pinned in `pnpm-workspace.yaml`). Node translations do not reach the app until a new version ships.
 
 To test locally before publishing:
 

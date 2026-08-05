@@ -45,7 +45,20 @@
     "upgradeCheckButton": "Check for updates",
     "upgradeConfirmTitle": "Upgrade Nexploy?",
     "upgradePatchNotes": "Read the patch notes for {version}",
-    "upgradeActiveBuildsWarning": "The following builds are currently running and will be cancelled if you upgrade now:"
+    "upgradeActiveBuildsWarning": "The following builds are currently running and will be cancelled if you upgrade now:",
+    "retentionTitle": "Activity retention",
+    "retentionDescription": "Entries older than the retention period are removed automatically every night.",
+    "retentionDays": "Retention (days)",
+    "retentionDaysDescription": "Set to 0 to keep every entry forever.",
+    "retentionSaved": "Retention updated.",
+    "retentionPurgeTitle": "Manual purge",
+    "retentionPurgeNow": "Purge now",
+    "retentionPurgeNowDescription": "Remove expired entries right away without waiting for the nightly run.",
+    "retentionPurged": "{count} entries removed.",
+    "retentionLastPurge": "Last purge: {date}",
+    "retentionPurgeConfirmTitle": "Purge activity entries?",
+    "retentionPurgeConfirmDescription": "Every entry older than the retention period will be permanently deleted. This action cannot be undone.",
+    "retentionPurgeConfirmAction": "Purge now"
   },
   "users": "Users",
   "user": "User",
@@ -247,5 +260,53 @@
     "editorView": "Back to editor",
     "saving": "Saving...",
     "saved": "Saved"
+  },
+  "activity": {
+    "title": "Activity",
+    "description": "Full audit trail of every action performed on this instance.",
+    "empty": "No activity recorded yet.",
+    "refresh": "Refresh",
+    "live": "Live",
+    "connecting": "Connecting…",
+    "disconnected": "Disconnected",
+    "loadMore": "Load older entries",
+    "total": "{count} entries",
+    "columns": {
+      "date": "Date",
+      "action": "Action",
+      "actor": "Author",
+      "target": "Target",
+      "status": "Status",
+      "duration": "Duration",
+      "source": "Source"
+    },
+    "status": {
+      "SUCCESS": "Success",
+      "FAILURE": "Failed",
+      "DENIED": "Denied"
+    },
+    "source": {
+      "SERVER_ACTION": "Server action",
+      "API_ROUTE": "API route"
+    },
+    "actorType": {
+      "USER": "User",
+      "API_KEY": "API key",
+      "SYSTEM": "System"
+    },
+    "filters": {
+      "searchPlaceholder": "Search an action, a target, an author…"
+    },
+    "detail": {
+      "actorRole": "Role",
+      "actorType": "Author type",
+      "targetId": "Target identifier",
+      "organization": "Organization",
+      "environment": "Environment",
+      "ipAddress": "IP address",
+      "userAgent": "User agent",
+      "error": "Error",
+      "metadata": "Payload"
+    }
   }
 }

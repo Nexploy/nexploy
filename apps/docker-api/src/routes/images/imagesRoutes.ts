@@ -13,6 +13,8 @@ import {
 } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { scanImage } from '@/services/trivyRunner';
 import { deleteImages, startImageMirror, startImagePull } from '@/services/imageService';
+import { runTrackedTask } from '@/lib/taskRunner';
+import { describeImages } from '@/utils/taskSubjects';
 import { docker } from '@/utils/dockerClient';
 
 const app = new Hono();
@@ -77,7 +79,12 @@ app.post(
     route({ param: imageIdParamSchema, json: imageTagBodySchema }, async (c) => {
         const { id } = c.req.valid('param');
         const { repo, tag } = c.req.valid('json');
-        return await docker.getImage(id).tag({ repo, tag });
+
+        return runTrackedTask({
+            kind: 'image-tag',
+            subjectName: tag ? `${repo}:${tag}` : repo,
+            run: () => docker.getImage(id).tag({ repo, tag }),
+        });
     }),
 );
 
@@ -93,7 +100,12 @@ app.post(
     '/delete',
     route({ json: imageDeleteSchema }, async (c) => {
         const { imageIds, force } = c.req.valid('json');
-        return await deleteImages(imageIds, force);
+
+        return runTrackedTask({
+            kind: 'image-remove',
+            subjectName: describeImages(imageIds),
+            run: () => deleteImages(imageIds, force),
+        });
     }),
 );
 
@@ -108,12 +120,18 @@ app.post(
         if (olderThan) filters.until = [olderThan];
         if (filter) filters.label = [filter];
 
-        const result = await docker.pruneImages({ filters: JSON.stringify(filters) });
+        return runTrackedTask({
+            kind: 'image-prune',
+            subjectName: '',
+            run: async () => {
+                const result = await docker.pruneImages({ filters: JSON.stringify(filters) });
 
-        return {
-            removedImages: result.ImagesDeleted?.length ?? 0,
-            reclaimedSpace: result.SpaceReclaimed ?? 0,
-        };
+                return {
+                    removedImages: result.ImagesDeleted?.length ?? 0,
+                    reclaimedSpace: result.SpaceReclaimed ?? 0,
+                };
+            },
+        });
     }),
 );
 

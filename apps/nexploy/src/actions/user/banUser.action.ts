@@ -9,6 +9,7 @@ import { prisma } from '../../../prisma/prisma';
 import { getTranslations } from 'next-intl/server';
 
 export const banUser = authActionServer
+    .metadata({ name: 'user.ban' })
     .use(requirePermission('user', 'ban'))
     .use(preventSelfAction)
     .inputSchema(banUsersSchema)

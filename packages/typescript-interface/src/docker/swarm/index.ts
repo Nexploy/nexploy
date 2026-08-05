@@ -1,3 +1,3 @@
-export * from './swarm.types';
-export * from './swarm.events';
-export * from './swarm.api';
+export * from './swarm.types.js';
+export * from './swarm.events.js';
+export * from './swarm.api.js';

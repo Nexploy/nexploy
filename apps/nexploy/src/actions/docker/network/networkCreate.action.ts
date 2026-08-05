@@ -8,6 +8,7 @@ import { HTTPError } from 'ky';
 import { getTranslations } from 'next-intl/server';
 
 export const onNetworkCreateAction = authActionServer
+    .metadata({ name: 'network.create' })
     .use(requirePermission('network', 'manage'))
     .inputSchema(networkCreateSchema)
     .action(async ({ parsedInput }) => {

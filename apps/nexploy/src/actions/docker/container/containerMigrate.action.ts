@@ -9,6 +9,7 @@ import { getRegistryWithPassword } from '@/services/registry.service';
 import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
 export const onContainerMigrateAction = authActionServer
+    .metadata({ name: 'container.migrate' })
     .use(requirePermission('container', 'manage', byContainerIds))
     .inputSchema(containerMigrateFormSchema)
     .action(

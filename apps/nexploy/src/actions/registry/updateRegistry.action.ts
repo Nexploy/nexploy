@@ -9,6 +9,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { revalidatePath } from 'next/cache';
 
 export const updateRegistryAction = authActionServer
+    .metadata({ name: 'registry.update' })
     .use(requirePermission('registry', 'update'))
     .inputSchema(updateRegistrySchema)
     .action(async ({ parsedInput }) => {

@@ -33,6 +33,23 @@
     "cancel": "Annuler",
     "rename": "Renommer"
   },
+  "restartPolicy": {
+    "title": "Politique de redémarrage",
+    "subtitle": "Appliquée à chaud",
+    "autoRemove": "Indisponible : ce conteneur est configuré en suppression automatique.",
+    "selectPolicy": "Sélectionner une politique",
+    "never": "Jamais",
+    "always": "Toujours",
+    "onFailure": "En cas d’échec",
+    "unlessStopped": "Sauf si arrêté",
+    "description": {
+      "no": "Le conteneur n’est jamais redémarré automatiquement.",
+      "always": "Le conteneur est toujours redémarré, y compris après un redémarrage du démon Docker.",
+      "on-failure": "Le conteneur est redémarré uniquement s’il se termine avec un code de sortie non nul.",
+      "unless-stopped": "Le conteneur est toujours redémarré, sauf s’il a été arrêté manuellement."
+    },
+    "updated": "Politique de redémarrage mise à jour"
+  },
   "changeImage": {
     "recreateWarning": "Le conteneur sera arrêté, supprimé puis recréé avec la nouvelle image. Toute sa configuration est conservée.",
     "imageLabel": "Image",
@@ -965,12 +982,47 @@
     "clearFinished": "Effacer",
     "cancel": "Annuler",
     "dismiss": "Masquer",
-    "openResult": "Ouvrir le conteneur",
+    "openResult": {
+      "container": "Ouvrir le conteneur",
+      "image": "Ouvrir l'image",
+      "network": "Ouvrir le réseau",
+      "volume": "Ouvrir le volume"
+    },
+    "openResultIn": {
+      "container": "Ouvrir le conteneur ({environment})",
+      "image": "Ouvrir l'image ({environment})",
+      "network": "Ouvrir le réseau ({environment})",
+      "volume": "Ouvrir le volume ({environment})"
+    },
     "kinds": {
       "container-migrate": "Déplacement de {name}",
       "container-recreate": "Recréation de {name}",
       "image-pull": "Téléchargement de {name}",
-      "image-mirror": "Mise en miroir de {name}"
+      "image-mirror": "Mise en miroir de {name}",
+      "container-create": "Création de {name}",
+      "container-rename": "Renommage de {name}",
+      "container-restart-policy": "Mise à jour de la politique de redémarrage de {name}",
+      "container-start": "Démarrage de {name}",
+      "container-stop": "Arrêt de {name}",
+      "container-restart": "Redémarrage de {name}",
+      "container-pause": "Mise en pause de {name}",
+      "container-unpause": "Reprise de {name}",
+      "container-remove": "Suppression de {name}",
+      "container-prune": "Nettoyage des conteneurs arrêtés",
+      "image-tag": "Tag de {name}",
+      "image-remove": "Suppression de l'image {name}",
+      "image-prune": "Nettoyage des images inutilisées",
+      "network-create": "Création du réseau {name}",
+      "network-remove": "Suppression du réseau {name}",
+      "volume-create": "Création du volume {name}",
+      "volume-remove": "Suppression du volume {name}",
+      "volume-prune": "Nettoyage des volumes inutilisés",
+      "stack-start": "Démarrage de la stack {name}",
+      "stack-stop": "Arrêt de la stack {name}",
+      "stack-restart": "Redémarrage de la stack {name}",
+      "stack-pause": "Mise en pause de la stack {name}",
+      "stack-unpause": "Reprise de la stack {name}",
+      "stack-remove": "Suppression de la stack {name}"
     },
     "status": {
       "running": "En cours",
@@ -993,9 +1045,9 @@
       "cleanup": "Nettoyage"
     },
     "toasts": {
-      "succeeded": "« {name} » a été déplacé vers l'environnement cible.",
-      "failed": "Le déplacement de « {name} » a échoué.",
-      "cancelled": "Le déplacement de « {name} » a été annulé."
+      "succeeded": "« {name} » est terminé.",
+      "failed": "« {name} » a échoué.",
+      "cancelled": "« {name} » a été annulé."
     }
   }
 }

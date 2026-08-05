@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { serviceIdParamSchema } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 
 export const onForceUpdateServiceAction = authActionServer
+    .metadata({ name: 'swarm.forceUpdateService' })
     .use(requirePermission('swarm', 'manage'))
     .inputSchema(serviceIdParamSchema)
     .action(async ({ parsedInput: { id } }) => {

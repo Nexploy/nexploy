@@ -7,6 +7,7 @@ import { deployComposeVersion } from '@/services/docker/version.service';
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const onDeployComposeVersion = authActionServer
+    .metadata({ name: 'versions.deployComposeVersion' })
     .use(requirePermission('deployment', 'deploy', byRepositoryId))
     .inputSchema(deployVersionSchema)
     .action(async ({ parsedInput }) => {

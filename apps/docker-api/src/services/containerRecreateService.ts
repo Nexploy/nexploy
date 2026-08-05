@@ -3,6 +3,7 @@ import { PortType } from '@workspace/typescript-interface/docker/docker.port';
 import { ContainerRecreateForm } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { StartedTask, TaskContext, runAsTask } from '@/lib/taskRunner';
+import { resolveContainersOwner } from '@/lib/taskOwnership';
 import { pullWithProgress } from '@/utils/pullProgress';
 import { assertSafeBindPath } from '@/utils/hostBindGuard';
 
@@ -197,7 +198,10 @@ export async function recreateContainer(
     return { id: newContainer.id };
 }
 
-export function startContainerRecreate(payload: ContainerRecreateForm, subjectName: string): StartedTask {
+export async function startContainerRecreate(
+    payload: ContainerRecreateForm,
+    subjectName: string,
+): Promise<StartedTask> {
     const docker = getCurrentDockerClient();
 
     return runAsTask<{ id: string }>({
@@ -205,6 +209,7 @@ export function startContainerRecreate(payload: ContainerRecreateForm, subjectNa
         subjectName,
         stepKeys: RECREATE_STEPS,
         environmentId: getCurrentEnvironmentId(),
+        ownerOrganizationId: await resolveContainersOwner([payload.containerId]),
         run: (context) => recreateContainer(docker, payload, context),
         resultHref: (result) => `/docker/containers/${result.id}`,
     });

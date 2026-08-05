@@ -8,6 +8,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { getTranslations } from 'next-intl/server';
 
 export const onVolumeCreateAction = authActionServer
+    .metadata({ name: 'volume.create' })
     .use(requirePermission('volume', 'manage'))
     .inputSchema(volumeCreateSchema)
     .action(async ({ parsedInput }) => {

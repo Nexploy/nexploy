@@ -6,6 +6,7 @@ import { updateEnvironment } from '@/services/environment/environment.service';
 import { environmentSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
 
 export const updateEnvironmentAction = authActionServer
+    .metadata({ name: 'environment.update' })
     .use(requirePermission('environment', 'update'))
     .inputSchema(environmentSchema)
     .action(async ({ parsedInput }) => {

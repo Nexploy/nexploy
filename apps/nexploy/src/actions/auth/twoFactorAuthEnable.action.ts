@@ -6,6 +6,7 @@ import { twoFactorAuthSchema } from '@workspace/schemas-zod/auth/twoFactorAuth.s
 import { setToastServer } from '@/lib/toastServer';
 
 export const onTwoFactorAuthEnableAction = authActionServer
+    .metadata({ name: 'auth.twoFactorEnable' })
     .inputSchema(twoFactorAuthSchema)
     .action(async ({ parsedInput }) => {
         try {

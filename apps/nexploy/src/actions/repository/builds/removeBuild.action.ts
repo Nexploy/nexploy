@@ -9,6 +9,7 @@ import { getTranslations } from 'next-intl/server';
 import { byBuildId, resolveOrganizationIdForBuild } from '@/lib/auth/resolveOrgContext';
 
 export const onRemoveBuild = authActionServer
+    .metadata({ name: 'builds.removeBuild' })
     .use(requirePermission('build', 'delete', byBuildId))
     .inputSchema(removeBuildSchema)
     .action(async ({ parsedInput: { buildId } }) => {

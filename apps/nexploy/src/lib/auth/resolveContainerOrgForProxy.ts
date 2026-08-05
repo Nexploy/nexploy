@@ -1,5 +1,6 @@
 import { prisma } from '../../../prisma/prisma';
-import { NEXPLOY_LABELS } from '@nexploy/nodes/core/nexployLabels';
+import { NEXPLOY_LABELS } from '@nexploy/shared/nexployLabels';
+import { NEXPLOY_ORGANIZATION_LABEL } from '@nexploy/shared/ownership';
 
 export async function resolveOrganizationIdForContainerId(containerId: string): Promise<string | null> {
     try {
@@ -11,7 +12,12 @@ export async function resolveOrganizationIdForContainerId(containerId: string): 
         if (!res.ok) return null;
 
         const info = (await res.json()) as { Config?: { Labels?: Record<string, string> } };
-        const repositoryId = info.Config?.Labels?.[NEXPLOY_LABELS.repositoryId];
+        const labels = info.Config?.Labels;
+
+        const owner = labels?.[NEXPLOY_ORGANIZATION_LABEL];
+        if (owner) return owner;
+
+        const repositoryId = labels?.[NEXPLOY_LABELS.repositoryId];
         if (!repositoryId) return null;
 
         const repository = await prisma.repository.findUnique({

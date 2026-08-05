@@ -8,6 +8,7 @@ import { setToastServer } from '@/lib/toastServer.ts';
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const setupWebhookAction = authActionServer
+    .metadata({ name: 'pipeline.setupWebhook' })
     .use(requirePermission('pipeline', 'webhook', byRepositoryId))
     .inputSchema(setupWebhookSchema)
     .action(async ({ parsedInput }) => {

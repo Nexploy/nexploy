@@ -1,4 +1,4 @@
-import { TraefikRequest } from '../../traefik/traefik.request';
+import { TraefikRequest } from '../../traefik/traefik.request.js';
 
 export interface RequestsFilter {
     methods?: string[];

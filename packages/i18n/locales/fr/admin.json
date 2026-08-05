@@ -45,7 +45,20 @@
     "upgradeCheckButton": "Vérifier les mises à jour",
     "upgradeConfirmTitle": "Mettre à niveau Nexploy ?",
     "upgradePatchNotes": "Voir les notes de version {version}",
-    "upgradeActiveBuildsWarning": "Les builds suivants sont actuellement en cours et seront annulés si vous effectuez la mise à niveau maintenant :"
+    "upgradeActiveBuildsWarning": "Les builds suivants sont actuellement en cours et seront annulés si vous effectuez la mise à niveau maintenant :",
+    "retentionTitle": "Rétention de l'activité",
+    "retentionDescription": "Les entrées plus anciennes que la durée de rétention sont supprimées automatiquement chaque nuit.",
+    "retentionDays": "Rétention (jours)",
+    "retentionDaysDescription": "Mettez 0 pour conserver toutes les entrées indéfiniment.",
+    "retentionSaved": "Rétention mise à jour.",
+    "retentionPurgeTitle": "Purge manuelle",
+    "retentionPurgeNow": "Purger maintenant",
+    "retentionPurgeNowDescription": "Supprimez immédiatement les entrées expirées sans attendre l'exécution nocturne.",
+    "retentionPurged": "{count} entrées supprimées.",
+    "retentionLastPurge": "Dernière purge : {date}",
+    "retentionPurgeConfirmTitle": "Purger les entrées d'activité ?",
+    "retentionPurgeConfirmDescription": "Toutes les entrées plus anciennes que la durée de rétention seront définitivement supprimées. Cette action est irréversible.",
+    "retentionPurgeConfirmAction": "Purger maintenant"
   },
   "users": "Utilisateurs",
   "user": "Utilisateur",
@@ -247,5 +260,53 @@
     "editorView": "Retour à l'éditeur",
     "saving": "Enregistrement...",
     "saved": "Enregistré"
+  },
+  "activity": {
+    "title": "Activité",
+    "description": "Historique complet de toutes les actions effectuées sur cette instance.",
+    "empty": "Aucune activité enregistrée pour le moment.",
+    "refresh": "Actualiser",
+    "live": "En direct",
+    "connecting": "Connexion…",
+    "disconnected": "Déconnecté",
+    "loadMore": "Charger les entrées plus anciennes",
+    "total": "{count} entrées",
+    "columns": {
+      "date": "Date",
+      "action": "Action",
+      "actor": "Auteur",
+      "target": "Cible",
+      "status": "Statut",
+      "duration": "Durée",
+      "source": "Source"
+    },
+    "status": {
+      "SUCCESS": "Réussie",
+      "FAILURE": "Échouée",
+      "DENIED": "Refusée"
+    },
+    "source": {
+      "SERVER_ACTION": "Server action",
+      "API_ROUTE": "Route API"
+    },
+    "actorType": {
+      "USER": "Utilisateur",
+      "API_KEY": "Clé API",
+      "SYSTEM": "Système"
+    },
+    "filters": {
+      "searchPlaceholder": "Rechercher une action, une cible, un auteur…"
+    },
+    "detail": {
+      "actorRole": "Rôle",
+      "actorType": "Type d'auteur",
+      "targetId": "Identifiant de la cible",
+      "organization": "Organisation",
+      "environment": "Environnement",
+      "ipAddress": "Adresse IP",
+      "userAgent": "Agent utilisateur",
+      "error": "Erreur",
+      "metadata": "Charge utile"
+    }
   }
 }

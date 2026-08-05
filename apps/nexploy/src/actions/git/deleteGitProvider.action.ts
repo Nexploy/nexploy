@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const deleteGitProviderAction = authActionServer
+    .metadata({ name: 'git.deleteProvider' })
     .use(requirePermission('gitProvider', 'delete'))
     .inputSchema(deleteGitProviderSchema)
     .action(async ({ parsedInput }) => {

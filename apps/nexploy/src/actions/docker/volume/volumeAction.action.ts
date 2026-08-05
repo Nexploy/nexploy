@@ -15,6 +15,7 @@ const skipReasonToKey: Record<string, string> = {
 };
 
 export const onVolumeAction = authActionServer
+    .metadata({ name: 'volume.action' })
     .use(requirePermission('volume', 'manage'))
     .inputSchema(volumeActionsSchema)
     .action(async ({ parsedInput: { action, volumeNames } }) => {

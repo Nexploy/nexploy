@@ -11,6 +11,7 @@ import { getOldestOrganizationId, isSoleOwner } from '@/services/organization.se
 import { revalidatePath } from 'next/cache';
 
 export const leaveOrganizationAction = authActionServer
+    .metadata({ name: 'organization.leave' })
     .inputSchema(organizationIdSchema)
     .action(async ({ parsedInput: { organizationId }, ctx: { session } }) => {
         const t = await getTranslations('organization');

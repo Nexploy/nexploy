@@ -1,4 +1,4 @@
-import { ContainerState } from './docker.container';
+import { ContainerState } from './docker.container.js';
 
 export type ContainersAction = 'start' | 'stop' | 'restart' | 'pause' | 'unpause' | 'kill' | 'remove';
 

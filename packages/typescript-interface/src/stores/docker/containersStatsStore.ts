@@ -1,4 +1,4 @@
-import { ContainersStatsTotals, ContainerStatsSample } from '../../docker/docker.containers.stats';
+import { ContainersStatsTotals, ContainerStatsSample } from '../../docker/docker.containers.stats.js';
 
 export interface ContainersStatsParams {
     refreshRate: string;

@@ -22,5 +22,5 @@ minimumReleaseAgeExclude:
   - '@better-auth/prisma-adapter@1.6.25'
   - '@better-auth/telemetry@1.6.25'
   - better-auth@1.6.25
-  - '@nexploy/nodes@0.1.5 || 0.2.0'
-  - '@nexploy/shared@0.1.0'
+  - '@nexploy/nodes'
+  - '@nexploy/shared'

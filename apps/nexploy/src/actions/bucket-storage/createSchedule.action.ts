@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
 
 export const createBackupScheduleAction = authActionServer
+    .metadata({ name: 'bucketStorage.createSchedule' })
     .use(requirePermission('cloudBackup', 'manage'))
     .inputSchema(createBackupScheduleSchema)
     .action(async ({ parsedInput }) => {

@@ -29,7 +29,7 @@ import { useTranslations } from 'next-intl';
 import { BotOff, Minimize2, Settings2 } from 'lucide-react';
 import { useLocalStorage } from 'usehooks-ts';
 import { Button } from '@workspace/ui/components/button';
-import { Dialog, DialogContent, DialogTitle } from '@workspace/ui/components/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@workspace/ui/components/dialog';
 import { ChatToolbar } from '@/components/ai/panel/ChatToolbar.tsx';
 
 export function ChatAIPanel() {
@@ -218,7 +218,8 @@ export function ChatAIPanel() {
                                     showCloseButton={false}
                                     className="flex h-dvh w-screen max-w-none flex-col gap-0 rounded-none border-0 p-0 sm:max-w-none"
                                 >
-                                    <DialogTitle className="sr-only">{t('panelTitle')}</DialogTitle>
+                                    <DialogTitle className="sr-only" />
+                                    <DialogDescription className="sr-only" />
                                     <PanelHeader
                                         isLoading={isLoading}
                                         hasMessages={messages.length > 0}

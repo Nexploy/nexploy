@@ -17,7 +17,7 @@ export function AIPanelToggle() {
     return (
         <Tooltip>
             <TooltipTrigger asChild>
-                <Button className={'size-8 rounded-l-none'} onClick={() => (isOpen ? closePanel() : openPanel())}>
+                <Button className={'size-8'} onClick={() => (isOpen ? closePanel() : openPanel())}>
                     <Bot />
                 </Button>
             </TooltipTrigger>

@@ -30,11 +30,16 @@ export async function authorizeContainerUpgrade(req: IncomingMessage, parsedUrl:
 
     if (role !== 'admin') {
         const containerId = extractContainerId(parsedUrl.pathname);
-        organizationId = containerId ? await resolveOrganizationIdForContainerId(containerId) : null;
-        const orgRole = organizationId ? await getCallerOrgRoleForProxy(session.user.id, organizationId) : null;
+        const containerOrganizationId = containerId ? await resolveOrganizationIdForContainerId(containerId) : null;
 
-        if (!orgRole || !hasOrgPermission(orgRole, 'container', 'manage')) {
-            return { authorized: false, denial: { status: 403, reason: 'Forbidden' } };
+        if (containerOrganizationId) {
+            const orgRole = await getCallerOrgRoleForProxy(session.user.id, containerOrganizationId);
+
+            if (!orgRole || !hasOrgPermission(orgRole, 'container', 'manage')) {
+                return { authorized: false, denial: { status: 403, reason: 'Forbidden' } };
+            }
+
+            organizationId = containerOrganizationId;
         }
     }
 

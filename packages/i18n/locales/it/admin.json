@@ -45,7 +45,17 @@
     "upgradeCheckButton": "Verifica aggiornamenti",
     "upgradeConfirmTitle": "Aggiornare Nexploy?",
     "upgradePatchNotes": "Leggi le note di rilascio della {version}",
-    "upgradeActiveBuildsWarning": "Le seguenti build sono in corso e verranno annullate se aggiorni ora:"
+    "upgradeActiveBuildsWarning": "Le seguenti build sono in corso e verranno annullate se aggiorni ora:",
+    "retentionTitle": "Conservazione dell'attività",
+    "retentionDescription": "Le voci più vecchie del periodo di conservazione vengono rimosse automaticamente ogni notte.",
+    "retentionDays": "Conservazione (giorni)",
+    "retentionDaysDescription": "Imposta 0 per conservare tutte le voci a tempo indeterminato.",
+    "retentionSaved": "Conservazione aggiornata.",
+    "retentionPurgeTitle": "Eliminazione manuale",
+    "retentionPurgeNow": "Elimina ora",
+    "retentionPurgeNowDescription": "Rimuovi subito le voci scadute senza attendere l'esecuzione notturna.",
+    "retentionPurged": "{count} voci rimosse.",
+    "retentionLastPurge": "Ultima eliminazione: {date}"
   },
   "users": "Utenti",
   "user": "Utente",
@@ -247,5 +257,53 @@
     "editorView": "Torna all'editor",
     "saving": "Salvataggio in corso...",
     "saved": "Salvato"
+  },
+  "activity": {
+    "title": "Attività",
+    "description": "Cronologia completa di tutte le azioni eseguite su questa istanza.",
+    "empty": "Nessuna attività registrata al momento.",
+    "refresh": "Aggiorna",
+    "live": "In diretta",
+    "connecting": "Connessione…",
+    "disconnected": "Disconnesso",
+    "loadMore": "Carica voci precedenti",
+    "total": "{count} voci",
+    "columns": {
+      "date": "Data",
+      "action": "Azione",
+      "actor": "Autore",
+      "target": "Destinazione",
+      "status": "Stato",
+      "duration": "Durata",
+      "source": "Origine"
+    },
+    "status": {
+      "SUCCESS": "Riuscita",
+      "FAILURE": "Non riuscita",
+      "DENIED": "Negata"
+    },
+    "source": {
+      "SERVER_ACTION": "Server action",
+      "API_ROUTE": "Rotta API"
+    },
+    "actorType": {
+      "USER": "Utente",
+      "API_KEY": "Chiave API",
+      "SYSTEM": "Sistema"
+    },
+    "filters": {
+      "searchPlaceholder": "Cerca un'azione, una destinazione, un autore…"
+    },
+    "detail": {
+      "actorRole": "Ruolo",
+      "actorType": "Tipo di autore",
+      "targetId": "Identificativo della destinazione",
+      "organization": "Organizzazione",
+      "environment": "Ambiente",
+      "ipAddress": "Indirizzo IP",
+      "userAgent": "User agent",
+      "error": "Errore",
+      "metadata": "Payload"
+    }
   }
 }

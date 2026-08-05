@@ -1,4 +1,4 @@
-import { SystemMetrics } from '../../monitoring/system.metrics';
+import { SystemMetrics } from '../../monitoring/system.metrics.js';
 
 export interface MonitoringStateParams {
     refreshRate: string;

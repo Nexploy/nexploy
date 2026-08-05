@@ -10,6 +10,7 @@ import { getPublicIp } from '@/lib/network/getPublicIp.ts';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const connectCloudflareAction = authActionServer
+    .metadata({ name: 'cloudflare.connect' })
     .use(requirePermission('dns', 'manage'))
     .inputSchema(cloudflareConnectSchema)
     .action(async ({ parsedInput, ctx }) => {

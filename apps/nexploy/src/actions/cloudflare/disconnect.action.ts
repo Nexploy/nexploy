@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { revalidatePath } from 'next/cache';
 
 export const disconnectCloudflareAction = authActionServer
+    .metadata({ name: 'cloudflare.disconnect' })
     .use(requirePermission('dns', 'manage'))
     .inputSchema(cloudflareDeleteSchema)
     .action(async ({ parsedInput }) => {

@@ -3,7 +3,7 @@ import type {
     OrganizationMember,
     PendingInvitation,
     UserOrganization,
-} from '../organization/organization';
+} from '../organization/organization.js';
 
 export interface OrganizationState {
     organizations: UserOrganization[];

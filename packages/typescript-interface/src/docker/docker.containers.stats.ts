@@ -1,5 +1,5 @@
-import { ContainerState } from './docker.container';
-import { ContainerStats } from './docker.container.stats';
+import { ContainerState } from './docker.container.js';
+import { ContainerStats } from './docker.container.stats.js';
 
 export interface ContainerStatsSample extends ContainerStats {
     name: string;

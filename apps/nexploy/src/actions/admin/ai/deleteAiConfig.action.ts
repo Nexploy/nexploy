@@ -6,6 +6,7 @@ import { deleteProviderApiKey } from '@/services/aiConfig.service';
 import { setToastServer } from '@/lib/toastServer';
 
 export const deleteAiConfigAction = authActionServer
+    .metadata({ name: 'ai.deleteConfig' })
     .use(requirePermission('ai', 'manage'))
     .inputSchema(deleteAiConfigSchema)
     .action(async ({ parsedInput }) => {

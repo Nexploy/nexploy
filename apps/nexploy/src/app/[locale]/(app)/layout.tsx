@@ -34,7 +34,11 @@ export default async function AppLayout({
         session && activeOrganizationId ? await getCallerOrgRole(session.user.id, activeOrganizationId) : null;
 
     return (
-        <PermissionProvider role={session?.user?.role} orgRole={activeOrganizationRole}>
+        <PermissionProvider
+            role={session?.user?.role}
+            orgRole={activeOrganizationRole}
+            organizationId={activeOrganizationId}
+        >
             <SidebarProvider defaultOpen={hasCookieSidebar ? defaultOpen : true}>
                 <AppSidebar variant={'inset'} />
                 <div className={'flex h-screen w-full flex-col'}>

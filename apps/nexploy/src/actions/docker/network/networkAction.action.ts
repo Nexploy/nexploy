@@ -16,6 +16,7 @@ const skipReasonToKey: Record<string, string> = {
 };
 
 export const onNetworkAction = authActionServer
+    .metadata({ name: 'network.action' })
     .use(requirePermission('network', 'manage'))
     .use(preventInfrastructureNetworkAction)
     .inputSchema(networkActionsSchema)

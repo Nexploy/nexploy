@@ -7,6 +7,7 @@ import { createUser } from '@/services/auth/createUser.service';
 import { revalidatePath } from 'next/cache';
 
 export const onCreateUserAction = authActionServer
+    .metadata({ name: 'auth.createUser' })
     .use(requirePermission('user', 'create'))
     .inputSchema(createUserFormSchema)
     .action(async ({ parsedInput, ctx }) => {

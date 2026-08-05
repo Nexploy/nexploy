@@ -6,6 +6,7 @@ import { createMcpApiKeySchema } from '@workspace/schemas-zod/ai/mcpApiKey.schem
 import { setToastServer } from '@/lib/toastServer';
 
 export const createMcpApiKeyAction = authActionServer
+    .metadata({ name: 'ai.createMcpApiKey' })
     .use(requirePermission('mcpKey', 'create'))
     .inputSchema(createMcpApiKeySchema)
     .action(async ({ parsedInput, ctx }) => {

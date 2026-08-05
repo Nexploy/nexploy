@@ -1,4 +1,4 @@
-import { Image, ImageHistoryEntry } from '../../docker/docker.image';
+import { Image, ImageHistoryEntry } from '../../docker/docker.image.js';
 
 export interface ImageDetailState {
     imageId: string | null;

@@ -11,7 +11,7 @@ import { useTranslations } from 'next-intl';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
-import { NEXPLOY_LABELS } from '@nexploy/nodes/core/nexployLabels';
+import { NEXPLOY_LABELS } from '@nexploy/shared/nexployLabels';
 import { VersionDeployButton } from '@/components/repositories/tabs/versions/VersionDeployButton.tsx';
 import { VersionDropdownActions } from '@/components/repositories/tabs/versions/VersionDropdownActions';
 

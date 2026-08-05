@@ -10,7 +10,7 @@ import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import dayjs from 'dayjs';
-import { NEXPLOY_LABELS } from '@/utils/nexployLabels';
+import { NEXPLOY_LABELS } from '@nexploy/shared/nexployLabels';
 
 const IMAGE_STATE_CHANGE_EVENTS = new Set<ImageAction>([
     'pull',

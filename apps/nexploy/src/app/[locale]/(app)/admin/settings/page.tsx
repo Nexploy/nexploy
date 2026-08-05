@@ -6,6 +6,8 @@ import { getCleanupSettings, getCurrentEnvironmentKey } from '@/services/cleanup
 import { CleanupScheduleCard } from '@/components/admin/settings/CleanupScheduleCard';
 import { InstanceDomainCard } from '@/components/admin/settings/InstanceDomainCard';
 import { UpgradeCard } from '@/components/admin/settings/UpgradeCard';
+import { ActivityRetentionCard } from '@/components/admin/settings/ActivityRetentionCard';
+import { getActivitySettings } from '@/services/activityLog.service';
 import { getInstanceDomainSettings } from '@/lib/instance/domain';
 
 export const metadata: Metadata = {
@@ -15,7 +17,11 @@ export const metadata: Metadata = {
 
 export default async function SettingsPage() {
     const environmentId = await getCurrentEnvironmentKey();
-    const [t, settings] = await Promise.all([getTranslations('admin.settings'), getCleanupSettings(environmentId)]);
+    const [t, settings, activitySettings] = await Promise.all([
+        getTranslations('admin.settings'),
+        getCleanupSettings(environmentId),
+        getActivitySettings(),
+    ]);
 
     const instanceDomainSettings = getInstanceDomainSettings();
 
@@ -36,6 +42,7 @@ export default async function SettingsPage() {
                     <div className="flex flex-col gap-5 pb-5">
                         <UpgradeCard />
                         <CleanupScheduleCard settings={settings} />
+                        <ActivityRetentionCard settings={activitySettings} />
                         {instanceDomainSettings && <InstanceDomainCard settings={instanceDomainSettings} />}
                     </div>
                 </ScrollAreaWithShadow>

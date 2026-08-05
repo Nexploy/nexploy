@@ -6,6 +6,7 @@ import { teardownWebhookSchema } from '@workspace/schemas-zod/repository/teardow
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const teardownWebhookAction = authActionServer
+    .metadata({ name: 'pipeline.teardownWebhook' })
     .use(requirePermission('pipeline', 'webhook', byRepositoryId))
     .inputSchema(teardownWebhookSchema)
     .action(async ({ parsedInput, ctx }) => {

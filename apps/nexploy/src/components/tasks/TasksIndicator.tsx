@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useMemo, useState } from 'react';
 import { Activity, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
@@ -14,33 +14,28 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { cn } from '@workspace/ui/lib/utils';
 import { useTasksStore } from '@/stores/useTasksStore';
-import { onTasksClearAction } from '@/actions/tasks/task.action';
 import { TaskItem } from '@/components/tasks/TaskItem';
 
 export function TasksIndicator() {
     const t = useTranslations('docker.tasks');
     const [open, setOpen] = useState(false);
-    const [isPending, startTransition] = useTransition();
 
     const tasks = useTasksStore((state) => state.tasks);
-    const connect = useTasksStore((state) => state.connect);
-    const disconnect = useTasksStore((state) => state.disconnect);
+    const dismissedTaskIds = useTasksStore((state) => state.dismissedTaskIds);
+    const dismissTasks = useTasksStore((state) => state.dismissTasks);
 
-    useEffect(() => {
-        connect();
+    const visibleTasks = useMemo(
+        () => tasks.filter((task) => !dismissedTaskIds.includes(task.id)),
+        [tasks, dismissedTaskIds],
+    );
 
-        return () => disconnect();
-    }, [connect, disconnect]);
+    const runningCount = visibleTasks.filter((task) => task.status === 'running').length;
+    const finishedTaskIds = visibleTasks.filter((task) => task.status !== 'running').map((task) => task.id);
 
-    const runningCount = tasks.filter((task) => task.status === 'running').length;
-    const finishedCount = tasks.length - runningCount;
-
-    if (tasks.length === 0) return null;
+    if (visibleTasks.length === 0) return null;
 
     const handleClear = () => {
-        startTransition(async () => {
-            await onTasksClearAction({});
-        });
+        dismissTasks(finishedTaskIds);
     };
 
     return (
@@ -50,7 +45,7 @@ export function TasksIndicator() {
                     <DropdownMenuTrigger asChild>
                         <Button
                             variant="outline"
-                            className="text-muted-foreground hover:text-foreground h-8 gap-1.5 rounded-r-none px-2.5 shadow-none"
+                            className="text-muted-foreground hover:text-foreground h-8 gap-1.5 px-2.5 shadow-none"
                         >
                             {runningCount > 0 ? (
                                 <Loader2 className="text-primary size-4 animate-spin" />
@@ -58,7 +53,7 @@ export function TasksIndicator() {
                                 <Activity className="size-4" />
                             )}
                             <span className={cn('text-xs font-medium', runningCount > 0 && 'text-foreground')}>
-                                {runningCount > 0 ? runningCount : tasks.length}
+                                {runningCount > 0 ? runningCount : visibleTasks.length}
                             </span>
                         </Button>
                     </DropdownMenuTrigger>
@@ -68,17 +63,11 @@ export function TasksIndicator() {
                 </TooltipContent>
             </Tooltip>
 
-            <DropdownMenuContent align="start" className="w-96 p-0">
+            <DropdownMenuContent align="start" className="w-96  p-0 mx-2">
                 <div className="flex items-center justify-between px-3 py-2">
                     <p className="text-sm font-medium">{t('title')}</p>
-                    {finishedCount > 0 && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 px-2 text-xs"
-                            onClick={handleClear}
-                            disabled={isPending}
-                        >
+                    {finishedTaskIds.length > 0 && (
+                        <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={handleClear}>
                             {t('clearFinished')}
                         </Button>
                     )}
@@ -86,7 +75,7 @@ export function TasksIndicator() {
                 <DropdownMenuSeparator className="m-0" />
                 <ScrollAreaWithShadow viewportClassName="max-h-[60vh]" bottomShadow>
                     <div className="divide-y">
-                        {tasks.map((task) => (
+                        {visibleTasks.map((task) => (
                             <TaskItem key={task.id} task={task} onNavigate={() => setOpen(false)} />
                         ))}
                     </div>

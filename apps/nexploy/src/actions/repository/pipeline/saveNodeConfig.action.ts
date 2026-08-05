@@ -10,6 +10,7 @@ import {
 import { byBoundRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const saveNodeConfigAction = authActionServer
+    .metadata({ name: 'pipeline.saveNodeConfig' })
     .use(requirePermission('pipeline', 'update', byBoundRepositoryId))
     .bindArgsSchemas(saveNodeConfigBindArgsSchemas)
     .inputSchema(saveNodeConfigInputSchema)

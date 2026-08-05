@@ -12,6 +12,7 @@ import { prisma } from '../../../prisma/prisma';
 import { revalidatePath } from 'next/cache';
 
 export const inviteMemberAction = authActionServer
+    .metadata({ name: 'organization.inviteMember' })
     .inputSchema(inviteMemberSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('organization');

@@ -10,10 +10,9 @@ import { useRouter } from 'next/navigation';
 import { usePermissions } from '@/contexts/PermissionContext';
 
 export function ContainerActionButtons() {
-    const { can } = usePermissions();
+    const { canOnContainer } = usePermissions();
     const container = useContainerStore((state) => state.container);
     const router = useRouter();
-    if (!can('container', 'manage')) return null;
 
     const containerActions = useContainerActions({
         containerId: container?.id ?? '',
@@ -31,6 +30,8 @@ export function ContainerActionButtons() {
 
         return result;
     };
+
+    if (!canOnContainer(container?.labels, 'manage')) return null;
 
     const renderButton = (action: (typeof containerActions)[0], index: number) => (
         <Tooltip key={index}>

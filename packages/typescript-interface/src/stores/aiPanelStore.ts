@@ -1,4 +1,4 @@
-import type { SelectedModel } from '../ai/aiConfig';
+import type { SelectedModel } from '../ai/aiConfig.js';
 
 export interface AIPanelStore {
     isOpen: boolean;

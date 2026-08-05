@@ -1,5 +1,7 @@
 import { TaskKind, TaskStepStatus } from '@workspace/typescript-interface/task';
 import { TaskCancelledError, tasksManager } from '@/managers/tasksManager';
+import { getCurrentActor, isUserAction } from '@/lib/actorContext';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { logger } from '@/utils/logger';
 
 export interface TaskContext {
@@ -19,6 +21,7 @@ export interface RunAsTaskInput<T> {
     stepKeys: string[];
     environmentId?: string;
     targetEnvironmentId?: string;
+    ownerOrganizationId?: string | null;
     cancellable?: boolean;
     run: (context: TaskContext) => Promise<T>;
     resultHref?: (result: T) => string | undefined;
@@ -35,6 +38,7 @@ export function runAsTask<T>({
     stepKeys,
     environmentId,
     targetEnvironmentId,
+    ownerOrganizationId,
     cancellable = false,
     run,
     resultHref,
@@ -45,6 +49,7 @@ export function runAsTask<T>({
         stepKeys,
         environmentId,
         targetEnvironmentId,
+        ownerOrganizationId: ownerOrganizationId ?? getCurrentActor().organizationId,
         cancellable,
     });
 
@@ -77,4 +82,60 @@ export function runAsTask<T>({
         });
 
     return { taskId: task.id, name: subjectName };
+}
+
+export interface TrackedTaskContext {
+    setProgress: (progress: number) => void;
+    warn: (message: string) => void;
+}
+
+export interface RunTrackedTaskInput<T> {
+    kind: TaskKind;
+    subjectName: string;
+    resolveOwner?: () => Promise<string | null>;
+    run: (context: TrackedTaskContext) => Promise<T>;
+    resultHref?: (result: T) => string | undefined;
+}
+
+const UNTRACKED_CONTEXT: TrackedTaskContext = {
+    setProgress: () => {},
+    warn: () => {},
+};
+
+export async function runTrackedTask<T>({
+    kind,
+    subjectName,
+    resolveOwner,
+    run,
+    resultHref,
+}: RunTrackedTaskInput<T>): Promise<T> {
+    if (!isUserAction()) {
+        return run(UNTRACKED_CONTEXT);
+    }
+
+    const { task } = tasksManager.create({
+        kind,
+        subjectName,
+        stepKeys: [],
+        environmentId: getCurrentEnvironmentId(),
+        ownerOrganizationId: (await resolveOwner?.()) ?? getCurrentActor().organizationId,
+        silent: true,
+    });
+
+    try {
+        const result = await run({
+            setProgress: (progress) => tasksManager.setProgress(task.id, progress),
+            warn: (message) => tasksManager.addWarning(task.id, message),
+        });
+
+        tasksManager.finish(task.id, 'succeeded', { resultHref: resultHref?.(result) });
+
+        return result;
+    } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        logger.error({ err, taskId: task.id, kind }, 'Tracked task failed');
+        tasksManager.finish(task.id, 'failed', { error: message });
+
+        throw err;
+    }
 }

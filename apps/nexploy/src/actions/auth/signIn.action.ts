@@ -8,6 +8,7 @@ import { redirect, RedirectType } from 'next/navigation';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
 export const onSignInAction = actionServer
+    .metadata({ name: 'auth.signIn' })
     .inputSchema(signInFormSchema)
     .action(async ({ parsedInput: { email, password } }) => {
         try {

@@ -12,6 +12,8 @@ import {
 import { cacheRestoreSchema, cacheSaveSchema } from '@workspace/schemas-zod/docker/volume/volumeCache.schema';
 import { restoreCache, saveCache } from '@/services/cacheService';
 import { deleteVolumes } from '@/services/volumeService';
+import { runTrackedTask } from '@/lib/taskRunner';
+import { joinSubjects } from '@/utils/taskSubjects';
 
 const app = new Hono();
 
@@ -55,14 +57,20 @@ app.post(
                 ? Object.fromEntries(entries.filter((e) => e.key.trim()).map((e) => [e.key.trim(), e.value.trim()]))
                 : undefined;
 
-        await docker.createVolume({
-            Name: name,
-            Driver: driver,
-            DriverOpts: toRecord(driverOpts),
-            Labels: toRecord(labels),
-        });
+        return runTrackedTask({
+            kind: 'volume-create',
+            subjectName: name,
+            run: async () => {
+                await docker.createVolume({
+                    Name: name,
+                    Driver: driver,
+                    DriverOpts: toRecord(driverOpts),
+                    Labels: toRecord(labels),
+                });
 
-        return { volumeName: name };
+                return { volumeName: name };
+            },
+        });
     }),
 );
 
@@ -71,7 +79,12 @@ app.post(
     route({ json: volumeDeleteSchema, query: volumeDeleteQuerySchema }, async (c) => {
         const { volumeNames } = c.req.valid('json');
         const { force } = c.req.valid('query');
-        return await deleteVolumes(volumeNames, force ?? false);
+
+        return runTrackedTask({
+            kind: 'volume-remove',
+            subjectName: joinSubjects(volumeNames),
+            run: () => deleteVolumes(volumeNames, force ?? false),
+        });
     }),
 );
 
@@ -84,15 +97,21 @@ app.post(
         if (all) filters.all = ['true'];
         if (filter) filters.label = [filter];
 
-        const result = (await docker.pruneVolumes({ filters: JSON.stringify(filters) })) as {
-            VolumesDeleted?: string[] | null;
-            SpaceReclaimed?: number;
-        };
+        return runTrackedTask({
+            kind: 'volume-prune',
+            subjectName: '',
+            run: async () => {
+                const result = (await docker.pruneVolumes({ filters: JSON.stringify(filters) })) as {
+                    VolumesDeleted?: string[] | null;
+                    SpaceReclaimed?: number;
+                };
 
-        return {
-            removedVolumes: result.VolumesDeleted?.length ?? 0,
-            reclaimedSpace: result.SpaceReclaimed ?? 0,
-        };
+                return {
+                    removedVolumes: result.VolumesDeleted?.length ?? 0,
+                    reclaimedSpace: result.SpaceReclaimed ?? 0,
+                };
+            },
+        });
     }),
 );
 

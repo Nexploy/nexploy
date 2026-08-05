@@ -3,6 +3,7 @@ import { HTTPError } from 'ky';
 import { logger } from '@/utils/logger';
 import { kyNexploy } from '@/lib/kyNexploy';
 import { type Actor, actorFromHeaders, SYSTEM_ACTOR } from '@nexploy/shared/actor';
+import { runWithActor } from '@/lib/actorContext';
 
 const VERIFY_CACHE_TTL_MS = 60_000;
 const VERIFY_INVALID_CACHE_TTL_MS = 3_000;
@@ -76,12 +77,10 @@ export async function authMiddleware(c: Context, next: Next) {
         return c.json({ error: 'Invalid API key.' }, 401);
     }
 
-    c.set(
-        'actor',
-        actorFromHeaders((name) => c.req.header(name)),
-    );
+    const actor = actorFromHeaders((name) => c.req.header(name));
+    c.set('actor', actor);
 
-    await next();
+    return runWithActor(actor, () => next());
 }
 
 export function getActor(c: Context): Actor {

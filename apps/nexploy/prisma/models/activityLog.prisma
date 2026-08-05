@@ -1,0 +1,65 @@
+model ActivityLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  name     String
+  source   ActivitySource
+  status   ActivityStatus
+  resource String?
+  action   String?
+
+  actorType      ActivityActorType @default(USER)
+  actorId        String?
+  actorEmail     String?
+  actorRole      String?
+  organizationId String?
+  actor          User?             @relation("ActivityLogActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  targetType String?
+  targetId   String?
+  targetName String?
+
+  environmentId String?
+  durationMs    Int?
+  errorMessage  String?
+
+  ipAddress String?
+  userAgent String?
+  requestId String?
+  metadata  Json?
+
+  @@index([createdAt])
+  @@index([actorId, createdAt])
+  @@index([name, createdAt])
+  @@index([status, createdAt])
+  @@index([targetType, targetId])
+  @@index([organizationId, createdAt])
+  @@map("activity_log")
+}
+
+model ActivitySettings {
+  id             String   @id @default(cuid())
+  singleton      String   @unique @default("default")
+  retentionDays  Int      @default(90)
+  lastPurgeAt    DateTime?
+  lastPurgeCount Int      @default(0)
+
+  @@map("activity_settings")
+}
+
+enum ActivitySource {
+  SERVER_ACTION
+  API_ROUTE
+}
+
+enum ActivityStatus {
+  SUCCESS
+  FAILURE
+  DENIED
+}
+
+enum ActivityActorType {
+  USER
+  API_KEY
+  SYSTEM
+}

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
-import { internalApiAuth, route } from '@/lib/api/nextRoute';
+import { auditRoute, internalApiAuth, route } from '@/lib/api/nextRoute';
 import { deleteBackupSchedulesByVolume, getBackupSchedulesForVolume } from '@/services/backupSchedule.service';
 import { inngest } from '@/inngest/client';
 import { syncVolumeDeleteSchema } from '@workspace/schemas-zod/bucket-storage/backupSchedule.schema';
 
 export const POST = route
+    .use(auditRoute('volume.syncDelete'))
     .use(internalApiAuth({ service: 'docker-api' }))
     .body(syncVolumeDeleteSchema)
     .handler(async (_, { body }) => {

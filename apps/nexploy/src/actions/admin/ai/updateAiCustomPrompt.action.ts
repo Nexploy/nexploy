@@ -6,6 +6,7 @@ import { updateAISettingsPart } from '@/services/aiSettings.service';
 import { setToastServer } from '@/lib/toastServer';
 
 export const updateAICustomPromptAction = authActionServer
+    .metadata({ name: 'ai.updateCustomPrompt' })
     .use(requirePermission('ai', 'manage'))
     .inputSchema(updateAICustomPromptSchema)
     .action(async ({ parsedInput }) => {

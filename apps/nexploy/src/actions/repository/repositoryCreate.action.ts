@@ -7,6 +7,7 @@ import { createRepository } from '@/services/repository.service';
 import { byActiveOrganization } from '@/lib/auth/resolveOrgContext';
 
 export const onRepositoryCreateAction = authActionServer
+    .metadata({ name: 'repository.create' })
     .use(requirePermission('repository', 'create', byActiveOrganization))
     .inputSchema(repositoryCreateFormSchema)
     .action(async ({ parsedInput, ctx }) => {

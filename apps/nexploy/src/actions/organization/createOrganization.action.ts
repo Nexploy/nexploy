@@ -10,6 +10,7 @@ import { revalidatePath } from 'next/cache';
 import { generateOrganizationSlug } from '@/services/organization.service';
 
 export const createOrganizationAction = authActionServer
+    .metadata({ name: 'organization.create' })
     .inputSchema(createOrganizationSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('organization');

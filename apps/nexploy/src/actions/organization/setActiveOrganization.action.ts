@@ -4,15 +4,12 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { auth } from '@/lib/auth/auth';
 import { headers } from 'next/headers';
 import { setToastServer } from '@/lib/toastServer';
-import { z } from 'zod';
+import { setActiveOrganizationSchema } from '@workspace/schemas-zod/organization/setActiveOrganization.schema';
 import { getTranslations } from 'next-intl/server';
 import { revalidatePath } from 'next/cache';
 
-const setActiveOrganizationSchema = z.object({
-    organizationId: z.string().nullable(),
-});
-
 export const setActiveOrganizationAction = authActionServer
+    .metadata({ name: 'organization.setActive' })
     .inputSchema(setActiveOrganizationSchema)
     .action(async ({ parsedInput }) => {
         const t = await getTranslations('organization');

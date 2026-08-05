@@ -7,6 +7,7 @@ import { envVariableSchema } from '@workspace/schemas-zod/repository/envVariable
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const onEnvVariableAction = authActionServer
+    .metadata({ name: 'repository.updateEnvVariables' })
     .use(requirePermission('envVar', 'write', byRepositoryId))
     .inputSchema(envVariableSchema)
     .action(async ({ parsedInput }) => {

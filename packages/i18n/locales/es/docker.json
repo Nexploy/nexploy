@@ -33,6 +33,23 @@
     "cancel": "Cancelar",
     "rename": "Renombrar"
   },
+  "restartPolicy": {
+    "title": "Política de reinicio",
+    "subtitle": "Se aplica en caliente",
+    "autoRemove": "No disponible: este contenedor está configurado para eliminarse automáticamente.",
+    "selectPolicy": "Selecciona una política",
+    "never": "Nunca",
+    "always": "Siempre",
+    "onFailure": "En caso de fallo",
+    "unlessStopped": "Salvo si se detiene",
+    "description": {
+      "no": "El contenedor nunca se reinicia automáticamente.",
+      "always": "El contenedor siempre se reinicia, incluso tras reiniciar el demonio de Docker.",
+      "on-failure": "El contenedor solo se reinicia cuando termina con un código de salida distinto de cero.",
+      "unless-stopped": "El contenedor siempre se reinicia, salvo que se haya detenido manualmente."
+    },
+    "updated": "Política de reinicio actualizada"
+  },
   "changeImage": {
     "recreateWarning": "El contenedor se detendrá, se eliminará y se volverá a crear con la nueva imagen. Toda su configuración se conserva.",
     "imageLabel": "Imagen",
@@ -965,12 +982,47 @@
     "clearFinished": "Borrar",
     "cancel": "Cancelar",
     "dismiss": "Ocultar",
-    "openResult": "Abrir el contenedor",
+    "openResult": {
+      "container": "Abrir el contenedor",
+      "image": "Abrir la imagen",
+      "network": "Abrir la red",
+      "volume": "Abrir el volumen"
+    },
+    "openResultIn": {
+      "container": "Abrir el contenedor ({environment})",
+      "image": "Abrir la imagen ({environment})",
+      "network": "Abrir la red ({environment})",
+      "volume": "Abrir el volumen ({environment})"
+    },
     "kinds": {
       "container-migrate": "Moviendo {name}",
       "container-recreate": "Recreando {name}",
       "image-pull": "Descargando {name}",
-      "image-mirror": "Replicando {name}"
+      "image-mirror": "Replicando {name}",
+      "container-create": "Creando {name}",
+      "container-rename": "Renombrando {name}",
+      "container-restart-policy": "Actualizando la política de reinicio de {name}",
+      "container-start": "Iniciando {name}",
+      "container-stop": "Deteniendo {name}",
+      "container-restart": "Reiniciando {name}",
+      "container-pause": "Pausando {name}",
+      "container-unpause": "Reanudando {name}",
+      "container-remove": "Eliminando {name}",
+      "container-prune": "Limpiando los contenedores detenidos",
+      "image-tag": "Etiquetando {name}",
+      "image-remove": "Eliminando la imagen {name}",
+      "image-prune": "Limpiando las imágenes sin usar",
+      "network-create": "Creando la red {name}",
+      "network-remove": "Eliminando la red {name}",
+      "volume-create": "Creando el volumen {name}",
+      "volume-remove": "Eliminando el volumen {name}",
+      "volume-prune": "Limpiando los volúmenes sin usar",
+      "stack-start": "Iniciando el stack {name}",
+      "stack-stop": "Deteniendo el stack {name}",
+      "stack-restart": "Reiniciando el stack {name}",
+      "stack-pause": "Pausando el stack {name}",
+      "stack-unpause": "Reanudando el stack {name}",
+      "stack-remove": "Eliminando el stack {name}"
     },
     "status": {
       "running": "En curso",
@@ -993,9 +1045,9 @@
       "cleanup": "Limpieza"
     },
     "toasts": {
-      "succeeded": "«{name}» se ha movido al entorno de destino.",
-      "failed": "El traslado de «{name}» ha fallado.",
-      "cancelled": "El traslado de «{name}» se ha cancelado."
+      "succeeded": "«{name}» se ha completado.",
+      "failed": "«{name}» ha fallado.",
+      "cancelled": "«{name}» se ha cancelado."
     }
   }
 }

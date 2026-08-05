@@ -11,6 +11,7 @@ import { byBoundRepositoryId, getCallerOrgRole } from '@/lib/auth/resolveOrgCont
 import { hasOrgPermission } from '@/lib/auth/orgPermissions';
 
 export const moveRepositoryToOrganizationAction = authActionServer
+    .metadata({ name: 'repository.moveToOrganization' })
     .use(requirePermission('repository', 'update', byBoundRepositoryId))
     .inputSchema(moveRepositoryToOrganizationSchema)
     .bindArgsSchemas(repositoryIdSchema)

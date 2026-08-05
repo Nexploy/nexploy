@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { byDomainId } from '@/lib/auth/resolveOrgContext';
 
 export const deleteDomain = authActionServer
+    .metadata({ name: 'domains.deleteDomain' })
     .use(requirePermission('domain', 'manage', byDomainId))
     .inputSchema(deleteDomainSchema)
     .action(async ({ parsedInput: { domainId } }) => {

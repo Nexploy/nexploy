@@ -7,6 +7,7 @@ import { updateUserRoleSchema } from '@workspace/schemas-zod/user/updateUserRole
 import { getTranslations } from 'next-intl/server';
 
 export const updateUserRole = authActionServer
+    .metadata({ name: 'user.updateRole' })
     .use(requirePermission('user', 'set-role'))
     .inputSchema(updateUserRoleSchema)
     .action(async ({ parsedInput: { userId, role }, ctx: { session } }) => {

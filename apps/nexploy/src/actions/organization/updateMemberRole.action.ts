@@ -11,6 +11,7 @@ import { getCallerOrgRole } from '@/lib/auth/resolveOrgContext';
 import { revalidatePath } from 'next/cache';
 
 export const updateMemberRoleAction = authActionServer
+    .metadata({ name: 'organization.updateMemberRole' })
     .inputSchema(updateMemberRoleSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('organization');

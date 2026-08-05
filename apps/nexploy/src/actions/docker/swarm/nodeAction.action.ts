@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { swarmNodeActionSchema } from '@workspace/schemas-zod/docker/swarm/nodeAction.schema';
 
 export const onSwarmNodeAction = authActionServer
+    .metadata({ name: 'swarm.nodeAction' })
     .use(requirePermission('swarm', 'manage'))
     .inputSchema(swarmNodeActionSchema)
     .action(async ({ parsedInput: { nodeId, action, force } }) => {

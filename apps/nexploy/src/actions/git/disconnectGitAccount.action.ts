@@ -6,6 +6,7 @@ import { disconnectGitAccountSchema } from '@workspace/schemas-zod/git/gitAccoun
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const disconnectGitAccountAction = authActionServer
+    .metadata({ name: 'git.disconnectAccount' })
     .inputSchema(disconnectGitAccountSchema)
     .action(async ({ parsedInput, ctx }) => {
         try {

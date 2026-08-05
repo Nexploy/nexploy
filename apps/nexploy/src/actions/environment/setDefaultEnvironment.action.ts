@@ -6,6 +6,7 @@ import { setDefaultEnvironmentById } from '@/services/environment/environment.se
 import { environmentIdSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
 
 export const setDefaultEnvironmentAction = authActionServer
+    .metadata({ name: 'environment.setDefault' })
     .use(requirePermission('environment', 'update'))
     .inputSchema(environmentIdSchema)
     .action(async ({ parsedInput }) => {

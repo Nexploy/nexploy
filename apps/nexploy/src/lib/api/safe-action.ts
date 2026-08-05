@@ -7,15 +7,60 @@ import { getTranslations } from 'next-intl/server';
 import { hasPermission, type PermissionActions, type PermissionResource } from '@/lib/auth/permissions';
 import { hasOrgPermission, type OrgPermissionResource } from '@/lib/auth/orgPermissions';
 import { isOrgScopedResource, type OrgScopedResource } from '@/lib/auth/orgScopedResources';
-import { getCallerOrgRole, HOST_SCOPED, type OrgScopeResolver } from '@/lib/auth/resolveOrgContext';
+import { getCallerOrgRole, HOST_OWNED, HOST_SCOPED, type OrgScopeResolver } from '@/lib/auth/resolveOrgContext';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { isNexployInfrastructureNetworkName } from '@nexploy/shared/nexployFilter';
+import { z } from 'zod';
+import { unstable_rethrow } from 'next/navigation';
+import type { ActivityStatus } from '@workspace/typescript-interface/activity';
+import { recordActivity } from '@/lib/activity/recordActivity';
+import { markErrorKind, runWithErrorKind, wasForbidden } from '@/lib/activity/actionAudit';
+import { ForbiddenError, isForbiddenError } from '@/lib/activity/forbiddenError';
+import type { OrgScopeArgs } from '@workspace/typescript-interface/auth/orgScope';
 
 export const actionServer = createSafeActionClient({
+    defineMetadataSchema: () => z.object({ name: z.string() }),
     handleServerError(error) {
         console.error(`[ACTION ERROR] ${error.message}`);
+        markErrorKind(error);
         return error.message || 'Error occurred';
     },
+}).use(async ({ next, metadata, clientInput }) => {
+    const startedAt = Date.now();
+
+    const record = (status: ActivityStatus, errorMessage?: string) =>
+        recordActivity({
+            name: metadata.name,
+            source: 'SERVER_ACTION',
+            status,
+            input: clientInput,
+            durationMs: Date.now() - startedAt,
+            errorMessage,
+        });
+
+    return runWithErrorKind(async () => {
+        try {
+            const result = await next();
+
+            if (result.serverError) {
+                await record(wasForbidden() ? 'DENIED' : 'FAILURE', String(result.serverError));
+            } else if (result.validationErrors) {
+                await record('FAILURE', 'Validation failed');
+            } else {
+                await record('SUCCESS');
+            }
+
+            return result;
+        } catch (error) {
+            unstable_rethrow(error);
+
+            await record(
+                isForbiddenError(error) ? 'DENIED' : 'FAILURE',
+                error instanceof Error ? error.message : undefined,
+            );
+            throw error;
+        }
+    });
 });
 
 export const authActionServer = actionServer.use(async ({ next }) => {
@@ -40,14 +85,10 @@ export const authActionServer = actionServer.use(async ({ next }) => {
     return next({ ctx: { session } });
 });
 
-type OrgScopeArgs<R extends PermissionResource> = R extends OrgScopedResource
-    ? [orgResolver: OrgScopeResolver]
-    : [orgResolver?: never];
-
 export const requirePermission = <R extends PermissionResource>(
     resource: R,
     action: PermissionActions[R],
-    ...[orgResolver]: OrgScopeArgs<R>
+    ...[orgResolver]: OrgScopeArgs<R, OrgScopedResource, OrgScopeResolver>
 ) =>
     createMiddleware<{ ctx: { session: Session } }>().define(
         async ({ ctx, clientInput, bindArgsClientInputs, next }) => {
@@ -56,7 +97,7 @@ export const requirePermission = <R extends PermissionResource>(
 
             const deny = async (): Promise<Error> => {
                 await setToastServer({ type: 'error', message: t('forbidden') });
-                return new Error(t('forbidden'));
+                return new ForbiddenError(t('forbidden'));
             };
 
             if (isOrgScopedResource(resource) && role !== 'admin' && orgResolver !== HOST_SCOPED) {
@@ -68,6 +109,11 @@ export const requirePermission = <R extends PermissionResource>(
                 if (organizationIds.length === 0) throw await deny();
 
                 for (const organizationId of organizationIds) {
+                    if (organizationId === HOST_OWNED) {
+                        if (!hasPermission(role, resource, action)) throw await deny();
+                        continue;
+                    }
+
                     const orgRole = await getCallerOrgRole(ctx.session.user.id, organizationId);
                     if (!orgRole || !hasOrgPermission(orgRole, resource as OrgPermissionResource, action as string)) {
                         throw await deny();

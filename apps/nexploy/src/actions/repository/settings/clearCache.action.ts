@@ -2,7 +2,7 @@
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
-import { z } from 'zod';
+import { clearCacheSchema } from '@workspace/schemas-zod/repository/settings/clearCache.schema';
 import { access, rm } from 'fs/promises';
 import { join } from 'path';
 import { getTranslations } from 'next-intl/server';
@@ -10,9 +10,8 @@ import { revalidatePath } from 'next/cache';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
-const clearCacheSchema = z.object({ repositoryId: z.string() });
-
 export const clearCacheAction = authActionServer
+    .metadata({ name: 'repository.clearCache' })
     .use(requirePermission('repository', 'delete', byRepositoryId))
     .inputSchema(clearCacheSchema)
     .action(async ({ parsedInput }) => {

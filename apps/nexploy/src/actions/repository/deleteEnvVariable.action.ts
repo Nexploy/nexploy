@@ -3,12 +3,13 @@
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { updateEnvVariables } from '@/services/repository.service';
-import { z } from 'zod';
+import { deleteEnvVariableSchema } from '@workspace/schemas-zod/repository/deleteEnvVariable.schema';
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const deleteEnvVariableAction = authActionServer
+    .metadata({ name: 'repository.deleteEnvVariable' })
     .use(requirePermission('envVar', 'write', byRepositoryId))
-    .inputSchema(z.object({ repositoryId: z.string(), envVariableId: z.string() }))
+    .inputSchema(deleteEnvVariableSchema)
     .action(async ({ parsedInput }) => {
         const { repositoryId, envVariableId } = parsedInput;
 

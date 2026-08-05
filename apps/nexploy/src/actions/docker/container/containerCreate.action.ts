@@ -9,6 +9,7 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { getRegistryWithPassword } from '@/services/registry.service';
 
 export const onContainerCreateAction = authActionServer
+    .metadata({ name: 'container.create' })
     .use(requirePermission('container', 'manage', HOST_SCOPED))
     .inputSchema(containerCreateFormSchema)
     .action(async ({ parsedInput }) => {

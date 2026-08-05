@@ -9,6 +9,8 @@ import {
 } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { filterNexployNetworks } from '@nexploy/shared/nexployFilter';
 import { deleteNetworks } from '@/services/networkService';
+import { runTrackedTask } from '@/lib/taskRunner';
+import { describeNetworks } from '@/utils/taskSubjects';
 
 const app = new Hono();
 
@@ -57,16 +59,23 @@ app.post(
             if (err.statusCode !== 404) throw err;
         }
 
-        const network = await docker.createNetwork({
-            ...rest,
-            ...operatorFields,
-            Name: name,
-            Driver: driver,
-            ConfigFrom: configFrom,
-            Options: options,
-            Labels: labels,
+        return runTrackedTask({
+            kind: 'network-create',
+            subjectName: name,
+            run: async () => {
+                const network = await docker.createNetwork({
+                    ...rest,
+                    ...operatorFields,
+                    Name: name,
+                    Driver: driver,
+                    ConfigFrom: configFrom,
+                    Options: options,
+                    Labels: labels,
+                });
+
+                return { id: network.id, name, alreadyExisted: false };
+            },
         });
-        return { id: network.id, name, alreadyExisted: false };
     }),
 );
 
@@ -82,7 +91,12 @@ app.post(
     '/delete',
     route({ json: networkDeleteSchema }, async (c) => {
         const { networkIds, force } = c.req.valid('json');
-        return await deleteNetworks(networkIds, force);
+
+        return runTrackedTask({
+            kind: 'network-remove',
+            subjectName: describeNetworks(networkIds),
+            run: () => deleteNetworks(networkIds, force),
+        });
     }),
 );
 

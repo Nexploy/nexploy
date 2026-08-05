@@ -8,6 +8,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { deployComposeSchema } from '@workspace/schemas-zod/docker/composes/composesAction.schema';
 
 export const onComposeDeployAction = authActionServer
+    .metadata({ name: 'compose.deploy' })
     .use(requirePermission('container', 'manage', HOST_SCOPED))
     .inputSchema(deployComposeSchema)
     .action(async ({ parsedInput }) => {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
+import { auditRoute, authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { readTraefikTree, resolveTraefikYmlPath } from '@/lib/traefik/fileTree';
@@ -14,6 +14,7 @@ export const GET = route
     });
 
 export const POST = route
+    .use(auditRoute('traefik.saveFile'))
     .use(authRouteServer)
     .use(requirePermission('traefik', 'manage'))
     .handler(async (_, { body }) => {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
+import { auditRoute, authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import * as fs from 'fs/promises';
 import { resolveTraefikYmlPath } from '@/lib/traefik/fileTree';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
@@ -30,6 +30,7 @@ export const GET = route
     });
 
 export const DELETE = route
+    .use(auditRoute('traefik.deleteFile'))
     .use(authRouteServer)
     .use(requirePermission('traefik', 'manage'))
     .handler(async (_request, { params }) => {

@@ -6,6 +6,7 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/lib/toastServer';
 
 export const updateInstanceDomainAction = authActionServer
+    .metadata({ name: 'admin.updateInstanceDomain' })
     .use(requirePermission('traefik', 'manage'))
     .inputSchema(instanceDomainSchema)
     .action(async ({ parsedInput }) => {

@@ -85,6 +85,7 @@ export async function startBuildRepository(
         gitBranch: branch,
         gitAccountId: repository.gitAccountId ?? undefined,
         repositoryId: repository.id,
+        organizationId: repository.organizationId,
         gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
         buildId: build.id,

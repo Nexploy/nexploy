@@ -1,6 +1,7 @@
 import { prisma } from '../../../prisma/prisma';
 import { kyDocker } from '@/lib/api/kyDocker';
-import { NEXPLOY_LABELS } from '@nexploy/nodes/core/nexployLabels';
+import { NEXPLOY_LABELS } from '@nexploy/shared/nexployLabels';
+import { NEXPLOY_ORGANIZATION_LABEL } from '@nexploy/shared/ownership';
 import { getDomains } from '@/services/traefik.service';
 import type { Session } from '@/lib/auth/auth';
 
@@ -53,7 +54,12 @@ export async function resolveOrganizationIdForContainer(containerId: string): Pr
         const info = await kyDocker
             .get(`container/${containerId}`)
             .json<{ Config?: { Labels?: Record<string, string> } }>();
-        const repositoryId = info.Config?.Labels?.[NEXPLOY_LABELS.repositoryId];
+        const labels = info.Config?.Labels;
+
+        const owner = labels?.[NEXPLOY_ORGANIZATION_LABEL];
+        if (owner) return owner;
+
+        const repositoryId = labels?.[NEXPLOY_LABELS.repositoryId];
         if (!repositoryId) return null;
         return resolveOrganizationIdForRepository(repositoryId);
     } catch {
@@ -61,12 +67,12 @@ export async function resolveOrganizationIdForContainer(containerId: string): Pr
     }
 }
 
+export const HOST_OWNED = 'host-owned' as const;
+
 export async function resolveOrganizationIdForContainers(containerIds: string[]): Promise<string[] | null> {
     if (containerIds.length === 0) return null;
     const orgIds = await Promise.all(containerIds.map(resolveOrganizationIdForContainer));
-    if (orgIds.some((id) => id === null)) return null;
-    const unique = new Set(orgIds as string[]);
-    return Array.from(unique);
+    return Array.from(new Set(orgIds.map((id) => id ?? HOST_OWNED)));
 }
 
 export async function getCallerOrgRole(userId: string, organizationId: string): Promise<string | null> {

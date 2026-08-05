@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { Task, TasksEvent } from '@workspace/typescript-interface/task';
 import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { toast } from 'sonner';
@@ -6,6 +7,7 @@ import { clientT } from '@/lib/i18n/clientTranslations';
 
 export interface TasksState {
     tasks: Task[];
+    dismissedTaskIds: string[];
     isConnected: boolean;
     unsubscribers: (() => void)[];
 
@@ -13,10 +15,15 @@ export interface TasksState {
     disconnect: () => void;
     upsertTask: (task: Task) => void;
     removeTask: (taskId: string) => void;
+    dismissTask: (taskId: string) => void;
+    dismissTasks: (taskIds: string[]) => void;
+    getVisibleTasks: () => Task[];
     getRunningTasks: () => Task[];
 }
 
 const notifyFinished = (task: Task) => {
+    if (task.silent) return;
+
     const name = task.subjectName;
 
     if (task.status === 'succeeded') {
@@ -35,74 +42,103 @@ const notifyFinished = (task: Task) => {
     }
 };
 
-export const useTasksStore = create<TasksState>((set, get) => ({
-    tasks: [],
-    isConnected: false,
-    unsubscribers: [],
+export const useTasksStore = create<TasksState>()(
+    persist(
+        (set, get) => ({
+            tasks: [],
+            dismissedTaskIds: [],
+            isConnected: false,
+            unsubscribers: [],
 
-    upsertTask: (task) =>
-        set((state) => {
-            const exists = state.tasks.some((candidate) => candidate.id === task.id);
+            upsertTask: (task) =>
+                set((state) => {
+                    const exists = state.tasks.some((candidate) => candidate.id === task.id);
 
-            return {
-                tasks: exists
-                    ? state.tasks.map((candidate) => (candidate.id === task.id ? task : candidate))
-                    : [task, ...state.tasks],
-            };
+                    return {
+                        tasks: exists
+                            ? state.tasks.map((candidate) => (candidate.id === task.id ? task : candidate))
+                            : [task, ...state.tasks],
+                    };
+                }),
+
+            removeTask: (taskId) =>
+                set((state) => ({
+                    tasks: state.tasks.filter((task) => task.id !== taskId),
+                    dismissedTaskIds: state.dismissedTaskIds.filter((id) => id !== taskId),
+                })),
+
+            dismissTask: (taskId) => get().dismissTasks([taskId]),
+
+            dismissTasks: (taskIds) =>
+                set((state) => ({
+                    dismissedTaskIds: Array.from(new Set([...state.dismissedTaskIds, ...taskIds])),
+                })),
+
+            getVisibleTasks: () => {
+                const { tasks, dismissedTaskIds } = get();
+
+                return tasks.filter((task) => !dismissedTaskIds.includes(task.id));
+            },
+
+            getRunningTasks: () => get().tasks.filter((task) => task.status === 'running'),
+
+            connect: () => {
+                if (get().isConnected) return;
+
+                const unsubscribers: (() => void)[] = [];
+
+                unsubscribers.push(
+                    sseMultiplexer.subscribe('tasks', 'initial-state', (event) => {
+                        const data: TasksEvent = JSON.parse(event.data);
+                        const tasks = data.tasks ?? [];
+                        const liveIds = new Set(tasks.map((task) => task.id));
+
+                        set((state) => ({
+                            tasks,
+                            dismissedTaskIds: state.dismissedTaskIds.filter((taskId) => liveIds.has(taskId)),
+                        }));
+                    }),
+                );
+
+                unsubscribers.push(
+                    sseMultiplexer.subscribe('tasks', 'task-created', (event) => {
+                        const data: TasksEvent = JSON.parse(event.data);
+                        if (data.task) get().upsertTask(data.task);
+                    }),
+                );
+
+                unsubscribers.push(
+                    sseMultiplexer.subscribe('tasks', 'task-updated', (event) => {
+                        const data: TasksEvent = JSON.parse(event.data);
+                        if (!data.task) return;
+
+                        const previous = get().tasks.find((candidate) => candidate.id === data.task!.id);
+                        get().upsertTask(data.task);
+
+                        if (previous?.status === 'running' && data.task.status !== 'running') {
+                            notifyFinished(data.task);
+                        }
+                    }),
+                );
+
+                unsubscribers.push(
+                    sseMultiplexer.subscribe('tasks', 'task-removed', (event) => {
+                        const data: TasksEvent = JSON.parse(event.data);
+                        if (data.taskId) get().removeTask(data.taskId);
+                    }),
+                );
+
+                set({ unsubscribers, isConnected: true });
+            },
+
+            disconnect: () => {
+                get().unsubscribers.forEach((unsubscribe) => unsubscribe());
+                set({ unsubscribers: [], isConnected: false });
+            },
         }),
-
-    removeTask: (taskId) =>
-        set((state) => ({
-            tasks: state.tasks.filter((task) => task.id !== taskId),
-        })),
-
-    getRunningTasks: () => get().tasks.filter((task) => task.status === 'running'),
-
-    connect: () => {
-        if (get().isConnected) return;
-
-        const unsubscribers: (() => void)[] = [];
-
-        unsubscribers.push(
-            sseMultiplexer.subscribe('tasks', 'initial-state', (event) => {
-                const data: TasksEvent = JSON.parse(event.data);
-                set({ tasks: data.tasks ?? [] });
-            }),
-        );
-
-        unsubscribers.push(
-            sseMultiplexer.subscribe('tasks', 'task-created', (event) => {
-                const data: TasksEvent = JSON.parse(event.data);
-                if (data.task) get().upsertTask(data.task);
-            }),
-        );
-
-        unsubscribers.push(
-            sseMultiplexer.subscribe('tasks', 'task-updated', (event) => {
-                const data: TasksEvent = JSON.parse(event.data);
-                if (!data.task) return;
-
-                const previous = get().tasks.find((candidate) => candidate.id === data.task!.id);
-                get().upsertTask(data.task);
-
-                if (previous?.status === 'running' && data.task.status !== 'running') {
-                    notifyFinished(data.task);
-                }
-            }),
-        );
-
-        unsubscribers.push(
-            sseMultiplexer.subscribe('tasks', 'task-removed', (event) => {
-                const data: TasksEvent = JSON.parse(event.data);
-                if (data.taskId) get().removeTask(data.taskId);
-            }),
-        );
-
-        set({ unsubscribers, isConnected: true });
-    },
-
-    disconnect: () => {
-        get().unsubscribers.forEach((unsubscribe) => unsubscribe());
-        set({ unsubscribers: [], isConnected: false });
-    },
-}));
+        {
+            name: 'tasks-storage',
+            partialize: (state) => ({ dismissedTaskIds: state.dismissedTaskIds }),
+        },
+    ),
+);

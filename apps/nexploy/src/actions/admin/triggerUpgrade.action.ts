@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { enableUpgradeOverride } from '@/lib/traefik/upgradeOverride';
 
 export const triggerUpgradeAction = authActionServer
+    .metadata({ name: 'admin.triggerUpgrade' })
     .use(requirePermission('setting', 'manage'))
     .inputSchema(upgradeSchema)
     .action(async ({ parsedInput }) => {

@@ -9,7 +9,9 @@ interface CreateTaskInput {
     stepKeys: string[];
     environmentId?: string;
     targetEnvironmentId?: string;
+    ownerOrganizationId?: string | null;
     cancellable?: boolean;
+    silent?: boolean;
 }
 
 const MAX_FINISHED_TASKS = 50;
@@ -34,7 +36,16 @@ class TasksManager extends EventEmitter {
         this.setMaxListeners(200);
     }
 
-    create({ kind, subjectName, stepKeys, environmentId, targetEnvironmentId, cancellable = false }: CreateTaskInput): {
+    create({
+        kind,
+        subjectName,
+        stepKeys,
+        environmentId,
+        targetEnvironmentId,
+        ownerOrganizationId = null,
+        cancellable = false,
+        silent = false,
+    }: CreateTaskInput): {
         task: Task;
         signal: AbortSignal;
     } {
@@ -45,11 +56,13 @@ class TasksManager extends EventEmitter {
             subjectName,
             environmentId,
             targetEnvironmentId,
+            ownerOrganizationId,
             steps: stepKeys.map((key): TaskStep => ({ key, status: 'pending' })),
             currentStepKey: null,
             progress: 0,
             warnings: [],
             cancellable,
+            silent,
             startedAt: Date.now(),
         };
 
@@ -153,8 +166,10 @@ class TasksManager extends EventEmitter {
         return true;
     }
 
-    clearFinished(): number {
-        const finished = this.list().filter((task) => task.status !== 'running');
+    clearFinished(taskIds?: string[]): number {
+        const finished = this.list().filter(
+            (task) => task.status !== 'running' && (!taskIds || taskIds.includes(task.id)),
+        );
         finished.forEach((task) => this.remove(task.id));
 
         return finished.length;

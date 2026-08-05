@@ -9,6 +9,7 @@ import { getTranslations } from 'next-intl/server';
 import { dockerRefreshSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
 
 export const onDockerRefreshAction = authActionServer
+    .metadata({ name: 'docker.refresh' })
     .use(requirePermission('container', 'read', HOST_SCOPED))
     .inputSchema(dockerRefreshSchema)
     .action(async ({ parsedInput: { environmentName } }) => {

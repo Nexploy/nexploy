@@ -7,6 +7,7 @@ import { resolveTraefikYmlPath } from '@/lib/traefik/fileTree';
 import { setToastServer } from '@/lib/toastServer';
 
 export const saveTraefikFile = authActionServer
+    .metadata({ name: 'traefik.saveFile' })
     .use(requirePermission('traefik', 'manage'))
     .inputSchema(saveTraefikFileSchema)
     .action(async ({ parsedInput: { filename, content } }) => {

@@ -7,6 +7,7 @@ import { azureReposSetupSchema } from '@workspace/schemas-zod/git/azureReposSetu
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const saveAzureReposProviderAction = authActionServer
+    .metadata({ name: 'git.saveAzureReposProvider' })
     .use(requirePermission('gitProvider', 'create'))
     .inputSchema(azureReposSetupSchema)
     .action(async ({ parsedInput }) => {

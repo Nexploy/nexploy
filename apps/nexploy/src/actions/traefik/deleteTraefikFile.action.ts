@@ -7,6 +7,7 @@ import { resolveTraefikYmlPath } from '@/lib/traefik/fileTree';
 import { setToastServer } from '@/lib/toastServer';
 
 export const deleteTraefikFile = authActionServer
+    .metadata({ name: 'traefik.deleteFile' })
     .use(requirePermission('traefik', 'manage'))
     .inputSchema(deleteTraefikFileSchema)
     .action(async ({ parsedInput: { filename } }) => {

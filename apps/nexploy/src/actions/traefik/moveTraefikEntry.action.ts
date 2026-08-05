@@ -8,6 +8,7 @@ import { resolveTraefikPath } from '@/lib/traefik/fileTree';
 import { setToastServer } from '@/lib/toastServer';
 
 export const moveTraefikEntry = authActionServer
+    .metadata({ name: 'traefik.moveEntry' })
     .use(requirePermission('traefik', 'manage'))
     .inputSchema(moveTraefikEntrySchema)
     .action(async ({ parsedInput: { source, destinationDir } }) => {

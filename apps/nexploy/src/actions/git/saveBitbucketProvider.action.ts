@@ -7,6 +7,7 @@ import { bitbucketSetupSchema } from '@workspace/schemas-zod/git/bitbucketSetup.
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const saveBitbucketProviderAction = authActionServer
+    .metadata({ name: 'git.saveBitbucketProvider' })
     .use(requirePermission('gitProvider', 'create'))
     .inputSchema(bitbucketSetupSchema)
     .action(async ({ parsedInput }) => {

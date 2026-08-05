@@ -33,6 +33,23 @@
     "cancel": "Cancel",
     "rename": "Rename"
   },
+  "restartPolicy": {
+    "title": "Restart policy",
+    "subtitle": "Applied live",
+    "autoRemove": "Not available: this container is set to auto-remove.",
+    "selectPolicy": "Select a policy",
+    "never": "Never",
+    "always": "Always",
+    "onFailure": "On failure",
+    "unlessStopped": "Unless stopped",
+    "description": {
+      "no": "The container is never restarted automatically.",
+      "always": "The container is always restarted, including after a Docker daemon restart.",
+      "on-failure": "The container is restarted only when it exits with a non-zero status code.",
+      "unless-stopped": "The container is always restarted, unless it was stopped manually."
+    },
+    "updated": "Restart policy updated"
+  },
   "changeImage": {
     "recreateWarning": "The container will be stopped, removed and recreated with the new image. All its configuration is preserved.",
     "imageLabel": "Image",
@@ -965,12 +982,47 @@
     "clearFinished": "Clear",
     "cancel": "Cancel",
     "dismiss": "Dismiss",
-    "openResult": "Open the container",
+    "openResult": {
+      "container": "Open the container",
+      "image": "Open the image",
+      "network": "Open the network",
+      "volume": "Open the volume"
+    },
+    "openResultIn": {
+      "container": "Open the container ({environment})",
+      "image": "Open the image ({environment})",
+      "network": "Open the network ({environment})",
+      "volume": "Open the volume ({environment})"
+    },
     "kinds": {
       "container-migrate": "Moving {name}",
       "container-recreate": "Recreating {name}",
       "image-pull": "Pulling {name}",
-      "image-mirror": "Mirroring {name}"
+      "image-mirror": "Mirroring {name}",
+      "container-create": "Creating {name}",
+      "container-rename": "Renaming {name}",
+      "container-restart-policy": "Updating the restart policy of {name}",
+      "container-start": "Starting {name}",
+      "container-stop": "Stopping {name}",
+      "container-restart": "Restarting {name}",
+      "container-pause": "Pausing {name}",
+      "container-unpause": "Resuming {name}",
+      "container-remove": "Removing {name}",
+      "container-prune": "Pruning stopped containers",
+      "image-tag": "Tagging {name}",
+      "image-remove": "Removing the image {name}",
+      "image-prune": "Pruning unused images",
+      "network-create": "Creating the network {name}",
+      "network-remove": "Removing the network {name}",
+      "volume-create": "Creating the volume {name}",
+      "volume-remove": "Removing the volume {name}",
+      "volume-prune": "Pruning unused volumes",
+      "stack-start": "Starting the stack {name}",
+      "stack-stop": "Stopping the stack {name}",
+      "stack-restart": "Restarting the stack {name}",
+      "stack-pause": "Pausing the stack {name}",
+      "stack-unpause": "Resuming the stack {name}",
+      "stack-remove": "Removing the stack {name}"
     },
     "status": {
       "running": "In progress",
@@ -993,9 +1045,9 @@
       "cleanup": "Cleaning up"
     },
     "toasts": {
-      "succeeded": "\"{name}\" has been moved to the target environment.",
-      "failed": "The move of \"{name}\" failed.",
-      "cancelled": "The move of \"{name}\" was cancelled."
+      "succeeded": "\"{name}\" completed successfully.",
+      "failed": "\"{name}\" failed.",
+      "cancelled": "\"{name}\" was cancelled."
     }
   }
 }

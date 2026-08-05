@@ -10,7 +10,7 @@ import { convertToModelMessages, generateId, type LanguageModel, stepCountIs, st
 import { createMCPClient } from '@ai-sdk/mcp';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { NextResponse } from 'next/server';
-import { authRouteServer, route } from '@/lib/api/nextRoute';
+import { auditRoute, authRouteServer, route } from '@/lib/api/nextRoute';
 import { chatBodySchema } from '@workspace/schemas-zod/ai/chat.schema';
 import type { Provider } from '@workspace/typescript-interface/ai/aiConfig';
 import { getProviderApiKey } from '@/services/aiConfig.service';
@@ -114,6 +114,7 @@ async function buildModel(provider: Provider, model: string): Promise<LanguageMo
 }
 
 export const POST = route
+    .use(auditRoute('ai.chat'))
     .use(authRouteServer)
     .body(chatBodySchema)
     .handler(async (_req, { ctx, body }) => {

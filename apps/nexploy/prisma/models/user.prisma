@@ -26,6 +26,7 @@ model User {
   oauthConsents        OauthConsent[]
   members              Member[]
   sentInvitations      Invitation[]
+  activityLogs         ActivityLog[]          @relation("ActivityLogActor")
 
   @@unique([email])
   @@map("user")

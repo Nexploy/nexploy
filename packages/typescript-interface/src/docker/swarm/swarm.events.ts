@@ -7,7 +7,7 @@ import type {
     SwarmService,
     SwarmTask,
     SwarmTaskState,
-} from './swarm.types';
+} from './swarm.types.js';
 
 interface BaseSwarmEvent {
     timestamp: number;

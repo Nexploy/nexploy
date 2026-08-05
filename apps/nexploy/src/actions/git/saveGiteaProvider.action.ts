@@ -7,6 +7,7 @@ import { giteaSetupSchema } from '@workspace/schemas-zod/git/giteaSetup.schema';
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const saveGiteaProviderAction = authActionServer
+    .metadata({ name: 'git.saveGiteaProvider' })
     .use(requirePermission('gitProvider', 'create'))
     .inputSchema(giteaSetupSchema)
     .action(async ({ parsedInput }) => {

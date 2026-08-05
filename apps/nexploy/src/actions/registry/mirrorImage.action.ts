@@ -8,6 +8,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export const mirrorImageAction = authActionServer
+    .metadata({ name: 'registry.mirrorImage' })
     .use(requirePermission('registry', 'mirror'))
     .inputSchema(mirrorImageSchema)
     .action(async ({ parsedInput }) => {

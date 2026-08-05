@@ -8,6 +8,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
 export const onContainerRemoveAction = authActionServer
+    .metadata({ name: 'container.remove' })
     .use(requirePermission('container', 'remove', byContainerIds))
     .inputSchema(containerRemoveSchema)
     .action(async ({ parsedInput: { containerIds, force } }) => {

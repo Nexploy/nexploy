@@ -3,8 +3,25 @@ import { GitProviderType } from 'generated/client';
 import { getGitAdapter } from '@/services/git/core/registry';
 import { findRepositoriesByWebhook } from '@/services/webhook/webhook.service';
 import { startBuildRepository } from '@/services/repository/build.service';
+import { recordActivity } from '@/lib/activity/recordActivity';
 
 export async function handleGitWebhook(request: Request, provider: GitProviderType) {
+    const startedAt = Date.now();
+    const repositoryId = new URL(request.url).searchParams.get('repositoryId');
+    const response = await runGitWebhook(request, provider);
+
+    await recordActivity({
+        name: 'repository.webhook',
+        source: 'API_ROUTE',
+        status: response.status < 400 ? 'SUCCESS' : 'FAILURE',
+        input: { provider, repositoryId, path: new URL(request.url).pathname },
+        durationMs: Date.now() - startedAt,
+    });
+
+    return response;
+}
+
+async function runGitWebhook(request: Request, provider: GitProviderType) {
     try {
         const adapter = getGitAdapter(provider);
         const event = request.headers.get(adapter.webhookEventHeader);

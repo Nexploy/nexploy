@@ -11,6 +11,7 @@ import { isPersonalOrganization } from '@/services/organization.service';
 import { revalidatePath } from 'next/cache';
 
 export const updateOrganizationAction = authActionServer
+    .metadata({ name: 'organization.update' })
     .inputSchema(updateOrganizationSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('organization');

@@ -10,6 +10,7 @@ import { prisma } from '../../../prisma/prisma';
 import { revalidatePath } from 'next/cache';
 
 export const rejectInvitationAction = authActionServer
+    .metadata({ name: 'organization.rejectInvitation' })
     .inputSchema(invitationIdSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('organization');

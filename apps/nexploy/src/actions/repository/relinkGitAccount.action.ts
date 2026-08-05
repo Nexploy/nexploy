@@ -10,6 +10,7 @@ import { getTranslations } from 'next-intl/server';
 import { byBoundRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const relinkGitAccountAction = authActionServer
+    .metadata({ name: 'repository.relinkGitAccount' })
     .use(requirePermission('repository', 'update', byBoundRepositoryId))
     .inputSchema(relinkGitAccountSchema)
     .bindArgsSchemas(repositoryIdSchema)

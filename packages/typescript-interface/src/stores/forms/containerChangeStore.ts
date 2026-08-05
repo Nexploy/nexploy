@@ -1,4 +1,4 @@
-import { PortType } from '../../docker/docker.port';
+import { PortType } from '../../docker/docker.port.js';
 
 export type PortChange = {
     typeAction: 'add' | 'edit' | 'delete';

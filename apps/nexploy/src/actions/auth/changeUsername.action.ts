@@ -6,6 +6,7 @@ import { changeUsername } from '@/services/auth/auth.service';
 import { changeUsernameFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 
 export const onChangeUsernameAction = actionServer
+    .metadata({ name: 'auth.changeUsername' })
     .inputSchema(changeUsernameFormSchema)
     .action(async ({ parsedInput }) => {
         try {

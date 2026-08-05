@@ -8,6 +8,7 @@ import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/conta
 import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
 export const onContainerRecreateAction = authActionServer
+    .metadata({ name: 'container.recreate' })
     .use(requirePermission('container', 'manage', byContainerIds))
     .inputSchema(ContainerRecreateFormSchema)
     .action(async ({ parsedInput }) => {

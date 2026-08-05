@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { setToastServer } from '@/lib/toastServer';
 
 export const deleteBucketStorageAccountAction = authActionServer
+    .metadata({ name: 'bucketStorage.deleteAccount' })
     .use(requirePermission('cloudBackup', 'manage'))
     .inputSchema(bucketStorageDeleteAccountSchema)
     .action(async ({ parsedInput }) => {

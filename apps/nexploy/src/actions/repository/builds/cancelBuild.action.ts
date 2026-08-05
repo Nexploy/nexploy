@@ -8,6 +8,7 @@ import { getTranslations } from 'next-intl/server';
 import { byBuildId } from '@/lib/auth/resolveOrgContext';
 
 export const onCancelBuild = authActionServer
+    .metadata({ name: 'builds.cancelBuild' })
     .use(requirePermission('build', 'cancel', byBuildId))
     .inputSchema(cancelBuildSchema)
     .action(async ({ parsedInput }) => {

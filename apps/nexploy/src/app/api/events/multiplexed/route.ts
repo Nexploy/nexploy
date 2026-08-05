@@ -5,6 +5,9 @@ import dayjs from 'dayjs';
 import ky from 'ky';
 import { NextResponse } from 'next/server';
 import { ChannelConfig, ChannelState, SSEChannel } from '@workspace/typescript-interface/sse';
+import type { TasksEvent } from '@workspace/typescript-interface/task';
+import { filterTasksEvent, resolveTaskViewer } from '@/lib/tasks/taskVisibility';
+import type { TaskViewer } from '@/lib/tasks/taskPermissions';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -84,6 +87,17 @@ const parseSSEFrame = (raw: string): { event: string; data: string } | null => {
     return { event, data };
 };
 
+const filterTasksFrame = (viewer: TaskViewer, data: string): string | null => {
+    try {
+        const event = JSON.parse(data) as TasksEvent;
+        const filtered = filterTasksEvent(viewer, event);
+
+        return filtered === null ? null : JSON.stringify(filtered);
+    } catch {
+        return data;
+    }
+};
+
 const buildEndpointUrl = (template: string, params?: Record<string, string>): string => {
     if (!params) return template;
 
@@ -128,6 +142,7 @@ export const GET = route
         }
 
         const connectionId = context.ctx.session.user.id;
+        const taskViewer = await resolveTaskViewer(context.ctx.session);
         const actorHeaders = actorToHeaders({
             source: 'user',
             userId: context.ctx.session.user.id,
@@ -334,6 +349,11 @@ export const GET = route
 
                                 const { event, data } = frame;
 
+                                const visibleData =
+                                    config.channel === 'tasks' ? filterTasksFrame(taskViewer, data) : data;
+
+                                if (visibleData === null) continue;
+
                                 try {
                                     controller.enqueue(
                                         encoder.encode(
@@ -341,7 +361,7 @@ export const GET = route
                                                 channel: config.channel,
                                                 params: config.params,
                                                 event,
-                                                data,
+                                                data: visibleData,
                                             })}\n\n`,
                                         ),
                                     );

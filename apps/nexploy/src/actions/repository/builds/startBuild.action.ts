@@ -9,6 +9,7 @@ import { getTranslations } from 'next-intl/server';
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const onStartBuild = authActionServer
+    .metadata({ name: 'builds.startBuild' })
     .use(requirePermission('build', 'run', byRepositoryId))
     .inputSchema(startBuildSchema)
     .action(async ({ parsedInput, ctx }) => {

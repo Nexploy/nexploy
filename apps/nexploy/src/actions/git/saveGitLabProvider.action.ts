@@ -7,6 +7,7 @@ import { gitlabSetupSchema } from '@workspace/schemas-zod/git/gitlabSetup.schema
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const saveGitLabProviderAction = authActionServer
+    .metadata({ name: 'git.saveGitlabProvider' })
     .use(requirePermission('gitProvider', 'create'))
     .inputSchema(gitlabSetupSchema)
     .action(async ({ parsedInput }) => {

@@ -4,6 +4,13 @@ import { logger } from '@/utils/logger';
 import { ContainersEvent } from '@workspace/typescript-interface/docker/docker.containers';
 import { getContainersStateManager } from '@/managers/list/containersStateManager';
 import { filterNexployContainers, isNexployInfrastructureContainer } from '@nexploy/shared/nexployFilter';
+import {
+    currentViewer,
+    filterVisibleContainers,
+    getRepositoryOrganizations,
+    resolveContainerOwner,
+} from '@/lib/containerOwnership';
+import { isVisibleToViewer } from '@nexploy/shared/ownership';
 import { createInitialStateGate } from '@/utils/initialStateGate';
 import { ContainersStatsManager } from '@/managers/list/containersStatsManager';
 import { ContainersStatsEvent } from '@workspace/typescript-interface/docker/docker.containers.stats';
@@ -20,17 +27,24 @@ const app = new Hono();
 
 app.get('/stream', (c) => {
     const manager = getContainersStateManager();
+    const viewer = currentViewer();
 
     return streamSSE(c, async (stream) => {
         const clientId = c.req.header('x-client-id');
+
+        const visibleContainers = async (containers: ContainersEvent['containers']) =>
+            containers ? await filterVisibleContainers(containers, viewer) : undefined;
+
+        const isHidden = async (container: NonNullable<ContainersEvent['container']>) =>
+            !isVisibleToViewer(container.labels, viewer, await getRepositoryOrganizations());
 
         const handleInitialState = async (containerEvent: ContainersEvent) => {
             try {
                 const filteredEvent = {
                     ...containerEvent,
-                    containers: containerEvent.containers
-                        ? filterNexployContainers(containerEvent.containers)
-                        : undefined,
+                    containers: await visibleContainers(
+                        containerEvent.containers ? filterNexployContainers(containerEvent.containers) : undefined,
+                    ),
                 };
                 await stream.writeSSE({
                     data: JSON.stringify(filteredEvent),
@@ -47,9 +61,9 @@ app.get('/stream', (c) => {
             try {
                 const filteredEvent = {
                     ...containerEvent,
-                    containers: containerEvent.containers
-                        ? filterNexployContainers(containerEvent.containers)
-                        : undefined,
+                    containers: await visibleContainers(
+                        containerEvent.containers ? filterNexployContainers(containerEvent.containers) : undefined,
+                    ),
                 };
                 await stream.writeSSE({
                     data: JSON.stringify(filteredEvent),
@@ -67,8 +81,14 @@ app.get('/stream', (c) => {
                 if (containerEvent.container && isNexployInfrastructureContainer(containerEvent.container)) {
                     return;
                 }
+                if (containerEvent.container && (await isHidden(containerEvent.container))) {
+                    return;
+                }
+                const visibleEvent = containerEvent.container
+                    ? { ...containerEvent, container: await resolveContainerOwner(containerEvent.container) }
+                    : containerEvent;
                 await stream.writeSSE({
-                    data: JSON.stringify(containerEvent),
+                    data: JSON.stringify(visibleEvent),
                     event: 'container-added',
                     id: `${Date.now()}`,
                 });
@@ -83,8 +103,14 @@ app.get('/stream', (c) => {
                 if (containerEvent.container && isNexployInfrastructureContainer(containerEvent.container)) {
                     return;
                 }
+                if (containerEvent.container && (await isHidden(containerEvent.container))) {
+                    return;
+                }
+                const visibleEvent = containerEvent.container
+                    ? { ...containerEvent, container: await resolveContainerOwner(containerEvent.container) }
+                    : containerEvent;
                 await stream.writeSSE({
-                    data: JSON.stringify(containerEvent),
+                    data: JSON.stringify(visibleEvent),
                     event: 'container-updated',
                     id: `${Date.now()}`,
                 });
@@ -99,8 +125,14 @@ app.get('/stream', (c) => {
                 if (containerEvent.container && isNexployInfrastructureContainer(containerEvent.container)) {
                     return;
                 }
+                if (containerEvent.container && (await isHidden(containerEvent.container))) {
+                    return;
+                }
+                const visibleEvent = containerEvent.container
+                    ? { ...containerEvent, container: await resolveContainerOwner(containerEvent.container) }
+                    : containerEvent;
                 await stream.writeSSE({
-                    data: JSON.stringify(containerEvent),
+                    data: JSON.stringify(visibleEvent),
                     event: 'container-removed',
                     id: `${Date.now()}`,
                 });
@@ -151,8 +183,7 @@ app.get('/stream', (c) => {
         manager.on('container-removed', onContainerRemoved);
 
         const allContainers = manager.getAllStates();
-        const containers = filterNexployContainers(allContainers);
-        await handleInitialState({ type: 'initial', containers, timestamp: Date.now() });
+        await handleInitialState({ type: 'initial', containers: allContainers, timestamp: Date.now() });
         await gate.release();
 
         c.req.raw.signal.addEventListener('abort', cleanup);

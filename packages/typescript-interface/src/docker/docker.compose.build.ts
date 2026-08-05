@@ -1,4 +1,4 @@
-import type { ComposeVolumeConfig } from './docker.compose.volume';
+import type { ComposeVolumeConfig } from './docker.compose.volume.js';
 
 export interface ComposeService {
     image?: string;

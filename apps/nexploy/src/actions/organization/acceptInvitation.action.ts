@@ -11,6 +11,7 @@ import { getUserOrganizations } from '@/services/organization.service';
 import { revalidatePath } from 'next/cache';
 
 export const acceptInvitationAction = authActionServer
+    .metadata({ name: 'organization.acceptInvitation' })
     .inputSchema(invitationIdSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('organization');

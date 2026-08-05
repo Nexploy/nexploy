@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer.ts';
 import { revalidatePath } from 'next/cache';
 
 export const addAiConfigAction = authActionServer
+    .metadata({ name: 'ai.addConfig' })
     .use(requirePermission('ai', 'manage'))
     .inputSchema(addProviderApiKeySchema)
     .action(async ({ parsedInput }) => {

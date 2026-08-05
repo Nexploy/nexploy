@@ -5,13 +5,16 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 
-export const onSwarmRefreshAction = authActionServer.use(requirePermission('swarm', 'read')).action(async () => {
-    try {
-        return await kyDocker.post(`swarm/hardRefresh`).json();
-    } catch (err: unknown) {
-        if (err instanceof HTTPError) {
-            await setToastServer({ type: 'error', message: err.message as string });
+export const onSwarmRefreshAction = authActionServer
+    .metadata({ name: 'swarm.refresh' })
+    .use(requirePermission('swarm', 'read'))
+    .action(async () => {
+        try {
+            return await kyDocker.post(`swarm/hardRefresh`).json();
+        } catch (err: unknown) {
+            if (err instanceof HTTPError) {
+                await setToastServer({ type: 'error', message: err.message as string });
+            }
+            throw err;
         }
-        throw err;
-    }
-});
+    });

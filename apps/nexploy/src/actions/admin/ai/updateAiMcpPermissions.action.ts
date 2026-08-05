@@ -6,6 +6,7 @@ import { updateAISettingsPart } from '@/services/aiSettings.service';
 import { setToastServer } from '@/lib/toastServer';
 
 export const updateAIMcpPermissionsAction = authActionServer
+    .metadata({ name: 'ai.updateMcpPermissions' })
     .use(requirePermission('ai', 'manage'))
     .inputSchema(updateAIMcpPermissionsSchema)
     .action(async ({ parsedInput }) => {

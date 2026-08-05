@@ -18,6 +18,7 @@ import {
     Network,
     PieChart,
     Plug,
+    ScrollText,
     Send,
     Settings,
     Shield,
@@ -155,6 +156,12 @@ const groups: PermissionedSidebarNavGroup[] = [
                 href: '/admin/backups',
                 icon: Database,
                 permission: { resource: 'backup', action: 'read' },
+            },
+            {
+                titleKey: 'activity',
+                href: '/admin/activity',
+                icon: ScrollText,
+                permission: { resource: 'activity', action: 'read' },
             },
             {
                 titleKey: 'settings',

@@ -97,7 +97,8 @@ http:
                         letter-spacing: 0.04em;
                         color: var(--muted);
                     }
-                    .footer strong { color: var(--primary); font-weight: 600; }
+                    .footer a { color: var(--primary); font-weight: 600; text-decoration: none; }
+                    .footer a:hover { text-decoration: underline; }
                 </style>
             </head>
             <body>
@@ -109,7 +110,7 @@ http:
                     <p>We're applying an update and will be back in just a moment.</p>
                     <p>This page will refresh automatically.</p>
                     <div class="divider"></div>
-                    <div class="footer">Powered by <strong>Nexploy</strong></div>
+                    <div class="footer">Powered by <a href="https://nexploy.app" target="_blank" rel="noopener noreferrer">Nexploy</a></div>
                 </div>
             </body>
             </html>

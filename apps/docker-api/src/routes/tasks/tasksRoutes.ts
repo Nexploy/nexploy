@@ -1,12 +1,8 @@
 import { Hono } from 'hono';
-import { z } from 'zod';
+import { clearTasksBodySchema, taskIdSchema } from '@workspace/schemas-zod/task/task.schema';
 import { route } from '@/utils/route';
 import { HttpError } from '@nexploy/shared/http-error';
 import { tasksManager } from '@/managers/tasksManager';
-
-const taskIdParamSchema = z.object({
-    taskId: z.string().min(1),
-});
 
 const app = new Hono();
 
@@ -21,9 +17,23 @@ app.get(
     }),
 );
 
+app.get(
+    '/:taskId',
+    route({ param: taskIdSchema }, async (c) => {
+        const { taskId } = c.req.valid('param');
+        const task = tasksManager.get(taskId);
+
+        if (!task) {
+            throw new HttpError(`Task not found: ${taskId}`, 404);
+        }
+
+        return task;
+    }),
+);
+
 app.post(
     '/:taskId/cancel',
-    route({ param: taskIdParamSchema }, async (c) => {
+    route({ param: taskIdSchema }, async (c) => {
         const { taskId } = c.req.valid('param');
 
         if (!tasksManager.get(taskId)) {
@@ -40,7 +50,7 @@ app.post(
 
 app.delete(
     '/:taskId',
-    route({ param: taskIdParamSchema }, async (c) => {
+    route({ param: taskIdSchema }, async (c) => {
         const { taskId } = c.req.valid('param');
 
         if (!tasksManager.remove(taskId)) {
@@ -53,8 +63,10 @@ app.delete(
 
 app.post(
     '/clear',
-    route(async () => {
-        return { removed: tasksManager.clearFinished() };
+    route({ json: clearTasksBodySchema }, async (c) => {
+        const { taskIds } = c.req.valid('json');
+
+        return { removed: tasksManager.clearFinished(taskIds) };
     }),
 );
 

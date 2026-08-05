@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { composesActionsSchema } from '@workspace/schemas-zod/docker/composes/composesAction.schema';
 
 export const onComposesAction = authActionServer
+    .metadata({ name: 'compose.action' })
     .inputSchema(composesActionsSchema)
     .action(async ({ parsedInput: { stackName, action, force } }) => {
         try {

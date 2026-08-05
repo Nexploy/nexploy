@@ -7,6 +7,7 @@ import { createCustomCertificate } from '@/services/sslCertificate.service';
 import { setToastServer } from '@/lib/toastServer.ts';
 
 export const createCustomCert = authActionServer
+    .metadata({ name: 'sslCertificate.createCustomCert' })
     .use(requirePermission('ssl', 'manage', HOST_SCOPED))
     .inputSchema(createCustomCertSchema)
     .action(async ({ parsedInput }) => {

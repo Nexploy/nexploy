@@ -8,6 +8,7 @@
     "./stores/*": "./src/stores/*.ts"
   },
   "dependencies": {
+    "@nexploy/shared": "^0.2.0",
     "@xyflow/react": "^12.11.1",
     "dockerode": "^5.0.0",
     "hono": "4.12.27",

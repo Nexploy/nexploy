@@ -8,6 +8,7 @@ import { createBucketStorageClient, putBucketStorageObject } from '@/lib/bucket-
 import { setToastServer } from '@/lib/toastServer';
 
 export const uploadVolumeToBucketStorageAction = authActionServer
+    .metadata({ name: 'bucketStorage.uploadVolume' })
     .use(requirePermission('cloudBackup', 'manage'))
     .inputSchema(uploadVolumeToBucketStorageSchema)
     .action(async ({ parsedInput }) => {

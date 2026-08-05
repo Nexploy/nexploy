@@ -1,4 +1,11 @@
-import type { SwarmInfo, SwarmNode, SwarmNodeRole, SwarmService, SwarmTask, SwarmTaskState } from '../../docker/swarm';
+import type {
+    SwarmInfo,
+    SwarmNode,
+    SwarmNodeRole,
+    SwarmService,
+    SwarmTask,
+    SwarmTaskState,
+} from '../../docker/swarm/index.js';
 
 export interface SwarmState {
     isSwarmActive: boolean;

@@ -366,3 +366,15 @@ OAuth scopes required:
 - **GitLab:** `api` (API access)
 - Token refresh handled by `getValidToken()` in services
 - Webhook configuration stored per repository
+
+### Sibling Repositories
+
+This repo lives inside a larger workspace at `../` (i.e. `nexploy/`), alongside sibling projects:
+
+- `../nodes` — `@nexploy/nodes`, the pipeline node library (published package, consumed here as a dependency)
+- `../shared` — `@nexploy/shared`, shared runtime helpers (actor, Docker constants, path safety)
+- `../cli` — the Nexploy CLI
+- `../docs` — the fumadocs documentation site
+- `../website` — the marketing website
+
+You may read from and write to these sibling repositories when a change requires it. Note that `@nexploy/nodes` and `@nexploy/shared` are installed here as **published versions**, not workspace links — editing their source under `../nodes/src` or `../shared/src` does not affect this repo until the package is rebuilt, republished, and the dependency version bumped. Say so explicitly when a change spans that boundary.

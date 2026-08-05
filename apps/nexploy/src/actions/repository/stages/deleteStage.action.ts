@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { byStageEntityId } from '@/lib/auth/resolveOrgContext';
 
 export const deleteStageAction = authActionServer
+    .metadata({ name: 'stages.deleteStage' })
     .use(requirePermission('stage', 'manage', byStageEntityId))
     .inputSchema(deleteDeploymentStageSchema)
     .action(async ({ parsedInput }) => {

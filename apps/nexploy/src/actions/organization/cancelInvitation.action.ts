@@ -11,6 +11,7 @@ import { getCallerOrgRole } from '@/lib/auth/resolveOrgContext';
 import { revalidatePath } from 'next/cache';
 
 export const cancelInvitationAction = authActionServer
+    .metadata({ name: 'organization.cancelInvitation' })
     .inputSchema(invitationIdSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('organization');

@@ -9,6 +9,7 @@ import { getRegistryWithPassword } from '@/services/registry.service';
 import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
 export const onContainerChangeImageAction = authActionServer
+    .metadata({ name: 'container.changeImage' })
     .use(requirePermission('container', 'manage', byContainerIds))
     .inputSchema(containerChangeImageSchema)
     .action(async ({ parsedInput: { containerId, image, registryId, pullImage } }) => {

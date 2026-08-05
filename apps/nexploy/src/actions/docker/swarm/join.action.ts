@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { swarmJoinSchema } from '@workspace/schemas-zod/docker/swarm/join.schema';
 
 export const onSwarmJoinAction = authActionServer
+    .metadata({ name: 'swarm.join' })
     .use(requirePermission('swarm', 'manage'))
     .inputSchema(swarmJoinSchema)
     .action(async ({ parsedInput }) => {

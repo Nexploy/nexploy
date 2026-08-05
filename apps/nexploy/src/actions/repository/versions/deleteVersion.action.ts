@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const onDeleteVersion = authActionServer
+    .metadata({ name: 'versions.deleteVersion' })
     .use(requirePermission('build', 'delete', byRepositoryId))
     .inputSchema(deleteVersionSchema)
     .action(async ({ parsedInput }) => {

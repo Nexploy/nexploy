@@ -9,6 +9,7 @@ import { inngest } from '@/inngest/client';
 import { CLEANUP_SCHEDULE_EVENT } from '@/inngest/functions/dockerCleanupScheduler';
 
 export const updateCleanupSettingsAction = authActionServer
+    .metadata({ name: 'cleanup.updateSettings' })
     .use(requirePermission('setting', 'manage'))
     .inputSchema(updateCleanupSettingsSchema)
     .action(async ({ parsedInput }) => {

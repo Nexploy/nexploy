@@ -7,6 +7,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { initActionSchema } from '@workspace/schemas-zod/docker/swarm/init.schema';
 
 export const onInitSwarmAction = authActionServer
+    .metadata({ name: 'swarm.init' })
     .use(requirePermission('swarm', 'manage'))
     .inputSchema(initActionSchema)
     .action(async ({ parsedInput: { advertiseAddr, listenAddr, forceNewCluster } }) => {

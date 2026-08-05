@@ -8,6 +8,7 @@ import { HTTPError } from 'ky';
 import { getRegistryWithPassword } from '@/services/registry.service';
 
 export const onImagePullAction = authActionServer
+    .metadata({ name: 'image.pull' })
     .use(requirePermission('image', 'pull'))
     .inputSchema(imagePullSchema)
     .action(async ({ parsedInput: { imageName, registryId } }) => {

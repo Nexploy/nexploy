@@ -7,7 +7,7 @@ import type {
     SwarmNodeRole,
     SwarmTaskState,
     SwarmStats,
-} from './swarm.types';
+} from './swarm.types.js';
 
 // ===== CLUSTER OPERATIONS =====
 export interface InitSwarmRequest {

@@ -9,6 +9,7 @@ import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const deleteRepositoryAction = authActionServer
+    .metadata({ name: 'repository.delete' })
     .use(requirePermission('repository', 'delete', byRepositoryId))
     .inputSchema(deleteRepositorySchema)
     .action(async ({ parsedInput }) => {

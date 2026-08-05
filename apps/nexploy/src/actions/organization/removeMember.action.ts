@@ -11,6 +11,7 @@ import { getCallerOrgRole } from '@/lib/auth/resolveOrgContext';
 import { revalidatePath } from 'next/cache';
 
 export const removeMemberAction = authActionServer
+    .metadata({ name: 'organization.removeMember' })
     .inputSchema(removeMemberSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('organization');

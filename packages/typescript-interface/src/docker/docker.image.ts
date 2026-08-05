@@ -1,4 +1,4 @@
-import { DropdownActionTool } from '../commun';
+import { DropdownActionTool } from '../commun.js';
 
 export interface ImageConfig {
     cmd: string[] | null;

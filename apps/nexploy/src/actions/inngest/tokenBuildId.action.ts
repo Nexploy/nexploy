@@ -9,6 +9,7 @@ import { tokenBuildIdSchema } from '@workspace/schemas-zod/inngest/token.schema'
 import { byBuildId } from '@/lib/auth/resolveOrgContext';
 
 export const onGetTokenBuildIdAction = authActionServer
+    .metadata({ name: 'inngest.getBuildToken' })
     .use(requirePermission('build', 'read', byBuildId))
     .inputSchema(tokenBuildIdSchema)
     .action(async ({ parsedInput: { buildId, topics } }) => {

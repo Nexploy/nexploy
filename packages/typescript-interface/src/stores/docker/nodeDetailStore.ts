@@ -1,4 +1,4 @@
-import type { SwarmNode, SwarmTask } from '../../docker/swarm/swarm.types';
+import type { SwarmNode, SwarmTask } from '../../docker/swarm/swarm.types.js';
 
 export interface NodeDetailState {
     nodeId: string | null;

@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 
 export const upsertStageAction = authActionServer
+    .metadata({ name: 'stages.upsertStage' })
     .use(requirePermission('stage', 'manage', byRepositoryId))
     .inputSchema(deploymentStageSchema)
     .action(async ({ parsedInput }) => {

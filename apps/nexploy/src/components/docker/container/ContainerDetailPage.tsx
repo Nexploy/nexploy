@@ -20,6 +20,7 @@ import { CardEnv } from '@/components/docker/container/cards/CardEnv';
 import { CardHealthDetails } from '@/components/docker/container/cards/CardHealthDetails';
 import { CardNetworks } from '@/components/docker/container/cards/CardNetworks.tsx';
 import { CardError } from '@/components/docker/container/cards/CardError';
+import { CardRestartPolicy } from '@/components/docker/container/cards/CardRestartPolicy';
 import { CardInfoContainer } from '@/components/docker/container/cards/CardInfoContainer';
 import { ContainerActionButtons } from '@/components/docker/container/actions/ContainerActionButtons';
 import { ContainerTerminal } from '@/components/docker/container/actions/ContainerTerminal';
@@ -188,6 +189,7 @@ export function ContainerDetailPage() {
                                 <CardInfoDetail />
                                 <CardExposedPorts />
                             </div>
+                            <CardRestartPolicy />
                             <CardEnv />
                             <CardVolumes />
                             <CardNetworks />

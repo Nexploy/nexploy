@@ -8,6 +8,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 
 export const onContainerRenameAction = authActionServer
+    .metadata({ name: 'container.rename' })
     .use(requirePermission('container', 'manage', byContainerIds))
     .inputSchema(containerRenameSchema)
     .action(async ({ parsedInput: { containerId, name } }) => {

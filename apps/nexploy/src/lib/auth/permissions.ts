@@ -28,6 +28,7 @@ export type PermissionActions = {
     backup: 'create' | 'read' | 'restore' | 'delete';
     traefik: 'read' | 'manage';
     setting: 'read' | 'manage';
+    activity: 'read' | 'manage';
     ai: 'read' | 'manage';
     mcpKey: 'create' | 'read' | 'delete';
     monitoring: 'read';
@@ -62,6 +63,7 @@ const statement = {
     backup: ['create', 'read', 'restore', 'delete'] as const,
     traefik: ['read', 'manage'] as const,
     setting: ['read', 'manage'] as const,
+    activity: ['read', 'manage'] as const,
     ai: ['read', 'manage'] as const,
     mcpKey: ['create', 'read', 'delete'] as const,
     monitoring: ['read'] as const,
@@ -134,6 +136,7 @@ const admin = ac.newRole({
     backup: ['create', 'read', 'restore', 'delete'],
     traefik: ['read', 'manage'],
     setting: ['read', 'manage'],
+    activity: ['read', 'manage'],
     ai: ['read', 'manage'],
     mcpKey: ['create', 'read', 'delete'],
     monitoring: ['read'],
