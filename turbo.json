@@ -32,6 +32,10 @@
     },
     "typecheck": {
       "dependsOn": ["^typecheck"]
+    },
+    "test": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", ".env.test"]
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "nexploy",
   "version": "1.0.0",
-  "description": "Nexploy \u2014 Self-hosted alternative to Vercel/Netlify, powered by Docker",
+  "description": "Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker",
   "type": "module",
   "private": true,
   "scripts": {
@@ -9,6 +9,11 @@
     "build": "next build --turbopack",
     "start": "NODE_ENV=production node server.js",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:audit": "vitest run tests/audit tests/permissions",
+    "test:api": "vitest run tests/runtime",
+    "test:report": "tsx tests/audit/report.ts",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:prod": "prisma migrate deploy",
     "db:generate": "prisma generate",
@@ -36,6 +41,7 @@
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@monaco-editor/react": "^4.7.0",
     "@nexploy/nodes": "^0.4.0",
+    "@nexploy/shared": "^0.3.0",
     "@next-safe-action/adapter-react-hook-form": "^2.0.0",
     "@openrouter/ai-sdk-provider": "^2.9.0",
     "@prisma/adapter-pg": "^7.8.0",
@@ -48,7 +54,6 @@
     "@thesvg/react": "^3.0.10",
     "@workspace/i18n": "workspace:*",
     "@workspace/schemas-zod": "workspace:*",
-    "@nexploy/shared": "^0.3.0",
     "@workspace/typescript-interface": "workspace:*",
     "@workspace/ui": "workspace:*",
     "@wrksz/themes": "^0.9.3",
@@ -99,6 +104,8 @@
     "@workspace/typescript-config": "workspace:*",
     "tailwindcss": "^4.3.1",
     "tsx": "^4.20.6",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.10"
   }
 }

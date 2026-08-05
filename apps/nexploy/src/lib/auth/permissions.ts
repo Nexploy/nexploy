@@ -69,6 +69,8 @@ const statement = {
     monitoring: ['read'] as const,
 } as const;
 
+export const PERMISSION_STATEMENT = statement;
+
 const ac = createAccessControl(statement);
 
 const guest = ac.newRole({
