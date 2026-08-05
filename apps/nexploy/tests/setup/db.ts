@@ -11,8 +11,11 @@ export async function resetDatabase() {
 
     if (truncatable.length === 0) return;
 
-    const list = truncatable.map((name) => `"public"."${name}"`).join(', ');
-    await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${list} RESTART IDENTITY CASCADE`);
+    const deletes = truncatable.map((name) => `DELETE FROM "public"."${name}";`).join('\n');
+
+    await prisma.$executeRawUnsafe(
+        `SET session_replication_role = 'replica';\n${deletes}\nSET session_replication_role = 'origin';`,
+    );
 }
 
 export async function disconnectDatabase() {

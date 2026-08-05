@@ -23,6 +23,7 @@ export interface EndpointCase {
     invoke: (world: WorldFixture) => Promise<unknown>;
     expected: Expectations;
     setup?: (world: WorldFixture) => Promise<void> | void;
+    denyMessage?: string;
 }
 
 export function allowOnly(...allowed: FixtureUserKey[]): Expectations {
@@ -30,6 +31,22 @@ export function allowOnly(...allowed: FixtureUserKey[]): Expectations {
         FIXTURE_USERS.map((user) => [user, allowed.includes(user) ? 'allow' : 'deny']),
     ) as Expectations;
 }
+
+export const ADMIN_ONLY = allowOnly('admin');
+
+export const DEVELOPER_AND_ABOVE = allowOnly('developer', 'admin', 'orgOwner', 'orgAdmin', 'orgMember', 'outsider');
+
+export const EVERY_ROLE = allowOnly(...FIXTURE_USERS);
+
+export const EVERY_ROLE_BUT_SYSTEM = allowOnly(
+    'guest',
+    'developer',
+    'admin',
+    'orgOwner',
+    'orgAdmin',
+    'orgMember',
+    'outsider',
+);
 
 export function denyOnly(...denied: FixtureUserKey[]): Expectations {
     return Object.fromEntries(
@@ -55,8 +72,9 @@ async function assertVerdict(testCase: EndpointCase, verdict: Verdict, outcome: 
     }
 
     const result = outcome as ActionResult;
-    if (verdict === 'deny') expectActionForbidden(result);
-    else expectActionAllowed(result);
+
+    if (verdict === 'deny') expectActionForbidden(result, testCase.denyMessage);
+    else expectActionAllowed(result, testCase.denyMessage);
 }
 
 export function describePermissionMatrix(suiteName: string, cases: EndpointCase[]) {

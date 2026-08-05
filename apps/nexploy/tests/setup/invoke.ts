@@ -50,18 +50,16 @@ export async function readJson<T = unknown>(response: Response): Promise<T> {
     return (await response.clone().json()) as T;
 }
 
-export function expectActionForbidden(result: ActionResult | undefined) {
-    expect(result?.serverError, `expected a forbidden serverError, got ${JSON.stringify(result)}`).toBe(
-        FORBIDDEN_MESSAGE,
-    );
+export function expectActionForbidden(result: ActionResult | undefined, denyMessage = FORBIDDEN_MESSAGE) {
+    expect(result?.serverError, `expected a forbidden serverError, got ${JSON.stringify(result)}`).toBe(denyMessage);
     expect(result?.data).toBeUndefined();
 }
 
-export function expectActionAllowed(result: ActionResult | undefined) {
+export function expectActionAllowed(result: ActionResult | undefined, denyMessage = FORBIDDEN_MESSAGE) {
     expect(
         result?.serverError,
         `expected the action to pass its permission guard, got ${JSON.stringify(result)}`,
-    ).not.toBe(FORBIDDEN_MESSAGE);
+    ).not.toBe(denyMessage);
 }
 
 export function expectRouteForbidden(response: Response) {

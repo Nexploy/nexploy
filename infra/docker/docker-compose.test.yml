@@ -10,7 +10,7 @@ services:
       - "POSTGRES_USER=nexploy"
       - "POSTGRES_PASSWORD=nexploy"
     tmpfs:
-      - /var/lib/postgresql
+      - /var/lib/postgresql:size=2g
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U nexploy -d nexploy_test" ]
       interval: 2s

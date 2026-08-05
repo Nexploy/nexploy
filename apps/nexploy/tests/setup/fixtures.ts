@@ -32,6 +32,14 @@ export interface WorldFixture {
     };
     stages: {
         inOrgA: string;
+        inOrgB: string;
+    };
+    builds: {
+        inOrgA: string;
+        inOrgB: string;
+    };
+    invitations: {
+        inOrgA: string;
     };
 }
 
@@ -136,6 +144,66 @@ export async function createStage(options: {
     return stage.id;
 }
 
+export async function createBuild(options: { repositoryId: string; stageId?: string }): Promise<string> {
+    const build = await prisma.build.create({
+        data: {
+            repositoryId: options.repositoryId,
+            stageId: options.stageId ?? null,
+            branch: 'main',
+        },
+    });
+
+    return build.id;
+}
+
+export async function createInvitation(options: {
+    organizationId: string;
+    email: string;
+    inviterId: string;
+    role?: string;
+}): Promise<string> {
+    const invitation = await prisma.invitation.create({
+        data: {
+            id: `invitation-${options.organizationId}`,
+            organizationId: options.organizationId,
+            email: options.email,
+            role: options.role ?? 'member',
+            status: 'pending',
+            expiresAt: new Date(Date.now() + 604_800_000),
+            inviterId: options.inviterId,
+        },
+    });
+
+    return invitation.id;
+}
+
+export async function createGitProvider(displayName = 'GitHub'): Promise<string> {
+    const provider = await prisma.gitProvider.create({
+        data: { provider: 'GITHUB', displayName, enabled: true },
+    });
+
+    return provider.id;
+}
+
+export async function createGitAccount(options: {
+    userId: string;
+    gitProviderId: string;
+    username: string;
+}): Promise<string> {
+    const account = await prisma.gitAccount.create({
+        data: {
+            userId: options.userId,
+            gitProviderId: options.gitProviderId,
+            provider: 'GITHUB',
+            providerAccountId: options.username,
+            providerUsername: options.username,
+            accessToken: 'token',
+        },
+    });
+
+    return account.id;
+}
+
 export async function seedWorld(): Promise<WorldFixture> {
     const orgA = await createOrganization('org-a');
     const orgB = await createOrganization('org-b');
@@ -164,9 +232,23 @@ export async function seedWorld(): Promise<WorldFixture> {
 
     const stages = {
         inOrgA: await createStage({ repositoryId: repositories.inOrgA, name: 'production', isProduction: true }),
+        inOrgB: await createStage({ repositoryId: repositories.inOrgB, name: 'production', isProduction: true }),
     };
 
-    return { orgA, orgB, users, repositories, stages };
+    const builds = {
+        inOrgA: await createBuild({ repositoryId: repositories.inOrgA, stageId: stages.inOrgA }),
+        inOrgB: await createBuild({ repositoryId: repositories.inOrgB, stageId: stages.inOrgB }),
+    };
+
+    const invitations = {
+        inOrgA: await createInvitation({
+            organizationId: orgA.id,
+            email: users.developer.email,
+            inviterId: users.orgOwner.id,
+        }),
+    };
+
+    return { orgA, orgB, users, repositories, stages, builds, invitations };
 }
 
 export { loginAs, logout };

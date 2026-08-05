@@ -25,6 +25,8 @@ The test database is started automatically from `infra/docker/docker-compose.tes
 | `permissions/` | Unit tests of `hasPermission`, `hasOrgPermission`, `canOnOwnedResource` |
 | `runtime/` | Per-domain tests that actually call the actions and routes |
 
+Every endpoint of the app is covered. `audit/coverage.test.ts` fails when a guarded endpoint — or an endpoint that leans on an exemption — is never referenced from `tests/runtime`, so a new endpoint cannot land untested. The handful of endpoints that cannot be driven in-process (Better Auth catch-all, Inngest serve, MCP handler, the OAuth redirect pair, the TOTP actions) are listed in that file with a reason.
+
 ## The three layers
 
 **1. Guard audit (`audit/`).** `inventory.ts` parses `src/actions/**/*.action.ts` and `src/app/api/**/route.ts`, and extracts the auth middleware, the `requirePermission(resource, action, resolver)` calls, and the action metadata name. `guards.test.ts` then fails when an endpoint has neither a permission guard nor a declared exemption, when an org-scoped resource has no organization resolver, when a resolver sits on a resource that is not org-scoped, or when an exemption loses the evidence it claims.
@@ -34,6 +36,16 @@ Every unguarded endpoint must be declared in `audit/exemptions.ts` with a catego
 **2. Access-control unit tests (`permissions/`).** Pure checks of the role tables, plus the matrix snapshots in `audit/matrix.test.ts` that make any change to a role's reach visible in the diff.
 
 **3. Runtime tests (`runtime/`).** Real calls, real database, real sessions, one verdict per role.
+
+| File | Covers |
+| --- | --- |
+| `repository.routes.test.ts`, `repository.actions.test.ts`, `repository.remaining.test.ts` | repositories, builds, stages, pipelines, versions, env vars, SSL, domains |
+| `docker.actions.test.ts`, `docker.remaining.test.ts` | containers, images, networks, volumes, swarm |
+| `admin.test.ts`, `admin.remaining.test.ts` | users, activity, AI, MCP keys, cleanup, upgrade, event streams |
+| `infrastructure.test.ts` | environments, registries, git providers, traefik, DNS, cloud backups, host info |
+| `organization.test.ts` | organizations, members, invitations |
+| `selfService.test.ts` | tasks, git accounts, account rename, sign-in, first-run setup, leaving an organization |
+| `unauthenticated.test.ts` | internal service endpoints, git webhook signatures, the AI chat endpoint |
 
 ## Adding a domain
 
@@ -53,6 +65,8 @@ describePermissionMatrix('registry actions', [
 ```
 
 `kind: 'route'` works the same way, with `callRoute(handler, { url, params, searchParams, body })`; the current session cookie is attached automatically.
+
+Permission middlewares run before input validation, so a case only needs an input shaped closely enough to reach the guard. Where the output matters, the suites assert it separately with valid input.
 
 `allow` means the endpoint passed its permission guard — not that the call succeeded. Business failures downstream (no git account linked, docker-api unreachable) still count as allowed, because the guard is what the matrix is about. Assert real outputs in a separate `describe` block, as the repository and admin suites do.
 
