@@ -31,6 +31,7 @@ const CHANNEL_ENDPOINTS: Record<SSEChannel, string> = {
     swarm: '/api/swarm/events/stream',
     traefik: '/api/traefik/events/stream',
     monitoring: '',
+    activity: '',
     tasks: '/api/tasks/events/stream',
 };
 

@@ -25,21 +25,23 @@ Rules for edits:
 - `app/layout.tsx` carries the SEO description, the OG description and the JSON-LD. When a section's
   headline fact changes, check whether that file repeats it.
 
-## Docs (`docs/content/docs`, fumadocs, French default + English)
+## Docs (`docs/content/docs`, fumadocs, French default + one file per translated locale)
 
 Voice: precise, second person, present tense, no hype. Tables for anything enumerable. French is the
-source language (`.mdx`); English (`.en.mdx`) is the translation.
+source language (`.mdx`); every other locale is a translation named `page.<lang>.mdx`. The locale
+list lives in `docs/lib/i18n.ts` — read it rather than assuming, it grows.
 
 Rules for edits:
 
-- **Both locales, same commit, always.** `page.mdx` and `page.en.mdx` must stay structurally
-  identical: same headings in the same order, same table rows, same callouts. `drift.sh i18n`
-  enforces the shape; only you can enforce the meaning.
+- **Every locale, same commit, always.** `page.mdx` and each `page.<lang>.mdx` must stay
+  structurally identical: same headings in the same order, same table rows, same callouts.
+  `drift.sh i18n` enforces the shape; only you can enforce the meaning.
 - **Frontmatter** is `title` + `description`, both translated. Keep `title` short — it is the sidebar
   label.
-- **Sidebar order** lives in `meta.json` (fr) and `meta.en.json` (en). A new page must be added to
-  both, in the same position. `meta.json` files without a `"title"` (the root one) need no English
-  twin.
+- **Sidebar order** lives in `meta.json` (fr) and one `meta.<lang>.json` per translated locale. A
+  new page must be added to all of them, in the same position — `drift.sh meta` fails on any
+  divergence in the page list or its order. `meta.json` files without a `"title"` (the root one)
+  need no translated twin.
 - **Available MDX components**: fumadocs defaults. In practice the corpus uses `<Callout>` and
   `<Callout type="warn" title="…">`. Do not introduce a component the repo does not already import.
 - **Code identifiers in backticks**: node ids, env vars, MCP tool names, file paths. `drift.sh`

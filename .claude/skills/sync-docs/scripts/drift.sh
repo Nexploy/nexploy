@@ -28,6 +28,10 @@ for arg in "$@"; do
     esac
 done
 
+DEFAULT_LOCALE="$(docs_default_locale)"
+LOCALES="$(docs_locales)"
+TRANSLATIONS="$(docs_translation_locales)"
+
 FAILED=0
 want() { [ "$WANT" = "all" ] || [ "$WANT" = "$1" ]; }
 do_docs() { [ "$TARGET" != "website" ] && have "$DOCS_SRC"; }
@@ -292,36 +296,42 @@ fi
 # --------------------------------------------------------------- 7. i18n parity
 
 if want i18n && do_docs; then
-    head2 "i18n — fr (default) vs en parity in the docs"
+    head2 "i18n — $DEFAULT_LOCALE (default) vs $(echo "$TRANSLATIONS" | tr '\n' ' ')parity in the docs"
 
-    missing_en=0
-    for f in $(find "$DOCS_SRC" -name '*.mdx' ! -name '*.en.mdx'); do
-        en="${f%.mdx}.en.mdx"
-        if [ ! -f "$en" ]; then
-            fail "no English counterpart: $(echo "$f" | rel)"
-            missing_en=1
-        fi
+    missing=0
+    for f in $(find "$DOCS_SRC" -name '*.mdx' ! -name '*.*.mdx'); do
+        for loc in $TRANSLATIONS; do
+            [ -f "${f%.mdx}.$loc.mdx" ] && continue
+            fail "no $loc counterpart: $(echo "$f" | rel)"
+            missing=1
+        done
     done
-    for f in $(find "$DOCS_SRC" -name '*.en.mdx'); do
-        fr="${f%.en.mdx}.mdx"
-        [ -f "$fr" ] || fail "English page with no French original: $(echo "$f" | rel)"
+    for loc in $TRANSLATIONS; do
+        for f in $(find "$DOCS_SRC" -name "*.$loc.mdx"); do
+            base="${f%.$loc.mdx}.mdx"
+            [ -f "$base" ] || fail "$loc page with no $DEFAULT_LOCALE original: $(echo "$f" | rel)"
+        done
     done
-    # Only meta files carrying a translatable "title" need an English twin.
+    # Only meta files carrying a translatable "title" need a twin per locale.
     for f in $(find "$DOCS_SRC" -name 'meta.json'); do
         grep -q '"title"' "$f" || continue
-        [ -f "${f%.json}.en.json" ] || fail "no meta.en.json beside $(echo "$f" | rel)"
+        for loc in $TRANSLATIONS; do
+            [ -f "${f%.json}.$loc.json" ] || fail "no meta.$loc.json beside $(echo "$f" | rel)"
+        done
     done
-    [ "$missing_en" = 0 ] && ok "every French page has an English counterpart"
+    [ "$missing" = 0 ] && ok "every $DEFAULT_LOCALE page has a counterpart in $(echo "$TRANSLATIONS" | tr '\n' ' ')"
 
-    for f in $(find "$DOCS_SRC" -name '*.mdx' ! -name '*.en.mdx'); do
-        en="${f%.mdx}.en.mdx"
-        [ -f "$en" ] || continue
-        a=$(grep -c '^#' "$f")
-        b=$(grep -c '^#' "$en")
-        [ "$a" = "$b" ] || warn "heading count differs ($a fr / $b en) — translation lag: $(echo "$f" | rel)"
-        a=$(grep -c '^|' "$f")
-        b=$(grep -c '^|' "$en")
-        [ "$a" = "$b" ] || warn "table row count differs ($a fr / $b en): $(echo "$f" | rel)"
+    for f in $(find "$DOCS_SRC" -name '*.mdx' ! -name '*.*.mdx'); do
+        for loc in $TRANSLATIONS; do
+            t="${f%.mdx}.$loc.mdx"
+            [ -f "$t" ] || continue
+            a=$(grep -c '^#' "$f")
+            b=$(grep -c '^#' "$t")
+            [ "$a" = "$b" ] || warn "heading count differs ($a $DEFAULT_LOCALE / $b $loc) — translation lag: $(echo "$f" | rel)"
+            a=$(grep -c '^|' "$f")
+            b=$(grep -c '^|' "$t")
+            [ "$a" = "$b" ] || warn "table row count differs ($a $DEFAULT_LOCALE / $b $loc): $(echo "$f" | rel)"
+        done
     done
 fi
 
@@ -335,9 +345,10 @@ if want links && do_docs; then
     while read -r l; do
         [ -n "$l" ] || continue
         p="${l#/}"
-        # fumadocs serves the default locale unprefixed and /en/... for English
-        p="${p#en/}"
-        p="${p#fr/}"
+        # fumadocs serves the default locale unprefixed and /<lang>/... for the others
+        for loc in $LOCALES; do
+            p="${p#$loc/}"
+        done
         [ -z "$p" ] && continue
         if [ -f "$DOCS_SRC/$p.mdx" ] || [ -f "$DOCS_SRC/$p/index.mdx" ] || [ -d "$DOCS_SRC/$p" ]; then
             continue
@@ -357,7 +368,7 @@ if want meta && do_docs; then
         dir=$(dirname "$meta")
         awk '/"pages"/ { inside = 1 } inside { print } inside && /\]/ { exit }' "$meta" |
             grep -oE '"[a-z0-9./-]+"' | tr -d '"' | grep -v '^pages$' | sort -u >"$TMP/meta-pages"
-        for page in $(find "$dir" -maxdepth 1 -name '*.mdx' ! -name '*.en.mdx' ! -name 'index.mdx' -exec basename {} .mdx \;); do
+        for page in $(find "$dir" -maxdepth 1 -name '*.mdx' ! -name '*.*.mdx' ! -name 'index.mdx' -exec basename {} .mdx \;); do
             grep -qx "$page" "$TMP/meta-pages" || warn "$page is not listed in $(echo "$meta" | rel)"
         done
         for entry in $(cat "$TMP/meta-pages"); do
@@ -366,6 +377,17 @@ if want meta && do_docs; then
             esac
             [ -f "$dir/$entry.mdx" ] || [ -d "$dir/$entry" ] ||
                 warn "$(echo "$meta" | rel) lists '$entry' but no such page exists"
+        done
+        # Each translated sidebar must carry the same entries, in the same order.
+        for loc in $TRANSLATIONS; do
+            translated="${meta%.json}.$loc.json"
+            [ -f "$translated" ] || continue
+            awk '/"pages"/ { inside = 1 } inside { print } inside && /\]/ { exit }' "$translated" |
+                grep -oE '"[a-z0-9./-]+"' | tr -d '"' | grep -v '^pages$' >"$TMP/meta-pages-$loc"
+            awk '/"pages"/ { inside = 1 } inside { print } inside && /\]/ { exit }' "$meta" |
+                grep -oE '"[a-z0-9./-]+"' | tr -d '"' | grep -v '^pages$' >"$TMP/meta-pages-ordered"
+            diff -q "$TMP/meta-pages-ordered" "$TMP/meta-pages-$loc" >/dev/null ||
+                fail "$(echo "$translated" | rel) does not list the same pages, in the same order, as $(basename "$meta")"
         done
     done
     ok "meta.json sweep done"

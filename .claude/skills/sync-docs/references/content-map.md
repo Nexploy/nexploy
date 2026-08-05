@@ -35,10 +35,11 @@ Prose lives in TSX arrays at the top of each section file, not in JSX. Edit the 
 | `apps/web/app/{terms,legal,sales-terms}/page.tsx` | legal text with `[TO COMPLETE]` placeholders | **never invent** — see writing-guide.md |
 | `apps/web/public/install.sh` | the installer itself — source of truth for install claims | it *is* the truth; read, don't rewrite from prose |
 
-## Target 2 — documentation (`docs/`, fumadocs, fr default + `.en.mdx`)
+## Target 2 — documentation (`docs/`, fumadocs, fr default + one `.<lang>.mdx` per locale)
 
-`content/docs/<section>/<page>.mdx` (French) and `<page>.en.mdx` (English) must stay in lockstep.
-Sidebar order lives in `meta.json` / `meta.en.json` per folder.
+`content/docs/<section>/<page>.mdx` (French) and every `<page>.<lang>.mdx` must stay in lockstep.
+Sidebar order lives in `meta.json` and one `meta.<lang>.json` per locale, per folder. The locale set
+is declared in `docs/lib/i18n.ts`.
 
 | Page | Asserts | Source of truth |
 |---|---|---|
@@ -61,9 +62,11 @@ Sidebar order lives in `meta.json` / `meta.en.json` per folder.
 | `features/backups` | schedules, frequencies, S3 targets | `backupSchedule.prisma` (`Frequency`), `bucketStorage.prisma` |
 | `features/cleanup` | scheduled prune targets and hour | `cleanupSettings.prisma` |
 | `features/ai-assistant` | providers, BYO key, model list, confirmations | `aiConfig.prisma`, `api/ai/models/[provider]/route.ts` |
+| `features/tasks` | **task kinds, steps, cancellable set**, retention, SSE channel | `docker-api/src/managers/tasksManager.ts`, `lib/taskRunner.ts`, `typescript-interface/src/task.ts` |
 | `features/mcp-server` | **tool count, group table, tool names** | `lib/ai/mcp/**` (`facts.sh mcp`) |
 | `security/authentication` | sign-in modes, 2FA, sessions, **cipher**, roles | `lib/auth/*`, `lib/encryption.ts` |
 | `security/api-keys` | API key issuance, header, scoping | `auth.ts` apiKey plugin |
+| `security/activity-log` | audited sources, entry fields, **redaction rules**, retention + purge cron, permissions | `lib/activity/*`, `services/activityLog.service.ts`, `activityLog.prisma`, `inngest/functions/activityLogPurge.ts` |
 | `security/recovery-cli` | commands, recovery key, audit log | `cli/` repo (`facts.sh cli`) |
 | `reference/architecture` | services, ports, data flow | `infra/docker/*`, `server.ts`, docker-api routes |
 | `reference/environment-variables` | **every env var in both apps** | `facts.sh env-vars` |

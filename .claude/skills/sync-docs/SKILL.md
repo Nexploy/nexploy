@@ -18,7 +18,7 @@ Repos are siblings and resolved automatically:
 ```
 nexploy/   ← app, source of truth (this skill lives here)
 website/   ← marketing site, English only, also hosts public/install.sh
-docs/      ← fumadocs, French default + .en.mdx
+docs/      ← fumadocs, French default + one .<lang>.mdx per translated locale
 cli/       ← recovery CLI, referenced by both
 ```
 
@@ -66,8 +66,8 @@ work list for Step 3.
 ```
 
 Checks: `identifiers` (node ids / MCP tool names that no longer exist), `counts` (every number
-asserted in prose vs the code, fr and en), `providers` (pages enumerating a stale subset),
-`encryption`, `env-vars`, `coverage` (product surface with no prose), `i18n` (fr/en parity),
+asserted in prose vs the code, every locale), `providers` (pages enumerating a stale subset),
+`encryption`, `env-vars`, `coverage` (product surface with no prose), `i18n` (locale parity),
 `links`, `meta`, `versions`.
 
 - **`[FAIL]` is proven drift.** Fix all of them. Each prints the file and line.
@@ -124,8 +124,9 @@ The three rules that matter most:
 
 - **Website**: edit the `const` array at the top of the section file, keep the sentence's rhythm,
   never upgrade a claim while fixing it.
-- **Docs**: `page.mdx` and `page.en.mdx` in the same pass, structurally identical; a new page goes
-  into `meta.json` *and* `meta.en.json`.
+- **Docs**: `page.mdx` and every `page.<lang>.mdx` in the same pass, structurally identical; a new
+  page goes into `meta.json` *and* every `meta.<lang>.json`. The locale set comes from
+  `docs/lib/i18n.ts` — `drift.sh` reads it, so a language added there is covered automatically.
 - **Numbers**: from `facts.sh`, and remember `website/apps/web/lib/pipeline.ts` duplicates the
   per-category node counts that feed four different sections.
 

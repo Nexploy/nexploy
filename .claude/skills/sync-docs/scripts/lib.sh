@@ -24,6 +24,8 @@ MCP_DIR="$NEXPLOY_SRC/lib/ai/mcp/groups"
 PRISMA_MODELS="$APP_ROOT/apps/nexploy/prisma/models"
 INSTALL_SH="$WEB_SRC/public/install.sh"
 
+DOCS_I18N="$DOCS_ROOT/lib/i18n.ts"
+
 have() { [ -e "$1" ]; }
 
 die() {
@@ -38,10 +40,53 @@ require_roots() {
     have "$DOCS_SRC" || echo "sync-docs: warning — docs not found at $DOCS_ROOT" >&2
 }
 
-# All docs pages, default locale only (fr). One relative path per line.
-docs_pages_fr() {
+# Locale set of the docs site. Authoritative source is docs/lib/i18n.ts; when it is
+# missing, the locales are recovered from the `page.<lang>.mdx` files on disk. Adding a
+# language to i18n.ts is enough for every check below to start covering it.
+docs_default_locale() {
+    local from_config=''
+    have "$DOCS_I18N" &&
+        from_config=$(grep -m1 "defaultLanguage:" "$DOCS_I18N" | sed "s/.*defaultLanguage: *['\"]\([a-z-]*\)['\"].*/\1/")
+    echo "${from_config:-fr}"
+}
+
+# Every locale declared for the docs, default one included, one per line.
+docs_locales() {
+    local default line
+    default="$(docs_default_locale)"
+
+    if have "$DOCS_I18N"; then
+        line=$(grep -m1 "languages:" "$DOCS_I18N" | grep -oE "\[[^]]*\]" | grep -oE "[a-z][a-z-]*")
+        if [ -n "$line" ]; then
+            printf '%s\n' "$line" | sort -u
+            return 0
+        fi
+    fi
+
+    have "$DOCS_SRC" || {
+        echo "$default"
+        return 0
+    }
+    {
+        echo "$default"
+        find "$DOCS_SRC" -name '*.*.mdx' -exec basename {} \; |
+            sed 's/\.mdx$//; s/.*\.//' | grep -E '^[a-z]{2}(-[a-z]{2})?$'
+    } | sort -u
+}
+
+# Every locale except the default one, one per line.
+docs_translation_locales() {
+    local default
+    default="$(docs_default_locale)"
+    docs_locales | grep -vx "$default"
+}
+
+# All docs pages, default locale only. One relative path per line.
+# A translated page is `<name>.<lang>.mdx`, so the default locale is every .mdx
+# whose basename holds no extra dot — true for any language added later.
+docs_pages_default() {
     have "$DOCS_SRC" || return 0
-    find "$DOCS_SRC" -name '*.mdx' ! -name '*.en.mdx' | sed "s|$DOCS_SRC/||" | sort
+    find "$DOCS_SRC" -name '*.mdx' ! -name '*.*.mdx' | sed "s|$DOCS_SRC/||" | sort
 }
 
 # Every prose file the skill is responsible for, absolute paths.
