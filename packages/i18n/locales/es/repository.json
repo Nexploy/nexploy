@@ -272,6 +272,8 @@
       "repository": "Repositorio",
       "loading": "Cargando...",
       "selectRepository": "Selecciona un repositorio",
+      "searchRepository": "Buscar un repositorio...",
+      "noRepositoryFound": "No se encontró ningún repositorio",
       "branch": "Rama",
       "noRepositoryOnAccount": "No se ha encontrado ningún repositorio en esta cuenta",
       "allRepositoriesAlreadyAdded": "Todos los repositorios de esta cuenta ya se han añadido a esta organización"

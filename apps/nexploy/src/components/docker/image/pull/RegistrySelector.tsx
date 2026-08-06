@@ -40,7 +40,7 @@ export function RegistrySelector({ registries }: RegistrySelectorProps) {
                                         <SelectValue placeholder={t('registryNone')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectItem value="none">{t('registryNone')}</SelectItem>
                                         {registries.map((registry) => (

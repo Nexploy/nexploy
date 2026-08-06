@@ -232,6 +232,7 @@
     "fileNotFound": "Fichier introuvable",
     "unknownProvider": "Fournisseur inconnu",
     "providerNotConfigured": "Fournisseur non configuré",
-    "unsupportedProvider": "Fournisseur non pris en charge"
+    "unsupportedProvider": "Fournisseur non pris en charge",
+    "invitableUsersFetchFailed": "Échec de la recherche d'utilisateurs"
   }
 }

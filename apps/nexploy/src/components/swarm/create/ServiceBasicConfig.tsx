@@ -101,7 +101,7 @@ export function ServiceBasicConfig() {
                                             <SelectValue />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectGroup>
                                             <SelectLabel>{t('deploymentMode')}</SelectLabel>
                                             <SelectItem value="replicated">{t('modeReplicated')}</SelectItem>

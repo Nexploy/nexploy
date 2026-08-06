@@ -24,7 +24,7 @@ export default async function OrganizationMembersPage({ params }: { params: Prom
     return (
         <BreadcrumbProvider segments={{ organizationId: detail.organization.name }}>
             <div className="flex h-full flex-1 flex-col">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-5">
                     <div className="flex justify-between gap-2 px-5">
                         <div className="flex gap-3">
                             <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">

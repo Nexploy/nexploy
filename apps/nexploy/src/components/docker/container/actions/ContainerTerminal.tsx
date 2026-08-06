@@ -141,7 +141,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                                 <SelectTrigger className="h-7! bg-white/10 text-white/90">
                                     <SelectValue placeholder={t('shellPlaceholder')} />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('shellLabel')}</SelectLabel>
                                         {shellKeys.map((shell) => (

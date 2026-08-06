@@ -74,7 +74,7 @@ export function NetworkForm() {
                                         <SelectValue placeholder={t('network.selectNetwork')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('network.network')}</SelectLabel>
                                         {availableNetworks.map((network) => (

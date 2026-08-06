@@ -146,7 +146,7 @@ export function CreateUserForm() {
                                         <SelectValue placeholder={t('role')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('role')}</SelectLabel>
                                         <SelectItem value="guest">{t('guestRole')}</SelectItem>

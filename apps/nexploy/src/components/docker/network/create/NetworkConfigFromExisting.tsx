@@ -43,7 +43,7 @@ export function NetworkConfigFromExisting() {
                                         <SelectValue placeholder={t('sourceNetworkPlaceholder')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     {configOnlyNetworks.length === 0 ? (
                                         <p className="text-muted-foreground text-center text-sm">
                                             {t('sourceNetworkEmpty')}

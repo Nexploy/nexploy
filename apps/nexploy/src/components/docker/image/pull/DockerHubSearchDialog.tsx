@@ -145,7 +145,7 @@ export function DockerHubSearchDialog({ trigger, onSelect, isSelected }: DockerH
                         <SelectTrigger>
                             <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent align="start">
                             <SelectGroup>
                                 <SelectLabel>{t('sortLabel')}</SelectLabel>
                                 <SelectItem value="pull_count">{t('sortPulls')}</SelectItem>
@@ -157,7 +157,7 @@ export function DockerHubSearchDialog({ trigger, onSelect, isSelected }: DockerH
                         <SelectTrigger>
                             <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent align="start">
                             <SelectGroup>
                                 <SelectLabel>{t('sourceLabel')}</SelectLabel>
                                 <SelectItem value="all">{t('sourceAll')}</SelectItem>

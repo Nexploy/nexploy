@@ -68,7 +68,7 @@ export function NetworkBasicConfig() {
                                         <SelectValue placeholder={t('selectDriver')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('driver')}</SelectLabel>
                                         {NETWORK_DRIVERS.map((driver) => (
@@ -97,7 +97,7 @@ export function NetworkBasicConfig() {
                                         <SelectValue placeholder={t('selectScope')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('scope')}</SelectLabel>
                                         {NETWORK_SCOPES.map((scope) => (

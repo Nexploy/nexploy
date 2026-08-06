@@ -169,7 +169,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                     <SelectTrigger className="h-7!">
                                         <SelectValue placeholder={t('refreshRatePlaceholder')} />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectGroup>
                                             <SelectLabel>{t('refreshRate')}</SelectLabel>
                                             {refreshRateOptions.map((option) => (

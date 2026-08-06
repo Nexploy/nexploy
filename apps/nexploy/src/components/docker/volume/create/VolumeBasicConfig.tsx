@@ -61,7 +61,7 @@ export function VolumeBasicConfig() {
                                         <SelectValue placeholder={t('selectDriver')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('driver')}</SelectLabel>
                                         {VOLUME_DRIVERS.map((driver) => (

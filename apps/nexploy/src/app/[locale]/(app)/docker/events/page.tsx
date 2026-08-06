@@ -68,7 +68,7 @@ export default function EventsPage() {
                                 <SelectTrigger className={'min-w-40 max-w-56'}>
                                     <SelectValue placeholder={t('nameId')} />
                                 </SelectTrigger>
-                                <SelectContent className={'max-h-72'}>
+                                <SelectContent align="start" className={'max-h-72'}>
                                     <SelectGroup>
                                         <SelectLabel>{t('nameId')}</SelectLabel>
                                         <SelectItem value="all">{t('allNames')}</SelectItem>
@@ -84,7 +84,7 @@ export default function EventsPage() {
                                 <SelectTrigger className={'min-w-40 max-w-56'}>
                                     <SelectValue placeholder={t('type')} />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('type')}</SelectLabel>
                                         <SelectItem value="all">{t('all')}</SelectItem>

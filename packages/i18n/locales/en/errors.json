@@ -232,6 +232,7 @@
     "fileNotFound": "File not found",
     "unknownProvider": "Unknown provider",
     "providerNotConfigured": "Provider not configured",
-    "unsupportedProvider": "Unsupported provider"
+    "unsupportedProvider": "Unsupported provider",
+    "invitableUsersFetchFailed": "Failed to search users"
   }
 }

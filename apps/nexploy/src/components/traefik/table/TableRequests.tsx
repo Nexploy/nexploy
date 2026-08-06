@@ -93,7 +93,7 @@ export function TableRequests() {
                         <SelectTrigger className={'min-w-40'}>
                             <SelectValue placeholder={t('method')} />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent align="start">
                             <SelectGroup>
                                 <SelectLabel>{t('method')}</SelectLabel>
                                 <SelectItem value="all">{t('allMethods')}</SelectItem>
@@ -109,7 +109,7 @@ export function TableRequests() {
                         <SelectTrigger className={'min-w-40'}>
                             <SelectValue placeholder={t('status')} />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent align="start">
                             <SelectGroup>
                                 <SelectLabel>{t('status')}</SelectLabel>
                                 <SelectItem value="all">{t('allStatuses')}</SelectItem>
@@ -124,7 +124,7 @@ export function TableRequests() {
                         <SelectTrigger className={'min-w-40'}>
                             <SelectValue placeholder={t('service')} />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent align="start">
                             <SelectGroup>
                                 <SelectLabel>{t('service')}</SelectLabel>
                                 <SelectItem value="all">{t('allServices')}</SelectItem>

@@ -1,10 +1,18 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Trash2, X } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
+import dayjs from 'dayjs';
+import { ArrowUpDown, MoreVertical, Shield, ShieldOff, Trash2, X } from 'lucide-react';
 import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@workspace/ui/components/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
 import type {
     OrganizationInvitation,
@@ -12,17 +20,11 @@ import type {
 } from '@workspace/typescript-interface/organization/organization';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 import type { UpdateMemberRoleInput } from '@workspace/schemas-zod/organization/updateMemberRole.schema';
-
-const getInitials = (name: string) =>
-    name
-        .split(' ')
-        .map((part) => part[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
+import { DicebearAvatar } from '@/components/shared/DicebearAvatar.tsx';
 
 interface MembersColumnsOptions {
     t: TranslationFunction;
+    tCommon: TranslationFunction;
     currentUserId: string;
     ownerCount: number;
     canManageMembers: boolean;
@@ -35,6 +37,7 @@ interface MembersColumnsOptions {
 
 export function getColumnsOrganizationMembers({
     t,
+    tCommon,
     currentUserId,
     ownerCount,
     canManageMembers,
@@ -50,41 +53,63 @@ export function getColumnsOrganizationMembers({
         {
             id: 'member',
             accessorFn: (member) => member.user.name,
-            header: () => t('members.member'),
+            header: ({ column }) => (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+                    {t('members.member')}
+                    <ArrowUpDown className="ml-2 size-4" />
+                </Button>
+            ),
             cell: ({ row }) => {
                 const member = row.original;
                 const isCurrentUser = member.user.id === currentUserId;
 
                 return (
-                    <div className="flex items-center gap-3">
-                        <Avatar className="size-8">
-                            <AvatarImage src={member.user.image || undefined} />
-                            <AvatarFallback className="text-xs">{getInitials(member.user.name)}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                            <span className="font-medium">
-                                {member.user.name}
-                                {isCurrentUser && (
-                                    <span className="text-muted-foreground ml-2 text-xs">{t('members.you')}</span>
-                                )}
-                            </span>
-                            <span className="text-muted-foreground text-xs">{member.user.email}</span>
+                    <div className="flex min-w-0 items-center gap-3">
+                        <DicebearAvatar seed={member.user.email} size={28} alt="Email Account Image" />
+                        <div className="flex min-w-0 flex-col">
+                            <span className="truncate font-medium">{member.user.name}</span>
+                            {isCurrentUser && <span className="text-muted-foreground text-xs">{t('members.you')}</span>}
                         </div>
                     </div>
                 );
             },
         },
         {
+            id: 'email',
+            accessorFn: (member) => member.user.email,
+            header: ({ column }) => (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+                    {t('members.email')}
+                    <ArrowUpDown className="ml-2 size-4" />
+                </Button>
+            ),
+            cell: ({ row }) => <span className="text-muted-foreground">{row.original.user.email}</span>,
+        },
+        {
             id: 'role',
             accessorFn: (member) => member.role,
-            header: () => t('members.role'),
+            header: ({ column }) => (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+                    {t('members.role')}
+                    <ArrowUpDown className="ml-2 size-4" />
+                </Button>
+            ),
             cell: ({ row }) => {
                 const member = row.original;
                 const canEditRole =
                     canManageMembers && (member.role !== 'owner' || (canTransferOwnership && !isSoleOwner(member)));
 
                 if (!canEditRole) {
-                    return <Badge variant="outline">{t(`roles.${member.role}`)}</Badge>;
+                    return (
+                        <Badge variant={member.role === 'member' ? 'secondary' : 'default'}>
+                            {member.role === 'member' ? (
+                                <ShieldOff className="mr-1 size-3" />
+                            ) : (
+                                <Shield className="mr-1 size-3" />
+                            )}
+                            {t(`roles.${member.role}`)}
+                        </Badge>
+                    );
                 }
 
                 return (
@@ -96,10 +121,27 @@ export function getColumnsOrganizationMembers({
                         <SelectTrigger size="sm" className="w-32">
                             <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="member">{t('roles.member')}</SelectItem>
-                            <SelectItem value="admin">{t('roles.admin')}</SelectItem>
-                            {canTransferOwnership && <SelectItem value="owner">{t('roles.owner')}</SelectItem>}
+                        <SelectContent align="start">
+                            <SelectItem value="member">
+                                <div className="flex items-center gap-2 truncate">
+                                    <ShieldOff className="size-3" />
+                                    <span className="truncate">{t('roles.member')}</span>
+                                </div>
+                            </SelectItem>
+                            <SelectItem value="admin">
+                                <div className="flex items-center gap-2 truncate">
+                                    <Shield className="size-3" />
+                                    <span className="truncate">{t('roles.admin')}</span>
+                                </div>
+                            </SelectItem>
+                            {canTransferOwnership && (
+                                <SelectItem value="owner">
+                                    <div className="flex items-center gap-2 truncate">
+                                        <Shield className="size-3" />
+                                        <span className="truncate">{t('roles.owner')}</span>
+                                    </div>
+                                </SelectItem>
+                            )}
                         </SelectContent>
                     </Select>
                 );
@@ -113,8 +155,7 @@ export function getColumnsOrganizationMembers({
         ...columns,
         {
             id: 'actions',
-            size: 40,
-            header: () => null,
+            size: 50,
             cell: ({ row }) => {
                 const member = row.original;
                 const isCurrentUser = member.user.id === currentUserId;
@@ -122,9 +163,26 @@ export function getColumnsOrganizationMembers({
                 if (isCurrentUser || isSoleOwner(member)) return null;
 
                 return (
-                    <Button variant="ghost" size="icon" disabled={isRemoving} onClick={() => onRemove(member)}>
-                        <Trash2 className="text-destructive size-4" />
-                    </Button>
+                    <div className="flex justify-end">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreVertical />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>{tCommon('actions')}</DropdownMenuLabel>
+                                <DropdownMenuItem
+                                    variant="destructive"
+                                    disabled={isRemoving}
+                                    onClick={() => onRemove(member)}
+                                >
+                                    <Trash2 />
+                                    {t('members.remove')}
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 );
             },
         },
@@ -133,12 +191,14 @@ export function getColumnsOrganizationMembers({
 
 interface InvitationsColumnsOptions {
     t: TranslationFunction;
+    tCommon: TranslationFunction;
     isCancelling: boolean;
     onCancel: (invitation: OrganizationInvitation) => void;
 }
 
 export function getColumnsOrganizationInvitations({
     t,
+    tCommon,
     isCancelling,
     onCancel,
 }: InvitationsColumnsOptions): ColumnDef<OrganizationInvitation>[] {
@@ -147,22 +207,61 @@ export function getColumnsOrganizationInvitations({
             id: 'email',
             accessorFn: (invitation) => invitation.email,
             header: () => t('members.email'),
-            cell: ({ row }) => row.original.email,
+            cell: ({ row }) => (
+                <div className="flex min-w-0 items-center gap-3">
+                    <DicebearAvatar seed={row.original.email} size={28} alt="Email Account Image" />
+                    <span className="truncate font-medium">{row.original.email}</span>
+                </div>
+            ),
         },
         {
             id: 'role',
             accessorFn: (invitation) => invitation.role ?? 'member',
             header: () => t('members.role'),
-            cell: ({ row }) => <Badge variant="outline">{t(`roles.${row.original.role ?? 'member'}`)}</Badge>,
+            cell: ({ row }) => {
+                const role = row.original.role ?? 'member';
+
+                return (
+                    <Badge variant={role === 'member' ? 'secondary' : 'default'}>
+                        {role === 'member' ? <ShieldOff className="mr-1 size-3" /> : <Shield className="mr-1 size-3" />}
+                        {t(`roles.${role}`)}
+                    </Badge>
+                );
+            },
+        },
+        {
+            id: 'createdAt',
+            accessorFn: (invitation) => invitation.createdAt,
+            header: () => t('invitations.invitedAt'),
+            cell: ({ row }) => (
+                <span className="text-muted-foreground">{dayjs(row.original.createdAt).format('DD/MM/YYYY')}</span>
+            ),
         },
         {
             id: 'actions',
-            size: 40,
-            header: () => null,
+            size: 50,
             cell: ({ row }) => (
-                <Button variant="ghost" size="icon" disabled={isCancelling} onClick={() => onCancel(row.original)}>
-                    <X className="size-4" />
-                </Button>
+                <div className="flex justify-end">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <MoreVertical />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>{tCommon('actions')}</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                variant="destructive"
+                                disabled={isCancelling}
+                                onClick={() => onCancel(row.original)}
+                            >
+                                <X />
+                                {t('invitations.cancel')}
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             ),
         },
     ];

@@ -1,9 +1,21 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import {
+    ColumnDef,
+    FilterFn,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
+} from '@tanstack/react-table';
 import { TableShell } from '@/components/table/TableShell';
+import { TablePagination } from '@/components/table/TablePagination';
+import { useClientTablePagination } from '@/hooks/useClientTablePagination';
+import { Input } from '@workspace/ui/components/input';
 import { Mail } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import type {
@@ -32,6 +44,17 @@ interface MembersSectionProps {
     canManageMembers: boolean;
     callerRole: string | null;
 }
+
+const membersGlobalFilterFn: FilterFn<OrganizationMember> = (row, _, value) => {
+    const search = value.toLowerCase();
+    const { user, role } = row.original;
+
+    return (
+        user.name.toLowerCase().includes(search) ||
+        user.email.toLowerCase().includes(search) ||
+        role.toLowerCase().includes(search)
+    );
+};
 
 function DataTable<TData>({
     data,
@@ -64,6 +87,9 @@ export function MembersSection({
     const t = useTranslations('organization');
     const tCommon = useTranslations('common');
     const { openAlertDialog } = useAlertConfirmationDialogStore();
+
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [globalFilter, setGlobalFilter] = useState<string>('');
 
     useEffect(() => initializeOrganizationMembersStore(organizationId, members, invitations), [organizationId]);
 
@@ -123,6 +149,7 @@ export function MembersSection({
         () =>
             getColumnsOrganizationMembers({
                 t,
+                tCommon,
                 currentUserId,
                 ownerCount,
                 canManageMembers,
@@ -134,6 +161,7 @@ export function MembersSection({
             }),
         [
             t,
+            tCommon,
             organizationId,
             currentUserId,
             ownerCount,
@@ -148,20 +176,66 @@ export function MembersSection({
         () =>
             getColumnsOrganizationInvitations({
                 t,
+                tCommon,
                 isCancelling,
                 onCancel: (invitation) => executeCancel({ invitationId: invitation.id }),
             }),
-        [t, isCancelling],
+        [t, tCommon, isCancelling],
     );
+
+    const pagination = useClientTablePagination();
+
+    const membersTable = useReactTable({
+        data: visibleMembers,
+        columns: membersColumns,
+        getRowId: (row) => row.id,
+        getCoreRowModel: getCoreRowModel(),
+        onSortingChange: setSorting,
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: membersGlobalFilterFn,
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        onPaginationChange: pagination.onPaginationChange,
+        state: {
+            sorting,
+            globalFilter,
+            pagination: pagination.state,
+        },
+    });
+
+    pagination.clampToPageCount(membersTable.getPageCount());
+
+    const isEmpty = visibleMembers.length === 0;
 
     return (
         <div className="flex flex-col gap-8">
-            <DataTable
-                data={visibleMembers}
-                columns={membersColumns}
-                rowClassName="h-14"
-                emptyLabel={tCommon('noResults')}
-            />
+            <div className="space-y-3">
+                <div className="flex flex-wrap justify-between gap-3">
+                    <Input
+                        className="w-56 shadow-xs"
+                        placeholder={tCommon('searchPlaceholder')}
+                        value={globalFilter ?? ''}
+                        onChange={(e) => setGlobalFilter(e.target.value)}
+                    />
+                </div>
+
+                <TableShell
+                    table={membersTable}
+                    rowClassName="h-14"
+                    emptyLabel={t('members.noMembers')}
+                    noResultsLabel={tCommon('noMatchSearch')}
+                    hasActiveFilters={!isEmpty}
+                />
+
+                <TablePagination
+                    table={membersTable}
+                    pageSize={pagination.pageSize}
+                    onPageSizeChange={pagination.setPageSize}
+                    perPageLabel={t('members.perPage')}
+                    allowAllPageSize
+                />
+            </div>
 
             {canManageMembers && visibleInvitations.length > 0 && (
                 <div className="flex flex-col gap-3">

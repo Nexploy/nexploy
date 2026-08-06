@@ -3,16 +3,18 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from '@workspace/ui/components/select';
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from '@workspace/ui/components/command';
+import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
+import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover';
 import { Button } from '@workspace/ui/components/button';
-import { BookMarked, GitBranch as GitBranchIcon } from 'lucide-react';
+import { cn } from '@workspace/ui/lib/utils';
+import { BookMarked, Check, ChevronDown, GitBranch as GitBranchIcon } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { useState } from 'react';
 import useSWR from 'swr';
@@ -28,6 +30,7 @@ export function GitSourceStep() {
     const tSource = useTranslations('repository.settings.source');
 
     const [selectedAccount, setSelectedAccount] = useState<GitAccountSummary | undefined>();
+    const [isRepoPopoverOpen, setIsRepoPopoverOpen] = useState(false);
 
     const { data, isLoading: isLoadingRepos } = useSWR<GitRepositoryList>(
         selectedAccount
@@ -82,50 +85,77 @@ export function GitSourceStep() {
                         control={control}
                         name="repo"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="flex flex-col">
                                 <FormLabel>{tSource('repository')}</FormLabel>
-                                <Select
-                                    onValueChange={(value) => {
-                                        const repo = repos?.find((r) => r.id === value);
-                                        if (repo) {
-                                            field.onChange(repo);
-                                            setValue('name', repo.fullName);
-                                        }
-                                    }}
-                                    value={field.value?.id || ''}
-                                    disabled={isLoadingRepos}
-                                >
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue
-                                                placeholder={
-                                                    isLoadingRepos
-                                                        ? tSource('loading')
-                                                        : (emptyMessage ?? tSource('selectRepository'))
-                                                }
-                                            />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {emptyMessage ? (
-                                            <div className="text-muted-foreground px-2 py-6 text-center text-sm">
-                                                {emptyMessage}
-                                            </div>
-                                        ) : (
-                                            <SelectGroup>
-                                                <SelectLabel>{tSource('repository')}</SelectLabel>
-                                                {repos?.map((repo) => (
-                                                    <SelectItem key={repo.id} value={repo.id}>
-                                                        <span className="flex items-center gap-2">
-                                                            <BookMarked />
-                                                            {repo.fullName || repo.name}
-                                                        </span>
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectGroup>
-                                        )}
-                                    </SelectContent>
-                                </Select>
+                                <Popover open={isRepoPopoverOpen} onOpenChange={setIsRepoPopoverOpen}>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                aria-expanded={isRepoPopoverOpen}
+                                                disabled={isLoadingRepos || !!emptyMessage}
+                                                className="w-fit justify-between font-normal"
+                                            >
+                                                <span
+                                                    className={cn(
+                                                        'flex items-center gap-2 truncate',
+                                                        !field.value && 'text-muted-foreground',
+                                                    )}
+                                                >
+                                                    {field.value ? (
+                                                        <>
+                                                            <BookMarked className="size-4 shrink-0" />
+                                                            {field.value.fullName || field.value.name}
+                                                        </>
+                                                    ) : isLoadingRepos ? (
+                                                        tSource('loading')
+                                                    ) : (
+                                                        (emptyMessage ?? tSource('selectRepository'))
+                                                    )}
+                                                </span>
+                                                <ChevronDown className="size-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full p-0" align="start">
+                                        <Command>
+                                            <CommandInput className="pl-2" placeholder={tSource('searchRepository')} />
+                                            <ScrollAreaWithShadow viewportClassName="h-auto max-h-[300px] w-full">
+                                                <CommandList className="max-h-none overflow-visible">
+                                                    <CommandEmpty>{tSource('noRepositoryFound')}</CommandEmpty>
+                                                    <CommandGroup>
+                                                        {repos?.map((repo) => (
+                                                            <CommandItem
+                                                                key={repo.id}
+                                                                value={repo.fullName || repo.name}
+                                                                className={'mr-2'}
+                                                                onSelect={() => {
+                                                                    field.onChange(repo);
+                                                                    setValue('name', repo.fullName);
+                                                                    setIsRepoPopoverOpen(false);
+                                                                }}
+                                                            >
+                                                                <BookMarked className="size-4 shrink-0" />
+                                                                <span className="truncate">
+                                                                    {repo.fullName || repo.name}
+                                                                </span>
+                                                                <Check
+                                                                    className={cn(
+                                                                        'ml-auto size-4',
+                                                                        field.value?.id === repo.id
+                                                                            ? 'opacity-100'
+                                                                            : 'opacity-0',
+                                                                    )}
+                                                                />
+                                                            </CommandItem>
+                                                        ))}
+                                                    </CommandGroup>
+                                                </CommandList>
+                                            </ScrollAreaWithShadow>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
                                 <FormMessage />
                             </FormItem>
                         )}

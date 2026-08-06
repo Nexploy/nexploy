@@ -22,7 +22,7 @@ export function MonitoringRefreshRateSelect() {
             <SelectTrigger>
                 <SelectValue placeholder={t('refreshRate')} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent align="start">
                 <SelectGroup>
                     <SelectLabel>{t('refreshRate')}</SelectLabel>
                     {refreshRateOptions.map((option) => (

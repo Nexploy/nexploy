@@ -28,6 +28,13 @@ export interface OrganizationInvitation {
     createdAt: Date;
 }
 
+export interface InvitableUser {
+    id: string;
+    name: string;
+    email: string;
+    image: string | null;
+}
+
 export interface PendingInvitation {
     id: string;
     role: string;

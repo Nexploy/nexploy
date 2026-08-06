@@ -59,7 +59,7 @@ export function GitAccountFormField({ onValueChange, noAccountsContent }: GitAcc
                                 <SelectValue placeholder={t('selectAccount')} />
                             </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent align="start">
                             <SelectGroup>
                                 <SelectLabel>{t('account')}</SelectLabel>
                                 {accounts.map((account) => {

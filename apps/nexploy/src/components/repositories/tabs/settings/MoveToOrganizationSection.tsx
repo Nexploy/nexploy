@@ -67,7 +67,7 @@ export function MoveToOrganizationSection({ repositoryId, currentOrganizationId 
                             <SelectTrigger className="w-full sm:max-w-xs">
                                 <SelectValue placeholder={t('selectPlaceholder')} />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent align="start">
                                 {targetOrganizations.map((org) => (
                                     <SelectItem key={org.id} value={org.id}>
                                         {org.name}

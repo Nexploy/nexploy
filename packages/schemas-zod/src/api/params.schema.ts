@@ -34,6 +34,10 @@ export const buildNodeParamSchema = z.object({
     nodeId: z.string().min(1),
 });
 
+export const userSearchQuerySchema = z.object({
+    q: z.string().trim().max(100).optional(),
+});
+
 export const organizationIdParamSchema = z.object({
     organizationId: z.string().min(1),
 });

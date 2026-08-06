@@ -232,6 +232,7 @@
     "fileNotFound": "Archivo no encontrado",
     "unknownProvider": "Proveedor desconocido",
     "providerNotConfigured": "Proveedor no configurado",
-    "unsupportedProvider": "Proveedor no compatible"
+    "unsupportedProvider": "Proveedor no compatible",
+    "invitableUsersFetchFailed": "Error al buscar usuarios"
   }
 }

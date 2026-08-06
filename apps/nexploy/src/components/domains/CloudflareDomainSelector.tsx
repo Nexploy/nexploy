@@ -121,7 +121,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({ form, basePath
                     <SelectTrigger>
                         <SelectValue placeholder={t('selectAccount')} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent align="start">
                         <SelectGroup>
                             <SelectLabel>{t('selectAccount')}</SelectLabel>
                             {cloudflareAccounts.map((account) => (
@@ -148,7 +148,7 @@ export function CloudflareDomainSelector<T extends FieldValues>({ form, basePath
                                 <SelectTrigger>
                                     <SelectValue placeholder={t('selectZone')} />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('zone')}</SelectLabel>
                                         <SelectItem value="manual">

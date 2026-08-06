@@ -90,7 +90,7 @@ export function ServicePorts() {
                                                     <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
-                                                    <SelectContent>
+                                                    <SelectContent align="start">
                                                         <SelectGroup>
                                                             <SelectLabel>{t('protocol')}</SelectLabel>
                                                             <SelectItem value="tcp">TCP</SelectItem>
@@ -112,7 +112,7 @@ export function ServicePorts() {
                                                     <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
-                                                    <SelectContent>
+                                                    <SelectContent align="start">
                                                         <SelectGroup>
                                                             <SelectLabel>{t('publishMode')}</SelectLabel>
                                                             <SelectItem value="ingress">

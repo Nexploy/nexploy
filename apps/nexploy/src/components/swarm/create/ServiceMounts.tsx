@@ -60,7 +60,7 @@ export function ServiceMounts() {
                                                     <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
-                                                    <SelectContent>
+                                                    <SelectContent align="start">
                                                         <SelectGroup>
                                                             <SelectLabel>{t('mountType')}</SelectLabel>
                                                             <SelectItem value="bind">{t('mountTypeBind')}</SelectItem>

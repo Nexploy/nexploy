@@ -103,7 +103,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                                         <SelectValue placeholder={t('environmentPlaceholder')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('environmentLabel')}</SelectLabel>
                                         {(environments ?? []).map((env) => (
@@ -134,7 +134,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                                         <SelectValue placeholder={t('requiredStagePlaceholder')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('requiredStageLabel')}</SelectLabel>
                                         <SelectItem value={'__NONE__'}>{t('requiredStageNone')}</SelectItem>

@@ -52,7 +52,7 @@ export function TablePagination<TData>({
                     <SelectTrigger size="sm" className="min-w-24">
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent align="start">
                         <SelectGroup>
                             <SelectLabel>{tCommon('size')}</SelectLabel>
                             {PAGE_SIZE_OPTIONS.map((size) => (

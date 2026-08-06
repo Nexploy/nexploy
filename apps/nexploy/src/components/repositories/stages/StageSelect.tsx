@@ -37,7 +37,7 @@ export function StageSelect({ repositoryId }: StageSelectProps) {
                     <SelectTrigger>
                         <SelectValue placeholder={t('selectStage')} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent align="start">
                         <SelectGroup>
                             <SelectLabel>{t('stages')}</SelectLabel>
                             {stages.map((stage) => {

@@ -125,7 +125,7 @@ export function ContainerBasicConfig() {
                                             <SelectValue placeholder={t('registryNone')} />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectGroup>
                                             <SelectItem value="none">{t('registryNone')}</SelectItem>
                                             {registries.map((registry) => (
@@ -172,7 +172,7 @@ export function ContainerBasicConfig() {
                                         <SelectValue placeholder={t('selectPolicy')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('restartPolicy')}</SelectLabel>
                                         <SelectItem value="no">{t('restartNever')}</SelectItem>

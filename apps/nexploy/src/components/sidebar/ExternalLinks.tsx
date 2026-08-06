@@ -54,18 +54,6 @@ export function ExternalLinks() {
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <SidebarMenuButton asChild className="size-8 justify-center">
-                            <a href="https://github.com/Nexploy/nexploy" target="_blank" rel="noopener noreferrer">
-                                <Github className="[&_path]:fill-current" />
-                            </a>
-                        </SidebarMenuButton>
-                    </TooltipTrigger>
-                    <TooltipContent side="top">{t('github')}</TooltipContent>
-                </Tooltip>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <SidebarMenuButton asChild className="size-8 justify-center">
                             <a
                                 href="https://github.com/Nexploy/nexploy/issues/new?labels=bug"
                                 target="_blank"
@@ -76,6 +64,18 @@ export function ExternalLinks() {
                         </SidebarMenuButton>
                     </TooltipTrigger>
                     <TooltipContent side="top">{t('reportBug')}</TooltipContent>
+                </Tooltip>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <SidebarMenuButton asChild className="size-8 justify-center">
+                            <a href="https://github.com/Nexploy/nexploy" target="_blank" rel="noopener noreferrer">
+                                <Github className="[&_path]:fill-current" />
+                            </a>
+                        </SidebarMenuButton>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">{t('github')}</TooltipContent>
                 </Tooltip>
             </SidebarMenuItem>
         </SidebarMenu>

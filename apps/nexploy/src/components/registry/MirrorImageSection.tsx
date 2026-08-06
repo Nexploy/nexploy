@@ -160,7 +160,7 @@ export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
                                                 <SelectValue placeholder={t('selectRegistry')} />
                                             </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent>
+                                        <SelectContent align="start">
                                             <SelectGroup>
                                                 <SelectLabel>{t('targetRegistryLabel')}</SelectLabel>
                                                 {registries.map((registry) => (

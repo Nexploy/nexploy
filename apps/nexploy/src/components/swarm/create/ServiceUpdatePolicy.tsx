@@ -82,7 +82,7 @@ export function ServiceUpdatePolicy() {
                                             <SelectValue />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectGroup>
                                             <SelectLabel>{t('failureAction')}</SelectLabel>
                                             <SelectItem value="pause">{t('failureActionPause')}</SelectItem>
@@ -108,7 +108,7 @@ export function ServiceUpdatePolicy() {
                                             <SelectValue />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectGroup>
                                             <SelectLabel>{t('updateOrder')}</SelectLabel>
                                             <SelectItem value="stop-first">{t('updateOrderStopFirst')}</SelectItem>
@@ -140,7 +140,7 @@ export function ServiceUpdatePolicy() {
                                                 <SelectValue />
                                             </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent>
+                                        <SelectContent align="start">
                                             <SelectGroup>
                                                 <SelectLabel>{t('restartCondition')}</SelectLabel>
                                                 <SelectItem value="none">{t('restartConditionNone')}</SelectItem>

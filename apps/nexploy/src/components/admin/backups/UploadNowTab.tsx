@@ -68,7 +68,7 @@ export function UploadNowTab({ volumeName, bucketStorageAccounts }: UploadNowTab
                                         <SelectValue placeholder={t('selectBucketStorageAccount')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('bucketStorageAccount')}</SelectLabel>
                                         {bucketStorageAccounts.map((a) => (

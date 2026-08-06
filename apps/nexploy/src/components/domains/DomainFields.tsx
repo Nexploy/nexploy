@@ -78,7 +78,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                     <SelectValue placeholder={t('selectEnvironment')} />
                                 </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
+                            <SelectContent align="start">
                                 <SelectGroup>
                                     <SelectLabel>{t('environment')}</SelectLabel>
                                     {environments.map((env) => (
@@ -163,7 +163,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                         <SelectValue placeholder={t('selectContainer')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     {containers.length === 0 ? (
                                         <div className="text-muted-foreground px-2 py-4 text-center text-sm">
                                             {t('noContainers')}
@@ -210,7 +210,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                         <SelectValue placeholder={t('selectPort')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     {!portOptions?.length ? (
                                         <div className="text-muted-foreground px-2 py-4 text-center text-sm">
                                             {t('noPorts')}
@@ -288,7 +288,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                         <SelectValue placeholder={t('selectCertificate')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     {certificates.length === 0 ? (
                                         <div className="text-muted-foreground px-2 py-4 text-center text-sm">
                                             {t('noCertificates')}

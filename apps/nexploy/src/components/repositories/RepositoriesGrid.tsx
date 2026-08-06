@@ -82,7 +82,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                         <SelectTrigger className="w-40">
                             <SelectValue placeholder={t('filterByProvider')} />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent align="start">
                             <SelectGroup>
                                 <SelectLabel>{t('filterByProvider')}</SelectLabel>
                                 <SelectItem value="all">{tCommon('all')}</SelectItem>
@@ -124,7 +124,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                         <SelectTrigger className="min-w-40">
                             <SelectValue placeholder={t('filterByStatus')} />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent align="start">
                             <SelectGroup>
                                 <SelectLabel>{t('filterByStatus')}</SelectLabel>
                                 <SelectItem value="all">{tCommon('all')}</SelectItem>

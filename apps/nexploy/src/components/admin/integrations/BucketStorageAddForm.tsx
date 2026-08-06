@@ -135,7 +135,7 @@ export function BucketStorageAddForm() {
                                 <SelectValue />
                             </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent align="start">
                             {PROVIDERS.map((p) => (
                                 <SelectItem key={p.id} value={p.id}>
                                     {t(p.labelKey)}

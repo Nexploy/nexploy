@@ -79,7 +79,7 @@ export function ContainerPorts() {
                                                     <SelectTrigger>
                                                         <SelectValue />
                                                     </SelectTrigger>
-                                                    <SelectContent>
+                                                    <SelectContent align="start">
                                                         <SelectGroup>
                                                             <SelectLabel>{t('protocol')}</SelectLabel>
                                                             <SelectItem value="tcp">TCP</SelectItem>

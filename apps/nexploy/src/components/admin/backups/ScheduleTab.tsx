@@ -93,7 +93,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                             <SelectValue placeholder={t('selectBucketStorageAccount')} />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectGroup>
                                             <SelectLabel>{t('bucketStorageAccount')}</SelectLabel>
                                             {bucketStorageAccounts.map((a) => (
@@ -144,7 +144,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                             <SelectValue />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectGroup>
                                             <SelectLabel>{t('frequency')}</SelectLabel>
                                             <SelectItem value="HOURLY">{t('frequencyHourly')}</SelectItem>
@@ -175,7 +175,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                                 <SelectValue />
                                             </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent>
+                                        <SelectContent align="start">
                                             <SelectGroup>
                                                 <SelectLabel>{t('scheduledDayOfWeek')}</SelectLabel>
                                                 {DAY_OF_WEEK_KEYS.map((key, i) => (
@@ -208,7 +208,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                                 <SelectValue />
                                             </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent>
+                                        <SelectContent align="start">
                                             <SelectGroup>
                                                 <SelectLabel>{t('scheduledDayOfMonth')}</SelectLabel>
                                                 {DAYS_OF_MONTH.map((d) => (
@@ -287,7 +287,7 @@ export function ScheduleTab({ volumeName, bucketStorageAccounts }: ScheduleTabPr
                                                         <SelectTrigger>
                                                             <SelectValue />
                                                         </SelectTrigger>
-                                                        <SelectContent>
+                                                        <SelectContent align="start">
                                                             <SelectGroup>
                                                                 <SelectItem value="AM">AM</SelectItem>
                                                                 <SelectItem value="PM">PM</SelectItem>

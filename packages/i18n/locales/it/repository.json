@@ -272,6 +272,8 @@
       "repository": "Repository",
       "loading": "Caricamento in corso...",
       "selectRepository": "Seleziona un repository",
+      "searchRepository": "Cerca un repository...",
+      "noRepositoryFound": "Nessun repository trovato",
       "branch": "Branch",
       "noRepositoryOnAccount": "Nessun repository trovato su questo account",
       "allRepositoriesAlreadyAdded": "Tutti i repository di questo account sono già stati aggiunti a questa organizzazione"

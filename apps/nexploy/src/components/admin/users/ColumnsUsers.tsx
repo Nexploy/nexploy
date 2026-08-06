@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import { ArrowUpDown, Ban, CheckCircle, Lock, MoreHorizontal, Shield, ShieldOff, Trash2 } from 'lucide-react';
+import { ArrowUpDown, Ban, CheckCircle, Lock, MoreVertical, Shield, ShieldOff, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import {
@@ -10,7 +10,6 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
@@ -40,15 +39,6 @@ interface ColumnsOptions {
     onBan: (user: UserRow) => void;
 }
 
-const getInitials = (name: string) => {
-    return name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
-};
-
 const isSystemUser = (user: UserRow) => {
     return user.role === 'system';
 };
@@ -71,15 +61,15 @@ export const getColumnsUsers = (t: TranslationFunction, options: ColumnsOptions)
                 const isSystem = isSystemUser(user);
 
                 return (
-                    <div className="flex items-center gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
                         <DicebearAvatar seed={user.email} size={28} alt="Email Account Image" />
-                        <div className="flex flex-col">
-                            <div className="flex items-center gap-2">
-                                <span className="font-medium">{user.name}</span>
+                        <div className="flex min-w-0 flex-col">
+                            <div className="flex min-w-0 items-center gap-2">
+                                <span className="truncate font-medium">{user.name}</span>
                                 {isSystem && (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Lock className="text-muted-foreground size-3.5" />
+                                            <Lock className="size-3.5 shrink-0" />
                                         </TooltipTrigger>
                                         <TooltipContent>
                                             <p>{t('systemUserProtected')}</p>
@@ -136,7 +126,7 @@ export const getColumnsUsers = (t: TranslationFunction, options: ColumnsOptions)
                             <SelectTrigger>
                                 <SelectValue />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent align="start">
                                 <SelectItem value="admin">
                                     <div className="flex items-center gap-2 truncate">
                                         <Shield className="size-3" />
@@ -229,6 +219,7 @@ export const getColumnsUsers = (t: TranslationFunction, options: ColumnsOptions)
     if (isAdmin) {
         columns.push({
             id: 'actions',
+            size: 50,
             cell: ({ row }) => {
                 const user = row.original;
                 const isCurrentUser = user.id === currentUserId;
@@ -239,29 +230,30 @@ export const getColumnsUsers = (t: TranslationFunction, options: ColumnsOptions)
                 }
 
                 return (
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="size-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => onBan(user)} disabled={isBanning}>
-                                <Ban />
-                                {user.banned ? t('unbanUser') : t('banUser')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                variant={'destructive'}
-                                onClick={() => onDelete(user)}
-                                disabled={isDeleting}
-                            >
-                                <Trash2 />
-                                {t('deleteUser')}
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex justify-end">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreVertical />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
+                                <DropdownMenuItem onClick={() => onBan(user)} disabled={isBanning}>
+                                    <Ban />
+                                    {user.banned ? t('unbanUser') : t('banUser')}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    variant={'destructive'}
+                                    onClick={() => onDelete(user)}
+                                    disabled={isDeleting}
+                                >
+                                    <Trash2 />
+                                    {t('deleteUser')}
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 );
             },
         });

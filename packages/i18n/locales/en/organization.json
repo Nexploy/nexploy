@@ -20,7 +20,11 @@
     "remove": "Remove member",
     "confirmRemove": "Remove {name} from this organization?",
     "transferOwnership": "Transfer ownership",
-    "confirmTransferOwnership": "Make {name} an owner of this organization? Owners have full control, including deleting it."
+    "confirmTransferOwnership": "Make {name} an owner of this organization? Owners have full control, including deleting it.",
+    "searchPlaceholder": "Search by name or email",
+    "noUserFound": "No matching account",
+    "noMembers": "No members",
+    "perPage": "Members per page"
   },
   "invitations": {
     "pending": "Pending invitations",
@@ -28,7 +32,9 @@
     "noPendingInvitations": "No pending invitations",
     "accept": "Accept",
     "reject": "Reject",
-    "invitedBy": "Invited by"
+    "invitedBy": "Invited by",
+    "invitedAt": "Invited on",
+    "cancel": "Cancel invitation"
   },
   "settings": {
     "rename": "Rename organization",
@@ -75,5 +81,9 @@
     "roleUpdated": "Member role updated",
     "left": "You left the organization",
     "deleted": "Organization deleted"
+  },
+  "roleDescriptions": {
+    "member": "Can view and work on the organization's repositories.",
+    "admin": "Can also invite, remove and manage members."
   }
 }

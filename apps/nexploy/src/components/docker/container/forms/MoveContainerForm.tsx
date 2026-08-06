@@ -122,7 +122,7 @@ export function MoveContainerForm({ containerId, containerName }: MoveContainerF
                                         <SelectValue placeholder={t('targetPlaceholder')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         {targetEnvironments.map((environment) => (
                                             <SelectItem key={environment.id} value={environment.id}>
@@ -151,7 +151,7 @@ export function MoveContainerForm({ containerId, containerName }: MoveContainerF
                                             <SelectValue placeholder={t('registryNone')} />
                                         </SelectTrigger>
                                     </FormControl>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectGroup>
                                             <SelectItem value="none">{t('registryNone')}</SelectItem>
                                             {registries.map((registry) => (

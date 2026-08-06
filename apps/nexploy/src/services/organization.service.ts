@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { prisma } from '../../prisma/prisma';
-import type { UserOrganization } from '@workspace/typescript-interface/organization/organization';
+import type { InvitableUser, UserOrganization } from '@workspace/typescript-interface/organization/organization';
 import { teardownRepositoryWebhook } from '@/services/webhook/repoWebhook.service';
 
 const PERSONAL_ORGANIZATION_SLUG_PREFIX = 'personal-';
@@ -110,6 +110,34 @@ export async function getPendingInvitations(email: string) {
     } catch (error) {
         throw new Error('Failed to fetch pending invitations');
     }
+}
+
+const INVITABLE_USERS_SEARCH_LIMIT = 8;
+const NON_INVITABLE_USER_ROLES = ['system'];
+
+export async function searchInvitableUsers(organizationId: string, query: string) {
+    const likePattern = `%${query.trim().replace(/[\\%_]/g, '\\$&')}%`;
+
+    return prisma.$queryRaw<InvitableUser[]>`
+        SELECT u."id", u."name", u."email", u."image"
+        FROM "user" u
+        WHERE u."banned" IS NOT TRUE
+          AND (u."role" IS NULL OR NOT (u."role" = ANY (${NON_INVITABLE_USER_ROLES})))
+          AND NOT EXISTS (
+              SELECT 1 FROM "member" m
+              WHERE m."organizationId" = ${organizationId} AND m."userId" = u."id"
+          )
+          AND NOT EXISTS (
+              SELECT 1 FROM "invitation" i
+              WHERE i."organizationId" = ${organizationId} AND i."status" = 'pending' AND i."email" = u."email"
+          )
+          AND (
+              unaccent(u."name") ILIKE unaccent(${likePattern})
+              OR unaccent(u."email") ILIKE unaccent(${likePattern})
+          )
+        ORDER BY u."name" ASC
+        LIMIT ${INVITABLE_USERS_SEARCH_LIMIT}
+    `;
 }
 
 export async function getOrganizationDetail(organizationId: string, userId: string, isGlobalAdmin: boolean) {

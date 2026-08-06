@@ -132,7 +132,7 @@ export function PortForm({ mode, defaultPort, originalPort }: PortFormProps) {
                                         <SelectValue placeholder={t('port.selectProtocol')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('port.protocol')}</SelectLabel>
                                         <SelectItem value="tcp">TCP</SelectItem>

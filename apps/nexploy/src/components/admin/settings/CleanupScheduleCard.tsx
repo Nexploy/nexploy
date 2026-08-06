@@ -113,7 +113,7 @@ export function CleanupScheduleCard({ settings }: { settings: CleanupSettings })
                                                 <SelectValue />
                                             </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent>
+                                        <SelectContent align="start">
                                             {Array.from({ length: 24 }, (_, h) => (
                                                 <SelectItem key={h} value={`${h}`}>
                                                     {formatHour(h)} UTC

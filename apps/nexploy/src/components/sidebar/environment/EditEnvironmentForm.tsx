@@ -133,7 +133,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('selectConnectionType')} />
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent align="start">
                                         <SelectGroup>
                                             <SelectLabel>{t('connectionType')}</SelectLabel>
                                             <SelectItem value="UNIX_SOCKET">{t('unixSocket')}</SelectItem>

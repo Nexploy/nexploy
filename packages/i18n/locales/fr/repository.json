@@ -272,6 +272,8 @@
       "repository": "Dépôt",
       "loading": "Chargement...",
       "selectRepository": "Sélectionner un dépôt",
+      "searchRepository": "Rechercher un dépôt...",
+      "noRepositoryFound": "Aucun dépôt trouvé",
       "branch": "Branche",
       "noRepositoryOnAccount": "Aucun dépôt trouvé sur ce compte",
       "allRepositoriesAlreadyAdded": "Tous les dépôts de ce compte ont déjà été ajoutés à cette organisation"

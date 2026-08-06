@@ -69,7 +69,7 @@ export function CardRestartPolicy() {
                     <SelectTrigger className="w-full sm:w-72">
                         <SelectValue placeholder={t('selectPolicy')} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent align="start">
                         <SelectGroup>
                             {POLICY_OPTIONS.map((option) => (
                                 <SelectItem key={option.value} value={option.value}>

@@ -20,7 +20,11 @@
     "remove": "Retirer le membre",
     "confirmRemove": "Retirer {name} de cette organisation ?",
     "transferOwnership": "Transférer la propriété",
-    "confirmTransferOwnership": "Faire de {name} un propriétaire de cette organisation ? Les propriétaires ont un contrôle total, y compris sa suppression."
+    "confirmTransferOwnership": "Faire de {name} un propriétaire de cette organisation ? Les propriétaires ont un contrôle total, y compris sa suppression.",
+    "searchPlaceholder": "Rechercher par nom ou email",
+    "noUserFound": "Aucun compte correspondant",
+    "noMembers": "Aucun membre",
+    "perPage": "Membres par page"
   },
   "invitations": {
     "pending": "Invitations en attente",
@@ -28,7 +32,9 @@
     "noPendingInvitations": "Aucune invitation en attente",
     "accept": "Accepter",
     "reject": "Refuser",
-    "invitedBy": "Invité par"
+    "invitedBy": "Invité par",
+    "invitedAt": "Invité le",
+    "cancel": "Annuler l'invitation"
   },
   "settings": {
     "rename": "Renommer l'organisation",
@@ -75,5 +81,9 @@
     "roleUpdated": "Rôle du membre mis à jour",
     "left": "Tu as quitté l'organisation",
     "deleted": "Organisation supprimée"
+  },
+  "roleDescriptions": {
+    "member": "Peut consulter et travailler sur les dépôts de l'organisation.",
+    "admin": "Peut en plus inviter, retirer et gérer les membres."
   }
 }

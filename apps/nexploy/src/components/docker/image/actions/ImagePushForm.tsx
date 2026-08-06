@@ -59,7 +59,7 @@ export function ImagePushForm({ image }: ImagePushFormProps) {
                                         <SelectValue placeholder={t('imageReference')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     {image.repoTags.map((repoTag) => (
                                         <SelectItem key={repoTag} value={repoTag}>
                                             {repoTag}
@@ -84,7 +84,7 @@ export function ImagePushForm({ image }: ImagePushFormProps) {
                                         <SelectValue placeholder={t('registryNone')} />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent align="start">
                                     <SelectItem value="none">{t('registryNone')}</SelectItem>
                                     {(registries ?? []).map((registry) => (
                                         <SelectItem key={registry.id} value={registry.id}>
