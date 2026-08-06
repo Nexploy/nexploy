@@ -15,6 +15,7 @@ import { GET as monitoringStream } from '@/app/api/events/monitoring/stream/rout
 import { GET as activityStream } from '@/app/api/events/activity/stream/route';
 import { GET as aiProviders } from '@/app/api/ai/providers/route';
 import { GET as aiModels } from '@/app/api/ai/models/[provider]/route';
+import { POST as chat } from '@/app/api/chat/route';
 import { callRoute, type RouteHandler } from '../setup/invoke';
 import { ADMIN_ONLY, DEVELOPER_AND_ABOVE, describePermissionMatrix, EVERY_ROLE } from './permissionMatrix';
 
@@ -86,13 +87,23 @@ describePermissionMatrix('AI configuration endpoints', [
         name: 'GET /api/ai/providers',
         kind: 'route',
         invoke: () => route(aiProviders, '/api/ai/providers'),
-        expected: EVERY_ROLE,
+        expected: DEVELOPER_AND_ABOVE,
     },
     {
         name: 'GET /api/ai/models/[provider]',
         kind: 'route',
         invoke: () => route(aiModels, '/api/ai/models/OPENAI', { params: { provider: 'OPENAI' } }),
-        expected: EVERY_ROLE,
+        expected: DEVELOPER_AND_ABOVE,
+    },
+    {
+        name: 'POST /api/chat',
+        kind: 'route',
+        invoke: () =>
+            route(chat, '/api/chat', {
+                method: 'POST',
+                body: { messages: [], provider: 'OPENAI', model: 'gpt-4o' },
+            }),
+        expected: DEVELOPER_AND_ABOVE,
     },
 ]);
 

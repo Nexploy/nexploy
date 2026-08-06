@@ -3,6 +3,7 @@ import { beforeEach, vi } from 'vitest';
 import { logout } from './session';
 import { getTestHeaders, resetNextMocks, testCookies, TestRedirectError, translator } from './nextMocks';
 import { kyDockerMock, resetDockerMock } from './dockerMock';
+import { inngestMock, resetInngestMock } from './inngestMock';
 
 vi.mock('next/headers', () => ({
     cookies: async () => testCookies,
@@ -37,12 +38,46 @@ vi.mock('next-intl/server', () => ({
     setRequestLocale: () => {},
 }));
 
-vi.mock('@/lib/api/kyDocker', () => ({
-    kyDocker: kyDockerMock,
-}));
+const DEV_DOCKER_API_PORTS = [':3300'];
+const dockerApiUrl = process.env.DOCKER_API_URL ?? '';
+
+if (DEV_DOCKER_API_PORTS.some((port) => dockerApiUrl.includes(port))) {
+    throw new Error(
+        `The tests must never reach the development docker-api (DOCKER_API_URL=${dockerApiUrl}). ` +
+            'Point it at the isolated test instance in apps/nexploy/.env.test.',
+    );
+}
+
+if (process.env.INNGEST_BASE_URL?.includes(':8288')) {
+    throw new Error(
+        `The tests must never reach the development Inngest server (INNGEST_BASE_URL=${process.env.INNGEST_BASE_URL}). ` +
+            'Point it at the isolated test instance in apps/nexploy/.env.test.',
+    );
+}
+
+const usesRealInngest = process.env.NEXPLOY_TEST_INNGEST === 'real' || process.env.NEXPLOY_TEST_DOCKER === 'real';
+
+vi.mock('@/inngest/client', async (importOriginal) => {
+    if (process.env.NEXPLOY_TEST_INNGEST === 'real' || process.env.NEXPLOY_TEST_DOCKER === 'real') {
+        return importOriginal<typeof import('@/inngest/client')>();
+    }
+
+    return { inngest: inngestMock };
+});
+
+const usesRealDockerApi = process.env.NEXPLOY_TEST_DOCKER === 'real';
+
+vi.mock('@/lib/api/kyDocker', async (importOriginal) => {
+    if (process.env.NEXPLOY_TEST_DOCKER === 'real') {
+        return importOriginal<typeof import('@/lib/api/kyDocker')>();
+    }
+
+    return { kyDocker: kyDockerMock };
+});
 
 beforeEach(() => {
     logout();
     resetNextMocks();
-    resetDockerMock();
+    if (!usesRealInngest) resetInngestMock();
+    if (!usesRealDockerApi) resetDockerMock();
 });

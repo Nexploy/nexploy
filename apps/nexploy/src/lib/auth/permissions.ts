@@ -29,7 +29,7 @@ export type PermissionActions = {
     traefik: 'read' | 'manage';
     setting: 'read' | 'manage';
     activity: 'read' | 'manage';
-    ai: 'read' | 'manage';
+    ai: 'read' | 'chat' | 'manage';
     mcpKey: 'create' | 'read' | 'delete';
     monitoring: 'read';
     user: (typeof adminAc.statements.user)[number];
@@ -64,7 +64,7 @@ const statement = {
     traefik: ['read', 'manage'] as const,
     setting: ['read', 'manage'] as const,
     activity: ['read', 'manage'] as const,
-    ai: ['read', 'manage'] as const,
+    ai: ['read', 'chat', 'manage'] as const,
     mcpKey: ['create', 'read', 'delete'] as const,
     monitoring: ['read'] as const,
 } as const;
@@ -109,7 +109,7 @@ const developer = ac.newRole({
     cloudBackup: ['read'],
     traefik: ['read', 'manage'],
     setting: ['read'],
-    ai: ['read'],
+    ai: ['read', 'chat'],
     mcpKey: ['read'],
     monitoring: ['read'],
 });
@@ -139,7 +139,7 @@ const admin = ac.newRole({
     traefik: ['read', 'manage'],
     setting: ['read', 'manage'],
     activity: ['read', 'manage'],
-    ai: ['read', 'manage'],
+    ai: ['read', 'chat', 'manage'],
     mcpKey: ['create', 'read', 'delete'],
     monitoring: ['read'],
 });

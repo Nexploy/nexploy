@@ -206,8 +206,8 @@ pnpm --filter=nexploy db:seed           # Seed + print the internal API key
 pnpm --filter=nexploy db:studio         # Prisma Studio
 pnpm --filter=nexploy db:reset          # Drop, re-migrate, re-seed
 
-# End-to-end tests
-pnpm test:e2e                           # Playwright
+# Tests
+pnpm test:api                           # Vitest (nexploy app)
 ```
 
 ## Project structure
@@ -230,12 +230,11 @@ nexploy/
 ├── infra/
 │   ├── docker/               # Compose files (dev, test, prod)
 │   └── traefik/              # Traefik static + dynamic configuration
-├── tests/e2e/                # Playwright end-to-end tests
-└── scripts/                  # e2e stack helper, changelog generation
+└── scripts/                  # changelog generation, tooling helpers
 ```
 
 Each dependency is declared in the workspace that actually imports it; the root `package.json` only carries the
-cross-cutting tooling (Turborepo, TypeScript, Prettier, ESLint, Playwright).
+cross-cutting tooling (Turborepo, TypeScript, Biome).
 
 ## Architecture
 

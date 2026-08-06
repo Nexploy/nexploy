@@ -53,6 +53,18 @@ describe('hasPermission', () => {
         expect(hasPermission('developer', 'gitProvider', 'create')).toBe(false);
     });
 
+    it('keeps the AI assistant out of the guest and system roles', () => {
+        expect(hasPermission('guest', 'ai', 'chat')).toBe(false);
+        expect(hasPermission('system', 'ai', 'chat')).toBe(false);
+        expect(hasPermission('developer', 'ai', 'chat')).toBe(true);
+        expect(hasPermission('admin', 'ai', 'chat')).toBe(true);
+    });
+
+    it('separates using the AI assistant from configuring it', () => {
+        expect(hasPermission('developer', 'ai', 'chat')).toBe(true);
+        expect(hasPermission('developer', 'ai', 'manage')).toBe(false);
+    });
+
     it('keeps user administration out of every role but admin', () => {
         for (const role of GLOBAL_ROLES.filter((candidate) => candidate !== 'admin')) {
             expect(hasPermission(role, 'user', 'create')).toBe(false);

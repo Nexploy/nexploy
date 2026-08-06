@@ -31,3 +31,13 @@ services:
       interval: 2s
       timeout: 3s
       retries: 40
+
+  inngest:
+    image: inngest/inngest:v1.31.0
+    container_name: nexploy_inngest_test
+    ports:
+      - "8299:8288"
+    environment:
+      - INNGEST_EVENT_KEY=local-dev-key
+      - INNGEST_SIGNING_KEY=signkey-test-12345678
+    command: inngest dev --no-discovery

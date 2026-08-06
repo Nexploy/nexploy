@@ -2,7 +2,7 @@
 
 These tests cover every server action and API route of the `nexploy` app: what they return, and who is allowed to call them.
 
-They run in-process with Vitest against a real PostgreSQL database and a real Better Auth stack. Only `docker-api` is mocked.
+They run in-process with Vitest against a real PostgreSQL database and a real Better Auth stack, in an isolated environment that never touches the development one.
 
 ## Running them
 
@@ -10,11 +10,48 @@ They run in-process with Vitest against a real PostgreSQL database and a real Be
 pnpm --filter=nexploy test          # everything
 pnpm --filter=nexploy test:audit    # static guard audit + access-control unit tests (no database needed beyond migrations)
 pnpm --filter=nexploy test:api      # runtime tests for actions and routes
+pnpm --filter=nexploy test:docker   # integration tests against Docker-in-Docker (implies the real Inngest)
+pnpm --filter=nexploy test:inngest  # integration tests against the throwaway Inngest server
 pnpm --filter=nexploy test:watch    # watch mode
 pnpm --filter=nexploy test:report repositor   # list endpoints and their guards
 ```
 
-The test database is started automatically from `infra/docker/docker-compose.test.yml` (PostgreSQL on port 5434) and migrated before the suite runs. Set `NEXPLOY_TEST_DB_AUTOSTART=0` if you manage the container yourself. Configuration lives in `.env.test`.
+## Isolation
+
+Nothing in this suite can reach the development stack.
+
+| Piece | Development | Tests |
+| --- | --- | --- |
+| PostgreSQL | 5433 | **5434** (`nexploy_postgres_test`, tmpfs) |
+| docker-api | 3300 | **3322** (spawned by the suite) |
+| Docker daemon | your host daemon | **`nexploy_dind_test`** on 12375 |
+| Inngest | `nexploy_inngest_dev` on 8288 | **8299** (`nexploy_inngest_test`), mocked in the default mode |
+
+`DOCKER_API_URL` in `.env.test` points at 3322, and `tests/setup/vitest.setup.ts` throws on startup if it ever points at the development port. In the default mode `kyDocker` is mocked, so no Docker call leaves the process at all. `@/inngest/client` is mocked too — `inngest.send` records into `inngestEvents` instead of posting anywhere — and the setup throws if `INNGEST_BASE_URL` ever points at the development port 8288.
+
+`tests/runtime/isolation.test.ts` enforces all of this: it wraps `globalThis.fetch`, runs a build action, and fails if any request reaches a development port.
+
+The `nexploy_test` compose stack is brought up before the suite and **torn down with `down -v --remove-orphans` when it finishes**, pass or fail. Set `NEXPLOY_TEST_STACK_KEEP=1` to keep it for debugging, or `NEXPLOY_TEST_DB_AUTOSTART=0` to manage the containers yourself.
+
+## Real Inngest mode
+
+`pnpm --filter=nexploy test:inngest` runs `tests/integration/` with `NEXPLOY_TEST_INNGEST=real`. It starts `nexploy_inngest_test` (`inngest dev --no-discovery`, published on **8299**), waits for it, and uses the real Inngest client. `tests/integration/inngest.test.ts` then checks that an allowed caller's event actually lands on that server, and that a denied caller produces none.
+
+No function is registered on the test server (`--no-discovery`), so events are recorded but nothing executes — which is what makes the mode fast and safe.
+
+## Docker-in-Docker mode
+
+`pnpm --filter=nexploy test:docker` runs `tests/integration/` with `NEXPLOY_TEST_DOCKER=real`. In that mode the suite:
+
+1. starts `postgres`, `dind` **and** `inngest` from `infra/docker/docker-compose.test.yml` (it implies the real Inngest mode),
+2. pulls `alpine:latest` into the throwaway daemon,
+3. serves a minimal nexploy stub on 3323 (`/api/environments`, `/api/internal/verify-api-key`, the sync-delete endpoints) so `docker-api` can boot without the real app,
+4. spawns `docker-api` on 3322 with `NEXPLOY_API_URL` pointing at that stub, its default environment being the DinD daemon over TCP,
+5. leaves `kyDocker` unmocked, so the actions issue real HTTP calls that end on the throwaway daemon.
+
+Everything — the docker-api process, the stub, the containers — is stopped and removed at the end. Set `NEXPLOY_TEST_DOCKER_LOGS=1` to see docker-api output.
+
+Configuration lives in `.env.test`.
 
 ## Layout
 
@@ -23,7 +60,8 @@ The test database is started automatically from `infra/docker/docker-compose.tes
 | `setup/` | Vitest setup, Next.js mocks, database reset, fixtures, session helpers, docker-api mock |
 | `audit/` | Static inventory of every endpoint, guard audit, permission matrix snapshots |
 | `permissions/` | Unit tests of `hasPermission`, `hasOrgPermission`, `canOnOwnedResource` |
-| `runtime/` | Per-domain tests that actually call the actions and routes |
+| `runtime/` | Per-domain tests that actually call the actions and routes (docker-api mocked) |
+| `integration/` | Tests that drive a real `docker-api` against Docker-in-Docker, excluded unless `NEXPLOY_TEST_DOCKER=real` |
 
 Every endpoint of the app is covered. `audit/coverage.test.ts` fails when a guarded endpoint — or an endpoint that leans on an exemption — is never referenced from `tests/runtime`, so a new endpoint cannot land untested. The handful of endpoints that cannot be driven in-process (Better Auth catch-all, Inngest serve, MCP handler, the OAuth redirect pair, the TOTP actions) are listed in that file with a reason.
 

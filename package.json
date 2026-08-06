@@ -2,7 +2,6 @@
   "name": "nexploy-monorepo",
   "version": "0.0.1",
   "description": "Nexploy - Self-hosted alternative to Vercel/Netlify, powered by Docker",
-  "private": true,
   "license": "GPL-3.0",
   "scripts": {
     "nodes:local": "node scripts/nodes-source.mjs local",
@@ -21,11 +20,6 @@
     "format": "biome format --write .",
     "check-types": "turbo run typecheck",
     "test:api": "turbo run test --filter=nexploy",
-    "test:e2e": "bash scripts/e2e.sh run",
-    "test:e2e:ui": "bash scripts/e2e.sh run --ui",
-    "test:e2e:stack:up": "bash scripts/e2e.sh up",
-    "test:e2e:stack:down": "bash scripts/e2e.sh down",
-    "test:e2e:report": "playwright show-report",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -38,7 +32,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.6",
-    "@playwright/test": "^1.61.0",
     "@turbo/gen": "^2.9.4",
     "@types/node": "^24.7.2",
     "baseline-browser-mapping": "^2.9.19",

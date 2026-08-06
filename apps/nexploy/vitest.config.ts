@@ -12,6 +12,10 @@ export default defineConfig({
         },
         globals: true,
         include: ['tests/**/*.test.ts'],
+        exclude:
+            process.env.NEXPLOY_TEST_DOCKER === 'real' || process.env.NEXPLOY_TEST_INNGEST === 'real'
+                ? []
+                : ['tests/integration/**'],
         setupFiles: ['./tests/setup/vitest.setup.ts'],
         globalSetup: ['./tests/setup/global-setup.ts'],
         fileParallelism: false,

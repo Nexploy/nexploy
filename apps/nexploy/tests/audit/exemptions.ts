@@ -192,21 +192,6 @@ export const GUARD_EXEMPTIONS: Record<string, Exemption> = {
         category: 'session-scoped',
         reason: 'Completes the OAuth flow for the caller, state is verified',
     },
-    'GET src/app/api/ai/providers/route.ts': {
-        category: 'session-scoped',
-        reason: 'Lists which AI providers are configured, without exposing credentials',
-        review: 'Any authenticated role can list configured providers; consider requiring ai.read',
-    },
-    'GET src/app/api/ai/models/[provider]/route.ts': {
-        category: 'session-scoped',
-        reason: 'Lists the models of a configured provider, without exposing credentials',
-        review: 'Any authenticated role can list models; consider requiring ai.read',
-    },
-    'POST src/app/api/chat/route.ts': {
-        category: 'session-scoped',
-        reason: 'AI assistant conversation; the exposed MCP tools carry their own checks',
-        review: 'Any authenticated role can use the AI assistant; consider requiring ai.read',
-    },
 };
 
 export const REVIEW_FLAGS = Object.entries(GUARD_EXEMPTIONS)

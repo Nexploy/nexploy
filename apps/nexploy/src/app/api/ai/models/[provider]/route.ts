@@ -1,6 +1,6 @@
 import ky from 'ky';
 import { NextResponse } from 'next/server';
-import { authRouteServer, route } from '@/lib/api/nextRoute';
+import { authRouteServer, requirePermission, route } from '@/lib/api/nextRoute';
 import { getProviderApiKey } from '@/services/aiConfig.service';
 import type { ModelOption } from '@workspace/typescript-interface/ai/aiConfig';
 import { providerParamSchema } from '@workspace/schemas-zod/api/params.schema';
@@ -103,6 +103,7 @@ async function fetchGrokModels(apiKey: string): Promise<ModelOption[]> {
 
 export const GET = route
     .use(authRouteServer)
+    .use(requirePermission('ai', 'read'))
     .params(providerParamSchema)
     .handler(async (_req, { params }) => {
         const { provider } = params;
