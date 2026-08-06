@@ -19,7 +19,12 @@ import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import { groupImagesByRepository, matchesSearch } from './imageTableUtils';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { Play, Trash2 } from 'lucide-react';
+import { Download, HardDriveDownload, Play, Trash2, Upload } from 'lucide-react';
+import { ImageImportForm } from '@/components/docker/image/actions/ImageImportForm';
+import { ImageLoadForm } from '@/components/docker/image/actions/ImageLoadForm';
+import { downloadImageArchive } from '@/components/docker/image/actions/downloadImageArchive';
+import { Can } from '@/components/permission/Can';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { Badge } from '@workspace/ui/components/badge';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -54,6 +59,8 @@ export function TableDockerImages() {
     const router = useRouter();
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
+    const tImage = useTranslations('docker.imageActions');
+    const openDialog = useConfirmationDialogStore((state) => state.openDialog);
 
     const statusDocker = useDockerStore((state) => state.status);
 
@@ -172,7 +179,48 @@ export function TableDockerImages() {
                     value={globalFilter ?? ''}
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
-                <div className={'flex gap-3'}>
+                <div className={'flex flex-wrap gap-3'}>
+                    <Can resource="image" action="pull">
+                        <Button
+                            variant={'outline'}
+                            icon={HardDriveDownload}
+                            onClick={() =>
+                                openDialog({
+                                    title: tImage('importTitle'),
+                                    description: tImage('importDescription'),
+                                    content: <ImageImportForm />,
+                                })
+                            }
+                        >
+                            {tImage('import')}
+                        </Button>
+                        <Button
+                            variant={'outline'}
+                            icon={Upload}
+                            onClick={() =>
+                                openDialog({
+                                    title: tImage('loadTitle'),
+                                    description: tImage('loadDescription'),
+                                    content: <ImageLoadForm />,
+                                })
+                            }
+                        >
+                            {tImage('load')}
+                        </Button>
+                    </Can>
+                    <Button
+                        variant={'outline'}
+                        icon={Download}
+                        onClick={() => downloadImageArchive(selectedImages.map((image) => image.id))}
+                        disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
+                    >
+                        {tImage('save')}
+                        {numberOfSelectedRows > 1 && (
+                            <Badge variant={'secondary'} className={'rounded-full'}>
+                                {numberOfSelectedRows}
+                            </Badge>
+                        )}
+                    </Button>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div>
@@ -210,6 +258,13 @@ export function TableDockerImages() {
                 noResultsLabel={t('noImagesMatchSearch')}
                 hasActiveFilters={!isEmpty}
                 rowClassName={(row) => cn('h-12', row.original.isGroup && 'bg-muted/30')}
+                onRowClick={(image, row) => {
+                    if (image.isGroup) {
+                        row.toggleExpanded();
+                        return;
+                    }
+                    router.push(`/docker/images/${image.id}`);
+                }}
             />
 
             <TablePagination

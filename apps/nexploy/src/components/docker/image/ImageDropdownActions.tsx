@@ -1,11 +1,16 @@
 import React, { Fragment, useRef } from 'react';
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@workspace/ui/components/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import { Play, Trash } from 'lucide-react';
+import { Download, Play, Tag, TagsIcon, Trash2, Upload } from 'lucide-react';
+import { ImagePushForm } from '@/components/docker/image/actions/ImagePushForm';
+import { ImageTagForm } from '@/components/docker/image/actions/ImageTagForm';
+import { ImageUntagForm } from '@/components/docker/image/actions/ImageUntagForm';
+import { downloadImageArchive } from '@/components/docker/image/actions/downloadImageArchive';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
 import { Image, ImageTool } from '@workspace/typescript-interface/docker/docker.image';
 import type { ImageActionInput } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Switch } from '@workspace/ui/components/switch';
@@ -20,7 +25,9 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const router = useRouter();
     const t = useTranslations('docker.dropdownActions');
+    const tImage = useTranslations('docker.imageActions');
     const forceRef = useRef(false);
+    const openDialog = useConfirmationDialogStore((state) => state.openDialog);
 
     const imageName = image.name;
 
@@ -40,7 +47,47 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
             tooltipContent: !image.repoTags.length ? t('image.noRepositoryTags') : undefined,
         },
         {
-            icon: Trash,
+            icon: Tag,
+            label: tImage('tag'),
+            onClick: () =>
+                openDialog({
+                    title: tImage('tagTitle'),
+                    description: tImage('tagDescription'),
+                    content: <ImageTagForm image={image} />,
+                }),
+            separator: true,
+        },
+        {
+            icon: TagsIcon,
+            label: tImage('untag'),
+            onClick: () =>
+                openDialog({
+                    title: tImage('untagTitle'),
+                    description: tImage('untagDescription'),
+                    content: <ImageUntagForm image={image} />,
+                }),
+            disabled: image.repoTags.length <= 1,
+            tooltipContent: image.repoTags.length <= 1 ? tImage('untagLastTagWarning') : undefined,
+        },
+        {
+            icon: Upload,
+            label: tImage('push'),
+            onClick: () =>
+                openDialog({
+                    title: tImage('pushTitle'),
+                    description: tImage('pushDescription'),
+                    content: <ImagePushForm image={image} />,
+                }),
+            disabled: !image.repoTags.length,
+            tooltipContent: !image.repoTags.length ? t('image.noRepositoryTags') : undefined,
+        },
+        {
+            icon: Download,
+            label: tImage('save'),
+            onClick: () => downloadImageArchive([image.id]),
+        },
+        {
+            icon: Trash2,
             label: t('remove'),
             onClick: () => {
                 forceRef.current = false;

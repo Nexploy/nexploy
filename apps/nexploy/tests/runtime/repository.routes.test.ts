@@ -3,6 +3,7 @@ import { GET as listRepositories } from '@/app/api/repositories/route';
 import { GET as getRepository } from '@/app/api/repositories/[repositoryId]/route';
 import { GET as listStages } from '@/app/api/repositories/[repositoryId]/stages/route';
 import { GET as listBuilds } from '@/app/api/repositories/[repositoryId]/builds/route';
+import { GET as listBuildTasks } from '@/app/api/tasks/builds/route';
 import { callRoute, readJson, type RouteHandler } from '../setup/invoke';
 import { resetDatabase } from '../setup/db';
 import { seedWorld, type WorldFixture } from '../setup/fixtures';
@@ -53,6 +54,12 @@ describePermissionMatrix('repository API routes', [
                 params: { repositoryId: world.repositories.inOrgA },
             }),
         expected: allowOnly('admin', 'orgOwner', 'orgAdmin', 'orgMember'),
+    },
+    {
+        name: 'GET /api/tasks/builds',
+        kind: 'route',
+        invoke: () => callRoute(listBuildTasks as RouteHandler, { url: 'http://localhost:3022/api/tasks/builds' }),
+        expected: allowOnly('guest', 'developer', 'admin', 'system', 'orgOwner', 'orgAdmin', 'orgMember', 'outsider'),
     },
 ]);
 

@@ -56,15 +56,7 @@ const DYNAMIC_CALLS: DynamicCall[] = [
     },
 ];
 
-const KNOWN_CONTRACT_GAPS: Record<string, string> = {
-    'POST /api/images/push': 'Accepted by imageActionsSchema, kept for a future docker-api route',
-    'POST /api/images/tag': 'Accepted by imageActionsSchema; docker-api serves POST /api/images/:id/tag today',
-    'POST /api/images/untag': 'Accepted by imageActionsSchema, kept for a future docker-api route',
-    'POST /api/images/import': 'Accepted by imageActionsSchema, kept for a future docker-api route',
-    'POST /api/images/load': 'Accepted by imageActionsSchema, kept for a future docker-api route',
-    'POST /api/images/save': 'Accepted by imageActionsSchema, kept for a future docker-api route',
-    'POST /api/networks/prune': 'Accepted by networkActionsSchema, kept for a future docker-api route',
-};
+const KNOWN_CONTRACT_GAPS: Record<string, string> = {};
 
 function expand(path: string, value: string): string {
     const lastParam = path.lastIndexOf(':param');

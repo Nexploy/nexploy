@@ -133,6 +133,9 @@
   "noContainers": "Aucun conteneur",
   "noVolumes": "Aucun volume",
   "noNetworks": "Aucun réseau",
+  "prune": "Nettoyer",
+  "pruneNetworks": "Nettoyer les réseaux",
+  "confirmPruneNetworks": "Cela supprimera définitivement tous les réseaux inutilisés. Cette action est irréversible.",
   "noContainersDescription": "Aucun conteneur disponible",
   "containerActions": {
     "resume": "Reprendre",
@@ -701,7 +704,8 @@
     "addEnvironment": "Ajouter l'environnement",
     "updating": "Mise à jour...",
     "updateEnvironment": "Mettre à jour l'environnement",
-    "selectionNotice": "Lorsque vous sélectionnez un environnement autre que celui par défaut, toutes vos interactions Docker (conteneurs, images, volumes, réseaux, déploiements...) passeront par ce nouvel environnement."
+    "selectionNotice": "Lorsque vous sélectionnez un environnement autre que celui par défaut, toutes vos interactions Docker (conteneurs, images, volumes, réseaux, déploiements...) passeront par ce nouvel environnement.",
+    "optional": "Optionnel"
   },
   "dropdownActions": {
     "remove": "Supprimer",
@@ -987,13 +991,15 @@
       "container": "Ouvrir le conteneur",
       "image": "Ouvrir l'image",
       "network": "Ouvrir le réseau",
-      "volume": "Ouvrir le volume"
+      "volume": "Ouvrir le volume",
+      "build": "Ouvrir le build"
     },
     "openResultIn": {
       "container": "Ouvrir le conteneur ({environment})",
       "image": "Ouvrir l'image ({environment})",
       "network": "Ouvrir le réseau ({environment})",
-      "volume": "Ouvrir le volume ({environment})"
+      "volume": "Ouvrir le volume ({environment})",
+      "build": "Ouvrir le build ({environment})"
     },
     "kinds": {
       "container-migrate": "Déplacement de {name}",
@@ -1023,7 +1029,14 @@
       "stack-restart": "Redémarrage de la stack {name}",
       "stack-pause": "Mise en pause de la stack {name}",
       "stack-unpause": "Reprise de la stack {name}",
-      "stack-remove": "Suppression de la stack {name}"
+      "stack-remove": "Suppression de la stack {name}",
+      "build-pipeline": "Build de {name}",
+      "image-push": "Envoi de {name}",
+      "image-untag": "Suppression des tags {name}",
+      "image-import": "Import de {name}",
+      "image-load": "Chargement de l’archive d’image",
+      "image-save": "Export de {name}",
+      "network-prune": "Nettoyage des réseaux inutilisés"
     },
     "status": {
       "running": "En cours",
@@ -1043,12 +1056,45 @@
       "recreate": "Recréation du conteneur",
       "tag": "Étiquetage de l'image",
       "push": "Envoi vers le registry",
-      "cleanup": "Nettoyage"
+      "cleanup": "Nettoyage",
+      "pipelineNode": "Étape : {step}",
+      "import": "Import de l’image"
     },
     "toasts": {
       "succeeded": "« {name} » est terminé.",
       "failed": "« {name} » a échoué.",
       "cancelled": "« {name} » a été annulé."
     }
+  },
+  "imageActions": {
+    "archiveDropZone": "Déposez une archive d’image ici ou cliquez pour la sélectionner",
+    "archiveFormats": "Formats acceptés : .tar, .tar.gz, .tgz",
+    "imageReference": "Référence de l’image",
+    "import": "Importer",
+    "importDescription": "Importer une image depuis l’URL d’une archive distante.",
+    "importStarted": "Import de {name} démarré.",
+    "importTitle": "Importer une image",
+    "load": "Charger",
+    "loadDescription": "Charger une ou plusieurs images depuis une archive locale.",
+    "loadSuccess": "{count, plural, one {# image chargée} other {# images chargées}}",
+    "loadTitle": "Charger une archive d’image",
+    "push": "Pousser",
+    "pushDescription": "Pousser cette image vers un registre.",
+    "pushStarted": "Push de {name} démarré.",
+    "pushTitle": "Pousser l’image",
+    "registry": "Registre",
+    "registryNone": "Docker Hub (par défaut)",
+    "repository": "Dépôt",
+    "save": "Exporter",
+    "sourceUrl": "URL source",
+    "tag": "Taguer",
+    "tagDescription": "Ajouter un nouveau dépôt et tag à cette image.",
+    "tagSuccess": "Image taguée avec succès.",
+    "tagTitle": "Taguer l’image",
+    "untag": "Supprimer les tags",
+    "untagDescription": "Sélectionnez les tags à supprimer de cette image.",
+    "untagLastTagWarning": "Cette image n’a qu’un seul tag : le supprimer supprime l’image.",
+    "untagSuccess": "{count, plural, one {# tag supprimé} other {# tags supprimés}}",
+    "untagTitle": "Supprimer les tags de l’image"
   }
 }

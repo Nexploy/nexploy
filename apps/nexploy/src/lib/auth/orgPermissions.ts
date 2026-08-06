@@ -63,6 +63,7 @@ export const orgAdmin = orgAc.newRole({
 });
 
 export const orgOwner = orgAc.newRole({
+    ...orgOwnerAc.statements,
     repository: ['create', 'read', 'update', 'delete'],
     build: ['read', 'run', 'cancel', 'delete'],
     deployment: ['deploy', 'rollback'],
@@ -72,7 +73,6 @@ export const orgOwner = orgAc.newRole({
     domain: ['read', 'manage'],
     ssl: ['read', 'manage'],
     container: ['read', 'manage', 'remove'],
-    ...orgOwnerAc.statements,
 });
 
 export const orgRoles: Record<OrgRole, any> = {

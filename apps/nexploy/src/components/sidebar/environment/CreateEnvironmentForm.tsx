@@ -6,7 +6,15 @@ import { environmentSchema } from '@workspace/schemas-zod/docker/environment/env
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@workspace/ui/components/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Alert, AlertDescription } from '@workspace/ui/components/alert';
 import { Info } from 'lucide-react';
@@ -130,9 +138,12 @@ export function CreateEnvironmentForm() {
                                         <SelectValue placeholder={t('selectConnectionType')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="UNIX_SOCKET">{t('unixSocket')}</SelectItem>
-                                        <SelectItem value="TCP">{t('tcp')}</SelectItem>
-                                        <SelectItem value="TCP_TLS">{t('tcpTls')}</SelectItem>
+                                        <SelectGroup>
+                                            <SelectLabel>{t('connectionType')}</SelectLabel>
+                                            <SelectItem value="UNIX_SOCKET">{t('unixSocket')}</SelectItem>
+                                            <SelectItem value="TCP">{t('tcp')}</SelectItem>
+                                            <SelectItem value="TCP_TLS">{t('tcpTls')}</SelectItem>
+                                        </SelectGroup>
                                     </SelectContent>
                                 </Select>
                             </FormControl>

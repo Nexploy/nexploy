@@ -15,12 +15,18 @@ const TASK_KIND_RESOURCE: Record<TaskKind, TaskResource> = {
     'container-remove': 'container',
     'container-prune': 'container',
     'image-pull': 'image',
+    'image-push': 'image',
     'image-mirror': 'image',
     'image-tag': 'image',
+    'image-untag': 'image',
+    'image-import': 'image',
+    'image-load': 'image',
+    'image-save': 'image',
     'image-remove': 'image',
     'image-prune': 'image',
     'network-create': 'network',
     'network-remove': 'network',
+    'network-prune': 'network',
     'volume-create': 'volume',
     'volume-remove': 'volume',
     'volume-prune': 'volume',
@@ -30,6 +36,11 @@ const TASK_KIND_RESOURCE: Record<TaskKind, TaskResource> = {
     'stack-pause': 'container',
     'stack-unpause': 'container',
     'stack-remove': 'container',
+    'build-pipeline': 'build',
+};
+
+const TASK_MANAGE_ACTION: Partial<Record<TaskResource, string>> = {
+    build: 'cancel',
 };
 
 export function getTaskResource(kind: TaskKind): TaskResource {
@@ -47,5 +58,5 @@ export function canReadTask(viewer: TaskViewer, task: Task): boolean {
 }
 
 export function canManageTask(viewer: TaskViewer, task: Task): boolean {
-    return canOnTask(viewer, task, 'manage');
+    return canOnTask(viewer, task, TASK_MANAGE_ACTION[getTaskResource(task.kind)] ?? 'manage');
 }

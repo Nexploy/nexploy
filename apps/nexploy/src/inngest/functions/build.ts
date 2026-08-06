@@ -10,6 +10,7 @@ import { getPipelineConfig } from '@/services/pipeline.service';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
 import { BuildStatus } from 'generated/client';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
+import { publishBuildTaskFromDatabase } from '@/services/repository/buildTask.service';
 
 export const buildFunction = inngest.createFunction(
     {
@@ -66,6 +67,7 @@ export const buildFunction = inngest.createFunction(
             const setStatusBuild = async (status: PipelineStatus) => {
                 await updateStatusBuild(buildId, status);
                 await publishSafe(buildChannel['build-status'], { buildStatus: status });
+                await publishBuildTaskFromDatabase(buildId);
             };
 
             const nodeStartTimes = new Map<string, number>();
@@ -76,8 +78,8 @@ export const buildFunction = inngest.createFunction(
                 buildStatus?: BuildStatus,
                 durationMs?: number,
                 startedAt?: number,
-            ) =>
-                Promise.all([
+            ) => {
+                await Promise.all([
                     updateNodeStatus(buildId, nodeId, nodeStatus, buildStatus, durationMs, startedAt),
                     publishSafe(buildChannel['node-status'], {
                         nodeId,
@@ -85,7 +87,10 @@ export const buildFunction = inngest.createFunction(
                         durationMs,
                         startedAt,
                     }),
-                ]).then(() => undefined);
+                ]);
+
+                await publishBuildTaskFromDatabase(buildId);
+            };
 
             const elapsed = (nodeId: string): number | undefined => {
                 const start = nodeStartTimes.get(nodeId);
@@ -120,7 +125,21 @@ export const buildFunction = inngest.createFunction(
                 throw new Error(`No pipeline configuration found for stage: ${config.stageId}`);
             }
 
-            return await pipelineOrchestrator.execute(buildId, config, graph, step, logger, reporter, setStatusBuild);
+            await publishBuildTaskFromDatabase(buildId);
+
+            try {
+                return await pipelineOrchestrator.execute(
+                    buildId,
+                    config,
+                    graph,
+                    step,
+                    logger,
+                    reporter,
+                    setStatusBuild,
+                );
+            } finally {
+                await publishBuildTaskFromDatabase(buildId);
+            }
         }
     },
 );

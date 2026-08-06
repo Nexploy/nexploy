@@ -44,6 +44,15 @@ export interface ImageDeleteResponse {
     skipped: { id: string; name: string; reason: string }[];
 }
 
+export interface ImageUntagResponse {
+    untagged: string[];
+    skipped: { tag: string; reason: string }[];
+}
+
+export interface ImageLoadResponse {
+    loaded: string[];
+}
+
 export interface ImageTool extends DropdownActionTool {
     disabled?: boolean;
     variant?: 'default' | 'destructive';

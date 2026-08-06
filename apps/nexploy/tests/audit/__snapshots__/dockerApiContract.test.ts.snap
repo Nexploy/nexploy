@@ -48,10 +48,16 @@ exports[`docker-api contract > records the calls nexploy makes, so a change to t
   "POST /api/images/:param/tag",
   "POST /api/images/delete",
   "POST /api/images/hardRefresh",
+  "POST /api/images/import",
+  "POST /api/images/load",
   "POST /api/images/mirror",
   "POST /api/images/prune",
   "POST /api/images/pull",
+  "POST /api/images/push",
+  "POST /api/images/save",
   "POST /api/images/scan",
+  "POST /api/images/tag",
+  "POST /api/images/untag",
   "POST /api/networks/:param",
   "POST /api/networks/create",
   "POST /api/networks/delete",
@@ -136,14 +142,4 @@ exports[`docker-api contract > records the routes docker-api serves but nexploy 
 ]
 `;
 
-exports[`docker-api contract > reports the calls that reach no docker-api route 1`] = `
-[
-  "POST /api/images/push — Accepted by imageActionsSchema, kept for a future docker-api route",
-  "POST /api/images/tag — Accepted by imageActionsSchema; docker-api serves POST /api/images/:id/tag today",
-  "POST /api/images/untag — Accepted by imageActionsSchema, kept for a future docker-api route",
-  "POST /api/images/import — Accepted by imageActionsSchema, kept for a future docker-api route",
-  "POST /api/images/load — Accepted by imageActionsSchema, kept for a future docker-api route",
-  "POST /api/images/save — Accepted by imageActionsSchema, kept for a future docker-api route",
-  "POST /api/networks/prune — Accepted by networkActionsSchema, kept for a future docker-api route",
-]
-`;
+exports[`docker-api contract > reports the calls that reach no docker-api route 1`] = `[]`;

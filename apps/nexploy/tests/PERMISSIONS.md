@@ -6,8 +6,8 @@ Generated from `src/lib/auth/permissions.ts` and the endpoint inventory.
 
 | Measure | Value |
 | --- | --- |
-| Endpoints discovered | 175 |
-| Endpoints with a `requirePermission` guard | 132 |
+| Endpoints discovered | 181 |
+| Endpoints with a `requirePermission` guard | 138 |
 | Endpoints without a guard (declared exemptions) | 43 |
 | Declared permissions | 83 |
 | Permissions required by at least one endpoint | 61 |
@@ -152,9 +152,9 @@ organization, and by the global role when it belongs to the host.
 
 | Action | guest | developer | admin | system | Endpoints |
 | --- | --- | --- | --- | --- | --- |
-| `read` | yes | yes | yes | yes | `GET src/app/api/docker/images/search/route.ts` |
-| `pull` | — | yes | yes | — | `onImagePullAction` |
-| `manage` | — | — | yes | — | `onImageAction` |
+| `read` | yes | yes | yes | yes | `GET src/app/api/docker/images/save/route.ts`<br>`GET src/app/api/docker/images/search/route.ts` |
+| `pull` | — | yes | yes | — | `onImageImportAction`<br>`onImageLoadAction`<br>`onImagePullAction` |
+| `manage` | — | — | yes | — | `onImageAction`<br>`onImagePushAction`<br>`onImageTagAction`<br>`onImageUntagAction` |
 | `remove` | — | — | yes | — | **none** |
 
 ### `network`

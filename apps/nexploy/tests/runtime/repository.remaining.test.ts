@@ -15,6 +15,7 @@ import { createCustomCert } from '@/actions/repository/sslCertificate/createCust
 import { createLetsEncryptCert } from '@/actions/repository/sslCertificate/createLetsEncryptCert.action';
 import { deleteSslCert } from '@/actions/repository/sslCertificate/deleteSslCert.action';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
+import { onGetTokenBuildTasksAction } from '@/actions/inngest/tokenBuildTasks.action';
 import { addDomain } from '@/actions/domains/addDomain.action';
 import { editDomain } from '@/actions/domains/editDomain.action';
 import { deleteDomain } from '@/actions/domains/deleteDomain.action';
@@ -67,6 +68,12 @@ describePermissionMatrix('build endpoints', [
         kind: 'action',
         invoke: (world) => onGetTokenBuildIdAction({ buildId: world.builds.inOrgA, topics: ['logs'] }),
         expected: ORG_A_MEMBERS,
+    },
+    {
+        name: 'onGetTokenBuildTasksAction',
+        kind: 'action',
+        invoke: () => onGetTokenBuildTasksAction(),
+        expected: allowOnly('guest', 'developer', 'admin', 'system', 'orgOwner', 'orgAdmin', 'orgMember', 'outsider'),
     },
     {
         name: 'onDeleteVersion',

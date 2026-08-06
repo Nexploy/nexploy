@@ -133,6 +133,9 @@
   "noContainers": "Sin contenedores",
   "noVolumes": "Sin volúmenes",
   "noNetworks": "Sin redes",
+  "prune": "Limpiar",
+  "pruneNetworks": "Limpiar redes",
+  "confirmPruneNetworks": "Esto eliminará permanentemente todas las redes sin usar. Esta acción no se puede deshacer.",
   "noContainersDescription": "No hay contenedores disponibles",
   "containerActions": {
     "resume": "Reanudar",
@@ -701,7 +704,8 @@
     "addEnvironment": "Añadiendo entorno",
     "updating": "Actualizando...",
     "updateEnvironment": "Actualizar el entorno",
-    "selectionNotice": "Cuando seleccionas un entorno distinto del predeterminado, todas tus interacciones con Docker (contenedores, imágenes, volúmenes, redes, despliegues...) pasarán por este nuevo entorno."
+    "selectionNotice": "Cuando seleccionas un entorno distinto del predeterminado, todas tus interacciones con Docker (contenedores, imágenes, volúmenes, redes, despliegues...) pasarán por este nuevo entorno.",
+    "optional": "Opcional"
   },
   "dropdownActions": {
     "remove": "Eliminar",
@@ -987,13 +991,15 @@
       "container": "Abrir el contenedor",
       "image": "Abrir la imagen",
       "network": "Abrir la red",
-      "volume": "Abrir el volumen"
+      "volume": "Abrir el volumen",
+      "build": "Abrir el build"
     },
     "openResultIn": {
       "container": "Abrir el contenedor ({environment})",
       "image": "Abrir la imagen ({environment})",
       "network": "Abrir la red ({environment})",
-      "volume": "Abrir el volumen ({environment})"
+      "volume": "Abrir el volumen ({environment})",
+      "build": "Abrir el build ({environment})"
     },
     "kinds": {
       "container-migrate": "Moviendo {name}",
@@ -1023,7 +1029,14 @@
       "stack-restart": "Reiniciando el stack {name}",
       "stack-pause": "Pausando el stack {name}",
       "stack-unpause": "Reanudando el stack {name}",
-      "stack-remove": "Eliminando el stack {name}"
+      "stack-remove": "Eliminando el stack {name}",
+      "build-pipeline": "Build de {name}",
+      "image-push": "Subiendo {name}",
+      "image-untag": "Eliminando las etiquetas {name}",
+      "image-import": "Importando {name}",
+      "image-load": "Cargando el archivo de imagen",
+      "image-save": "Exportando {name}",
+      "network-prune": "Limpiando las redes sin usar"
     },
     "status": {
       "running": "En curso",
@@ -1043,12 +1056,45 @@
       "recreate": "Recreando el contenedor",
       "tag": "Etiquetando la imagen",
       "push": "Enviando al registro",
-      "cleanup": "Limpieza"
+      "cleanup": "Limpieza",
+      "pipelineNode": "Paso: {step}",
+      "import": "Importando la imagen"
     },
     "toasts": {
       "succeeded": "«{name}» se ha completado.",
       "failed": "«{name}» ha fallado.",
       "cancelled": "«{name}» se ha cancelado."
     }
+  },
+  "imageActions": {
+    "archiveDropZone": "Suelta aquí un archivo de imagen o haz clic para seleccionarlo",
+    "archiveFormats": "Formatos aceptados: .tar, .tar.gz, .tgz",
+    "imageReference": "Referencia de la imagen",
+    "import": "Importar",
+    "importDescription": "Importar una imagen desde la URL de un archivo remoto.",
+    "importStarted": "Importación de {name} iniciada.",
+    "importTitle": "Importar una imagen",
+    "load": "Cargar",
+    "loadDescription": "Cargar una o varias imágenes desde un archivo local.",
+    "loadSuccess": "{count, plural, one {# imagen cargada} other {# imágenes cargadas}}",
+    "loadTitle": "Cargar un archivo de imagen",
+    "push": "Subir",
+    "pushDescription": "Subir esta imagen a un registro.",
+    "pushStarted": "Subida de {name} iniciada.",
+    "pushTitle": "Subir la imagen",
+    "registry": "Registro",
+    "registryNone": "Docker Hub (por defecto)",
+    "repository": "Repositorio",
+    "save": "Exportar",
+    "sourceUrl": "URL de origen",
+    "tag": "Etiquetar",
+    "tagDescription": "Añadir un nuevo repositorio y etiqueta a esta imagen.",
+    "tagSuccess": "Imagen etiquetada correctamente.",
+    "tagTitle": "Etiquetar la imagen",
+    "untag": "Eliminar etiquetas",
+    "untagDescription": "Selecciona las etiquetas que quieres eliminar de esta imagen.",
+    "untagLastTagWarning": "Esta imagen solo tiene una etiqueta: eliminarla borra la imagen.",
+    "untagSuccess": "{count, plural, one {# etiqueta eliminada} other {# etiquetas eliminadas}}",
+    "untagTitle": "Eliminar las etiquetas de la imagen"
   }
 }

@@ -133,6 +133,9 @@
   "noContainers": "No containers",
   "noVolumes": "No volumes",
   "noNetworks": "No networks",
+  "prune": "Prune",
+  "pruneNetworks": "Prune networks",
+  "confirmPruneNetworks": "This will permanently remove all unused networks. This action cannot be undone.",
   "noContainersDescription": "No containers available",
   "containerActions": {
     "resume": "Resume",
@@ -701,7 +704,8 @@
     "addEnvironment": "Adding environment",
     "updating": "Updating...",
     "updateEnvironment": "Update environment",
-    "selectionNotice": "When you select an environment other than the default one, all your Docker interactions (containers, images, volumes, networks, deployments...) will go through this new environment."
+    "selectionNotice": "When you select an environment other than the default one, all your Docker interactions (containers, images, volumes, networks, deployments...) will go through this new environment.",
+    "optional": "Optional"
   },
   "dropdownActions": {
     "remove": "Remove",
@@ -987,13 +991,15 @@
       "container": "Open the container",
       "image": "Open the image",
       "network": "Open the network",
-      "volume": "Open the volume"
+      "volume": "Open the volume",
+      "build": "Open the build"
     },
     "openResultIn": {
       "container": "Open the container ({environment})",
       "image": "Open the image ({environment})",
       "network": "Open the network ({environment})",
-      "volume": "Open the volume ({environment})"
+      "volume": "Open the volume ({environment})",
+      "build": "Open the build ({environment})"
     },
     "kinds": {
       "container-migrate": "Moving {name}",
@@ -1023,7 +1029,14 @@
       "stack-restart": "Restarting the stack {name}",
       "stack-pause": "Pausing the stack {name}",
       "stack-unpause": "Resuming the stack {name}",
-      "stack-remove": "Removing the stack {name}"
+      "stack-remove": "Removing the stack {name}",
+      "build-pipeline": "Build of {name}",
+      "image-push": "Pushing {name}",
+      "image-untag": "Removing the tags {name}",
+      "image-import": "Importing {name}",
+      "image-load": "Loading the image archive",
+      "image-save": "Exporting {name}",
+      "network-prune": "Pruning unused networks"
     },
     "status": {
       "running": "In progress",
@@ -1043,12 +1056,45 @@
       "recreate": "Recreating the container",
       "tag": "Tagging the image",
       "push": "Pushing to the registry",
-      "cleanup": "Cleaning up"
+      "cleanup": "Cleaning up",
+      "pipelineNode": "Step: {step}",
+      "import": "Importing the image"
     },
     "toasts": {
       "succeeded": "\"{name}\" completed successfully.",
       "failed": "\"{name}\" failed.",
       "cancelled": "\"{name}\" was cancelled."
     }
+  },
+  "imageActions": {
+    "archiveDropZone": "Drop an image archive here or click to select it",
+    "archiveFormats": "Accepted formats: .tar, .tar.gz, .tgz",
+    "imageReference": "Image reference",
+    "import": "Import",
+    "importDescription": "Import an image from a remote archive URL.",
+    "importStarted": "Import of {name} started.",
+    "importTitle": "Import an image",
+    "load": "Load",
+    "loadDescription": "Load one or more images from a local archive.",
+    "loadSuccess": "{count, plural, one {# image loaded} other {# images loaded}}",
+    "loadTitle": "Load an image archive",
+    "push": "Push",
+    "pushDescription": "Push this image to a registry.",
+    "pushStarted": "Push of {name} started.",
+    "pushTitle": "Push the image",
+    "registry": "Registry",
+    "registryNone": "Docker Hub (default)",
+    "repository": "Repository",
+    "save": "Export",
+    "sourceUrl": "Source URL",
+    "tag": "Tag",
+    "tagDescription": "Add a new repository and tag to this image.",
+    "tagSuccess": "Image tagged successfully.",
+    "tagTitle": "Tag the image",
+    "untag": "Remove tags",
+    "untagDescription": "Select the tags to remove from this image.",
+    "untagLastTagWarning": "This image only has one tag: removing it deletes the image.",
+    "untagSuccess": "{count, plural, one {# tag removed} other {# tags removed}}",
+    "untagTitle": "Remove the image tags"
   }
 }

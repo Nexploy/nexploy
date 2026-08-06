@@ -16,7 +16,8 @@ import { useNetworksStore } from '../../../../stores/docker/useNetworksStore';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
-import { Trash2 } from 'lucide-react';
+import { Eraser, Trash2 } from 'lucide-react';
+import { Can } from '@/components/permission/Can';
 import { Badge } from '@workspace/ui/components/badge';
 import { onNetworkAction } from '@/actions/docker/network/networkAction.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
@@ -26,6 +27,7 @@ import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 import { TableShell } from '@/components/table/TableShell';
 import { TablePagination } from '@/components/table/TablePagination';
 import { useClientTablePagination } from '@/hooks/useClientTablePagination';
+import { useRouter } from '@/i18n/navigation';
 
 const globalFilterFn: FilterFn<Network> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -55,6 +57,8 @@ export function TableDockerNetworks() {
     const t = useTranslations('docker.tables');
     const tDocker = useTranslations('docker');
     const tCommon = useTranslations('common');
+
+    const router = useRouter();
 
     const isLoading = !networks.length && !lastUpdate;
     const isEmpty = !networks.length && !!lastUpdate;
@@ -128,6 +132,18 @@ export function TableDockerNetworks() {
         });
     }, [rowSelection, openAlertDialog, tDocker, tCommon, table]);
 
+    const handlePruneAction = useCallback(() => {
+        openAlertDialog({
+            title: tDocker('pruneNetworks'),
+            description: tDocker('confirmPruneNetworks'),
+            cancelLabel: tCommon('cancel'),
+            actionLabel: tDocker('prune'),
+            onAction: async () => {
+                await onNetworkAction({ networkIds: [], action: 'prune' });
+            },
+        });
+    }, [openAlertDialog, tDocker, tCommon]);
+
     return (
         <div className={'mx-5 space-y-3'}>
             <div className={'flex flex-wrap justify-between gap-3'}>
@@ -137,7 +153,17 @@ export function TableDockerNetworks() {
                     value={globalFilter ?? ''}
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
-                <div className={'flex gap-3'}>
+                <div className={'flex flex-wrap gap-3'}>
+                    <Can resource="network" action="manage">
+                        <Button
+                            variant={'outline'}
+                            icon={Eraser}
+                            onClick={handlePruneAction}
+                            disabled={statusDocker !== 'connected'}
+                        >
+                            {tDocker('prune')}
+                        </Button>
+                    </Can>
                     <Button
                         variant={'destructive'}
                         onClick={handleDeleteAction}
@@ -160,6 +186,7 @@ export function TableDockerNetworks() {
                 emptyLabel={tDocker('noNetworks')}
                 noResultsLabel={tCommon('noMatchSearch')}
                 hasActiveFilters={!isEmpty}
+                onRowClick={(network) => router.push(`/docker/networks/${network.id}`)}
             />
 
             <TablePagination

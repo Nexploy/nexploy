@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { BookOpen, Globe } from 'lucide-react';
+import { BookOpen, Bug, Globe } from 'lucide-react';
 import Github from '@thesvg/react/github';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@workspace/ui/components/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -60,6 +60,22 @@ export function ExternalLinks() {
                         </SidebarMenuButton>
                     </TooltipTrigger>
                     <TooltipContent side="top">{t('github')}</TooltipContent>
+                </Tooltip>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <SidebarMenuButton asChild className="size-8 justify-center">
+                            <a
+                                href="https://github.com/Nexploy/nexploy/issues/new?labels=bug"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Bug />
+                            </a>
+                        </SidebarMenuButton>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">{t('reportBug')}</TooltipContent>
                 </Tooltip>
             </SidebarMenuItem>
         </SidebarMenu>

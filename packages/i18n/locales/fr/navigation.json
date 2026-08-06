@@ -50,6 +50,7 @@
   "website": "Site web",
   "documentation": "Documentation",
   "github": "GitHub",
+  "reportBug": "Signaler un bug",
   "diskUsage": "Utilisation du disque",
   "activity": "Activité"
 }

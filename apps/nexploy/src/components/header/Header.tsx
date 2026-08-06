@@ -4,6 +4,7 @@ import { BreadcrumbPath } from '@/components/header/BreadcrumbPath';
 import { AIPanelToggle } from '@/components/ai/AIPanelToggle';
 import { SearchCommand } from '@/components/search/SearchCommand.tsx';
 import { TasksIndicator } from '@/components/tasks/TasksIndicator';
+import { BuildTasksSubscriber } from '@/components/tasks/BuildTasksSubscriber';
 import { ButtonGroup } from '@workspace/ui/components/button-group.tsx';
 import { SSEProvider } from '@/providers/SSEProviders.tsx';
 
@@ -18,6 +19,7 @@ export function Header() {
             <div className="flex items-center">
                 <ButtonGroup>
                     <SSEProvider connections={['tasks']}>
+                        <BuildTasksSubscriber />
                         <TasksIndicator />
                     </SSEProvider>
                     <SearchCommand />

@@ -6,7 +6,8 @@ import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';
 
 interface DragAndDropProps {
-    onFileContent: (content: string, fileName: string) => void;
+    onFileContent?: (content: string, fileName: string) => void;
+    onFile?: (file: File | null) => void;
     accept?: string[];
     dropText?: string;
     formatsText?: string;
@@ -16,6 +17,7 @@ interface DragAndDropProps {
 
 function DragAndDrop({
     onFileContent,
+    onFile,
     accept,
     dropText = 'Drag & drop a file here, or click to browse',
     formatsText,
@@ -28,15 +30,18 @@ function DragAndDrop({
 
     const processFile = React.useCallback(
         (file: File) => {
+            setFileName(file.name);
+            onFile?.(file);
+
+            if (!onFileContent) return;
+
             const reader = new FileReader();
             reader.onload = (e) => {
-                const content = e.target?.result as string;
-                setFileName(file.name);
-                onFileContent(content, file.name);
+                onFileContent(e.target?.result as string, file.name);
             };
             reader.readAsText(file);
         },
-        [onFileContent],
+        [onFileContent, onFile],
     );
 
     const handleDrop = React.useCallback(
@@ -73,11 +78,12 @@ function DragAndDrop({
 
     const handleClear = React.useCallback(() => {
         setFileName(null);
-        onFileContent('', '');
+        onFile?.(null);
+        onFileContent?.('', '');
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
-    }, [onFileContent]);
+    }, [onFileContent, onFile]);
 
     return (
         <div

@@ -6,6 +6,11 @@ import { onContainerRemoveAction } from '@/actions/docker/container/containerRem
 import { onContainerCreateAction } from '@/actions/docker/container/containerCreate.action';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
 import { onImagePullAction } from '@/actions/docker/image/imagePullAction.action';
+import { onImagePushAction } from '@/actions/docker/image/imagePushAction.action';
+import { onImageTagAction } from '@/actions/docker/image/imageTagAction.action';
+import { onImageUntagAction } from '@/actions/docker/image/imageUntagAction.action';
+import { onImageImportAction } from '@/actions/docker/image/imageImportAction.action';
+import { onImageLoadAction } from '@/actions/docker/image/imageLoadAction.action';
 import { onNetworkCreateAction } from '@/actions/docker/network/networkCreate.action';
 import { onVolumeCreateAction } from '@/actions/docker/volume/volumeCreate.action';
 import { onInitSwarmAction } from '@/actions/docker/swarm/init.action';
@@ -95,6 +100,47 @@ describePermissionMatrix('docker host-level actions', [
         setup: mockContainerOwnership,
         invoke: () => onImageAction({ action: 'delete', force: false, imageIds: ['sha256:abc'] }),
         expected: allowOnly('admin'),
+    },
+    {
+        name: 'onImagePushAction',
+        kind: 'action',
+        setup: mockContainerOwnership,
+        invoke: () => onImagePushAction({ imageName: 'alpine:latest' }),
+        expected: allowOnly('admin'),
+    },
+    {
+        name: 'onImageTagAction',
+        kind: 'action',
+        setup: mockContainerOwnership,
+        invoke: () => onImageTagAction({ imageId: 'sha256:abc', repo: 'alpine', tag: 'copy' }),
+        expected: allowOnly('admin'),
+    },
+    {
+        name: 'onImageUntagAction',
+        kind: 'action',
+        setup: () => {
+            mockContainerOwnership();
+            mockDocker('post', 'images/untag', { untagged: ['alpine:copy'], skipped: [] });
+        },
+        invoke: () => onImageUntagAction({ tags: ['alpine:copy'] }),
+        expected: allowOnly('admin'),
+    },
+    {
+        name: 'onImageImportAction',
+        kind: 'action',
+        setup: mockContainerOwnership,
+        invoke: () => onImageImportAction({ source: 'https://example.test/rootfs.tar', repo: 'imported', tag: 'v1' }),
+        expected: allowOnly('developer', 'admin', 'orgOwner', 'orgAdmin', 'orgMember', 'outsider'),
+    },
+    {
+        name: 'onImageLoadAction',
+        kind: 'action',
+        setup: () => {
+            mockContainerOwnership();
+            mockDocker('post', 'images/load', { loaded: ['alpine:latest'] });
+        },
+        invoke: () => onImageLoadAction({ archive: new File(['tar-content'], 'images.tar') }),
+        expected: allowOnly('developer', 'admin', 'orgOwner', 'orgAdmin', 'orgMember', 'outsider'),
     },
     {
         name: 'onNetworkCreateAction',

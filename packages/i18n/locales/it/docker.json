@@ -133,6 +133,9 @@
   "noContainers": "Nessun container",
   "noVolumes": "Nessun volume",
   "noNetworks": "Nessuna rete",
+  "prune": "Pulisci",
+  "pruneNetworks": "Pulisci le reti",
+  "confirmPruneNetworks": "Questa operazione rimuoverà definitivamente tutte le reti inutilizzate. L'azione non può essere annullata.",
   "noContainersDescription": "Nessun container disponibile",
   "containerActions": {
     "resume": "Riprendi",
@@ -701,7 +704,8 @@
     "addEnvironment": "Aggiunta dell'ambiente",
     "updating": "Aggiornamento in corso...",
     "updateEnvironment": "Aggiorna l'ambiente",
-    "selectionNotice": "Quando selezioni un ambiente diverso da quello predefinito, tutte le tue interazioni con Docker (container, immagini, volumi, reti, deployment...) passeranno da questo nuovo ambiente."
+    "selectionNotice": "Quando selezioni un ambiente diverso da quello predefinito, tutte le tue interazioni con Docker (container, immagini, volumi, reti, deployment...) passeranno da questo nuovo ambiente.",
+    "optional": "Opzionale"
   },
   "dropdownActions": {
     "remove": "Rimuovi",
@@ -987,13 +991,15 @@
       "container": "Apri il container",
       "image": "Apri l'immagine",
       "network": "Apri la rete",
-      "volume": "Apri il volume"
+      "volume": "Apri il volume",
+      "build": "Apri la build"
     },
     "openResultIn": {
       "container": "Apri il container ({environment})",
       "image": "Apri l'immagine ({environment})",
       "network": "Apri la rete ({environment})",
-      "volume": "Apri il volume ({environment})"
+      "volume": "Apri il volume ({environment})",
+      "build": "Apri la build ({environment})"
     },
     "kinds": {
       "container-migrate": "Spostamento di {name}",
@@ -1023,7 +1029,14 @@
       "stack-restart": "Riavvio dello stack {name}",
       "stack-pause": "Sospensione dello stack {name}",
       "stack-unpause": "Ripresa dello stack {name}",
-      "stack-remove": "Rimozione dello stack {name}"
+      "stack-remove": "Rimozione dello stack {name}",
+      "build-pipeline": "Build di {name}",
+      "image-push": "Push di {name}",
+      "image-untag": "Rimozione dei tag {name}",
+      "image-import": "Importazione di {name}",
+      "image-load": "Caricamento dell’archivio immagine",
+      "image-save": "Esportazione di {name}",
+      "network-prune": "Pulizia delle reti inutilizzate"
     },
     "status": {
       "running": "In corso",
@@ -1043,12 +1056,45 @@
       "recreate": "Ricreazione del container",
       "tag": "Tag dell'immagine",
       "push": "Invio al registry",
-      "cleanup": "Pulizia"
+      "cleanup": "Pulizia",
+      "pipelineNode": "Passaggio: {step}",
+      "import": "Importazione dell’immagine"
     },
     "toasts": {
       "succeeded": "«{name}» è stato completato.",
       "failed": "«{name}» non è riuscito.",
       "cancelled": "«{name}» è stato annullato."
     }
+  },
+  "imageActions": {
+    "archiveDropZone": "Trascina qui un archivio immagine o clicca per selezionarlo",
+    "archiveFormats": "Formati accettati: .tar, .tar.gz, .tgz",
+    "imageReference": "Riferimento immagine",
+    "import": "Importa",
+    "importDescription": "Importa un’immagine dall’URL di un archivio remoto.",
+    "importStarted": "Importazione di {name} avviata.",
+    "importTitle": "Importa un’immagine",
+    "load": "Carica",
+    "loadDescription": "Carica una o più immagini da un archivio locale.",
+    "loadSuccess": "{count, plural, one {# immagine caricata} other {# immagini caricate}}",
+    "loadTitle": "Carica un archivio immagine",
+    "push": "Push",
+    "pushDescription": "Esegui il push di questa immagine verso un registry.",
+    "pushStarted": "Push di {name} avviato.",
+    "pushTitle": "Esegui il push dell’immagine",
+    "registry": "Registry",
+    "registryNone": "Docker Hub (predefinito)",
+    "repository": "Repository",
+    "save": "Esporta",
+    "sourceUrl": "URL di origine",
+    "tag": "Tagga",
+    "tagDescription": "Aggiungi un nuovo repository e tag a questa immagine.",
+    "tagSuccess": "Immagine taggata correttamente.",
+    "tagTitle": "Tagga l’immagine",
+    "untag": "Rimuovi i tag",
+    "untagDescription": "Seleziona i tag da rimuovere da questa immagine.",
+    "untagLastTagWarning": "Questa immagine ha un solo tag: rimuoverlo elimina l’immagine.",
+    "untagSuccess": "{count, plural, one {# tag rimosso} other {# tag rimossi}}",
+    "untagTitle": "Rimuovi i tag dell’immagine"
   }
 }

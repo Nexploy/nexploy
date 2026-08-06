@@ -63,6 +63,52 @@ export const imageTagBodySchema = z.object({
     tag: z.string().min(1),
 });
 
+export const imagePushSchema = z.object({
+    imageName: z.string().min(1),
+    registryId: z.string().optional(),
+});
+
+export const imagePushWithAuthSchema = z.object({
+    imageName: z.string().min(1),
+    auth: imageAuthSchema.optional(),
+});
+
+export const imageTagSchema = z.object({
+    imageId: z.string().min(1),
+    repo: z.string().min(1),
+    tag: z.string().min(1),
+});
+
+export const imageUntagSchema = z.object({
+    tags: z.array(z.string().min(1)).min(1),
+});
+
+export const imageImportSchema = z.object({
+    source: z.url(),
+    repo: z.string().min(1),
+    tag: z.string().min(1).default('latest'),
+});
+
+export const imageSaveSchema = z.object({
+    imageIds: z.array(z.string().min(1)).min(1),
+});
+
+export const imageSaveQuerySchema = z.object({
+    imageIds: z
+        .string()
+        .min(1)
+        .transform((value) => value.split(',').filter(Boolean)),
+});
+
+const MAX_IMAGE_ARCHIVE_BYTES = 8 * 1024 * 1024 * 1024;
+
+export const imageLoadSchema = z.object({
+    archive: z
+        .instanceof(File)
+        .refine((file) => file.size > 0)
+        .refine((file) => file.size <= MAX_IMAGE_ARCHIVE_BYTES),
+});
+
 export const imagePruneSchema = z.object({
     dangling: z.boolean().default(true),
     filter: z.string().optional(),

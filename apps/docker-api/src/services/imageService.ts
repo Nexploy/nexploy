@@ -1,9 +1,11 @@
+import type Docker from 'dockerode';
 import { docker } from '@/utils/dockerClient';
 import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { imagesStateManager } from '@/managers/list/imagesStateManager';
 import { ImageDeleteResponse, ImageDeleteResult } from '@workspace/typescript-interface/docker/docker.image';
 import { StartedTask, runAsTask } from '@/lib/taskRunner';
-import { RegistryAuth, pullWithProgress } from '@/utils/pullProgress';
+import { RegistryAuth, pullWithProgress, pushWithProgress } from '@/utils/pullProgress';
+import type { ImageLoadResponse, ImageUntagResponse } from '@workspace/typescript-interface/docker/docker.image';
 
 export async function deleteImages(imageIds: string[], force: boolean): Promise<ImageDeleteResponse> {
     const results = await Promise.all(
@@ -53,6 +55,129 @@ export function startImagePull(imageName: string, auth?: RegistryAuth): StartedT
             return { imageName, imageId: inspect.Id };
         },
         resultHref: (result) => `/docker/images/${encodeURIComponent(result.imageId)}`,
+    });
+}
+
+export function startImagePush(imageName: string, auth?: RegistryAuth): StartedTask {
+    const client = getCurrentDockerClient();
+    const environmentId = getCurrentEnvironmentId();
+
+    return runAsTask<{ imageName: string }>({
+        kind: 'image-push',
+        subjectName: imageName,
+        stepKeys: ['push'],
+        environmentId,
+        run: async ({ step, completeStep, setProgress }) => {
+            step('push');
+            await pushWithProgress(client, imageName, auth, setProgress);
+            setProgress(100);
+            completeStep('push');
+
+            return { imageName };
+        },
+    });
+}
+
+export function startImageImport(source: string, repo: string, tag: string): StartedTask {
+    const client = getCurrentDockerClient();
+    const environmentId = getCurrentEnvironmentId();
+    const imageName = `${repo}:${tag}`;
+
+    return runAsTask<{ imageName: string; imageId: string }>({
+        kind: 'image-import',
+        subjectName: imageName,
+        stepKeys: ['import'],
+        environmentId,
+        run: async ({ step, completeStep }) => {
+            step('import');
+
+            const stream = await client.createImage(null, { fromSrc: source, repo, tag });
+            await followStream(client, stream);
+
+            completeStep('import');
+
+            const inspect = await client.getImage(imageName).inspect();
+
+            return { imageName, imageId: inspect.Id };
+        },
+        resultHref: (result) => `/docker/images/${encodeURIComponent(result.imageId)}`,
+    });
+}
+
+export async function untagImages(tags: string[]): Promise<ImageUntagResponse> {
+    const untagged: string[] = [];
+    const skipped: { tag: string; reason: string }[] = [];
+
+    for (const tag of tags) {
+        const image = imagesStateManager.getByName(tag);
+
+        if (!image) {
+            skipped.push({ tag, reason: 'not_found' });
+            continue;
+        }
+
+        if (image.repoTags.length <= 1) {
+            skipped.push({ tag, reason: 'last_tag' });
+            continue;
+        }
+
+        await docker.getImage(tag).remove();
+        untagged.push(tag);
+    }
+
+    return { untagged, skipped };
+}
+
+export async function loadImages(archive: NodeJS.ReadableStream): Promise<ImageLoadResponse> {
+    const client = getCurrentDockerClient();
+    const stream = await client.loadImage(archive);
+    const events = await followStream(client, stream);
+
+    const loaded = events
+        .map((event) => /Loaded image(?: ID)?: (.+)/.exec(event.stream ?? '')?.[1]?.trim())
+        .filter((name): name is string => !!name);
+
+    return { loaded };
+}
+
+export async function saveImages(imageIds: string[]): Promise<NodeJS.ReadableStream> {
+    const client = getCurrentDockerClient();
+    const [first] = imageIds;
+
+    if (imageIds.length === 1 && first) return client.getImage(first).get();
+
+    const names = imageIds.map((id) => `names=${encodeURIComponent(id)}`).join('&');
+
+    return new Promise<NodeJS.ReadableStream>((resolve, reject) => {
+        client.modem.dial(
+            {
+                path: `/images/get?${names}`,
+                method: 'GET',
+                isStream: true,
+                statusCodes: { 200: true, 500: 'server error' },
+            },
+            (err: Error | null, data: unknown) => {
+                if (err) return reject(err);
+                resolve(data as NodeJS.ReadableStream);
+            },
+        );
+    });
+}
+
+interface DockerStreamEvent {
+    stream?: string;
+    error?: string;
+}
+
+function followStream(client: Docker, stream: NodeJS.ReadableStream): Promise<DockerStreamEvent[]> {
+    return new Promise<DockerStreamEvent[]>((resolve, reject) => {
+        client.modem.followProgress(
+            stream,
+            (err: Error | null, events: DockerStreamEvent[]) => (err ? reject(err) : resolve(events ?? [])),
+            (event: DockerStreamEvent) => {
+                if (event.error) reject(new Error(event.error));
+            },
+        );
     });
 }
 

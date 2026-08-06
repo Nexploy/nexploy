@@ -14,6 +14,7 @@ import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
 import { PipelineNode } from '@nexploy/nodes/core/node';
 import { matchesWebhookTrigger, WebhookCloneFilters } from '@nexploy/nodes/core/webhookTrigger';
+import { publishBuildTaskFromDatabase } from '@/services/repository/buildTask.service';
 
 function pipelineAcceptsWebhookTrigger(nodes: unknown, trigger: WebhookTrigger, branch?: string): boolean {
     const webhookNodes = (Array.isArray(nodes) ? (nodes as PipelineNode[]) : []).filter(
@@ -96,6 +97,8 @@ export async function startBuildRepository(
     };
 
     await addBuildJob(build.id, config);
+    await publishBuildTaskFromDatabase(build.id);
+
     return { id: build.id, numberBuild: build.number };
 }
 
@@ -297,6 +300,8 @@ export async function cancelBuildRepository(buildId: string) {
     ]);
 
     await inngest.send({ name: 'build/cancel', data: { buildId } });
+
+    await publishBuildTaskFromDatabase(buildId);
 }
 
 export async function getBuildsPage(repositoryId: string, stageId?: string, cursor?: string, take = 20) {

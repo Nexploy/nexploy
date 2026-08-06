@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { Box, Play, Trash } from 'lucide-react';
+import { Box, Play, Trash2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useImageStore } from '../../../stores/docker/useImageStore';
 import { CardImageDetails } from '@/components/docker/image/cards/CardImageDetails';
@@ -122,7 +122,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                             <TooltipContent>{t('useImage')}</TooltipContent>
                         </Tooltip>
                         <Button variant="destructive" size="icon" onClick={handleRemove} disabled={!image}>
-                            <Trash className="size-4" />
+                            <Trash2 className="size-4" />
                         </Button>
                     </div>
                 </div>

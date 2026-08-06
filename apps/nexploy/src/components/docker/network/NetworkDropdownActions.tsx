@@ -2,7 +2,7 @@ import type { NetworkActionInput } from '@workspace/schemas-zod/docker/network/n
 import { Fragment } from 'react';
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@workspace/ui/components/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
-import { Trash } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { onNetworkAction } from '@/actions/docker/network/networkAction.action';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
@@ -34,7 +34,7 @@ export function NetworkDropdownActions({ network }: NetworkDropdownActionsProps)
 
     const networkTools: NetworkTool[] = [
         {
-            icon: Trash,
+            icon: Trash2,
             label: t('remove'),
             action: () =>
                 openAlertDialog({

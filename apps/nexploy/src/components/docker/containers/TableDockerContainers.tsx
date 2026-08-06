@@ -21,6 +21,7 @@ import { ContainerTableActions } from './ContainerTableActions';
 import { TableShell } from '@/components/table/TableShell';
 import { TablePagination } from '@/components/table/TablePagination';
 import { useClientTablePagination } from '@/hooks/useClientTablePagination';
+import { useRouter } from '@/i18n/navigation';
 
 interface TableDockerContainersProps {
     containers: Containers[];
@@ -39,6 +40,8 @@ export function TableDockerContainers({ containers, isLoading, search = '' }: Ta
 
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
+
+    const router = useRouter();
 
     const containerRows = useMemo(() => buildContainerRows(containers), [containers]);
     const pagination = useClientTablePagination();
@@ -88,6 +91,13 @@ export function TableDockerContainers({ containers, isLoading, search = '' }: Ta
                 noResultsLabel={t('noContainersMatchSearch')}
                 hasActiveFilters={!isEmpty}
                 rowClassName={(row) => cn('h-12', row.original.isGroup && 'bg-muted/30')}
+                onRowClick={(container, row) => {
+                    if (container.isGroup) {
+                        row.toggleExpanded();
+                        return;
+                    }
+                    router.push(`/docker/containers/${container.id}`);
+                }}
             />
 
             <TablePagination

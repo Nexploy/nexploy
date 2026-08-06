@@ -25,6 +25,7 @@ import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 import { TableShell } from '@/components/table/TableShell';
 import { TablePagination } from '@/components/table/TablePagination';
 import { useClientTablePagination } from '@/hooks/useClientTablePagination';
+import { useRouter } from '@/i18n/navigation';
 
 const globalFilterFn: FilterFn<Volume> = (row, _, value) => {
     const search = value.toLowerCase();
@@ -47,6 +48,8 @@ export function TableDockerVolumes() {
 
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
+
+    const router = useRouter();
 
     const statusDocker = useDockerStore((state) => state.status);
 
@@ -131,6 +134,7 @@ export function TableDockerVolumes() {
                 skeletonRows={5}
                 emptyLabel={t('noVolumesFound')}
                 hasActiveFilters={!isEmpty}
+                onRowClick={(volume) => router.push(`/docker/volumes/${encodeURIComponent(volume.name)}`)}
             />
 
             <TablePagination

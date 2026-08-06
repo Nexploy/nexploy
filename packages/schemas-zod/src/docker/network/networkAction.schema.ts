@@ -57,6 +57,11 @@ export const networkDeleteSchema = z.object({
     force: z.boolean().optional().default(false),
 });
 
+export const networkPruneSchema = z.object({
+    networkIds: z.array(z.string()).optional(),
+    force: z.boolean().optional(),
+});
+
 export const networkIdParamSchema = z.object({
     id: z.string().min(1),
 });

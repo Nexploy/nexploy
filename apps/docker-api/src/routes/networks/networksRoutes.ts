@@ -6,10 +6,11 @@ import {
     networkCreateSchema,
     networkDeleteSchema,
     networkIdParamSchema,
+    networkPruneSchema,
 } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { stripProtectedLabelEntries } from '@nexploy/shared/protectedLabels';
 import { filterNexployNetworks } from '@nexploy/shared/nexployFilter';
-import { deleteNetworks } from '@/services/networkService';
+import { deleteNetworks, pruneNetworks } from '@/services/networkService';
 import { runTrackedTask } from '@/lib/taskRunner';
 import { describeNetworks } from '@/utils/taskSubjects';
 
@@ -100,6 +101,17 @@ app.post(
             kind: 'network-remove',
             subjectName: describeNetworks(networkIds),
             run: () => deleteNetworks(networkIds, force),
+        });
+    }),
+);
+
+app.post(
+    '/prune',
+    route({ json: networkPruneSchema }, async () => {
+        return runTrackedTask({
+            kind: 'network-prune',
+            subjectName: '',
+            run: () => pruneNetworks(),
         });
     }),
 );

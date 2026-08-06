@@ -5,7 +5,7 @@ import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
-import { Plus, Save, Trash } from 'lucide-react';
+import { Plus, Save, Trash2 } from 'lucide-react';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import {
     ContainerLabelForm,
@@ -108,7 +108,7 @@ export function LabelForm({ mode, defaultLabel, originalLabel }: LabelFormProps)
 
                 <DialogFooter className="flex justify-between! pt-4">
                     {mode === 'edit' && (
-                        <Button size="icon" type="button" variant="destructive" icon={Trash} onClick={handleDelete} />
+                        <Button size="icon" type="button" variant="destructive" icon={Trash2} onClick={handleDelete} />
                     )}
                     <div className="flex flex-1 flex-row justify-end gap-2">
                         <DialogClose asChild>

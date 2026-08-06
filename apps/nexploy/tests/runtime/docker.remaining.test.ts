@@ -18,6 +18,7 @@ import { onForceUpdateServiceAction } from '@/actions/docker/swarm/forceUpdateSe
 import { onRemoveServicesAction } from '@/actions/docker/swarm/removeServices.action';
 import { onScaleServiceAction } from '@/actions/docker/swarm/scaleService.action';
 import { GET as searchImages } from '@/app/api/docker/images/search/route';
+import { GET as saveImages } from '@/app/api/docker/images/save/route';
 import { callRoute, type RouteHandler } from '../setup/invoke';
 import { mockDocker, mockDockerFallback } from '../setup/dockerMock';
 import { ADMIN_ONLY, allowOnly, DEVELOPER_AND_ABOVE, describePermissionMatrix, EVERY_ROLE } from './permissionMatrix';
@@ -151,6 +152,29 @@ describePermissionMatrix('docker host resources', [
                 url: 'http://localhost:3022/api/docker/images/search?term=alpine',
             }),
         expected: EVERY_ROLE,
+    },
+    {
+        name: 'GET /api/docker/images/save',
+        kind: 'route',
+        setup: () => {
+            mockContainerOwnership();
+            mockDocker('post', 'images/save', () => new Response('tar-archive'));
+        },
+        invoke: () =>
+            callRoute(saveImages as RouteHandler, {
+                url: 'http://localhost:3022/api/docker/images/save?imageIds=sha256%3Aabc',
+            }),
+        expected: EVERY_ROLE,
+    },
+]);
+
+describePermissionMatrix('network pruning', [
+    {
+        name: 'onNetworkAction (prune)',
+        kind: 'action',
+        setup: mockContainerOwnership,
+        invoke: () => onNetworkAction({ action: 'prune', networkIds: [] }),
+        expected: ADMIN_ONLY,
     },
 ]);
 

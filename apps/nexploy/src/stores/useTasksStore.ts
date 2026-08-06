@@ -14,6 +14,8 @@ export interface TasksState {
     connect: () => void;
     disconnect: () => void;
     upsertTask: (task: Task) => void;
+    applyTask: (task: Task) => void;
+    replaceTasksOfKind: (kind: Task['kind'], tasks: Task[]) => void;
     removeTask: (taskId: string) => void;
     dismissTask: (taskId: string) => void;
     dismissTasks: (taskIds: string[]) => void;
@@ -61,6 +63,30 @@ export const useTasksStore = create<TasksState>()(
                     };
                 }),
 
+            applyTask: (task) => {
+                const previous = get().tasks.find((candidate) => candidate.id === task.id);
+
+                get().upsertTask(task);
+
+                if (previous && previous.status === 'running' && task.status !== 'running') {
+                    notifyFinished(task);
+                }
+            },
+
+            replaceTasksOfKind: (kind, tasks) =>
+                set((state) => {
+                    const liveIds = new Set(tasks.map((task) => task.id));
+
+                    return {
+                        tasks: [...tasks, ...state.tasks.filter((task) => task.kind !== kind)],
+                        dismissedTaskIds: state.dismissedTaskIds.filter(
+                            (taskId) =>
+                                liveIds.has(taskId) ||
+                                state.tasks.some((task) => task.id === taskId && task.kind !== kind),
+                        ),
+                    };
+                }),
+
             removeTask: (taskId) =>
                 set((state) => ({
                     tasks: state.tasks.filter((task) => task.id !== taskId),
@@ -93,10 +119,15 @@ export const useTasksStore = create<TasksState>()(
                         const tasks = data.tasks ?? [];
                         const liveIds = new Set(tasks.map((task) => task.id));
 
-                        set((state) => ({
-                            tasks,
-                            dismissedTaskIds: state.dismissedTaskIds.filter((taskId) => liveIds.has(taskId)),
-                        }));
+                        set((state) => {
+                            const keptTasks = state.tasks.filter((task) => task.kind === 'build-pipeline');
+                            keptTasks.forEach((task) => liveIds.add(task.id));
+
+                            return {
+                                tasks: [...tasks, ...keptTasks],
+                                dismissedTaskIds: state.dismissedTaskIds.filter((taskId) => liveIds.has(taskId)),
+                            };
+                        });
                     }),
                 );
 
@@ -110,14 +141,7 @@ export const useTasksStore = create<TasksState>()(
                 unsubscribers.push(
                     sseMultiplexer.subscribe('tasks', 'task-updated', (event) => {
                         const data: TasksEvent = JSON.parse(event.data);
-                        if (!data.task) return;
-
-                        const previous = get().tasks.find((candidate) => candidate.id === data.task!.id);
-                        get().upsertTask(data.task);
-
-                        if (previous?.status === 'running' && data.task.status !== 'running') {
-                            notifyFinished(data.task);
-                        }
+                        if (data.task) get().applyTask(data.task);
                     }),
                 );
 

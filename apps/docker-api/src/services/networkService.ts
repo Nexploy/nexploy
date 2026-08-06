@@ -1,6 +1,23 @@
 import { docker } from '@/utils/dockerClient';
 import { networksStateManager } from '@/managers/list/networksStateManager';
-import { isBuiltinNetwork } from '@nexploy/shared/nexployFilter';
+import { filterNexployNetworks, isBuiltinNetwork } from '@nexploy/shared/nexployFilter';
+
+export async function pruneNetworks(): Promise<{
+    deleted: string[];
+    skipped: { id: string; name: string; reason?: string }[];
+}> {
+    const candidates = filterNexployNetworks(networksStateManager.getAllNetworks()).filter(
+        (network) =>
+            !isBuiltinNetwork(network.name) &&
+            network.containers.length === 0 &&
+            !network.labels?.['com.docker.compose.project'],
+    );
+
+    return deleteNetworks(
+        candidates.map((network) => network.id),
+        false,
+    );
+}
 
 export async function deleteNetworks(
     networkIds: string[],

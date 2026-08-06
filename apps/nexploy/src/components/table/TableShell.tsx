@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { flexRender, type Row, type Table as TanstackTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { Skeleton } from '@workspace/ui/components/skeleton';
@@ -17,9 +17,12 @@ export interface TableShellProps<TData> {
     bare?: boolean;
     className?: string;
     rowClassName?: string | ((row: Row<TData>) => string | undefined);
-    onRowClick?: (row: TData) => void;
+    onRowClick?: (data: TData, row: Row<TData>) => void;
     isRowClickable?: (row: TData) => boolean;
 }
+
+const INTERACTIVE_SELECTOR =
+    'a, button, input, label, select, textarea, [role="checkbox"], [role="menu"], [role="menuitem"], [role="dialog"], [data-slot="checkbox"]';
 
 export function TableShell<TData>({
     table,
@@ -37,6 +40,12 @@ export function TableShell<TData>({
 }: TableShellProps<TData>) {
     const columns = table.getAllColumns();
     const rows = table.getRowModel().rows;
+
+    const handleRowClick = (row: Row<TData>) => (event: MouseEvent<HTMLTableRowElement>) => {
+        const target = event.target as HTMLElement | null;
+        if (target?.closest(INTERACTIVE_SELECTOR)) return;
+        onRowClick?.(row.original, row);
+    };
 
     const content = (
         <Table className={cn('transition-opacity', isFetching && !isLoading && 'opacity-60')}>
@@ -92,7 +101,7 @@ export function TableShell<TData>({
                                     clickable && 'cursor-pointer',
                                 )}
                                 data-state={row.getIsSelected() && 'selected'}
-                                onClick={clickable ? () => onRowClick?.(row.original) : undefined}
+                                onClick={clickable ? handleRowClick(row) : undefined}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>

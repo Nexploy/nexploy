@@ -137,6 +137,18 @@ export function getLocale(): Locale {
 
 The current `getLocale` only tests `=== 'fr'` — replace it with a set-membership test rather than chaining `if`s, and widen the regex to `([\w-]+)` for hyphenated codes.
 
+### A5 — `AGENTS.md`
+
+`AGENTS.md` (repo root, loaded as project instructions by every agent) lists the available languages under **Internationalization (MANDATORY)**. It is not derived from code, so it goes stale silently and agents then add keys to only the locales it names.
+
+Add the new language to the **Available languages** list:
+
+```markdown
+- `<code>` (<English name of the language>) - `packages/i18n/locales/<code>/`
+```
+
+Keep the surrounding rules locale-agnostic — they must say "every locale listed above", never enumerate `en`/`fr` inline.
+
 ---
 
 # Part B — `@nexploy/nodes` (pipeline nodes)
@@ -295,6 +307,7 @@ Finally in the browser: `pnpm dev`, switch language via the sidebar avatar menu 
 - [ ] `account.json` → `language.<code>` in **every** locale, including the new one
 - [ ] `packages/i18n/index.ts`: imports + `locales` entry + `appLocales`
 - [ ] `clientTranslations.ts`: import, `Locale` type, `translations` map, `getLocale`
+- [ ] `AGENTS.md`: new language added to the **Available languages** list
 
 **Nodes**
 - [ ] 63 `<code>.json` files scaffolded **and translated**

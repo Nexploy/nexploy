@@ -50,6 +50,13 @@ export function TaskItem({ task, onNavigate }: TaskItemProps) {
     const canCancel =
         isRunning && task.cancellable && canManageTask({ role: role ?? '', orgRole, organizationId }, task);
 
+    const currentStep = task.steps.find((step) => step.key === task.currentStepKey);
+    const runningLabel = currentStep?.label
+        ? t('steps.pipelineNode', { step: currentStep.label })
+        : task.currentStepKey
+          ? t(`steps.${task.currentStepKey}`)
+          : null;
+
     const resultResource = getTaskResource(task.kind);
     const resultEnvironmentId = task.targetEnvironmentId ?? task.environmentId ?? null;
     const needsEnvironmentSwitch = Boolean(resultEnvironmentId && resultEnvironmentId !== selectedEnvironmentId);
@@ -84,9 +91,7 @@ export function TaskItem({ task, onNavigate }: TaskItemProps) {
                         {t(`kinds.${task.kind}`, { name: task.subjectName })}
                     </p>
                     <p className="text-muted-foreground break-all text-xs">
-                        {isRunning && task.currentStepKey
-                            ? t(`steps.${task.currentStepKey}`)
-                            : t(`status.${task.status}`)}
+                        {isRunning && runningLabel ? runningLabel : t(`status.${task.status}`)}
                         {' · '}
                         {elapsed}
                     </p>

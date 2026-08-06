@@ -76,7 +76,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             const isGroup = row.original.isGroup;
             const nameTags = row.original.name;
             const containersUsed = row.original.containersUsed;
-            const nameJoin = nameTags.join(' → ');
+            const nameJoin = [...new Set(nameTags)].join(', ');
             const depth = row.depth;
 
             if (isGroup) {
@@ -161,7 +161,15 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
                 );
             }
             const tag = row.original.tag;
-            return <Badge variant="secondary">{tag.join(' → ')}</Badge>;
+            return (
+                <div className="flex flex-wrap gap-1">
+                    {tag.map((version) => (
+                        <Badge key={version} variant="secondary">
+                            {version}
+                        </Badge>
+                    ))}
+                </div>
+            );
         },
     },
     {

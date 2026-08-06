@@ -347,17 +347,21 @@ Use shadcn/ui components from `@workspace/ui`:
 **Available languages (all must be updated):**
 - `en` (English) - `packages/i18n/locales/en/`
 - `fr` (French) - `packages/i18n/locales/fr/`
+- `es` (Spanish) - `packages/i18n/locales/es/`
+- `it` (Italian) - `packages/i18n/locales/it/`
+
+The authoritative list is `appLocales` in `packages/i18n/index.ts`. When a new locale is added, this list in AGENTS.md must be updated too.
 
 **Translation namespaces:**
-`common`, `auth`, `navigation`, `repository`, `docker`, `monitoring`, `integrations`, `account`, `admin`, `ai`, `notifications`, `requests`, `validation`
+`common`, `auth`, `navigation`, `repository`, `docker`, `monitoring`, `integrations`, `account`, `admin`, `ai`, `notifications`, `requests`, `errors`, `organization`, `swarm`
 
 **Rules:**
-1. When adding any new text visible to users, add the translation key to the appropriate namespace JSON file in **both** `en` and `fr` locales
+1. When adding any new text visible to users, add the translation key to the appropriate namespace JSON file in **every** locale listed above
 2. Use `useTranslations("namespace")` in client components and `getTranslations("namespace")` in server components
 3. Choose the namespace that best matches the feature area. Create a new namespace only if none fit
 4. Keep translation keys in camelCase and logically grouped (e.g., `"backups.create"`, `"backups.restore"`)
 5. Never commit a component with hardcoded user-facing strings — always use `t("key")`
-6. **docker-api translations:** Important user-facing messages returned by `docker-api` (error messages, status labels, notifications) must also be translated. Use the `@workspace/i18n` package to ensure these texts are available in both `en` and `fr` locales
+6. **docker-api translations:** Important user-facing messages returned by `docker-api` (error messages, status labels, notifications) must also be translated. Use the `@workspace/i18n` package to ensure these texts are available in every locale
 
 ### Git Provider Integration
 

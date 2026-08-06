@@ -6,13 +6,20 @@ import { authActionServer } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/lib/toastServer';
 import { requireManageableTask } from '@/lib/tasks/requireManageableTask';
+import { cancelBuildRepository } from '@/services/repository/build.service';
 
 export const onTaskCancelAction = authActionServer
     .metadata({ name: 'tasks.cancel' })
     .inputSchema(taskIdSchema)
     .action(async ({ parsedInput: { taskId }, ctx }) => {
         try {
-            await requireManageableTask(taskId, ctx.session);
+            const task = await requireManageableTask(taskId, ctx.session);
+
+            if (task.kind === 'build-pipeline') {
+                if (task.subjectId) await cancelBuildRepository(task.subjectId);
+
+                return { cancelled: true, taskId };
+            }
 
             return await kyDocker.post(`tasks/${taskId}/cancel`).json<{ cancelled: boolean; taskId: string }>();
         } catch (err: unknown) {
