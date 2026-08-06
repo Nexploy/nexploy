@@ -3,7 +3,8 @@ import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@w
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Play, Trash } from 'lucide-react';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
-import { Image, ImageAction, ImageTool } from '@workspace/typescript-interface/docker/docker.image';
+import { Image, ImageTool } from '@workspace/typescript-interface/docker/docker.image';
+import type { ImageActionInput } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -23,7 +24,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
 
     const imageName = image.name;
 
-    const handleAction = async (action: ImageAction) => {
+    const handleAction = async (action: ImageActionInput) => {
         const result = await onImageAction({ imageIds: [image.id], action, force: forceRef.current });
         if (result?.serverError) {
             toast.error(result.serverError);

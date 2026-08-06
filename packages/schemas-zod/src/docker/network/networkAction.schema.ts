@@ -50,6 +50,8 @@ export const networkActionsSchema = z.object({
     force: z.boolean().optional(),
 });
 
+export type NetworkActionInput = z.infer<typeof networkActionsSchema>['action'];
+
 export const networkDeleteSchema = z.object({
     networkIds: z.array(z.string()).min(1),
     force: z.boolean().optional().default(false),

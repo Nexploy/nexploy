@@ -71,6 +71,8 @@ Every endpoint of the app is covered. `audit/coverage.test.ts` fails when a guar
 
 Every unguarded endpoint must be declared in `audit/exemptions.ts` with a category and a reason. That file is the record of *why* an endpoint is open — adding a new unguarded endpoint fails the suite until it is justified there.
 
+**1 bis. docker-api contract (`audit/dockerApiContract.test.ts`).** Parses every `app.<method>('<path>')` declared by `apps/docker-api` — following the `app.route()` mounts to rebuild the full paths — and every `kyDocker.<method>('<path>')` issued by nexploy. It fails when nexploy calls a path or a verb docker-api does not serve. Paths built by interpolating an enum value (`images/${action}`, `composes/${stack}/${action}`) are declared in `DYNAMIC_CALLS` and every value is checked. The calls that reach nothing are recorded in `KNOWN_CONTRACT_GAPS` with a reason, and the test fails if one of them starts resolving.
+
 **2. Access-control unit tests (`permissions/`).** Pure checks of the role tables, plus the matrix snapshots in `audit/matrix.test.ts` that make any change to a role's reach visible in the diff.
 
 **3. Runtime tests (`runtime/`).** Real calls, real database, real sessions, one verdict per role.

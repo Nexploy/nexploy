@@ -1,3 +1,4 @@
+import type { NetworkActionInput } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { Fragment } from 'react';
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@workspace/ui/components/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -27,7 +28,7 @@ export function NetworkDropdownActions({ network }: NetworkDropdownActionsProps)
 
     const networkName = network.name;
 
-    const handleAction = async (action: 'delete' | 'prune') => {
+    const handleAction = async (action: NetworkActionInput) => {
         await onNetworkAction({ networkIds: [network.id], action });
     };
 

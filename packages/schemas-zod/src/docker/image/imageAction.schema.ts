@@ -18,6 +18,8 @@ export const imageActionsSchema = z.object({
     imageIds: z.array(z.string()),
 });
 
+export type ImageActionInput = z.infer<typeof imageActionsSchema>['action'];
+
 export const imageDeleteSchema = z.object({
     imageIds: z.array(z.string()),
     force: z.boolean().default(false),

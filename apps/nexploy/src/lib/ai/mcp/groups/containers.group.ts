@@ -76,7 +76,7 @@ export const containersGroup: ToolGroup = {
                 if (g) return g;
                 try {
                     const data = await kyDocker
-                        .get(`container/${idOrName}/inspect`, {
+                        .get(`container/${idOrName}`, {
                             environmentId: ctx.environmentId,
                         } as KyDockerOptions)
                         .json();

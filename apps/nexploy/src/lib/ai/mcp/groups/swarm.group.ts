@@ -138,7 +138,7 @@ export const swarmGroup: ToolGroup = {
                 if (g) return g;
                 try {
                     await kyDocker
-                        .post(`swarm/node/${params.nodeId}/${params.action}`, {
+                        .post(`swarm/nodes/${params.nodeId}/${params.action}`, {
                             json: params,
                             environmentId: ctx.environmentId,
                         } as KyDockerOptions)
