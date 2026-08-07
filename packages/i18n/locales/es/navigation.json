@@ -52,5 +52,6 @@
   "github": "GitHub",
   "reportBug": "Reportar un error",
   "diskUsage": "Uso del disco",
-  "activity": "Actividad"
+  "activity": "Actividad",
+  "protection": "Protección"
 }

@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { imageImportSchema } from '@workspace/schemas-zod/docker/image/imageAction.schema';
@@ -89,9 +90,11 @@ export function ImageImportForm() {
                     >
                         {tCommon('cancel')}
                     </Button>
-                    <Button type="submit" isLoading={form.formState.isSubmitting}>
-                        {t('import')}
-                    </Button>
+                    <ProtectedAction action="image.pull">
+                        <Button type="submit" isLoading={form.formState.isSubmitting}>
+                            {t('import')}
+                        </Button>
+                    </ProtectedAction>
                 </div>
             </form>
         </Form>

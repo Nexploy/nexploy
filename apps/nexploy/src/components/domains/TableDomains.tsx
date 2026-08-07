@@ -28,7 +28,6 @@ interface DomainsTableProps {
 
 export function TableDomains({ domains }: DomainsTableProps) {
     const t = useTranslations('repository.settings.domains');
-    const tCommon = useTranslations('common');
     const router = useRouter();
 
     const { openDialog, closeDialog } = useConfirmationDialogStore();

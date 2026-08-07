@@ -2,6 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { toolGroups } from './mcp';
 import { ToolContext } from './mcp/types';
 import { McpServerOptions } from '@workspace/typescript-interface/ai/mcp';
+import { withEnvironmentProtection } from './mcp/environmentProtectionGuard';
 
 export function createNexployMCPServer(
     userId: string,
@@ -20,8 +21,10 @@ export function createNexployMCPServer(
         confirmedTargets: new Set<string>(),
     };
 
+    const guardedServer = withEnvironmentProtection(server, ctx);
+
     for (const group of toolGroups) {
-        group.register(server, ctx);
+        group.register(guardedServer, ctx);
     }
 
     return server;

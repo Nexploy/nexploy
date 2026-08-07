@@ -7,6 +7,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { Box, Container, Hammer, HardDrive, RefreshCw, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { formatBytes } from '@/utils/formatBytes';
@@ -146,15 +147,17 @@ export function DiskUsageCard() {
                                     {t('ofTotal', { total: formatBytes(usage.totalSize) })}
                                 </span>
                             </div>
-                            <Button
-                                variant="destructive"
-                                icon={Trash2}
-                                isLoading={cleaningTarget === 'all'}
-                                disabled={cleaningTarget !== null}
-                                onClick={() => handleClean('all')}
-                            >
-                                {t('cleanAll')}
-                            </Button>
+                            <ProtectedAction action="maintenance.cleanup">
+                                <Button
+                                    variant="destructive"
+                                    icon={Trash2}
+                                    isLoading={cleaningTarget === 'all'}
+                                    disabled={cleaningTarget !== null}
+                                    onClick={() => handleClean('all')}
+                                >
+                                    {t('cleanAll')}
+                                </Button>
+                            </ProtectedAction>
                         </div>
 
                         <div className="overflow-hidden rounded-md border">
@@ -181,16 +184,18 @@ export function DiskUsageCard() {
                                                 </span>
                                             </div>
                                         </div>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            icon={Trash2}
-                                            isLoading={cleaningTarget === row.key}
-                                            disabled={cleaningTarget !== null}
-                                            onClick={() => handleClean(row.key)}
-                                        >
-                                            {t('clean')}
-                                        </Button>
+                                        <ProtectedAction action="maintenance.cleanup">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                icon={Trash2}
+                                                isLoading={cleaningTarget === row.key}
+                                                disabled={cleaningTarget !== null}
+                                                onClick={() => handleClean(row.key)}
+                                            >
+                                                {t('clean')}
+                                            </Button>
+                                        </ProtectedAction>
                                     </div>
                                 );
                             })}

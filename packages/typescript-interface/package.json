@@ -13,7 +13,7 @@
     "dockerode": "^5.0.0",
     "hono": "4.12.27",
     "inngest": "^4.5.1",
-    "lucide-react": "^1.17.0",
+    "lucide-react": "^1.30.0",
     "react": "^19.2.3",
     "zod": "^4.3.6"
   },

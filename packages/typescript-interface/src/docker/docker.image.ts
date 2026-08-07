@@ -56,7 +56,6 @@ export interface ImageLoadResponse {
 export interface ImageTool extends DropdownActionTool {
     disabled?: boolean;
     variant?: 'default' | 'destructive';
-    tooltipContent?: string;
 }
 
 export interface ImageEvent {

@@ -8,6 +8,7 @@ import { StageList } from '@/components/repositories/stages/StageList';
 import { AddStageButton } from '@/components/repositories/stages/AddStageButton';
 import { BackButton } from '@/components/shared/BackButton';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
+import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert.tsx';
 
 interface StagesPageProps {
     params: Promise<{ repositoryId: string }>;
@@ -42,15 +43,11 @@ export default async function RepositoryStagesPage({ params }: StagesPageProps) 
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-4 px-5 pb-5">
-                        <div className="border-primary/20 bg-primary/5 flex gap-3 rounded-lg border p-4">
-                            <Info className="text-primary mt-0.5 size-5 shrink-0" />
-                            <div className="flex flex-col gap-1">
-                                <span className="text-sm font-medium">{t('infoTitle')}</span>
-                                <span className="text-muted-foreground text-sm leading-relaxed">
-                                    {t('infoDescription')}
-                                </span>
-                            </div>
-                        </div>
+                        <Alert variant="info">
+                            <Info />
+                            <AlertTitle>{t('infoTitle')}</AlertTitle>
+                            <AlertDescription>{t('infoDescription')}</AlertDescription>
+                        </Alert>
                         <StageList repositoryId={repositoryId} stages={stages} />
                     </div>
                 </ScrollAreaWithShadow>

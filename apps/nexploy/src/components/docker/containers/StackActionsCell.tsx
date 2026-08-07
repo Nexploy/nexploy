@@ -4,6 +4,7 @@ import { MouseEvent, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Separator } from '@workspace/ui/components/separator';
 import { Switch } from '@workspace/ui/components/switch';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -75,17 +76,19 @@ export function StackActionsCell({ stackName, runningCount, totalCount }: StackA
         <div className="flex items-center justify-end gap-1">
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button
-                        onClick={(e) => handleAction('start', e)}
-                        disabled={isLoading || allRunning}
-                        isLoading={isLoading}
-                        variant="outline"
-                        icon={Play}
-                        size="icon"
-                        className="size-7"
-                    >
-                        <span className="sr-only">{t('start')}</span>
-                    </Button>
+                    <ProtectedAction action="container.lifecycle">
+                        <Button
+                            onClick={(e) => handleAction('start', e)}
+                            disabled={isLoading || allRunning}
+                            isLoading={isLoading}
+                            variant="outline"
+                            icon={Play}
+                            size="icon"
+                            className="size-7"
+                        >
+                            <span className="sr-only">{t('start')}</span>
+                        </Button>
+                    </ProtectedAction>
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>{t('start')}</p>
@@ -93,17 +96,19 @@ export function StackActionsCell({ stackName, runningCount, totalCount }: StackA
             </Tooltip>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button
-                        onClick={(e) => handleAction('stop', e)}
-                        disabled={isLoading || !hasRunning}
-                        isLoading={isLoading}
-                        variant="outline"
-                        icon={Square}
-                        size="icon"
-                        className="size-7"
-                    >
-                        <span className="sr-only">{t('stop')}</span>
-                    </Button>
+                    <ProtectedAction action="container.lifecycle">
+                        <Button
+                            onClick={(e) => handleAction('stop', e)}
+                            disabled={isLoading || !hasRunning}
+                            isLoading={isLoading}
+                            variant="outline"
+                            icon={Square}
+                            size="icon"
+                            className="size-7"
+                        >
+                            <span className="sr-only">{t('stop')}</span>
+                        </Button>
+                    </ProtectedAction>
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>{t('stop')}</p>
@@ -111,17 +116,19 @@ export function StackActionsCell({ stackName, runningCount, totalCount }: StackA
             </Tooltip>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button
-                        onClick={(e) => handleAction('restart', e)}
-                        disabled={isLoading || !hasRunning}
-                        isLoading={isLoading}
-                        variant="outline"
-                        icon={RotateCw}
-                        size="icon"
-                        className="size-7"
-                    >
-                        <span className="sr-only">{t('restart')}</span>
-                    </Button>
+                    <ProtectedAction action="container.lifecycle">
+                        <Button
+                            onClick={(e) => handleAction('restart', e)}
+                            disabled={isLoading || !hasRunning}
+                            isLoading={isLoading}
+                            variant="outline"
+                            icon={RotateCw}
+                            size="icon"
+                            className="size-7"
+                        >
+                            <span className="sr-only">{t('restart')}</span>
+                        </Button>
+                    </ProtectedAction>
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>{t('restart')}</p>
@@ -130,17 +137,19 @@ export function StackActionsCell({ stackName, runningCount, totalCount }: StackA
             <Separator orientation="vertical" className="mx-1 h-5!" />
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button
-                        onClick={handleRemove}
-                        disabled={isLoading}
-                        isLoading={isLoading}
-                        variant="destructiveOutline"
-                        icon={Trash2}
-                        size="icon"
-                        className="size-7"
-                    >
-                        <span className="sr-only">{t('remove')}</span>
-                    </Button>
+                    <ProtectedAction action="container.remove">
+                        <Button
+                            onClick={handleRemove}
+                            disabled={isLoading}
+                            isLoading={isLoading}
+                            variant="destructiveOutline"
+                            icon={Trash2}
+                            size="icon"
+                            className="size-7"
+                        >
+                            <span className="sr-only">{t('remove')}</span>
+                        </Button>
+                    </ProtectedAction>
                 </TooltipTrigger>
                 <TooltipContent>
                     <p>{t('remove')}</p>

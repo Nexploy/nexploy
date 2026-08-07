@@ -11,6 +11,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { onImageAction } from '@/actions/docker/image/imageAction.action';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { CardImageConfig } from '@/components/docker/image/cards/CardImageConfig';
 import { CardImageContainers } from '@/components/docker/image/cards/CardImageContainers';
@@ -121,9 +122,11 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                             </TooltipTrigger>
                             <TooltipContent>{t('useImage')}</TooltipContent>
                         </Tooltip>
-                        <Button variant="destructive" size="icon" onClick={handleRemove} disabled={!image}>
-                            <Trash2 className="size-4" />
-                        </Button>
+                        <ProtectedAction action="image.remove">
+                            <Button variant="destructive" size="icon" onClick={handleRemove} disabled={!image}>
+                                <Trash2 className="size-4" />
+                            </Button>
+                        </ProtectedAction>
                     </div>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">

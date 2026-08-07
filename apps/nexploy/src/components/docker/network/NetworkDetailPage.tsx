@@ -6,6 +6,7 @@ import { useNetworkStore } from '@/stores/docker/useNetworkStore.ts';
 import { CardNetworkDetails } from '@/components/docker/network/cards/CardNetworkDetails';
 import { CardNetworkContainers } from '@/components/docker/network/cards/CardNetworkContainers';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
@@ -70,14 +71,16 @@ export function NetworkDetailPage({ networkId }: NetworkDetailPageProps) {
                         )}
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
-                    <Button
-                        className={'mt-5'}
-                        icon={Trash2}
-                        variant="destructive"
-                        size="icon"
-                        onClick={handleRemove}
-                        disabled={!network}
-                    />
+                    <ProtectedAction action="network.remove">
+                        <Button
+                            className={'mt-5'}
+                            icon={Trash2}
+                            variant="destructive"
+                            size="icon"
+                            onClick={handleRemove}
+                            disabled={!network}
+                        />
+                    </ProtectedAction>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-5 px-5 pb-5">

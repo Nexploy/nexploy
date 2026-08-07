@@ -1,6 +1,11 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import {
+    authActionServer,
+    requirePermission,
+    requireUnprotectedEnvironment,
+    fromInputField,
+} from '@/lib/api/safe-action';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
@@ -11,6 +16,8 @@ import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 export const onContainerMigrateAction = authActionServer
     .metadata({ name: 'container.migrate' })
     .use(requirePermission('container', 'manage', byContainerIds))
+    .use(requireUnprotectedEnvironment('container.migrateOut'))
+    .use(requireUnprotectedEnvironment('container.migrateIn', fromInputField('targetEnvironmentId')))
     .inputSchema(containerMigrateFormSchema)
     .action(
         async ({

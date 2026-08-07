@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
 import { Textarea } from '@workspace/ui/components/textarea';
@@ -99,9 +100,11 @@ export function JoinSwarmForm() {
                 <Button variant="outline" onClick={closeDialog} disabled={isLoading}>
                     {tCommon('cancel')}
                 </Button>
-                <Button onClick={handleJoin} isLoading={isLoading} disabled={isLoading}>
-                    {t('joinSwarm')}
-                </Button>
+                <ProtectedAction action="swarm.manage">
+                    <Button onClick={handleJoin} isLoading={isLoading} disabled={isLoading}>
+                        {t('joinSwarm')}
+                    </Button>
+                </ProtectedAction>
             </div>
         </div>
     );

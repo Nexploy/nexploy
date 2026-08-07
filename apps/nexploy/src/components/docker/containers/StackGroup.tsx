@@ -5,6 +5,7 @@ import { MouseEvent, useRef, useState } from 'react';
 import { ContainerCard } from '@/components/docker/containers/ContainerCard';
 import { Layers, Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Separator } from '@workspace/ui/components/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
@@ -94,51 +95,59 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                             <Separator orientation="vertical" className="h-6!" />
 
                             <div className="flex items-center gap-2">
-                                <Button
-                                    onClick={(e) => handleAction('start', e)}
-                                    disabled={isLoading || allRunning}
-                                    isLoading={isLoading}
-                                    variant={'outline'}
-                                    icon={Play}
-                                    size="icon"
-                                >
-                                    <span className="sr-only">{t('start')}</span>
-                                </Button>
+                                <ProtectedAction action="container.lifecycle">
+                                    <Button
+                                        onClick={(e) => handleAction('start', e)}
+                                        disabled={isLoading || allRunning}
+                                        isLoading={isLoading}
+                                        variant={'outline'}
+                                        icon={Play}
+                                        size="icon"
+                                    >
+                                        <span className="sr-only">{t('start')}</span>
+                                    </Button>
+                                </ProtectedAction>
 
-                                <Button
-                                    onClick={(e) => handleAction('stop', e)}
-                                    disabled={isLoading || !hasRunning}
-                                    isLoading={isLoading}
-                                    variant={'outline'}
-                                    icon={Square}
-                                    size="icon"
-                                >
-                                    <span className="sr-only">{t('stop')}</span>
-                                </Button>
+                                <ProtectedAction action="container.lifecycle">
+                                    <Button
+                                        onClick={(e) => handleAction('stop', e)}
+                                        disabled={isLoading || !hasRunning}
+                                        isLoading={isLoading}
+                                        variant={'outline'}
+                                        icon={Square}
+                                        size="icon"
+                                    >
+                                        <span className="sr-only">{t('stop')}</span>
+                                    </Button>
+                                </ProtectedAction>
 
-                                <Button
-                                    onClick={(e) => handleAction('restart', e)}
-                                    disabled={isLoading || !hasRunning}
-                                    isLoading={isLoading}
-                                    variant={'outline'}
-                                    icon={RotateCw}
-                                    size="icon"
-                                >
-                                    <span className="sr-only">{t('restart')}</span>
-                                </Button>
+                                <ProtectedAction action="container.lifecycle">
+                                    <Button
+                                        onClick={(e) => handleAction('restart', e)}
+                                        disabled={isLoading || !hasRunning}
+                                        isLoading={isLoading}
+                                        variant={'outline'}
+                                        icon={RotateCw}
+                                        size="icon"
+                                    >
+                                        <span className="sr-only">{t('restart')}</span>
+                                    </Button>
+                                </ProtectedAction>
 
                                 <Separator orientation="vertical" className="h-6!" />
 
-                                <Button
-                                    onClick={handleRemove}
-                                    disabled={isLoading}
-                                    isLoading={isLoading}
-                                    variant={'destructiveOutline'}
-                                    icon={Trash2}
-                                    size="icon"
-                                >
-                                    <span className="sr-only">{t('delete')}</span>
-                                </Button>
+                                <ProtectedAction action="container.remove">
+                                    <Button
+                                        onClick={handleRemove}
+                                        disabled={isLoading}
+                                        isLoading={isLoading}
+                                        variant={'destructiveOutline'}
+                                        icon={Trash2}
+                                        size="icon"
+                                    >
+                                        <span className="sr-only">{t('delete')}</span>
+                                    </Button>
+                                </ProtectedAction>
                             </div>
                         </div>
                     }

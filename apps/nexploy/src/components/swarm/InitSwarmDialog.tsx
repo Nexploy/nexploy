@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { toast } from 'sonner';
@@ -79,13 +80,15 @@ export function InitSwarmForm() {
                     >
                         {tCommon('cancel')}
                     </Button>
-                    <Button
-                        type="submit"
-                        isLoading={form.formState.isSubmitting}
-                        disabled={isDetecting || form.formState.isSubmitting}
-                    >
-                        {t('initializeSwarm')}
-                    </Button>
+                    <ProtectedAction action="swarm.manage">
+                        <Button
+                            type="submit"
+                            isLoading={form.formState.isSubmitting}
+                            disabled={isDetecting || form.formState.isSubmitting}
+                        >
+                            {t('initializeSwarm')}
+                        </Button>
+                    </ProtectedAction>
                 </div>
             </form>
         </Form>

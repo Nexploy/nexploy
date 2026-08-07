@@ -16,6 +16,7 @@ import { useVolumesStore } from '@/stores/docker/useVolumesStore.ts';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Trash2 } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import { Badge } from '@workspace/ui/components/badge';
@@ -113,19 +114,21 @@ export function TableDockerVolumes() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
                 <div className={'flex gap-3'}>
-                    <Button
-                        variant={'destructive'}
-                        onClick={handleDeleteAction}
-                        disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
-                        icon={Trash2}
-                    >
-                        {tCommon('remove')}
-                        {numberOfSelectedRows > 1 && (
-                            <Badge variant={'secondary'} className={'rounded-full'}>
-                                {numberOfSelectedRows}
-                            </Badge>
-                        )}
-                    </Button>
+                    <ProtectedAction action="volume.remove">
+                        <Button
+                            variant={'destructive'}
+                            onClick={handleDeleteAction}
+                            disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
+                            icon={Trash2}
+                        >
+                            {tCommon('remove')}
+                            {numberOfSelectedRows > 1 && (
+                                <Badge variant={'secondary'} className={'rounded-full'}>
+                                    {numberOfSelectedRows}
+                                </Badge>
+                            )}
+                        </Button>
+                    </ProtectedAction>
                 </div>
             </div>
             <TableShell

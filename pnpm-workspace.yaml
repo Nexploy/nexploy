@@ -24,3 +24,4 @@ minimumReleaseAgeExclude:
   - better-auth@1.6.25
   - '@nexploy/nodes'
   - '@nexploy/shared'
+  - lucide-react@1.30.0

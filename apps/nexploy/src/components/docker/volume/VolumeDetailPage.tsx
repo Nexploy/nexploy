@@ -6,6 +6,7 @@ import { useVolumeStore } from '@/stores/docker/useVolumeStore.ts';
 import { CardVolumeDetails } from '@/components/docker/volume/cards/CardVolumeDetails';
 import { CardVolumeContainers } from '@/components/docker/volume/cards/CardVolumeContainers';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
@@ -75,14 +76,16 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
                         )}
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
-                    <Button
-                        className={'mt-5'}
-                        icon={Trash2}
-                        variant="destructive"
-                        size="icon"
-                        onClick={handleRemove}
-                        disabled={isConnecting}
-                    />
+                    <ProtectedAction action="volume.remove">
+                        <Button
+                            className={'mt-5'}
+                            icon={Trash2}
+                            variant="destructive"
+                            size="icon"
+                            onClick={handleRemove}
+                            disabled={isConnecting}
+                        />
+                    </ProtectedAction>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-5 px-5 pb-5">

@@ -1,4 +1,5 @@
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Save } from 'lucide-react';
 import { useState } from 'react';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
@@ -40,8 +41,10 @@ export function ApplyChangesButtonForm() {
     if (isSwarmContainer || !hasChanges()) return null;
 
     return (
-        <Button icon={Save} isLoading={isLoading} onClick={handleApplyChanges} className={cn('mt-5')}>
-            {t('applyChanges')}
-        </Button>
+        <ProtectedAction action="container.update">
+            <Button icon={Save} isLoading={isLoading} onClick={handleApplyChanges} className={cn('mt-5')}>
+                {t('applyChanges')}
+            </Button>
+        </ProtectedAction>
     );
 }

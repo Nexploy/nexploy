@@ -1,6 +1,11 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import {
+    authActionServer,
+    requirePermission,
+    requireUnprotectedEnvironment,
+    fromInputField,
+} from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { deployVersionSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { getTranslations } from 'next-intl/server';
@@ -15,6 +20,12 @@ const ERROR_TRANSLATION_MAP: Record<string, string> = {
 export const onDeployDockerfileVersion = authActionServer
     .metadata({ name: 'versions.deployDockerfileVersion' })
     .use(requirePermission('deployment', 'deploy', byRepositoryId))
+    .use(
+        requireUnprotectedEnvironment(
+            'deployment.deploy',
+            fromInputField('environmentId', { fallbackToCurrent: true }),
+        ),
+    )
     .inputSchema(deployVersionSchema)
     .action(async ({ parsedInput }) => {
         const { imageTag, repositoryId, environmentId } = parsedInput;

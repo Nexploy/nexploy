@@ -5,6 +5,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { DragAndDrop } from '@workspace/ui/components/drag-and-drop';
 import { onImageLoadAction } from '@/actions/docker/image/imageLoadAction.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
@@ -39,14 +40,16 @@ export function ImageLoadForm() {
                 <Button type="button" variant="outline" onClick={closeDialog} disabled={isPending}>
                     {tCommon('cancel')}
                 </Button>
-                <Button
-                    type="button"
-                    isLoading={isPending}
-                    disabled={!archive}
-                    onClick={() => archive && execute({ archive })}
-                >
-                    {t('load')}
-                </Button>
+                <ProtectedAction action="image.pull">
+                    <Button
+                        type="button"
+                        isLoading={isPending}
+                        disabled={!archive}
+                        onClick={() => archive && execute({ archive })}
+                    >
+                        {t('load')}
+                    </Button>
+                </ProtectedAction>
             </div>
         </div>
     );

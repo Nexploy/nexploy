@@ -1,6 +1,11 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import {
+    authActionServer,
+    requirePermission,
+    requireUnprotectedEnvironment,
+    fromInputField,
+} from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { setDefaultEnvironmentById } from '@/services/environment/environment.service';
 import { environmentIdSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
@@ -8,6 +13,7 @@ import { environmentIdSchema } from '@workspace/schemas-zod/docker/environment/e
 export const setDefaultEnvironmentAction = authActionServer
     .metadata({ name: 'environment.setDefault' })
     .use(requirePermission('environment', 'update'))
+    .use(requireUnprotectedEnvironment('environment.update', fromInputField('environmentId')))
     .inputSchema(environmentIdSchema)
     .action(async ({ parsedInput }) => {
         try {

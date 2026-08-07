@@ -15,6 +15,10 @@ model Environment {
   isActive    Boolean @default(true)
   description String?
 
+  isProtected       Boolean  @default(false)
+  allowAdminBypass  Boolean  @default(true)
+  protectedActions  String[] @default([])
+
   lastHealthCheck DateTime?
   healthStatus    String?
 

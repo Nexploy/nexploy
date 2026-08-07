@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
 import { scaleServiceFormSchema } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 import { onScaleServiceAction } from '@/actions/docker/swarm/scaleService.action';
@@ -64,9 +65,11 @@ export function ScaleServiceForm({ service }: ScaleServiceFormProps) {
                             {t('cancel')}
                         </Button>
                     </DialogClose>
-                    <Button type="submit" isLoading={action.isPending}>
-                        {t('scaleService')}
-                    </Button>
+                    <ProtectedAction action="swarm.manage">
+                        <Button type="submit" isLoading={action.isPending}>
+                            {t('scaleService')}
+                        </Button>
+                    </ProtectedAction>
                 </DialogFooter>
             </form>
         </Form>

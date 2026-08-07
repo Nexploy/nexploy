@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { containerRenameSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DialogClose, DialogFooter } from '@workspace/ui/components/dialog';
@@ -62,9 +63,11 @@ export function RenameContainerForm({ containerId, currentName }: RenameContaine
                             {t('cancel')}
                         </Button>
                     </DialogClose>
-                    <Button type="submit" isLoading={action.isPending}>
-                        {t('rename')}
-                    </Button>
+                    <ProtectedAction action="container.update">
+                        <Button type="submit" isLoading={action.isPending}>
+                            {t('rename')}
+                        </Button>
+                    </ProtectedAction>
                 </DialogFooter>
             </form>
         </Form>

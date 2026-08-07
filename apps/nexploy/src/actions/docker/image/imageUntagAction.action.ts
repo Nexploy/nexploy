@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { imageUntagSchema } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { setToastServer } from '@/lib/toastServer';
@@ -16,6 +16,7 @@ const skipReasonToKey: Record<string, string> = {
 export const onImageUntagAction = authActionServer
     .metadata({ name: 'image.untag' })
     .use(requirePermission('image', 'manage'))
+    .use(requireUnprotectedEnvironment('image.manage'))
     .inputSchema(imageUntagSchema)
     .action(async ({ parsedInput: { tags } }) => {
         try {

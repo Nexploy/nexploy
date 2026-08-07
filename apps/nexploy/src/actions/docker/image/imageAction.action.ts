@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { imageActionsSchema } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { HTTPError } from 'ky';
@@ -10,6 +10,7 @@ import { setToastServer } from '@/lib/toastServer.ts';
 export const onImageAction = authActionServer
     .metadata({ name: 'image.action' })
     .use(requirePermission('image', 'manage'))
+    .use(requireUnprotectedEnvironment('image.remove'))
     .inputSchema(imageActionsSchema)
     .action(async ({ parsedInput: { action, imageIds, force } }) => {
         try {

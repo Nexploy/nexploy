@@ -17,6 +17,30 @@ import { recordActivity } from '@/lib/activity/recordActivity';
 import { markErrorKind, runWithErrorKind, wasForbidden } from '@/lib/activity/actionAudit';
 import { ForbiddenError, isForbiddenError } from '@/lib/activity/forbiddenError';
 import type { OrgScopeArgs } from '@workspace/typescript-interface/auth/orgScope';
+import type { EnvironmentProtectedAction } from '@workspace/schemas-zod/docker/environment/environmentProtection.schema';
+import {
+    getEnvironmentProtection,
+    isEnvironmentActionBlocked,
+} from '@/services/environment/environmentProtection.service';
+import { getCurrentEnvironmentId, getEnvironmentIdForStage } from '@/lib/api/currentEnvironment';
+
+type EnvironmentIdResolver = (clientInput: unknown) => Promise<string | undefined> | string | undefined;
+
+const fromCurrentEnvironment: EnvironmentIdResolver = () => getCurrentEnvironmentId();
+
+export const fromInputField =
+    (field: string, { fallbackToCurrent = false }: { fallbackToCurrent?: boolean } = {}): EnvironmentIdResolver =>
+    (clientInput) => {
+        const value = (clientInput as Record<string, unknown> | null | undefined)?.[field];
+        if (typeof value === 'string' && value.length > 0) return value;
+
+        return fallbackToCurrent ? getCurrentEnvironmentId() : undefined;
+    };
+
+export const fromStageInput: EnvironmentIdResolver = (clientInput) => {
+    const stageId = (clientInput as { stageId?: unknown } | null | undefined)?.stageId;
+    return getEnvironmentIdForStage(typeof stageId === 'string' ? stageId : undefined);
+};
 
 export const actionServer = createSafeActionClient({
     defineMetadataSchema: () => z.object({ name: z.string() }),
@@ -125,6 +149,28 @@ export const requirePermission = <R extends PermissionResource>(
             return next({ ctx });
         },
     );
+
+export const requireUnprotectedEnvironment = (
+    action: EnvironmentProtectedAction,
+    resolveEnvironmentId: EnvironmentIdResolver = fromCurrentEnvironment,
+) =>
+    createMiddleware<{ ctx: { session: Session } }>().define(async ({ ctx, clientInput, next }) => {
+        const environmentId = await resolveEnvironmentId(clientInput);
+
+        if (environmentId) {
+            const protection = await getEnvironmentProtection(environmentId);
+
+            if (isEnvironmentActionBlocked(protection, action, ctx.session.user.role as string)) {
+                const t = await getTranslations('errors');
+                const message = t('environment.protection.blocked', { name: protection!.name });
+
+                await setToastServer({ type: 'error', message });
+                throw new ForbiddenError(message);
+            }
+        }
+
+        return next({ ctx });
+    });
 
 export const preventInfrastructureNetworkAction = createMiddleware().define(async ({ clientInput, next }) => {
     const input = clientInput as { action?: string; networkIds?: string[] };

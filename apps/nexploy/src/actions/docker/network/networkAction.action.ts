@@ -1,6 +1,11 @@
 'use server';
 
-import { authActionServer, preventInfrastructureNetworkAction, requirePermission } from '@/lib/api/safe-action';
+import {
+    authActionServer,
+    preventInfrastructureNetworkAction,
+    requirePermission,
+    requireUnprotectedEnvironment,
+} from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/lib/toastServer';
 import { networkActionsSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
@@ -18,6 +23,7 @@ const skipReasonToKey: Record<string, string> = {
 export const onNetworkAction = authActionServer
     .metadata({ name: 'network.action' })
     .use(requirePermission('network', 'manage'))
+    .use(requireUnprotectedEnvironment('network.remove'))
     .use(preventInfrastructureNetworkAction)
     .inputSchema(networkActionsSchema)
     .action(async ({ parsedInput: { action, networkIds, force } }) => {

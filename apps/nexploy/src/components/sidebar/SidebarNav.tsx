@@ -13,6 +13,7 @@ import {
     FileCog,
     FolderGit2,
     Globe,
+    GlobeLock,
     HardDrive,
     LayoutList,
     Network,
@@ -21,7 +22,7 @@ import {
     ScrollText,
     Send,
     Settings,
-    Shield,
+    ShieldLock,
     Users,
     Warehouse,
 } from 'lucide-react';
@@ -112,7 +113,7 @@ const groups: PermissionedSidebarNavGroup[] = [
             {
                 titleKey: 'sslCertificates',
                 href: '/ssl-certificates',
-                icon: Shield,
+                icon: GlobeLock,
                 permission: { resource: 'ssl', action: 'manage' },
             },
             {
@@ -156,6 +157,12 @@ const groups: PermissionedSidebarNavGroup[] = [
                 href: '/admin/backups',
                 icon: Database,
                 permission: { resource: 'backup', action: 'read' },
+            },
+            {
+                titleKey: 'protection',
+                href: '/admin/protection',
+                icon: ShieldLock,
+                permission: { resource: 'environment', action: 'update' },
             },
             {
                 titleKey: 'activity',

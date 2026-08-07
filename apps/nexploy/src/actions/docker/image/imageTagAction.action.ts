@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { imageTagSchema } from '@workspace/schemas-zod/docker/image/imageAction.schema';
 import { setToastServer } from '@/lib/toastServer';
@@ -9,6 +9,7 @@ import { HTTPError } from 'ky';
 export const onImageTagAction = authActionServer
     .metadata({ name: 'image.tag' })
     .use(requirePermission('image', 'manage'))
+    .use(requireUnprotectedEnvironment('image.manage'))
     .inputSchema(imageTagSchema)
     .action(async ({ parsedInput: { imageId, repo, tag } }) => {
         try {

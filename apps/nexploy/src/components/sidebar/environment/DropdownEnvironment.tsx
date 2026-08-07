@@ -13,7 +13,7 @@ import {
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Button } from '@workspace/ui/components/button';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@workspace/ui/components/sidebar';
-import { Check, ChevronsUpDown, MoreHorizontal, Pencil, Plus, Star, Trash2 } from 'lucide-react';
+import { Check, ChevronsUpDown, Lock, MoreHorizontal, Pencil, Plus, Star, Trash2 } from 'lucide-react';
 import { CreateEnvironmentForm } from '@/components/sidebar/environment/CreateEnvironmentForm';
 import { EditEnvironmentForm } from '@/components/sidebar/environment/EditEnvironmentForm';
 import { Environment } from 'generated/client';
@@ -180,6 +180,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                         {environment.isDefault && (
                                             <Star className="text-muted-foreground size-3 fill-current" />
                                         )}
+                                        {environment.isProtected && <Lock className="text-muted-foreground size-3" />}
                                     </div>
                                     {selectedEnvironmentId === environment.id && <Check className="size-4" />}
                                 </DropdownMenuItem>

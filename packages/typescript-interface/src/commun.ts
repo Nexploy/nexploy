@@ -9,4 +9,5 @@ export interface DropdownActionTool {
     onClick?: () => Promise<any> | void;
     separator?: boolean;
     disabled?: boolean;
+    tooltipContent?: string;
 }

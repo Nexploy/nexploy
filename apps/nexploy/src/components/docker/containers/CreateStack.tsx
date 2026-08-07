@@ -9,6 +9,7 @@ import { Layers, Rocket, Upload } from 'lucide-react';
 import { Editor } from '@monaco-editor/react';
 import { useTheme } from '@wrksz/themes/client';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import {
     Form,
     FormControl,
@@ -122,9 +123,11 @@ export default function CreateStack() {
                         </div>
                         <div className="mt-5 flex gap-3">
                             <BackButton disabled={isSubmitting} />
-                            <Button type="submit" icon={Rocket} isLoading={isSubmitting} disabled={isSubmitting}>
-                                {isSubmitting ? t('deploying') : t('deployButton')}
-                            </Button>
+                            <ProtectedAction action="deployment.deploy">
+                                <Button type="submit" icon={Rocket} isLoading={isSubmitting} disabled={isSubmitting}>
+                                    {isSubmitting ? t('deploying') : t('deployButton')}
+                                </Button>
+                            </ProtectedAction>
                         </div>
                     </div>
 

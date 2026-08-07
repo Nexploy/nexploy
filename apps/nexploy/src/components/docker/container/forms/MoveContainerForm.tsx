@@ -33,6 +33,7 @@ import { containerMigrateFormSchema } from '@workspace/schemas-zod/docker/contai
 import { onContainerMigrateAction } from '@/actions/docker/container/containerMigrate.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
+import { useEnvironmentProtection } from '@/hooks/useEnvironmentProtection';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import type { RegistryInfo } from '@/services/registry.service';
 
@@ -52,9 +53,15 @@ export function MoveContainerForm({ containerId, containerName }: MoveContainerF
     const environments = useEnvironmentStore((state) => state.environments);
     const selectedEnvironmentId = useEnvironmentStore((state) => state.selectedEnvironmentId);
 
+    const { isBlockedOn } = useEnvironmentProtection();
+
     const targetEnvironments = useMemo(
-        () => environments.filter((environment) => environment.id !== selectedEnvironmentId),
-        [environments, selectedEnvironmentId],
+        () =>
+            environments.filter(
+                (environment) =>
+                    environment.id !== selectedEnvironmentId && !isBlockedOn(environment.id, 'container.migrateIn'),
+            ),
+        [environments, selectedEnvironmentId, isBlockedOn],
     );
 
     const { form, handleSubmitWithAction, action } = useHookFormAction(

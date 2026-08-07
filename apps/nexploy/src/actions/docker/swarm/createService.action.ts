@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
@@ -9,6 +9,7 @@ import { createServiceFormSchema } from '@workspace/schemas-zod/docker/swarm/ser
 export const onCreateServiceAction = authActionServer
     .metadata({ name: 'swarm.createService' })
     .use(requirePermission('swarm', 'manage'))
+    .use(requireUnprotectedEnvironment('swarm.manage'))
     .inputSchema(createServiceFormSchema)
     .action(async ({ parsedInput }) => {
         try {

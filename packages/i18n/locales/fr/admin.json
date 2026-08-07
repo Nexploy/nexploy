@@ -308,5 +308,135 @@
       "error": "Erreur",
       "metadata": "Charge utile"
     }
+  },
+  "protection": {
+    "title": "Protection des environnements",
+    "description": "Bloque les actions Docker sensibles sur les environnements protégés",
+    "scopeTitle": "La protection s’applique à l’environnement",
+    "scopeDescription": "Un environnement protégé refuse les actions sélectionnées partout dans Nexploy : interface, server actions, jobs de fond et terminaux de conteneurs.",
+    "readOnly": "Votre rôle ne permet pas de modifier ces règles",
+    "noEnvironments": "Aucun environnement",
+    "noEnvironmentsDescription": "Créez un environnement Docker avant de configurer la protection.",
+    "cardDescription": "Choisissez les actions qui doivent être refusées sur cet environnement.",
+    "enable": "Protéger",
+    "statusProtected": "{count} actions bloquées",
+    "statusUnprotected": "Non protégé",
+    "allowAdminBypass": "Autoriser les administrateurs à outrepasser",
+    "allowAdminBypassDescription": "Les administrateurs peuvent toujours exécuter les actions bloquées. Désactivez pour bloquer tout le monde.",
+    "presets": "Préréglages :",
+    "clearAll": "Tout effacer",
+    "reset": "Réinitialiser",
+    "save": "Enregistrer",
+    "saved": "Protection mise à jour pour « {name} »",
+    "blockedTooltip": "Bloqué : l’environnement « {name} » est protégé pour cette action",
+    "presetNames": {
+      "readOnly": "Lecture seule",
+      "production": "Production",
+      "noDataLoss": "Aucune perte de données"
+    },
+    "groups": {
+      "container": "Conteneurs",
+      "image": "Images",
+      "volume": "Volumes",
+      "network": "Réseaux",
+      "swarm": "Swarm",
+      "deployment": "Déploiements",
+      "maintenance": "Maintenance",
+      "environment": "Environnement"
+    },
+    "actions": {
+      "container": {
+        "create": {
+          "label": "Créer un conteneur",
+          "description": "Bloque la création de nouveaux conteneurs sur cet environnement"
+        },
+        "lifecycle": {
+          "label": "Démarrer / arrêter / redémarrer",
+          "description": "Bloque start, stop, pause, unpause et restart"
+        },
+        "update": {
+          "label": "Modifier un conteneur",
+          "description": "Bloque le renommage, la recréation, le changement d’image et la politique de redémarrage"
+        },
+        "remove": {
+          "label": "Supprimer un conteneur",
+          "description": "Bloque la suppression de conteneurs"
+        },
+        "exec": {
+          "label": "Accès terminal",
+          "description": "Bloque les sessions terminal et attach sur les conteneurs"
+        },
+        "migrateIn": {
+          "label": "Déplacement entrant",
+          "description": "Bloque le déplacement d’un conteneur vers cet environnement"
+        },
+        "migrateOut": {
+          "label": "Déplacement sortant",
+          "description": "Bloque le déplacement d’un conteneur hors de cet environnement"
+        }
+      },
+      "image": {
+        "pull": {
+          "label": "Récupérer / importer une image",
+          "description": "Bloque le pull, le load et l’import d’images"
+        },
+        "manage": {
+          "label": "Gérer les images",
+          "description": "Bloque le push, le tag et le untag"
+        },
+        "remove": {
+          "label": "Supprimer des images",
+          "description": "Bloque la suppression et le prune d’images"
+        }
+      },
+      "volume": {
+        "manage": {
+          "label": "Créer un volume",
+          "description": "Bloque la création de volumes"
+        },
+        "remove": {
+          "label": "Supprimer des volumes",
+          "description": "Bloque la suppression et le prune de volumes"
+        }
+      },
+      "network": {
+        "manage": {
+          "label": "Créer un réseau",
+          "description": "Bloque la création de réseaux"
+        },
+        "remove": {
+          "label": "Supprimer des réseaux",
+          "description": "Bloque la suppression et le prune de réseaux"
+        }
+      },
+      "swarm": {
+        "manage": {
+          "label": "Gérer le Swarm",
+          "description": "Bloque init, join, leave, services et nœuds"
+        }
+      },
+      "deployment": {
+        "deploy": {
+          "label": "Déployer",
+          "description": "Bloque les builds et déploiements de versions ciblant cet environnement"
+        }
+      },
+      "maintenance": {
+        "cleanup": {
+          "label": "Lancer le nettoyage",
+          "description": "Bloque les nettoyages Docker manuels"
+        }
+      },
+      "environment": {
+        "update": {
+          "label": "Modifier l’environnement",
+          "description": "Bloque la modification de cet environnement et sa définition par défaut"
+        },
+        "delete": {
+          "label": "Supprimer l’environnement",
+          "description": "Bloque la suppression de cet environnement"
+        }
+      }
+    }
   }
 }

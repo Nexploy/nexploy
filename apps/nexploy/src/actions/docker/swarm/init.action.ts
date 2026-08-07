@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer';
@@ -9,6 +9,7 @@ import { initActionSchema } from '@workspace/schemas-zod/docker/swarm/init.schem
 export const onInitSwarmAction = authActionServer
     .metadata({ name: 'swarm.init' })
     .use(requirePermission('swarm', 'manage'))
+    .use(requireUnprotectedEnvironment('swarm.manage'))
     .inputSchema(initActionSchema)
     .action(async ({ parsedInput: { advertiseAddr, listenAddr, forceNewCluster } }) => {
         try {

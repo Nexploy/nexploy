@@ -5,8 +5,24 @@ import { hasOrgPermission } from '@/lib/auth/orgPermissions';
 import { getCallerOrgRoleForProxy, resolveOrganizationIdForContainerId } from '@/lib/auth/resolveContainerOrgForProxy';
 import { extractContainerId } from '@/server/wsRoutes';
 import type { Actor } from '@nexploy/shared/actor';
+import {
+    getEnvironmentProtection,
+    isEnvironmentActionBlocked,
+} from '@/services/environment/environmentProtection.service';
+import { ENVIRONMENT_COOKIE_NAME } from '@/lib/api/environmentCookie';
 
 const EXEC_USER_PATTERN = /^[a-zA-Z0-9_.-]+(:[a-zA-Z0-9_.-]+)?$/;
+
+function readEnvironmentIdFromCookie(cookieHeader: string | undefined): string | null {
+    if (!cookieHeader) return null;
+
+    for (const part of cookieHeader.split(';')) {
+        const [name, ...rest] = part.trim().split('=');
+        if (name === ENVIRONMENT_COOKIE_NAME) return rest.join('=') || null;
+    }
+
+    return null;
+}
 
 export interface UpgradeDenial {
     status: number;
@@ -40,6 +56,16 @@ export async function authorizeContainerUpgrade(req: IncomingMessage, parsedUrl:
             }
 
             organizationId = containerOrganizationId;
+        }
+    }
+
+    const environmentId = readEnvironmentIdFromCookie(req.headers.cookie);
+
+    if (environmentId) {
+        const protection = await getEnvironmentProtection(environmentId).catch(() => null);
+
+        if (isEnvironmentActionBlocked(protection, 'container.exec', role)) {
+            return { authorized: false, denial: { status: 403, reason: 'Environment Protected' } };
         }
     }
 

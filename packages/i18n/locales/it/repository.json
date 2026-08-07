@@ -444,7 +444,7 @@
     "cancelEdit": "Annulla",
     "nameLabel": "Nome",
     "namePlaceholder": "Produzione",
-    "environmentLabel": "Ambiente di destinazione",
+    "environmentLabel": "Ambiente di destinazione predefinito",
     "environmentPlaceholder": "Seleziona un ambiente",
     "environmentNone": "Nessun ambiente",
     "isProductionLabel": "Fase di produzione",
@@ -461,6 +461,7 @@
     "requiredStageLabel": "Protezione della build",
     "requiredStagePlaceholder": "Nessuna protezione",
     "requiredStageNone": "Nessuna protezione",
+    "requiredStageDisabledTooltip": "Nessun altro stage disponibile per proteggere questo stage",
     "requiredStageHint": "Se impostata, questa fase non può più essere costruita direttamente: solo la fase selezionata può costruirla tramite il suo nodo \"Trigger Stage Build\".",
     "protectedBadge": "Protetta da {stage}",
     "protectedTooltip": "Questa fase non può essere costruita direttamente — solo « {stage} » può costruirla tramite il suo nodo \"Trigger Stage Build\""

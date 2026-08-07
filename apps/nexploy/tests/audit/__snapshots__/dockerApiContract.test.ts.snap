@@ -89,6 +89,7 @@ exports[`docker-api contract > records the calls nexploy makes, so a change to t
   "POST /api/volumes/delete",
   "POST /api/volumes/hardRefresh",
   "POST /api/volumes/prune",
+  "PUT /api/environments/:param/protection",
 ]
 `;
 

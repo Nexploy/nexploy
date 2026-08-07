@@ -207,7 +207,12 @@
     "updateDbFailed": "Aggiornamento dell'ambiente nel database non riuscito",
     "updateDockerApiFailed": "Aggiornamento dell'ambiente in docker-api non riuscito: {error}",
     "deleteDbFailed": "Eliminazione dell'ambiente dal database non riuscita",
-    "unregisterFailed": "Rimozione della registrazione dell'ambiente da docker-api non riuscita: {error}"
+    "unregisterFailed": "Rimozione della registrazione dell'ambiente da docker-api non riuscita: {error}",
+    "protection": {
+      "blocked": "Azione bloccata: l’ambiente «{name}» è protetto",
+      "updateFailed": "Aggiornamento della protezione dell’ambiente non riuscito",
+      "syncFailed": "Sincronizzazione della protezione dell’ambiente con docker-api non riuscita"
+    }
   },
   "api": {
     "repositoriesFetchFailed": "Recupero dei repository non riuscito",

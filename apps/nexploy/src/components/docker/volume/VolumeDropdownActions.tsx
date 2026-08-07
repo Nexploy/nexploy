@@ -7,6 +7,7 @@ import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
 import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 
 interface VolumeDropdownActionsProps {
     volume: Volume;
@@ -52,10 +53,12 @@ export function VolumeDropdownActions({ volume }: VolumeDropdownActionsProps) {
             {volumeTools.map((tool, index) => (
                 <Fragment key={index}>
                     {tool.separator && <DropdownMenuSeparator />}
-                    <DropdownMenuItem variant={tool.variant} onClick={tool.action}>
-                        <tool.icon />
-                        {tool.label}
-                    </DropdownMenuItem>
+                    <ProtectedAction action="volume.remove">
+                        <DropdownMenuItem variant={tool.variant} onClick={tool.action}>
+                            <tool.icon />
+                            {tool.label}
+                        </DropdownMenuItem>
+                    </ProtectedAction>
                 </Fragment>
             ))}
         </DropdownMenuContent>

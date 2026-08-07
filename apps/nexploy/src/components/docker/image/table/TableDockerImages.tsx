@@ -19,6 +19,7 @@ import { ImageRow } from '@workspace/typescript-interface/docker/docker.image';
 import { groupImagesByRepository, matchesSearch } from './imageTableUtils';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Download, HardDriveDownload, Play, Trash2, Upload } from 'lucide-react';
 import { ImageImportForm } from '@/components/docker/image/actions/ImageImportForm';
 import { ImageLoadForm } from '@/components/docker/image/actions/ImageLoadForm';
@@ -181,46 +182,52 @@ export function TableDockerImages() {
                 />
                 <div className={'flex flex-wrap gap-3'}>
                     <Can resource="image" action="pull">
-                        <Button
-                            variant={'outline'}
-                            icon={HardDriveDownload}
-                            onClick={() =>
-                                openDialog({
-                                    title: tImage('importTitle'),
-                                    description: tImage('importDescription'),
-                                    content: <ImageImportForm />,
-                                })
-                            }
-                        >
-                            {tImage('import')}
-                        </Button>
-                        <Button
-                            variant={'outline'}
-                            icon={Upload}
-                            onClick={() =>
-                                openDialog({
-                                    title: tImage('loadTitle'),
-                                    description: tImage('loadDescription'),
-                                    content: <ImageLoadForm />,
-                                })
-                            }
-                        >
-                            {tImage('load')}
-                        </Button>
+                        <ProtectedAction action="image.pull">
+                            <Button
+                                variant={'outline'}
+                                icon={HardDriveDownload}
+                                onClick={() =>
+                                    openDialog({
+                                        title: tImage('importTitle'),
+                                        description: tImage('importDescription'),
+                                        content: <ImageImportForm />,
+                                    })
+                                }
+                            >
+                                {tImage('import')}
+                            </Button>
+                        </ProtectedAction>
+                        <ProtectedAction action="image.pull">
+                            <Button
+                                variant={'outline'}
+                                icon={Upload}
+                                onClick={() =>
+                                    openDialog({
+                                        title: tImage('loadTitle'),
+                                        description: tImage('loadDescription'),
+                                        content: <ImageLoadForm />,
+                                    })
+                                }
+                            >
+                                {tImage('load')}
+                            </Button>
+                        </ProtectedAction>
                     </Can>
-                    <Button
-                        variant={'outline'}
-                        icon={Download}
-                        onClick={() => downloadImageArchive(selectedImages.map((image) => image.id))}
-                        disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
-                    >
-                        {tImage('save')}
-                        {numberOfSelectedRows > 1 && (
-                            <Badge variant={'secondary'} className={'rounded-full'}>
-                                {numberOfSelectedRows}
-                            </Badge>
-                        )}
-                    </Button>
+                    <ProtectedAction action="image.manage">
+                        <Button
+                            variant={'outline'}
+                            icon={Download}
+                            onClick={() => downloadImageArchive(selectedImages.map((image) => image.id))}
+                            disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
+                        >
+                            {tImage('save')}
+                            {numberOfSelectedRows > 1 && (
+                                <Badge variant={'secondary'} className={'rounded-full'}>
+                                    {numberOfSelectedRows}
+                                </Badge>
+                            )}
+                        </Button>
+                    </ProtectedAction>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div>
@@ -235,19 +242,21 @@ export function TableDockerImages() {
                         </TooltipTrigger>
                         {getUseTooltipContent() && <TooltipContent>{getUseTooltipContent()}</TooltipContent>}
                     </Tooltip>
-                    <Button
-                        variant={'destructive'}
-                        onClick={handleDeleteAction}
-                        disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
-                    >
-                        <Trash2 />
-                        {tCommon('remove')}
-                        {numberOfSelectedRows > 1 && (
-                            <Badge variant={'secondary'} className={'rounded-full'}>
-                                {numberOfSelectedRows}
-                            </Badge>
-                        )}
-                    </Button>
+                    <ProtectedAction action="image.remove">
+                        <Button
+                            variant={'destructive'}
+                            onClick={handleDeleteAction}
+                            disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
+                        >
+                            <Trash2 />
+                            {tCommon('remove')}
+                            {numberOfSelectedRows > 1 && (
+                                <Badge variant={'secondary'} className={'rounded-full'}>
+                                    {numberOfSelectedRows}
+                                </Badge>
+                            )}
+                        </Button>
+                    </ProtectedAction>
                 </div>
             </div>
             <TableShell

@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { containerRemoveSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { HTTPError } from 'ky';
@@ -10,6 +10,7 @@ import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 export const onContainerRemoveAction = authActionServer
     .metadata({ name: 'container.remove' })
     .use(requirePermission('container', 'remove', byContainerIds))
+    .use(requireUnprotectedEnvironment('container.remove'))
     .inputSchema(containerRemoveSchema)
     .action(async ({ parsedInput: { containerIds, force } }) => {
         try {

@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Label } from '@workspace/ui/components/label';
 import { LogOut } from 'lucide-react';
@@ -51,12 +52,14 @@ export function LeaveSwarmDialog() {
     };
 
     return (
-        <Button
-            className={'mt-5 size-8'}
-            size={'icon'}
-            icon={LogOut}
-            variant="destructiveOutline"
-            onClick={handleOpen}
-        />
+        <ProtectedAction action="swarm.manage">
+            <Button
+                className={'mt-5 size-8'}
+                size={'icon'}
+                icon={LogOut}
+                variant="destructiveOutline"
+                onClick={handleOpen}
+            />
+        </ProtectedAction>
     );
 }

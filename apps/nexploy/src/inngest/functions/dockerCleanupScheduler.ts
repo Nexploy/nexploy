@@ -2,6 +2,10 @@ import { inngest } from '@/inngest/client';
 import { getCleanupSettings, LOCAL_ENVIRONMENT_KEY, markCleanupRan } from '@/services/cleanupSettings.service';
 import { runScheduledCleanup } from '@/services/dockerCleanup.service';
 import type { CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
+import {
+    getEnvironmentProtection,
+    isEnvironmentActionBlocked,
+} from '@/services/environment/environmentProtection.service';
 
 export const CLEANUP_SCHEDULE_EVENT = 'docker/cleanup.schedule';
 
@@ -53,6 +57,14 @@ export const dockerCleanupSchedulerFunction = inngest.createFunction(
 
         if (!current.enabled) {
             return { skipped: true, reason: 'disabled', environmentId };
+        }
+
+        const isProtected = await step.run('check-environment-protection', async () =>
+            isEnvironmentActionBlocked(await getEnvironmentProtection(environmentId), 'maintenance.cleanup', 'system'),
+        );
+
+        if (isProtected) {
+            return { skipped: true, reason: 'environment-protected', environmentId };
         }
 
         const targets = collectTargets(current);

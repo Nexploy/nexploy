@@ -444,7 +444,7 @@
     "cancelEdit": "Cancel",
     "nameLabel": "Name",
     "namePlaceholder": "Production",
-    "environmentLabel": "Target environment",
+    "environmentLabel": "Default target environment",
     "environmentPlaceholder": "Select an environment",
     "environmentNone": "No environment",
     "isProductionLabel": "Production stage",
@@ -461,6 +461,7 @@
     "requiredStageLabel": "Build protection",
     "requiredStagePlaceholder": "No protection",
     "requiredStageNone": "No protection",
+    "requiredStageDisabledTooltip": "No other stage available to protect this stage",
     "requiredStageHint": "When set, this stage can no longer be built directly: only the selected stage can build it through its \"Trigger Stage Build\" node.",
     "protectedBadge": "Protected by {stage}",
     "protectedTooltip": "This stage cannot be built directly — only « {stage} » can build it via its \"Trigger Stage Build\" node"

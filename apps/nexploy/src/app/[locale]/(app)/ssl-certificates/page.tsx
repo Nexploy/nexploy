@@ -1,4 +1,4 @@
-import { Shield } from 'lucide-react';
+import { GlobeLock } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { getTranslations } from 'next-intl/server';
 import { getCertificates } from '@/services/sslCertificate.service';
@@ -20,7 +20,7 @@ export default async function SSLCertificatesPage() {
                 <div className="flex justify-between gap-2 px-5">
                     <div className="flex gap-3">
                         <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                            <Shield className="text-primary size-7" />
+                            <GlobeLock className="text-primary size-7" />
                         </div>
                         <div className="mt-3.5 flex flex-col">
                             <h1 className="text-3xl font-semibold tracking-tight break-all">{t('title')}</h1>

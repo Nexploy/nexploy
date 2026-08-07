@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { useAction } from 'next-safe-action/hooks';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { onRemoveServicesAction } from '@/actions/docker/swarm/removeServices.action';
@@ -41,20 +42,22 @@ export function ServiceTableActions({ selectedServices, onResetSelection }: Serv
     return (
         <Can resource="swarm" action="manage">
             <div className="flex items-center gap-2">
-                <Button
-                    variant="destructive"
-                    icon={Trash2}
-                    onClick={handleRemove}
-                    disabled={numberOfSelected === 0 || isRemoving}
-                    isLoading={isRemoving}
-                >
-                    {tCommon('remove')}
-                    {numberOfSelected > 1 && (
-                        <Badge variant="secondary" className="rounded-full">
-                            {numberOfSelected}
-                        </Badge>
-                    )}
-                </Button>
+                <ProtectedAction action="swarm.manage">
+                    <Button
+                        variant="destructive"
+                        icon={Trash2}
+                        onClick={handleRemove}
+                        disabled={numberOfSelected === 0 || isRemoving}
+                        isLoading={isRemoving}
+                    >
+                        {tCommon('remove')}
+                        {numberOfSelected > 1 && (
+                            <Badge variant="secondary" className="rounded-full">
+                                {numberOfSelected}
+                            </Badge>
+                        )}
+                    </Button>
+                </ProtectedAction>
             </div>
         </Can>
     );

@@ -9,6 +9,9 @@ export interface EnvironmentConfig {
     tlsKey?: string;
     tlsCa?: string;
     isDefault?: boolean;
+    isProtected?: boolean;
+    allowAdminBypass?: boolean;
+    protectedActions?: string[];
 }
 
 export interface Environment extends EnvironmentConfig {

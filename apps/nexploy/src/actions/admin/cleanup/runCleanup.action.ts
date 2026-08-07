@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { runCleanupSchema } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
 import { runCleanupTarget } from '@/services/dockerCleanup.service';
 import { setToastServer } from '@/lib/toastServer';
@@ -8,6 +8,7 @@ import { setToastServer } from '@/lib/toastServer';
 export const runCleanupAction = authActionServer
     .metadata({ name: 'cleanup.run' })
     .use(requirePermission('setting', 'manage'))
+    .use(requireUnprotectedEnvironment('maintenance.cleanup'))
     .inputSchema(runCleanupSchema)
     .action(async ({ parsedInput }) => {
         try {

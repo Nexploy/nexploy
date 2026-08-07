@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { volumeActionsSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
@@ -17,6 +17,7 @@ const skipReasonToKey: Record<string, string> = {
 export const onVolumeAction = authActionServer
     .metadata({ name: 'volume.action' })
     .use(requirePermission('volume', 'manage'))
+    .use(requireUnprotectedEnvironment('volume.remove'))
     .inputSchema(volumeActionsSchema)
     .action(async ({ parsedInput: { action, volumeNames } }) => {
         try {

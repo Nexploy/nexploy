@@ -207,7 +207,12 @@
     "updateDbFailed": "Failed to update environment in database",
     "updateDockerApiFailed": "Failed to update environment in docker-api: {error}",
     "deleteDbFailed": "Failed to delete environment from database",
-    "unregisterFailed": "Failed to unregister environment from docker-api: {error}"
+    "unregisterFailed": "Failed to unregister environment from docker-api: {error}",
+    "protection": {
+      "blocked": "This action is blocked: the environment \"{name}\" is protected",
+      "updateFailed": "Failed to update environment protection",
+      "syncFailed": "Failed to sync environment protection with docker-api"
+    }
   },
   "api": {
     "repositoriesFetchFailed": "Failed to fetch repositories",

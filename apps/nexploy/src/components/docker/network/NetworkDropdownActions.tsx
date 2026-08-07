@@ -7,6 +7,7 @@ import { onNetworkAction } from '@/actions/docker/network/networkAction.action';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
+import { useProtectionTooltip } from '@/hooks/useProtectionTooltip';
 
 interface NetworkDropdownActionsProps {
     network: Network;
@@ -32,10 +33,14 @@ export function NetworkDropdownActions({ network }: NetworkDropdownActionsProps)
         await onNetworkAction({ networkIds: [network.id], action });
     };
 
+    const removeProtection = useProtectionTooltip('network.remove');
+
     const networkTools: NetworkTool[] = [
         {
             icon: Trash2,
             label: t('remove'),
+            disabled: removeProtection.blocked,
+            tooltipContent: removeProtection.tooltip,
             action: () =>
                 openAlertDialog({
                     title: t('network.removeTitle'),

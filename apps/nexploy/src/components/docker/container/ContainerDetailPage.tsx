@@ -24,6 +24,7 @@ import { CardRestartPolicy } from '@/components/docker/container/cards/CardResta
 import { CardInfoContainer } from '@/components/docker/container/cards/CardInfoContainer';
 import { ContainerActionButtons } from '@/components/docker/container/actions/ContainerActionButtons';
 import { ContainerTerminal } from '@/components/docker/container/actions/ContainerTerminal';
+import { useProtectionTooltip } from '@/hooks/useProtectionTooltip';
 import { ContainerAttach } from '@/components/docker/container/actions/ContainerAttach';
 import { ButtonGroup } from '@workspace/ui/components/button-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -53,6 +54,10 @@ export function ContainerDetailPage() {
     const t = useTranslations('docker.containerDetail');
     const { openDialog } = useConfirmationDialogStore();
     const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
+
+    const execProtection = useProtectionTooltip('container.exec');
+    const updateProtection = useProtectionTooltip('container.update');
+    const migrateProtection = useProtectionTooltip('container.migrateOut');
 
     const handleRename = () => {
         if (!container) return;
@@ -154,6 +159,8 @@ export function ContainerDetailPage() {
                                                     icon={Terminal}
                                                     label={t('console')}
                                                     onClick={openConsole}
+                                                    disabled={execProtection.blocked}
+                                                    disabledReason={execProtection.tooltip}
                                                 />
                                             )}
                                         </ContainerTerminal>
@@ -163,6 +170,8 @@ export function ContainerDetailPage() {
                                                     icon={Terminal}
                                                     label={t('attach')}
                                                     onClick={openAttach}
+                                                    disabled={execProtection.blocked}
+                                                    disabledReason={execProtection.tooltip}
                                                 />
                                             )}
                                         </ContainerAttach>
@@ -171,6 +180,8 @@ export function ContainerDetailPage() {
                                                 icon={Replace}
                                                 label={t('changeImage')}
                                                 onClick={handleChangeImage}
+                                                disabled={updateProtection.blocked}
+                                                disabledReason={updateProtection.tooltip}
                                             />
                                         )}
                                         {!isSwarmContainer && (
@@ -178,6 +189,8 @@ export function ContainerDetailPage() {
                                                 icon={ArrowRightLeft}
                                                 label={t('moveEnvironment')}
                                                 onClick={handleMoveEnvironment}
+                                                disabled={migrateProtection.blocked}
+                                                disabledReason={migrateProtection.tooltip}
                                             />
                                         )}
                                     </ButtonGroup>

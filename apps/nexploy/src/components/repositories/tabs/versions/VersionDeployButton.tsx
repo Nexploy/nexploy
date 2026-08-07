@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Check, Loader2, Rocket } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -46,20 +47,22 @@ export function VersionDeployButton({ version, repositoryId, isCurrent }: Versio
     };
 
     return (
-        <Button
-            size="sm"
-            variant={isCurrent ? 'secondary' : 'outline'}
-            onClick={handleDeploy}
-            disabled={isDeploying || isCurrent}
-        >
-            {isDeploying ? (
-                <Loader2 className="size-4 animate-spin" />
-            ) : isCurrent ? (
-                <Check className="size-4" />
-            ) : (
-                <Rocket className="size-4" />
-            )}
-            {isCurrent ? t('deployed') : t('deploy')}
-        </Button>
+        <ProtectedAction action="deployment.deploy" environmentId={version.environmentId ?? undefined}>
+            <Button
+                size="sm"
+                variant={isCurrent ? 'secondary' : 'outline'}
+                onClick={handleDeploy}
+                disabled={isDeploying || isCurrent}
+            >
+                {isDeploying ? (
+                    <Loader2 className="size-4 animate-spin" />
+                ) : isCurrent ? (
+                    <Check className="size-4" />
+                ) : (
+                    <Rocket className="size-4" />
+                )}
+                {isCurrent ? t('deployed') : t('deploy')}
+            </Button>
+        </ProtectedAction>
     );
 }

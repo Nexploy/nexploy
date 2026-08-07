@@ -13,6 +13,7 @@ import {
 } from '@workspace/ui/components/form';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Switch } from '@workspace/ui/components/switch';
 import {
     Select,
@@ -173,9 +174,11 @@ export function ChangeImageForm({ containerId, currentImage }: ChangeImageFormPr
                             {t('cancel')}
                         </Button>
                     </DialogClose>
-                    <Button type="submit" isLoading={action.isPending}>
-                        {t('apply')}
-                    </Button>
+                    <ProtectedAction action="container.update">
+                        <Button type="submit" isLoading={action.isPending}>
+                            {t('apply')}
+                        </Button>
+                    </ProtectedAction>
                 </DialogFooter>
             </form>
         </Form>

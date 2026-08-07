@@ -5,6 +5,7 @@ import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hoo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HardDrive, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { BackButton } from '@/components/shared/BackButton';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -58,9 +59,11 @@ export default function CreateVolume() {
                         </div>
                         <div className="mt-5 flex gap-3">
                             <BackButton disabled={isSubmitting} />
-                            <Button type="submit" icon={Plus} isLoading={isSubmitting} disabled={isSubmitting}>
-                                {isSubmitting ? t('creating') : t('createButton')}
-                            </Button>
+                            <ProtectedAction action="volume.manage">
+                                <Button type="submit" icon={Plus} isLoading={isSubmitting} disabled={isSubmitting}>
+                                    {isSubmitting ? t('creating') : t('createButton')}
+                                </Button>
+                            </ProtectedAction>
                         </div>
                     </div>
 

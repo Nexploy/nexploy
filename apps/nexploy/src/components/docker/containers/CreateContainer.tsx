@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Container, Plus } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { BackButton } from '@/components/shared/BackButton';
 import { Form } from '@workspace/ui/components/form';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -73,9 +74,11 @@ export default function CreateContainerPage() {
                         </div>
                         <div className="mt-5 flex gap-3">
                             <BackButton disabled={isSubmitting} />
-                            <Button type="submit" icon={Plus} isLoading={isSubmitting} disabled={isSubmitting}>
-                                {isSubmitting ? t('creatingContainer') : t('createButton')}
-                            </Button>
+                            <ProtectedAction action="container.create">
+                                <Button type="submit" icon={Plus} isLoading={isSubmitting} disabled={isSubmitting}>
+                                    {isSubmitting ? t('creatingContainer') : t('createButton')}
+                                </Button>
+                            </ProtectedAction>
                         </div>
                     </div>
 

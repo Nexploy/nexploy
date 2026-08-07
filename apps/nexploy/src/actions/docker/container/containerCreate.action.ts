@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { HOST_SCOPED } from '@/lib/auth/resolveOrgContext';
 import { HTTPError } from 'ky';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
@@ -11,6 +11,7 @@ import { getRegistryWithPassword } from '@/services/registry.service';
 export const onContainerCreateAction = authActionServer
     .metadata({ name: 'container.create' })
     .use(requirePermission('container', 'manage', HOST_SCOPED))
+    .use(requireUnprotectedEnvironment('container.create'))
     .inputSchema(containerCreateFormSchema)
     .action(async ({ parsedInput }) => {
         const { registryId, ...createInput } = parsedInput;

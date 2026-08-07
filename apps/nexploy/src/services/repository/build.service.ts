@@ -15,6 +15,10 @@ import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
 import { PipelineNode } from '@nexploy/nodes/core/node';
 import { matchesWebhookTrigger, WebhookCloneFilters } from '@nexploy/nodes/core/webhookTrigger';
 import { publishBuildTaskFromDatabase } from '@/services/repository/buildTask.service';
+import {
+    getEnvironmentProtection,
+    isEnvironmentActionBlocked,
+} from '@/services/environment/environmentProtection.service';
 
 function pipelineAcceptsWebhookTrigger(nodes: unknown, trigger: WebhookTrigger, branch?: string): boolean {
     const webhookNodes = (Array.isArray(nodes) ? (nodes as PipelineNode[]) : []).filter(
@@ -61,6 +65,14 @@ export async function startBuildRepository(
     }
 
     await assertStageProtectionSatisfied(stage.id, stage.requiredStageId, triggeredByStageId);
+
+    if (triggerSource !== 'manual' || triggeredByStageId) {
+        const protection = stage.environmentId ? await getEnvironmentProtection(stage.environmentId) : null;
+
+        if (isEnvironmentActionBlocked(protection, 'deployment.deploy', 'system')) {
+            throw new Error(t('environment.protection.blocked', { name: protection!.name }));
+        }
+    }
 
     const pipelineConfig = await prisma.pipelineConfig.findUnique({
         where: { stageId: stage.id },

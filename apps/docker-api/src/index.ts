@@ -42,6 +42,7 @@ import { dockerEnvironmentMiddleware } from '@/middleware/dockerEnvironment.midd
 import { authMiddleware } from '@/middleware/auth.middleware';
 import { actorAuditMiddleware } from '@/middleware/actorAudit.middleware';
 import { securityHeadersMiddleware } from '@/middleware/securityHeaders.middleware';
+import { environmentProtectionMiddleware } from '@/middleware/environmentProtection.middleware';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import { ContainersStateManager } from '@/managers/list/containersStateManager';
@@ -62,6 +63,7 @@ app.use('*', securityHeadersMiddleware);
 app.use('*', authMiddleware);
 app.use('*', actorAuditMiddleware);
 app.use('*', dockerEnvironmentMiddleware);
+app.use('*', environmentProtectionMiddleware);
 
 app.use(
     '/api/*/events/*',

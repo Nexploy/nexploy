@@ -306,5 +306,135 @@
       "error": "Errore",
       "metadata": "Payload"
     }
+  },
+  "protection": {
+    "title": "Protezione degli ambienti",
+    "description": "Blocca le azioni Docker sensibili sugli ambienti protetti",
+    "scopeTitle": "La protezione si applica all’ambiente",
+    "scopeDescription": "Un ambiente protetto rifiuta le azioni selezionate ovunque in Nexploy: interfaccia, server action, job in background e terminali dei container.",
+    "readOnly": "Il tuo ruolo non consente di modificare queste regole",
+    "noEnvironments": "Nessun ambiente",
+    "noEnvironmentsDescription": "Crea un ambiente Docker prima di configurare la protezione.",
+    "cardDescription": "Scegli le azioni che devono essere rifiutate su questo ambiente.",
+    "enable": "Proteggi",
+    "statusProtected": "{count} azioni bloccate",
+    "statusUnprotected": "Non protetto",
+    "allowAdminBypass": "Consenti agli amministratori di ignorare",
+    "allowAdminBypassDescription": "Gli amministratori possono comunque eseguire le azioni bloccate. Disattiva per bloccare tutti.",
+    "presets": "Preimpostazioni:",
+    "clearAll": "Cancella tutto",
+    "reset": "Reimposta",
+    "save": "Salva",
+    "saved": "Protezione aggiornata per «{name}»",
+    "blockedTooltip": "Bloccato: l’ambiente «{name}» è protetto per questa azione",
+    "presetNames": {
+      "readOnly": "Sola lettura",
+      "production": "Produzione",
+      "noDataLoss": "Nessuna perdita di dati"
+    },
+    "groups": {
+      "container": "Container",
+      "image": "Immagini",
+      "volume": "Volumi",
+      "network": "Reti",
+      "swarm": "Swarm",
+      "deployment": "Distribuzioni",
+      "maintenance": "Manutenzione",
+      "environment": "Ambiente"
+    },
+    "actions": {
+      "container": {
+        "create": {
+          "label": "Creare un container",
+          "description": "Blocca la creazione di nuovi container su questo ambiente"
+        },
+        "lifecycle": {
+          "label": "Avviare / arrestare / riavviare",
+          "description": "Blocca start, stop, pause, unpause e restart"
+        },
+        "update": {
+          "label": "Modificare un container",
+          "description": "Blocca rinomina, ricreazione, cambio immagine e criterio di riavvio"
+        },
+        "remove": {
+          "label": "Eliminare un container",
+          "description": "Blocca l’eliminazione dei container"
+        },
+        "exec": {
+          "label": "Accesso al terminale",
+          "description": "Blocca le sessioni terminal e attach sui container"
+        },
+        "migrateIn": {
+          "label": "Spostamento in entrata",
+          "description": "Blocca lo spostamento di un container verso questo ambiente"
+        },
+        "migrateOut": {
+          "label": "Spostamento in uscita",
+          "description": "Blocca lo spostamento di un container fuori da questo ambiente"
+        }
+      },
+      "image": {
+        "pull": {
+          "label": "Scaricare / importare un’immagine",
+          "description": "Blocca pull, load e import delle immagini"
+        },
+        "manage": {
+          "label": "Gestire le immagini",
+          "description": "Blocca push, tag e untag"
+        },
+        "remove": {
+          "label": "Eliminare immagini",
+          "description": "Blocca l’eliminazione e il prune delle immagini"
+        }
+      },
+      "volume": {
+        "manage": {
+          "label": "Creare un volume",
+          "description": "Blocca la creazione di volumi"
+        },
+        "remove": {
+          "label": "Eliminare volumi",
+          "description": "Blocca l’eliminazione e il prune dei volumi"
+        }
+      },
+      "network": {
+        "manage": {
+          "label": "Creare una rete",
+          "description": "Blocca la creazione di reti"
+        },
+        "remove": {
+          "label": "Eliminare reti",
+          "description": "Blocca l’eliminazione e il prune delle reti"
+        }
+      },
+      "swarm": {
+        "manage": {
+          "label": "Gestire lo Swarm",
+          "description": "Blocca init, join, leave, servizi e nodi"
+        }
+      },
+      "deployment": {
+        "deploy": {
+          "label": "Distribuire",
+          "description": "Blocca build e distribuzioni di versioni verso questo ambiente"
+        }
+      },
+      "maintenance": {
+        "cleanup": {
+          "label": "Eseguire la pulizia",
+          "description": "Blocca le pulizie Docker manuali"
+        }
+      },
+      "environment": {
+        "update": {
+          "label": "Modificare l’ambiente",
+          "description": "Blocca la modifica di questo ambiente e la sua impostazione come predefinito"
+        },
+        "delete": {
+          "label": "Eliminare l’ambiente",
+          "description": "Blocca l’eliminazione di questo ambiente"
+        }
+      }
+    }
   }
 }

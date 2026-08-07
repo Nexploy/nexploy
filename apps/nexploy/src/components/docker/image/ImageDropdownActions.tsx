@@ -16,6 +16,7 @@ import { useTranslations } from 'next-intl';
 import { Switch } from '@workspace/ui/components/switch';
 import { Label } from '@workspace/ui/components/label';
 import { toast } from 'sonner';
+import { useProtectionTooltip } from '@/hooks/useProtectionTooltip';
 
 interface ImageDropdownActionsProps {
     image: Image;
@@ -28,6 +29,8 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
     const tImage = useTranslations('docker.imageActions');
     const forceRef = useRef(false);
     const openDialog = useConfirmationDialogStore((state) => state.openDialog);
+    const manage = useProtectionTooltip('image.manage');
+    const remove = useProtectionTooltip('image.remove');
 
     const imageName = image.name;
 
@@ -49,6 +52,8 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
         {
             icon: Tag,
             label: tImage('tag'),
+            disabled: manage.blocked,
+            tooltipContent: manage.tooltip,
             onClick: () =>
                 openDialog({
                     title: tImage('tagTitle'),
@@ -66,8 +71,8 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                     description: tImage('untagDescription'),
                     content: <ImageUntagForm image={image} />,
                 }),
-            disabled: image.repoTags.length <= 1,
-            tooltipContent: image.repoTags.length <= 1 ? tImage('untagLastTagWarning') : undefined,
+            disabled: manage.blocked || image.repoTags.length <= 1,
+            tooltipContent: manage.tooltip ?? (image.repoTags.length <= 1 ? tImage('untagLastTagWarning') : undefined),
         },
         {
             icon: Upload,
@@ -78,13 +83,15 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                     description: tImage('pushDescription'),
                     content: <ImagePushForm image={image} />,
                 }),
-            disabled: !image.repoTags.length,
-            tooltipContent: !image.repoTags.length ? t('image.noRepositoryTags') : undefined,
+            disabled: manage.blocked || !image.repoTags.length,
+            tooltipContent: manage.tooltip ?? (!image.repoTags.length ? t('image.noRepositoryTags') : undefined),
         },
         {
             icon: Download,
             label: tImage('save'),
             onClick: () => downloadImageArchive([image.id]),
+            disabled: manage.blocked,
+            tooltipContent: manage.tooltip,
         },
         {
             icon: Trash2,
@@ -121,7 +128,8 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                     onAction: () => handleAction('delete'),
                 });
             },
-            disabled: !image.id || image.containersUsed > 0,
+            disabled: remove.blocked || !image.id || image.containersUsed > 0,
+            tooltipContent: remove.tooltip,
             variant: 'destructive',
         },
     ];

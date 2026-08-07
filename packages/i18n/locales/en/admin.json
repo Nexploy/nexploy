@@ -308,5 +308,135 @@
       "error": "Error",
       "metadata": "Payload"
     }
+  },
+  "protection": {
+    "title": "Environment protection",
+    "description": "Block sensitive Docker actions on protected environments",
+    "scopeTitle": "Protection applies to the environment",
+    "scopeDescription": "A protected environment refuses the selected actions everywhere in Nexploy: UI, server actions, background jobs and container terminals.",
+    "readOnly": "Your role does not allow changing these rules",
+    "noEnvironments": "No environment",
+    "noEnvironmentsDescription": "Create a Docker environment before configuring protection.",
+    "cardDescription": "Pick the actions that must be refused on this environment.",
+    "enable": "Protect",
+    "statusProtected": "{count} blocked actions",
+    "statusUnprotected": "Not protected",
+    "allowAdminBypass": "Allow administrators to bypass",
+    "allowAdminBypassDescription": "Administrators can still run blocked actions. Disable to block everyone.",
+    "presets": "Presets:",
+    "clearAll": "Clear",
+    "reset": "Reset",
+    "save": "Save",
+    "saved": "Protection updated for \"{name}\"",
+    "blockedTooltip": "Blocked: the environment \"{name}\" is protected for this action",
+    "presetNames": {
+      "readOnly": "Read only",
+      "production": "Production",
+      "noDataLoss": "No data loss"
+    },
+    "groups": {
+      "container": "Containers",
+      "image": "Images",
+      "volume": "Volumes",
+      "network": "Networks",
+      "swarm": "Swarm",
+      "deployment": "Deployments",
+      "maintenance": "Maintenance",
+      "environment": "Environment"
+    },
+    "actions": {
+      "container": {
+        "create": {
+          "label": "Create a container",
+          "description": "Block creating new containers on this environment"
+        },
+        "lifecycle": {
+          "label": "Start / stop / restart",
+          "description": "Block start, stop, pause, unpause and restart"
+        },
+        "update": {
+          "label": "Modify a container",
+          "description": "Block rename, recreate, image change and restart policy"
+        },
+        "remove": {
+          "label": "Delete a container",
+          "description": "Block deleting containers"
+        },
+        "exec": {
+          "label": "Terminal access",
+          "description": "Block terminal and attach sessions on containers"
+        },
+        "migrateIn": {
+          "label": "Incoming move",
+          "description": "Block moving a container into this environment"
+        },
+        "migrateOut": {
+          "label": "Outgoing move",
+          "description": "Block moving a container out of this environment"
+        }
+      },
+      "image": {
+        "pull": {
+          "label": "Pull / import an image",
+          "description": "Block pull, load and import of images"
+        },
+        "manage": {
+          "label": "Manage images",
+          "description": "Block push, tag and untag"
+        },
+        "remove": {
+          "label": "Delete images",
+          "description": "Block deleting and pruning images"
+        }
+      },
+      "volume": {
+        "manage": {
+          "label": "Create a volume",
+          "description": "Block creating volumes"
+        },
+        "remove": {
+          "label": "Delete volumes",
+          "description": "Block deleting and pruning volumes"
+        }
+      },
+      "network": {
+        "manage": {
+          "label": "Create a network",
+          "description": "Block creating networks"
+        },
+        "remove": {
+          "label": "Delete networks",
+          "description": "Block deleting and pruning networks"
+        }
+      },
+      "swarm": {
+        "manage": {
+          "label": "Manage the Swarm",
+          "description": "Block init, join, leave, services and nodes"
+        }
+      },
+      "deployment": {
+        "deploy": {
+          "label": "Deploy",
+          "description": "Block builds and version deployments targeting this environment"
+        }
+      },
+      "maintenance": {
+        "cleanup": {
+          "label": "Run cleanup",
+          "description": "Block manual Docker cleanup runs"
+        }
+      },
+      "environment": {
+        "update": {
+          "label": "Edit the environment",
+          "description": "Block editing this environment and setting it as default"
+        },
+        "delete": {
+          "label": "Delete the environment",
+          "description": "Block deleting this environment"
+        }
+      }
+    }
   }
 }

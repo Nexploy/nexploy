@@ -15,6 +15,8 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { useTranslations } from 'next-intl';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
+import { useProtectionTooltip } from '@/hooks/useProtectionTooltip';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { onContainerRestartPolicyAction } from '@/actions/docker/container/containerRestartPolicy.action';
@@ -35,6 +37,7 @@ export function CardRestartPolicy() {
     const t = useTranslations('docker.restartPolicy');
     const [pendingPolicy, setPendingPolicy] = useState<ContainerRestartPolicyName | null>(null);
     const { executeAsync, isPending } = useAction(onContainerRestartPolicyAction);
+    const updateProtection = useProtectionTooltip('container.update');
 
     if (isConnecting) {
         return <Skeleton className={'h-28 flex-1'} />;
@@ -43,7 +46,7 @@ export function CardRestartPolicy() {
     if (!container) return null;
 
     const currentPolicy = container.restartPolicy?.name ?? 'no';
-    const isEditable = !isSwarmContainer && !container.autoRemove;
+    const isEditable = !isSwarmContainer && !container.autoRemove && !updateProtection.blocked;
 
     const handleChange = async (policy: ContainerRestartPolicyName) => {
         if (policy === currentPolicy) return;
@@ -66,9 +69,14 @@ export function CardRestartPolicy() {
                     onValueChange={(value) => handleChange(value as ContainerRestartPolicyName)}
                     disabled={!isEditable || isPending}
                 >
-                    <SelectTrigger className="w-full sm:w-72">
-                        <SelectValue placeholder={t('selectPolicy')} />
-                    </SelectTrigger>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <SelectTrigger className="w-full sm:w-72">
+                                <SelectValue placeholder={t('selectPolicy')} />
+                            </SelectTrigger>
+                        </TooltipTrigger>
+                        {updateProtection.tooltip && <TooltipContent>{updateProtection.tooltip}</TooltipContent>}
+                    </Tooltip>
                     <SelectContent align="start">
                         <SelectGroup>
                             {POLICY_OPTIONS.map((option) => (

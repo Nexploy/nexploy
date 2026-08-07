@@ -1,6 +1,11 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import {
+    authActionServer,
+    fromStageInput,
+    requirePermission,
+    requireUnprotectedEnvironment,
+} from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
 import { startBuildSchema } from '@workspace/schemas-zod/inngest/build.schema';
 import { startBuildRepository } from '@/services/repository/build.service';
@@ -11,6 +16,7 @@ import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
 export const onStartBuild = authActionServer
     .metadata({ name: 'builds.startBuild' })
     .use(requirePermission('build', 'run', byRepositoryId))
+    .use(requireUnprotectedEnvironment('deployment.deploy', fromStageInput))
     .inputSchema(startBuildSchema)
     .action(async ({ parsedInput, ctx }) => {
         const t = await getTranslations('repository');

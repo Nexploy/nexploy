@@ -306,5 +306,135 @@
       "error": "Error",
       "metadata": "Carga útil"
     }
+  },
+  "protection": {
+    "title": "Protección de entornos",
+    "description": "Bloquea las acciones sensibles de Docker en los entornos protegidos",
+    "scopeTitle": "La protección se aplica al entorno",
+    "scopeDescription": "Un entorno protegido rechaza las acciones seleccionadas en todo Nexploy: interfaz, server actions, trabajos en segundo plano y terminales de contenedores.",
+    "readOnly": "Tu rol no permite modificar estas reglas",
+    "noEnvironments": "Sin entorno",
+    "noEnvironmentsDescription": "Crea un entorno Docker antes de configurar la protección.",
+    "cardDescription": "Elige las acciones que deben rechazarse en este entorno.",
+    "enable": "Proteger",
+    "statusProtected": "{count} acciones bloqueadas",
+    "statusUnprotected": "Sin protección",
+    "allowAdminBypass": "Permitir que los administradores lo omitan",
+    "allowAdminBypassDescription": "Los administradores aún pueden ejecutar las acciones bloqueadas. Desactívalo para bloquear a todos.",
+    "presets": "Preajustes:",
+    "clearAll": "Borrar todo",
+    "reset": "Restablecer",
+    "save": "Guardar",
+    "saved": "Protección actualizada para «{name}»",
+    "blockedTooltip": "Bloqueado: el entorno «{name}» está protegido para esta acción",
+    "presetNames": {
+      "readOnly": "Solo lectura",
+      "production": "Producción",
+      "noDataLoss": "Sin pérdida de datos"
+    },
+    "groups": {
+      "container": "Contenedores",
+      "image": "Imágenes",
+      "volume": "Volúmenes",
+      "network": "Redes",
+      "swarm": "Swarm",
+      "deployment": "Despliegues",
+      "maintenance": "Mantenimiento",
+      "environment": "Entorno"
+    },
+    "actions": {
+      "container": {
+        "create": {
+          "label": "Crear un contenedor",
+          "description": "Bloquea la creación de nuevos contenedores en este entorno"
+        },
+        "lifecycle": {
+          "label": "Iniciar / detener / reiniciar",
+          "description": "Bloquea start, stop, pause, unpause y restart"
+        },
+        "update": {
+          "label": "Modificar un contenedor",
+          "description": "Bloquea renombrar, recrear, cambiar la imagen y la política de reinicio"
+        },
+        "remove": {
+          "label": "Eliminar un contenedor",
+          "description": "Bloquea la eliminación de contenedores"
+        },
+        "exec": {
+          "label": "Acceso a terminal",
+          "description": "Bloquea las sesiones de terminal y attach en los contenedores"
+        },
+        "migrateIn": {
+          "label": "Movimiento entrante",
+          "description": "Bloquea mover un contenedor hacia este entorno"
+        },
+        "migrateOut": {
+          "label": "Movimiento saliente",
+          "description": "Bloquea mover un contenedor fuera de este entorno"
+        }
+      },
+      "image": {
+        "pull": {
+          "label": "Descargar / importar una imagen",
+          "description": "Bloquea pull, load e import de imágenes"
+        },
+        "manage": {
+          "label": "Gestionar imágenes",
+          "description": "Bloquea push, tag y untag"
+        },
+        "remove": {
+          "label": "Eliminar imágenes",
+          "description": "Bloquea la eliminación y el prune de imágenes"
+        }
+      },
+      "volume": {
+        "manage": {
+          "label": "Crear un volumen",
+          "description": "Bloquea la creación de volúmenes"
+        },
+        "remove": {
+          "label": "Eliminar volúmenes",
+          "description": "Bloquea la eliminación y el prune de volúmenes"
+        }
+      },
+      "network": {
+        "manage": {
+          "label": "Crear una red",
+          "description": "Bloquea la creación de redes"
+        },
+        "remove": {
+          "label": "Eliminar redes",
+          "description": "Bloquea la eliminación y el prune de redes"
+        }
+      },
+      "swarm": {
+        "manage": {
+          "label": "Gestionar el Swarm",
+          "description": "Bloquea init, join, leave, servicios y nodos"
+        }
+      },
+      "deployment": {
+        "deploy": {
+          "label": "Desplegar",
+          "description": "Bloquea las compilaciones y despliegues de versiones hacia este entorno"
+        }
+      },
+      "maintenance": {
+        "cleanup": {
+          "label": "Ejecutar la limpieza",
+          "description": "Bloquea las limpiezas manuales de Docker"
+        }
+      },
+      "environment": {
+        "update": {
+          "label": "Editar el entorno",
+          "description": "Bloquea la edición de este entorno y definirlo como predeterminado"
+        },
+        "delete": {
+          "label": "Eliminar el entorno",
+          "description": "Bloquea la eliminación de este entorno"
+        }
+      }
+    }
   }
 }

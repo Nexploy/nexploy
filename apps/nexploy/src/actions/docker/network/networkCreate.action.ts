@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/lib/toastServer';
 import { networkCreateSchema } from '@workspace/schemas-zod/docker/network/networkAction.schema';
@@ -10,6 +10,7 @@ import { getTranslations } from 'next-intl/server';
 export const onNetworkCreateAction = authActionServer
     .metadata({ name: 'network.create' })
     .use(requirePermission('network', 'manage'))
+    .use(requireUnprotectedEnvironment('network.manage'))
     .inputSchema(networkCreateSchema)
     .action(async ({ parsedInput }) => {
         try {

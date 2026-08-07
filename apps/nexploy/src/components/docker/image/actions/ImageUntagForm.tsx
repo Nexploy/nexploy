@@ -5,6 +5,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { Label } from '@workspace/ui/components/label';
 import { onImageUntagAction } from '@/actions/docker/image/imageUntagAction.action';
@@ -58,14 +59,16 @@ export function ImageUntagForm({ image }: ImageUntagFormProps) {
                 <Button type="button" variant="outline" onClick={closeDialog} disabled={isPending}>
                     {tCommon('cancel')}
                 </Button>
-                <Button
-                    type="button"
-                    isLoading={isPending}
-                    disabled={selected.length === 0 || selected.length >= image.repoTags.length}
-                    onClick={() => execute({ tags: selected })}
-                >
-                    {t('untag')}
-                </Button>
+                <ProtectedAction action="image.manage">
+                    <Button
+                        type="button"
+                        isLoading={isPending}
+                        disabled={selected.length === 0 || selected.length >= image.repoTags.length}
+                        onClick={() => execute({ tags: selected })}
+                    >
+                        {t('untag')}
+                    </Button>
+                </ProtectedAction>
             </div>
         </div>
     );

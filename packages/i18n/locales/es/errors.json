@@ -207,7 +207,12 @@
     "updateDbFailed": "No se ha podido actualizar el entorno en la base de datos",
     "updateDockerApiFailed": "No se ha podido actualizar el entorno en docker-api: {error}",
     "deleteDbFailed": "No se ha podido eliminar el entorno de la base de datos",
-    "unregisterFailed": "No se ha podido cancelar el registro del entorno en docker-api: {error}"
+    "unregisterFailed": "No se ha podido cancelar el registro del entorno en docker-api: {error}",
+    "protection": {
+      "blocked": "Acción bloqueada: el entorno «{name}» está protegido",
+      "updateFailed": "Error al actualizar la protección del entorno",
+      "syncFailed": "Error al sincronizar la protección del entorno con docker-api"
+    }
   },
   "api": {
     "repositoriesFetchFailed": "No se han podido obtener los repositorios",

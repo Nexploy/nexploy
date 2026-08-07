@@ -6,20 +6,26 @@ export function ToolbarButton({
     icon: Icon,
     label,
     onClick,
+    disabled,
+    disabledReason,
 }: {
     icon: LucideIcon;
     label: string;
     onClick: () => void;
+    disabled?: boolean;
+    disabledReason?: string;
 }) {
     return (
         <Tooltip>
             <TooltipTrigger asChild>
-                <Button variant="outline" onClick={onClick}>
+                <Button variant="outline" aria-disabled={disabled} onClick={disabled ? undefined : onClick}>
                     <Icon />
                     <span className="sm:hidden md:block">{label}</span>
                 </Button>
             </TooltipTrigger>
-            <TooltipContent className="hidden sm:block md:hidden">{label}</TooltipContent>
+            <TooltipContent className={disabledReason ? undefined : 'hidden sm:block md:hidden'}>
+                {disabledReason ?? label}
+            </TooltipContent>
         </Tooltip>
     );
 }

@@ -159,6 +159,20 @@ class DockerClientRegistry {
         return this.configs.get(environmentId) || null;
     }
 
+    setEnvironmentProtection(
+        environmentId: string,
+        protection: Pick<EnvironmentConfig, 'isProtected' | 'allowAdminBypass' | 'protectedActions'>,
+    ): boolean {
+        const config = this.configs.get(environmentId);
+
+        if (!config) return false;
+
+        this.configs.set(environmentId, { ...config, ...protection });
+        logger.info({ environmentId, isProtected: protection.isProtected }, 'Environment protection updated');
+
+        return true;
+    }
+
     getDefaultEnvironmentConfig(): EnvironmentConfig | null {
         if (!this.defaultEnvironmentId) {
             return null;

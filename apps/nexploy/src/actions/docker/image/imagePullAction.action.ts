@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { imagePullSchema } from '@workspace/schemas-zod/docker/image/imagePullAction.schema';
 import { setToastServer } from '@/lib/toastServer';
@@ -10,6 +10,7 @@ import { getRegistryWithPassword } from '@/services/registry.service';
 export const onImagePullAction = authActionServer
     .metadata({ name: 'image.pull' })
     .use(requirePermission('image', 'pull'))
+    .use(requireUnprotectedEnvironment('image.pull'))
     .inputSchema(imagePullSchema)
     .action(async ({ parsedInput: { imageName, registryId } }) => {
         let auth: { username: string; password: string; serveraddress: string } | undefined;

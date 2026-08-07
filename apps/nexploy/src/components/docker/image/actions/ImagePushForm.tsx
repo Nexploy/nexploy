@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
 import { imagePushSchema } from '@workspace/schemas-zod/docker/image/imageAction.schema';
@@ -107,9 +108,11 @@ export function ImagePushForm({ image }: ImagePushFormProps) {
                     >
                         {tCommon('cancel')}
                     </Button>
-                    <Button type="submit" isLoading={form.formState.isSubmitting}>
-                        {t('push')}
-                    </Button>
+                    <ProtectedAction action="image.manage">
+                        <Button type="submit" isLoading={form.formState.isSubmitting}>
+                            {t('push')}
+                        </Button>
+                    </ProtectedAction>
                 </div>
             </form>
         </Form>

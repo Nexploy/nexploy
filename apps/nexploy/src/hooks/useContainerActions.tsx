@@ -10,6 +10,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { Switch } from '@workspace/ui/components/switch';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
+import { useProtectionTooltip } from '@/hooks/useProtectionTooltip';
 
 interface UseContainerActionsProps {
     containerId: string;
@@ -22,6 +23,8 @@ export function useContainerActions({ containerId, containerName, isPaused }: Us
     const tTables = useTranslations('docker.tables');
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const forceRef = useRef(false);
+    const lifecycle = useProtectionTooltip('container.lifecycle');
+    const remove = useProtectionTooltip('container.remove');
 
     const containerTools: ContainerTool[] = [
         isPaused
@@ -32,6 +35,8 @@ export function useContainerActions({ containerId, containerName, isPaused }: Us
                   onClick: () => onContainerUnpauseAction({ containerIds: [containerId] }),
                   disabledStates: [],
                   variant: 'outline',
+                  disabled: lifecycle.blocked,
+                  tooltipContent: lifecycle.tooltip,
               }
             : {
                   id: 'start',
@@ -40,6 +45,8 @@ export function useContainerActions({ containerId, containerName, isPaused }: Us
                   onClick: () => onContainerStartAction({ containerIds: [containerId] }),
                   disabledStates: ['running', 'restarting', 'paused'],
                   variant: 'outline',
+                  disabled: lifecycle.blocked,
+                  tooltipContent: lifecycle.tooltip,
               },
         {
             id: 'stop',
@@ -48,6 +55,8 @@ export function useContainerActions({ containerId, containerName, isPaused }: Us
             onClick: () => onContainerStopAction({ containerIds: [containerId] }),
             disabledStates: ['exited', 'created', 'dead'],
             variant: 'outline',
+            disabled: lifecycle.blocked,
+            tooltipContent: lifecycle.tooltip,
         },
         {
             id: 'pause',
@@ -56,6 +65,8 @@ export function useContainerActions({ containerId, containerName, isPaused }: Us
             onClick: () => onContainerPauseAction({ containerIds: [containerId] }),
             disabledStates: ['paused', 'exited', 'dead', 'created'],
             variant: 'outline',
+            disabled: lifecycle.blocked,
+            tooltipContent: lifecycle.tooltip,
         },
         {
             id: 'restart',
@@ -64,6 +75,8 @@ export function useContainerActions({ containerId, containerName, isPaused }: Us
             onClick: () => onContainerRestartAction({ containerIds: [containerId] }),
             disabledStates: ['created', 'dead'],
             variant: 'outline',
+            disabled: lifecycle.blocked,
+            tooltipContent: lifecycle.tooltip,
         },
         {
             id: 'destroy',
@@ -115,6 +128,8 @@ export function useContainerActions({ containerId, containerName, isPaused }: Us
             separator: true,
             variant: 'destructive',
             disabledStates: [],
+            disabled: remove.blocked,
+            tooltipContent: remove.tooltip,
         },
     ];
 

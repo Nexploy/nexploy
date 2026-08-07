@@ -207,7 +207,12 @@
     "updateDbFailed": "Échec de la mise à jour de l'environnement dans la base de données",
     "updateDockerApiFailed": "Échec de la mise à jour de l'environnement dans docker-api : {error}",
     "deleteDbFailed": "Échec de la suppression de l'environnement de la base de données",
-    "unregisterFailed": "Échec du désenregistrement de l'environnement auprès de docker-api : {error}"
+    "unregisterFailed": "Échec du désenregistrement de l'environnement auprès de docker-api : {error}",
+    "protection": {
+      "blocked": "Action bloquée : l’environnement « {name} » est protégé",
+      "updateFailed": "Échec de la mise à jour de la protection de l’environnement",
+      "syncFailed": "Échec de la synchronisation de la protection avec docker-api"
+    }
   },
   "api": {
     "repositoriesFetchFailed": "Échec de la récupération des dépôts",

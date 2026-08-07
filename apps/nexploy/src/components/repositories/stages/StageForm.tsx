@@ -20,6 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { upsertStageAction } from '@/actions/repository/stages/upsertStage.action';
@@ -47,6 +48,7 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
 
     const { stages } = usePipelineStage(repositoryId);
     const protectionStages = stages.filter((s) => s.id !== stage?.id);
+    const hasProtectionStages = protectionStages.length > 0;
 
     const { form, action, handleSubmitWithAction } = useHookFormAction(
         upsertStageAction,
@@ -128,17 +130,25 @@ export function StageForm({ repositoryId, stage }: StageFormProps) {
                             <Select
                                 value={field.value ?? '__NONE__'}
                                 onValueChange={(value) => field.onChange(value === '__NONE__' ? null : value)}
+                                disabled={!hasProtectionStages}
                             >
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder={t('requiredStagePlaceholder')} />
-                                    </SelectTrigger>
-                                </FormControl>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('requiredStagePlaceholder')} />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                    </TooltipTrigger>
+                                    {!hasProtectionStages && (
+                                        <TooltipContent>{t('requiredStageDisabledTooltip')}</TooltipContent>
+                                    )}
+                                </Tooltip>
                                 <SelectContent align="start">
                                     <SelectGroup>
                                         <SelectLabel>{t('requiredStageLabel')}</SelectLabel>
                                         <SelectItem value={'__NONE__'}>{t('requiredStageNone')}</SelectItem>
-                                        <SelectSeparator />
+                                        {hasProtectionStages && <SelectSeparator />}
                                         {protectionStages.map((s) => (
                                             <SelectItem key={s.id} value={s.id}>
                                                 {s.name}

@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Play, RotateCw, Square, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Switch } from '@workspace/ui/components/switch';
 import { useAction } from 'next-safe-action/hooks';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
@@ -98,62 +99,70 @@ export function ContainerTableActions({ selectedContainers, onResetSelection }: 
     return (
         <Can resource="container" action="manage">
             <div className="flex items-center gap-2">
-                <Button
-                    variant="outline"
-                    icon={Play}
-                    onClick={handleStart}
-                    disabled={!canStart || isAnyLoading}
-                    isLoading={isStarting}
-                >
-                    {tActions('start')}
-                    {numberOfSelectedRows > 1 && (
-                        <Badge variant={'secondary'} className={'rounded-full'}>
-                            {numberOfSelectedRows}
-                        </Badge>
-                    )}
-                </Button>
-                <Button
-                    variant="outline"
-                    icon={Square}
-                    onClick={handleStop}
-                    disabled={!canStop || isAnyLoading}
-                    isLoading={isStopping}
-                >
-                    {tActions('stop')}
-                    {numberOfSelectedRows > 1 && (
-                        <Badge variant={'secondary'} className={'rounded-full'}>
-                            {numberOfSelectedRows}
-                        </Badge>
-                    )}
-                </Button>
-                <Button
-                    variant="outline"
-                    icon={RotateCw}
-                    onClick={handleRestart}
-                    disabled={!canRestart || isAnyLoading}
-                    isLoading={isRestarting}
-                >
-                    {tActions('restart')}
-                    {numberOfSelectedRows > 1 && (
-                        <Badge variant={'secondary'} className={'rounded-full'}>
-                            {numberOfSelectedRows}
-                        </Badge>
-                    )}
-                </Button>
-                <Button
-                    variant="destructive"
-                    icon={Trash2}
-                    onClick={handleRemove}
-                    disabled={numberOfSelectedRows === 0 || isAnyLoading}
-                    isLoading={isRemoving}
-                >
-                    {tCommon('remove')}
-                    {numberOfSelectedRows > 1 && (
-                        <Badge variant={'secondary'} className={'rounded-full'}>
-                            {numberOfSelectedRows}
-                        </Badge>
-                    )}
-                </Button>
+                <ProtectedAction action="container.lifecycle">
+                    <Button
+                        variant="outline"
+                        icon={Play}
+                        onClick={handleStart}
+                        disabled={!canStart || isAnyLoading}
+                        isLoading={isStarting}
+                    >
+                        {tActions('start')}
+                        {numberOfSelectedRows > 1 && (
+                            <Badge variant={'secondary'} className={'rounded-full'}>
+                                {numberOfSelectedRows}
+                            </Badge>
+                        )}
+                    </Button>
+                </ProtectedAction>
+                <ProtectedAction action="container.lifecycle">
+                    <Button
+                        variant="outline"
+                        icon={Square}
+                        onClick={handleStop}
+                        disabled={!canStop || isAnyLoading}
+                        isLoading={isStopping}
+                    >
+                        {tActions('stop')}
+                        {numberOfSelectedRows > 1 && (
+                            <Badge variant={'secondary'} className={'rounded-full'}>
+                                {numberOfSelectedRows}
+                            </Badge>
+                        )}
+                    </Button>
+                </ProtectedAction>
+                <ProtectedAction action="container.lifecycle">
+                    <Button
+                        variant="outline"
+                        icon={RotateCw}
+                        onClick={handleRestart}
+                        disabled={!canRestart || isAnyLoading}
+                        isLoading={isRestarting}
+                    >
+                        {tActions('restart')}
+                        {numberOfSelectedRows > 1 && (
+                            <Badge variant={'secondary'} className={'rounded-full'}>
+                                {numberOfSelectedRows}
+                            </Badge>
+                        )}
+                    </Button>
+                </ProtectedAction>
+                <ProtectedAction action="container.remove">
+                    <Button
+                        variant="destructive"
+                        icon={Trash2}
+                        onClick={handleRemove}
+                        disabled={numberOfSelectedRows === 0 || isAnyLoading}
+                        isLoading={isRemoving}
+                    >
+                        {tCommon('remove')}
+                        {numberOfSelectedRows > 1 && (
+                            <Badge variant={'secondary'} className={'rounded-full'}>
+                                {numberOfSelectedRows}
+                            </Badge>
+                        )}
+                    </Button>
+                </ProtectedAction>
             </div>
         </Can>
     );

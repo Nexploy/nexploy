@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { HTTPError } from 'ky';
 import { volumeCreateSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
@@ -10,6 +10,7 @@ import { getTranslations } from 'next-intl/server';
 export const onVolumeCreateAction = authActionServer
     .metadata({ name: 'volume.create' })
     .use(requirePermission('volume', 'manage'))
+    .use(requireUnprotectedEnvironment('volume.manage'))
     .inputSchema(volumeCreateSchema)
     .action(async ({ parsedInput }) => {
         try {

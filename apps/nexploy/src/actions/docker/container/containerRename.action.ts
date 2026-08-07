@@ -1,6 +1,6 @@
 'use server';
 
-import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { authActionServer, requirePermission, requireUnprotectedEnvironment } from '@/lib/api/safe-action';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { containerRenameSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
 import { HTTPError } from 'ky';
@@ -10,6 +10,7 @@ import { byContainerIds } from '@/lib/auth/resolveOrgContext';
 export const onContainerRenameAction = authActionServer
     .metadata({ name: 'container.rename' })
     .use(requirePermission('container', 'manage', byContainerIds))
+    .use(requireUnprotectedEnvironment('container.update'))
     .inputSchema(containerRenameSchema)
     .action(async ({ parsedInput: { containerId, name } }) => {
         try {

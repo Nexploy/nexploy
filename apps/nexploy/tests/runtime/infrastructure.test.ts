@@ -2,6 +2,7 @@ import { createEnvironmentAction } from '@/actions/environment/createEnvironment
 import { deleteEnvironmentAction } from '@/actions/environment/deleteEnvironment.action';
 import { setDefaultEnvironmentAction } from '@/actions/environment/setDefaultEnvironment.action';
 import { updateEnvironmentAction } from '@/actions/environment/updateEnvironment.action';
+import { updateEnvironmentProtectionAction } from '@/actions/environment/updateEnvironmentProtection.action';
 import { createRegistryAction } from '@/actions/registry/createRegistry.action';
 import { deleteRegistryAction } from '@/actions/registry/deleteRegistry.action';
 import { updateRegistryAction } from '@/actions/registry/updateRegistry.action';
@@ -56,6 +57,18 @@ describePermissionMatrix('environment endpoints', [
         kind: 'action',
         invoke: () =>
             updateEnvironmentAction({ id: 'environment-1', name: 'renamed', connectionType: 'UNIX_SOCKET' } as never),
+        expected: ADMIN_ONLY,
+    },
+    {
+        name: 'updateEnvironmentProtectionAction',
+        kind: 'action',
+        invoke: () =>
+            updateEnvironmentProtectionAction({
+                environmentId: 'environment-1',
+                isProtected: true,
+                allowAdminBypass: true,
+                protectedActions: ['container.remove'],
+            } as never),
         expected: ADMIN_ONLY,
     },
     {

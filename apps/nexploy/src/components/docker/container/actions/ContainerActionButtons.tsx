@@ -33,22 +33,28 @@ export function ContainerActionButtons() {
 
     if (!canOnContainer(container?.labels, 'manage')) return null;
 
-    const renderButton = (action: (typeof containerActions)[0], index: number) => (
-        <Tooltip key={index}>
-            <TooltipTrigger asChild>
-                <Button
-                    className={'sm:w-9 xl:w-fit'}
-                    onClick={() => handleActionClick(action)}
-                    disabled={!container || action.disabledStates.includes(container.state)}
-                    variant={action.variant}
-                >
-                    <action.icon />
-                    <span className={'sm:hidden xl:block'}>{action.label}</span>
-                </Button>
-            </TooltipTrigger>
-            <TooltipContent className="hidden sm:block xl:hidden">{action.label}</TooltipContent>
-        </Tooltip>
-    );
+    const renderButton = (action: (typeof containerActions)[0], index: number) => {
+        const isDisabled = !container || action.disabled || action.disabledStates.includes(container.state);
+
+        return (
+            <Tooltip key={index}>
+                <TooltipTrigger asChild>
+                    <Button
+                        className={'sm:w-9 xl:w-fit'}
+                        onClick={isDisabled ? undefined : () => handleActionClick(action)}
+                        aria-disabled={isDisabled}
+                        variant={action.variant}
+                    >
+                        <action.icon />
+                        <span className={'sm:hidden xl:block'}>{action.label}</span>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent className={action.tooltipContent ? undefined : 'hidden sm:block xl:hidden'}>
+                    {action.tooltipContent ?? action.label}
+                </TooltipContent>
+            </Tooltip>
+        );
+    };
 
     const groups: ReactNode[] = [];
     let currentGroup: ReactNode[] = [];

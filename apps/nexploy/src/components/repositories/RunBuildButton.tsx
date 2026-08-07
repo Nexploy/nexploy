@@ -2,6 +2,7 @@
 
 import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Loader2, Rocket } from 'lucide-react';
 import { ComponentProps, MouseEvent } from 'react';
 import { toast } from 'sonner';
@@ -43,10 +44,12 @@ export function RunBuildButton({ repositoryId, showText = true, ...props }: Depl
 
     return (
         <Can resource="build" action="run">
-            <Button {...props} onClick={(e) => handleDeploy(e)} disabled={isPending}>
-                {isPending ? <Loader2 className="animate-spin" /> : <Rocket />}
-                {showText && (isPending ? t('building') : t('runBuild'))}
-            </Button>
+            <ProtectedAction action="deployment.deploy">
+                <Button {...props} onClick={(e) => handleDeploy(e)} disabled={isPending}>
+                    {isPending ? <Loader2 className="animate-spin" /> : <Rocket />}
+                    {showText && (isPending ? t('building') : t('runBuild'))}
+                </Button>
+            </ProtectedAction>
         </Can>
     );
 }

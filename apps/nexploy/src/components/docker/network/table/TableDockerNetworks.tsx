@@ -16,6 +16,7 @@ import { useNetworksStore } from '../../../../stores/docker/useNetworksStore';
 import { Network } from '@workspace/typescript-interface/docker/docker.network';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
+import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Eraser, Trash2 } from 'lucide-react';
 import { Can } from '@/components/permission/Can';
 import { Badge } from '@workspace/ui/components/badge';
@@ -155,28 +156,32 @@ export function TableDockerNetworks() {
                 />
                 <div className={'flex flex-wrap gap-3'}>
                     <Can resource="network" action="manage">
-                        <Button
-                            variant={'outline'}
-                            icon={Eraser}
-                            onClick={handlePruneAction}
-                            disabled={statusDocker !== 'connected'}
-                        >
-                            {tDocker('prune')}
-                        </Button>
+                        <ProtectedAction action="network.remove">
+                            <Button
+                                variant={'outline'}
+                                icon={Eraser}
+                                onClick={handlePruneAction}
+                                disabled={statusDocker !== 'connected'}
+                            >
+                                {tDocker('prune')}
+                            </Button>
+                        </ProtectedAction>
                     </Can>
-                    <Button
-                        variant={'destructive'}
-                        onClick={handleDeleteAction}
-                        disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
-                        icon={Trash2}
-                    >
-                        {tCommon('remove')}
-                        {numberOfSelectedRows > 1 && (
-                            <Badge variant={'secondary'} className={'rounded-full'}>
-                                {numberOfSelectedRows}
-                            </Badge>
-                        )}
-                    </Button>
+                    <ProtectedAction action="network.remove">
+                        <Button
+                            variant={'destructive'}
+                            onClick={handleDeleteAction}
+                            disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
+                            icon={Trash2}
+                        >
+                            {tCommon('remove')}
+                            {numberOfSelectedRows > 1 && (
+                                <Badge variant={'secondary'} className={'rounded-full'}>
+                                    {numberOfSelectedRows}
+                                </Badge>
+                            )}
+                        </Button>
+                    </ProtectedAction>
                 </div>
             </div>
             <TableShell

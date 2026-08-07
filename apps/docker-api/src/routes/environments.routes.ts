@@ -3,6 +3,7 @@ import { logger } from '@/utils/logger';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import { environmentIdSchema, environmentSchema } from '@workspace/schemas-zod/docker/environment/environment.schema';
+import { environmentProtectionSchema } from '@workspace/schemas-zod/docker/environment/environmentProtection.schema';
 import { route } from '@/utils/route';
 import { createDockerClient } from '@/utils/dockerClient';
 import { HttpError } from '@nexploy/shared/http-error';
@@ -81,6 +82,30 @@ app.post(
         return {
             success: true,
             message: 'Default environment set successfully.',
+            environmentId,
+        };
+    }),
+);
+
+app.put(
+    '/:environmentId/protection',
+    route({ param: environmentIdSchema, json: environmentProtectionSchema }, async (c) => {
+        const { environmentId } = c.req.valid('param');
+        const { isProtected, allowAdminBypass, protectedActions } = c.req.valid('json');
+
+        const updated = dockerClientRegistry.setEnvironmentProtection(environmentId, {
+            isProtected,
+            allowAdminBypass,
+            protectedActions,
+        });
+
+        if (!updated) {
+            logger.info({ environmentId }, 'Environment not registered yet, protection will load on demand');
+        }
+
+        return {
+            success: true,
+            message: 'Environment protection updated.',
             environmentId,
         };
     }),
