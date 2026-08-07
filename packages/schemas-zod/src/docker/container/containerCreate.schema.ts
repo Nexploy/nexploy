@@ -39,7 +39,7 @@ const createAuthSchema = z.object({
 });
 
 export const containerCreateFormSchema = z.object({
-    name: z.string().optional(),
+    name: z.string().max(255, 'Name must be at most 255 characters').optional(),
     image: z.string().min(1, 'Image is required'),
     restart: z.enum(['no', 'always', 'on-failure', 'unless-stopped']).default('unless-stopped'),
     networks: z.array(networkSchema).default([]),

@@ -2,7 +2,10 @@ import { z } from 'zod';
 
 export const githubSetupSchema = z
     .object({
-        displayName: z.string().min(1, { message: 'Display name is required' }),
+        displayName: z
+            .string()
+            .min(1, { message: 'Display name is required' })
+            .max(100, { message: 'Display name must be at most 100 characters' }),
         forOrg: z.boolean(),
         orgName: z.string(),
     })

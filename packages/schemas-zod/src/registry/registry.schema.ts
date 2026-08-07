@@ -13,7 +13,7 @@ const registryUrl = z
     .pipe(z.string().min(1, 'URL is required'));
 
 export const createRegistrySchema = z.object({
-    name: z.string().min(1, 'Name is required'),
+    name: z.string().min(1, 'Name is required').max(100, 'Name must be at most 100 characters'),
     url: registryUrl,
     username: z.string().optional(),
     password: z.string().optional(),
@@ -21,7 +21,7 @@ export const createRegistrySchema = z.object({
 
 export const updateRegistrySchema = z.object({
     id: z.string(),
-    name: z.string().min(1, 'Name is required'),
+    name: z.string().min(1, 'Name is required').max(100, 'Name must be at most 100 characters'),
     url: registryUrl,
     username: z.string().optional(),
     password: z.string().optional(),

@@ -60,7 +60,7 @@ export const imageScanSchema = z.object({
 
 export const imageTagBodySchema = z.object({
     repo: z.string().min(1),
-    tag: z.string().min(1),
+    tag: z.string().min(1).max(128, 'Tag must be at most 128 characters'),
 });
 
 export const imagePushSchema = z.object({
@@ -76,7 +76,7 @@ export const imagePushWithAuthSchema = z.object({
 export const imageTagSchema = z.object({
     imageId: z.string().min(1),
     repo: z.string().min(1),
-    tag: z.string().min(1),
+    tag: z.string().min(1).max(128, 'Tag must be at most 128 characters'),
 });
 
 export const imageUntagSchema = z.object({
@@ -86,7 +86,7 @@ export const imageUntagSchema = z.object({
 export const imageImportSchema = z.object({
     source: z.url(),
     repo: z.string().min(1),
-    tag: z.string().min(1).default('latest'),
+    tag: z.string().min(1).max(128, 'Tag must be at most 128 characters').default('latest'),
 });
 
 export const imageSaveSchema = z.object({

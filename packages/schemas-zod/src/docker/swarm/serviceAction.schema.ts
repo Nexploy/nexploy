@@ -46,7 +46,7 @@ const serviceMountSchema = z.object({
 });
 
 export const createServiceFormSchema = z.object({
-    name: z.string().min(1, 'Name is required'),
+    name: z.string().min(1, 'Name is required').max(255, 'Name must be at most 255 characters'),
     image: z.string().min(1, 'Image is required'),
     mode: z.enum(['replicated', 'global']).default('replicated'),
     replicas: z.coerce.number().min(1, 'Must be at least 1').default(1),

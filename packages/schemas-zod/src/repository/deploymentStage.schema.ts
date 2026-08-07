@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const deploymentStageSchema = z.object({
     id: z.cuid().optional(),
     repositoryId: z.cuid(),
-    name: z.string().min(1, 'Name is required'),
+    name: z.string().min(1, 'Name is required').max(100, 'Name must be at most 100 characters'),
     isProduction: z.boolean().optional(),
     environmentId: z.cuid('An environment is required'),
     requiredStageId: z.cuid().nullable().optional(),

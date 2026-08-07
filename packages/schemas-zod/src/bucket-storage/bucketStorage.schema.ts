@@ -7,7 +7,7 @@ export const uploadVolumeToBucketStorageSchema = z.object({
 });
 
 export const bucketStorageAddAccountSchema = z.object({
-    displayName: z.string().min(1, 'Display name is required'),
+    displayName: z.string().min(1, 'Display name is required').max(100, 'Display name must be at most 100 characters'),
     accessKeyId: z.string().min(1, 'Access key ID is required'),
     secretAccessKey: z.string().min(1, 'Secret access key is required'),
     region: z.string().min(1, 'Region is required'),

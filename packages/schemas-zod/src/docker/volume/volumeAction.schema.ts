@@ -16,7 +16,7 @@ const volumeLabelSchema = z.object({
 });
 
 export const volumeCreateSchema = z.object({
-    name: z.string().min(1, 'Name is required'),
+    name: z.string().min(1, 'Name is required').max(255, 'Name must be at most 255 characters'),
     driver: z.string().optional(),
     driverOpts: z.array(driverOptSchema).default([]),
     labels: z.array(volumeLabelSchema).default([]),

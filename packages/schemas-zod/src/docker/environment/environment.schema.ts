@@ -5,7 +5,7 @@ export const dockerConnectionTypeSchema = z.enum(['UNIX_SOCKET', 'TCP', 'TCP_TLS
 export const environmentSchema = z
     .object({
         id: z.cuid().optional(),
-        name: z.string().min(1, 'Name is required'),
+        name: z.string().min(1, 'Name is required').max(100, 'Name must be at most 100 characters'),
         connectionType: dockerConnectionTypeSchema,
         socketPath: z.string().optional(),
         host: z.string().optional(),
@@ -13,7 +13,7 @@ export const environmentSchema = z
         tlsCert: z.string().optional(),
         tlsKey: z.string().optional(),
         tlsCa: z.string().optional(),
-        description: z.string().optional(),
+        description: z.string().max(500, 'Description must be at most 500 characters').optional(),
         isDefault: z.boolean().optional(),
     })
     .refine(

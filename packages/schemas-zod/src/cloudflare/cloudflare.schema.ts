@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const cloudflareConnectSchema = z.object({
-    displayName: z.string().min(1, 'Display name is required'),
+    displayName: z.string().min(1, 'Display name is required').max(100, 'Display name must be at most 100 characters'),
     apiToken: z.string().min(1, 'API token is required'),
 });
 

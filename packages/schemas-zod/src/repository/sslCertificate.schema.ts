@@ -3,14 +3,14 @@ import { z } from 'zod';
 export const certTypeSchema = z.enum(['LETS_ENCRYPT', 'CUSTOM']);
 
 export const createLetsEncryptCertSchema = z.object({
-    name: z.string().min(1, "Name can't be empty"),
+    name: z.string().min(1, "Name can't be empty").max(100, 'Name must be at most 100 characters'),
     domain: z.string().min(1, "Domain can't be empty"),
     email: z.email(),
     agreedToTos: z.boolean().refine((v) => v, { message: 'You must agree to the Terms of Service' }),
 });
 
 export const createCustomCertSchema = z.object({
-    name: z.string().min(1, "Name can't be empty"),
+    name: z.string().min(1, "Name can't be empty").max(100, 'Name must be at most 100 characters'),
     domain: z.string().min(1, "Domain can't be empty"),
     certificate: z.string().min(1, "Certificate can't be empty"),
     privateKey: z.string().min(1, "Private key can't be empty"),
