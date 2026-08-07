@@ -323,9 +323,16 @@
     "allowAdminBypassDescription": "Los administradores aún pueden ejecutar las acciones bloqueadas. Desactívalo para bloquear a todos.",
     "presets": "Preajustes:",
     "clearAll": "Borrar todo",
-    "reset": "Restablecer",
-    "save": "Guardar",
-    "saved": "Protección actualizada para «{name}»",
+    "toasts": {
+      "protectionEnabled": "Protección activada en «{name}»",
+      "protectionDisabled": "Protección desactivada en «{name}»",
+      "adminBypassEnabled": "Omisión de administrador permitida en «{name}»",
+      "adminBypassDisabled": "Omisión de administrador bloqueada en «{name}»",
+      "actionProtected": "«{action}» bloqueada en «{name}»",
+      "actionUnprotected": "«{action}» permitida en «{name}»",
+      "presetApplied": "Ajuste «{preset}» aplicado a «{name}»",
+      "allCleared": "Todas las acciones permitidas en «{name}»"
+    },
     "blockedTooltip": "Bloqueado: el entorno «{name}» está protegido para esta acción",
     "presetNames": {
       "readOnly": "Solo lectura",

@@ -325,9 +325,16 @@
     "allowAdminBypassDescription": "Les administrateurs peuvent toujours exécuter les actions bloquées. Désactivez pour bloquer tout le monde.",
     "presets": "Préréglages :",
     "clearAll": "Tout effacer",
-    "reset": "Réinitialiser",
-    "save": "Enregistrer",
-    "saved": "Protection mise à jour pour « {name} »",
+    "toasts": {
+      "protectionEnabled": "Protection activée sur « {name} »",
+      "protectionDisabled": "Protection désactivée sur « {name} »",
+      "adminBypassEnabled": "Contournement admin autorisé sur « {name} »",
+      "adminBypassDisabled": "Contournement admin bloqué sur « {name} »",
+      "actionProtected": "« {action} » bloquée sur « {name} »",
+      "actionUnprotected": "« {action} » autorisée sur « {name} »",
+      "presetApplied": "Préréglage « {preset} » appliqué à « {name} »",
+      "allCleared": "Toutes les actions autorisées sur « {name} »"
+    },
     "blockedTooltip": "Bloqué : l’environnement « {name} » est protégé pour cette action",
     "presetNames": {
       "readOnly": "Lecture seule",

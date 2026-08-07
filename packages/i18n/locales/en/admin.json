@@ -325,9 +325,16 @@
     "allowAdminBypassDescription": "Administrators can still run blocked actions. Disable to block everyone.",
     "presets": "Presets:",
     "clearAll": "Clear",
-    "reset": "Reset",
-    "save": "Save",
-    "saved": "Protection updated for \"{name}\"",
+    "toasts": {
+      "protectionEnabled": "Protection enabled on “{name}”",
+      "protectionDisabled": "Protection disabled on “{name}”",
+      "adminBypassEnabled": "Admin bypass allowed on “{name}”",
+      "adminBypassDisabled": "Admin bypass blocked on “{name}”",
+      "actionProtected": "“{action}” blocked on “{name}”",
+      "actionUnprotected": "“{action}” allowed on “{name}”",
+      "presetApplied": "Preset “{preset}” applied to “{name}”",
+      "allCleared": "All actions allowed on “{name}”"
+    },
     "blockedTooltip": "Blocked: the environment \"{name}\" is protected for this action",
     "presetNames": {
       "readOnly": "Read only",

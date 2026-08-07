@@ -29,7 +29,7 @@ export function EnvironmentProtectionSection({ environments, canManage }: Enviro
     }
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 ">
             <Alert variant="info">
                 <ShieldAlert />
                 <AlertTitle>{t('scopeTitle')}</AlertTitle>

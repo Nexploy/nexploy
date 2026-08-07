@@ -323,9 +323,16 @@
     "allowAdminBypassDescription": "Gli amministratori possono comunque eseguire le azioni bloccate. Disattiva per bloccare tutti.",
     "presets": "Preimpostazioni:",
     "clearAll": "Cancella tutto",
-    "reset": "Reimposta",
-    "save": "Salva",
-    "saved": "Protezione aggiornata per «{name}»",
+    "toasts": {
+      "protectionEnabled": "Protezione attivata su «{name}»",
+      "protectionDisabled": "Protezione disattivata su «{name}»",
+      "adminBypassEnabled": "Bypass admin consentito su «{name}»",
+      "adminBypassDisabled": "Bypass admin bloccato su «{name}»",
+      "actionProtected": "«{action}» bloccata su «{name}»",
+      "actionUnprotected": "«{action}» consentita su «{name}»",
+      "presetApplied": "Preset «{preset}» applicato a «{name}»",
+      "allCleared": "Tutte le azioni consentite su «{name}»"
+    },
     "blockedTooltip": "Bloccato: l’ambiente «{name}» è protetto per questa azione",
     "presetNames": {
       "readOnly": "Sola lettura",
