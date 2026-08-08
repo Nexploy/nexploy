@@ -38,7 +38,7 @@ services:
     container_name: nexploy_traefik_prod
     restart: unless-stopped
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock:ro
       - ${TRAEFIK_STATIC_CONFIG:-../traefik/traefik.prod.yml}:/etc/traefik/traefik.yml:ro
       - ../traefik/service:/etc/nexploy/traefik/service
       - traefik_acme:/etc/traefik
@@ -112,7 +112,7 @@ services:
       TRAEFIK_CONTAINER_NAME: nexploy_traefik_prod
       TRAEFIK_NETWORK_NAME: nexploy_traefik_network_prod
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
       - deployer_workdir:/tmp/deployer
     depends_on:
       nexploy:

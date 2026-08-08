@@ -1,6 +1,15 @@
 import { HttpError } from '@nexploy/shared/http-error';
+import { DOCKER_SOCKET_PATH } from '@/lib/config';
 
-const DENIED_HOST_PATHS = ['/var/run/docker.sock', '/var/lib/docker', '/etc', '/root', '/boot', '/proc', '/sys'];
+const DENIED_HOST_PATHS = [
+    ...new Set([DOCKER_SOCKET_PATH, '/var/run/docker.sock']),
+    '/var/lib/docker',
+    '/etc',
+    '/root',
+    '/boot',
+    '/proc',
+    '/sys',
+];
 
 export function assertSafeBindPath(hostPath: string): void {
     if (!hostPath.startsWith('/')) {

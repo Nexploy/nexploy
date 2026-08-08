@@ -24,6 +24,7 @@ import { useTranslations } from 'next-intl';
 import { Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { DownloadCertScriptButton } from './DownloadCertScriptButton';
+import { DEFAULT_DOCKER_SOCKET_PATH } from '@/lib/constants';
 
 interface EditEnvironmentFormProps {
     environment: Environment;
@@ -67,7 +68,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
         form.setValue('connectionType', type);
 
         if (type === 'UNIX_SOCKET') {
-            form.setValue('socketPath', '/var/run/docker.sock');
+            form.setValue('socketPath', DEFAULT_DOCKER_SOCKET_PATH);
             form.setValue('host', undefined);
             form.setValue('port', undefined);
         } else {
@@ -157,8 +158,8 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                 <FormLabel>{t('socketPath')}</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder={t('socketPathPlaceholder')}
                                         {...field}
+                                        placeholder={DEFAULT_DOCKER_SOCKET_PATH}
                                         disabled={form.formState.isSubmitting}
                                     />
                                 </FormControl>

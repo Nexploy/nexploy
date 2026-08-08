@@ -24,7 +24,7 @@ async function seedEnvironment() {
         data: {
             name: 'Local Docker',
             connectionType: 'UNIX_SOCKET',
-            socketPath: '/var/run/docker.sock',
+            socketPath: process.env.DOCKER_SOCKET || '/var/run/docker.sock',
             isDefault: true,
             isActive: true,
             userId: null,

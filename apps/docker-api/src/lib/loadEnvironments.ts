@@ -1,6 +1,7 @@
 import { HTTPError } from 'ky';
 import { logger } from '@/utils/logger';
 import { kyNexploy } from '@/lib/kyNexploy';
+import { DOCKER_SOCKET_PATH } from '@/lib/config';
 import { EnvironmentConfig } from '@workspace/typescript-interface/docker/environment/environment';
 
 export async function loadEnvironmentsFromAPI(): Promise<EnvironmentConfig[]> {
@@ -24,7 +25,7 @@ export async function loadEnvironmentsFromAPI(): Promise<EnvironmentConfig[]> {
                 id: 'default',
                 name: 'Default Environment',
                 connectionType: 'UNIX_SOCKET',
-                socketPath: process.env.DOCKER_SOCKET,
+                socketPath: DOCKER_SOCKET_PATH,
                 isDefault: true,
             },
         ];

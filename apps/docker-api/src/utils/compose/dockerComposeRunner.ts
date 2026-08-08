@@ -3,6 +3,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import type { EnvironmentConfig } from '@workspace/typescript-interface/docker/environment/environment';
+import { DOCKER_SOCKET_PATH } from '@/lib/config';
 
 export interface DockerEnvResult {
     env: Record<string, string>;
@@ -16,10 +17,7 @@ export function buildDockerHostEnv(envConfig: EnvironmentConfig | null): DockerE
 
     switch (envConfig.connectionType) {
         case 'UNIX_SOCKET': {
-            const socketPath = envConfig.socketPath || '/var/run/docker.sock';
-            if (socketPath === '/var/run/docker.sock') {
-                return { env: {} };
-            }
+            const socketPath = envConfig.socketPath || DOCKER_SOCKET_PATH;
             return { env: { DOCKER_HOST: `unix://${socketPath}` } };
         }
         case 'TCP':

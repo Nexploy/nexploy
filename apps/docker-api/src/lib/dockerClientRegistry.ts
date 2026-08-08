@@ -1,6 +1,7 @@
 import Docker from 'dockerode';
 import { logger } from '@/utils/logger';
 import { defaultDocker } from '@/utils/dockerClient';
+import { DOCKER_SOCKET_PATH } from '@/lib/config';
 import { EnvironmentSchemaType } from '@workspace/schemas-zod/docker/environment/environment.schema';
 import { EnvironmentConfig } from '@workspace/typescript-interface/docker/environment/environment';
 
@@ -91,7 +92,7 @@ class DockerClientRegistry {
     private createClient(config: EnvironmentSchemaType): Docker {
         switch (config.connectionType) {
             case 'UNIX_SOCKET':
-                return new Docker({ socketPath: config.socketPath });
+                return new Docker({ socketPath: config.socketPath || DOCKER_SOCKET_PATH });
             case 'TCP':
                 return new Docker({
                     host: config.host,

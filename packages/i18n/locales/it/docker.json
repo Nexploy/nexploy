@@ -674,7 +674,6 @@
     "tcp": "TCP (remoto)",
     "tcpTls": "TCP con TLS (remoto sicuro)",
     "socketPath": "Percorso del socket",
-    "socketPathPlaceholder": "/var/run/docker.sock",
     "socketPathDescription": "Percorso del file socket del daemon Docker",
     "host": "Host",
     "hostPlaceholder": "es. localhost, 192.168.1.100",

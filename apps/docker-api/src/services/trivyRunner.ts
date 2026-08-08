@@ -2,6 +2,7 @@ import type { Writable } from 'stream';
 import { getCurrentDockerClient } from '@/lib/dockerContext';
 import type { ScanImageResult } from '@workspace/typescript-interface/docker/docker.image';
 import { ensureImage } from '@/utils/ensureImage';
+import { DOCKER_SOCKET_PATH } from '@/lib/config';
 
 const TRIVY_IMAGE_BASE = 'aquasec/trivy';
 
@@ -39,7 +40,7 @@ async function getOrCreateDaemonContainer(trivyVersion: string, buildId: string)
             Entrypoint: ['sleep', 'infinity'],
             Cmd: [],
             HostConfig: {
-                Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
+                Binds: [`${DOCKER_SOCKET_PATH}:/var/run/docker.sock`],
                 AutoRemove: false,
                 RestartPolicy: { Name: 'no' },
             },

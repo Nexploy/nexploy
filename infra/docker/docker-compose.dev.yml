@@ -40,7 +40,7 @@ services:
     container_name: nexploy_traefik_dev
     restart: unless-stopped
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock:ro
       - ../traefik/traefik.dev.yml:/etc/traefik/traefik.yml
       - ../traefik/service:/etc/nexploy/traefik/service
     ports:

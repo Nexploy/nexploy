@@ -3,6 +3,9 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig: NextConfig = {
     output: 'standalone',
+    env: {
+        NEXT_PUBLIC_DOCKER_SOCKET: process.env.DOCKER_SOCKET ?? '/var/run/docker.sock',
+    },
     distDir: process.env.NEXT_DIST_DIR || '.next',
     images: {
         remotePatterns: [

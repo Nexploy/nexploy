@@ -1,9 +1,10 @@
 import Docker from 'dockerode';
 import { getCurrentDockerClient } from '@/lib/dockerContext';
+import { DOCKER_SOCKET_PATH } from '@/lib/config';
 import { EnvironmentSchemaType } from '@workspace/schemas-zod/docker/environment/environment.schema';
 
 export const defaultDocker = new Docker({
-    socketPath: process.env.DOCKER_SOCKET,
+    socketPath: DOCKER_SOCKET_PATH,
 });
 
 export const docker = new Proxy({} as Docker, {
@@ -22,7 +23,7 @@ export const docker = new Proxy({} as Docker, {
 export function createDockerClient(config: EnvironmentSchemaType): Docker {
     switch (config.connectionType) {
         case 'UNIX_SOCKET':
-            return new Docker({ socketPath: config.socketPath });
+            return new Docker({ socketPath: config.socketPath || DOCKER_SOCKET_PATH });
 
         case 'TCP':
             return new Docker({

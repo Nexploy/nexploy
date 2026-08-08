@@ -22,6 +22,7 @@ import { TlsCertificateField } from './TlsCertificateField';
 import { DownloadCertScriptButton } from './DownloadCertScriptButton';
 import { Switch } from '@workspace/ui/components/switch';
 import { createEnvironmentAction } from '@/actions/environment/createEnvironment.action';
+import { DEFAULT_DOCKER_SOCKET_PATH } from '@/lib/constants';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -39,7 +40,7 @@ export function CreateEnvironmentForm() {
                 defaultValues: {
                     name: '',
                     connectionType: 'UNIX_SOCKET' as const,
-                    socketPath: '/var/run/docker.sock',
+                    socketPath: DEFAULT_DOCKER_SOCKET_PATH,
                     description: '',
                     isDefault: false,
                 },
@@ -68,7 +69,7 @@ export function CreateEnvironmentForm() {
         form.setValue('tlsCa', undefined);
 
         if (type === 'UNIX_SOCKET') {
-            form.setValue('socketPath', '/var/run/docker.sock');
+            form.setValue('socketPath', DEFAULT_DOCKER_SOCKET_PATH);
         } else if (type === 'TCP' || type === 'TCP_TLS') {
             form.setValue('host', 'localhost');
             form.setValue('port', type === 'TCP_TLS' ? 2376 : 2375);
@@ -160,8 +161,8 @@ export function CreateEnvironmentForm() {
                                 <FormLabel>{t('socketPath')}</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder={t('socketPathPlaceholder')}
                                         {...field}
+                                        placeholder={DEFAULT_DOCKER_SOCKET_PATH}
                                         disabled={form.formState.isSubmitting}
                                     />
                                 </FormControl>
