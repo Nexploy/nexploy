@@ -7,7 +7,8 @@ import {
 } from '@workspace/schemas-zod/docker/composes/composesAction.schema';
 import { docker } from '@/utils/dockerClient';
 import { controlComposeStack } from '@/services/composeService';
-import { runTrackedTask } from '@/lib/taskRunner';
+import { runAsTask, runTrackedTask } from '@/lib/taskRunner';
+import { isUserAction } from '@/lib/actorContext';
 import { resolveStackOwner } from '@/lib/taskOwnership';
 import type { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
 import type { TaskKind } from '@workspace/typescript-interface/task';
@@ -39,6 +40,23 @@ function runStackAction(project: string, action: ComposesAction, force = false) 
         subjectName: project,
         resolveOwner: () => resolveStackOwner(project),
         run: (track) => controlComposeStack(project, action, force, track.setProgress),
+    });
+}
+
+async function startStackRemove(project: string, force: boolean) {
+    if (!isUserAction()) {
+        return controlComposeStack(project, 'remove', force);
+    }
+
+    const ownerOrganizationId = await resolveStackOwner(project);
+
+    return runAsTask({
+        kind: STACK_TASK_KINDS.remove,
+        subjectName: project,
+        stepKeys: [],
+        environmentId: getCurrentEnvironmentId(),
+        ownerOrganizationId,
+        run: ({ setProgress }) => controlComposeStack(project, 'remove', force, setProgress),
     });
 }
 
@@ -253,7 +271,7 @@ app.post(
         const { project } = c.req.valid('param');
         const body = await c.req.json().catch(() => ({}));
         const force = body?.force === true;
-        return runStackAction(project, 'remove', force);
+        return startStackRemove(project, force);
     }),
 );
 
