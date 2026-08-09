@@ -17,6 +17,7 @@ import { Switch } from '@workspace/ui/components/switch';
 import { Label } from '@workspace/ui/components/label';
 import { toast } from 'sonner';
 import { useProtectionTooltip } from '@/hooks/useProtectionTooltip';
+import { runToolAction } from '@/lib/runToolAction';
 
 interface ImageDropdownActionsProps {
     image: Image;
@@ -145,7 +146,7 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                                 <div>
                                     <DropdownMenuItem
                                         variant={tool.variant}
-                                        onClick={tool.onClick}
+                                        onClick={() => runToolAction(tool.onClick)}
                                         disabled={tool.disabled}
                                     >
                                         <tool.icon />
@@ -160,7 +161,11 @@ export function ImageDropdownActions({ image }: ImageDropdownActionsProps) {
                             )}
                         </Tooltip>
                     ) : (
-                        <DropdownMenuItem variant={tool.variant} onClick={tool.onClick} disabled={tool.disabled}>
+                        <DropdownMenuItem
+                            variant={tool.variant}
+                            onClick={() => runToolAction(tool.onClick)}
+                            disabled={tool.disabled}
+                        >
                             <tool.icon />
                             {tool.label}
                         </DropdownMenuItem>

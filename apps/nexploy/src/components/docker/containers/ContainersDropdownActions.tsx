@@ -7,6 +7,7 @@ import { useContainerActions } from '@/hooks/useContainerActions';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { MoveContainerForm } from '@/components/docker/container/forms/MoveContainerForm';
 import { useProtectionTooltip } from '@/hooks/useProtectionTooltip';
+import { runToolAction } from '@/lib/runToolAction';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 
 interface ContainerDropdownActionsProps {
@@ -41,7 +42,7 @@ export function ContainersDropdownActions({ container: { id, name, state } }: Co
                 variant={tool.variant}
                 onClick={(event) => {
                     event.stopPropagation();
-                    tool.onClick?.();
+                    runToolAction(tool.onClick);
                 }}
                 disabled={tool.disabled || (state && tool.disabledStates.includes(state))}
             >

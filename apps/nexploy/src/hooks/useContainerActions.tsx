@@ -123,6 +123,7 @@ export function useContainerActions({ containerId, containerName, isPaused }: Us
                                 reject(error);
                             }
                         },
+                        onCancel: async () => resolve(null),
                     });
                 }),
             separator: true,

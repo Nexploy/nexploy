@@ -34,7 +34,7 @@ export const useContainerStatsStore = create<ContainerStatsState>((set, get) => 
         const state = get();
         const isSameContainerId = state.containerId === containerId;
 
-        if (state.isConnected && isSameContainerId) {
+        if (state.isConnected && isSameContainerId && lastConnectionParams?.refreshRate === refreshRate) {
             return;
         }
 

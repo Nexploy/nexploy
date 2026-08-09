@@ -829,12 +829,12 @@ exports[`permission matrix > resolves the same verdict for every endpoint and gl
     "system": "exempt:session-scoped",
   },
   {
-    "admin": "exempt:undeclared",
-    "developer": "exempt:undeclared",
+    "admin": "exempt:org-role-check",
+    "developer": "exempt:org-role-check",
     "endpoint": "GET src/app/api/organizations/[organizationId]/members/search-users/route.ts",
     "guards": null,
-    "guest": "exempt:undeclared",
-    "system": "exempt:undeclared",
+    "guest": "exempt:org-role-check",
+    "system": "exempt:org-role-check",
   },
   {
     "admin": "exempt:session-scoped",

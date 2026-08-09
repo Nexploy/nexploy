@@ -96,8 +96,12 @@ export const useContainersStatsStore = create<ContainersStatsState>((set, get) =
     connect: ({ refreshRate }) => {
         const state = get();
 
-        if (state.isConnected) {
+        if (state.isConnected && lastConnectionParams?.refreshRate === refreshRate) {
             return;
+        }
+
+        if (state.isConnected) {
+            get().disconnect();
         }
 
         lastConnectionParams = { refreshRate };

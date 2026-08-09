@@ -12,6 +12,7 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { useBuildActions } from '@/hooks/useBuildActions';
 import { BuildStatus } from 'generated/client';
+import { runToolAction } from '@/lib/runToolAction';
 
 interface BuildDropdownActionsProps {
     buildId: string;
@@ -42,7 +43,7 @@ export function BuildDropdownActions({ buildId, status }: BuildDropdownActionsPr
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    action.onClick();
+                                    runToolAction(action.onClick);
                                 }}
                                 disabled={action.disabled}
                             >

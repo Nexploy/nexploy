@@ -16,6 +16,7 @@ export function useEnvironmentNetworks(environmentId?: string): {
     useEffect(() => {
         if (!environmentId) return;
 
+        setNetworks([]);
         setIsLoading(true);
 
         const params = { environment: environmentId };

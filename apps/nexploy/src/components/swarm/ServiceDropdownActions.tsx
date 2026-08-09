@@ -3,6 +3,7 @@ import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@w
 import { useTranslations } from 'next-intl';
 import type { SwarmService } from '@workspace/typescript-interface/docker/swarm';
 import { useServiceActions } from '@/hooks/useServiceActions';
+import { runToolAction } from '@/lib/runToolAction';
 
 interface ServiceDropdownActionsProps {
     service: SwarmService;
@@ -22,7 +23,7 @@ export function ServiceDropdownActions({ service }: ServiceDropdownActionsProps)
                         disabled={tool.disabled}
                         onClick={(event) => {
                             event.stopPropagation();
-                            tool.onClick?.();
+                            runToolAction(tool.onClick);
                         }}
                     >
                         <tool.icon />

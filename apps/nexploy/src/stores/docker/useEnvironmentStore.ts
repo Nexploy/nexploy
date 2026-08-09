@@ -11,8 +11,10 @@ import { useContainersStatsStore } from '@/stores/docker/useContainersStatsStore
 const resetDockerStores = () => {
     const stores = [useDockerStore, useContainersStore, useImagesStore, useVolumesStore, useNetworksStore];
 
+    const connectedStores = stores.filter((store) => store.getState().eventSource !== null);
+
     stores.forEach((store) => store.getState().reset());
-    stores.forEach((store) => store.getState().connect());
+    connectedStores.forEach((store) => store.getState().connect());
 
     useContainersStatsStore.getState().reset();
 };

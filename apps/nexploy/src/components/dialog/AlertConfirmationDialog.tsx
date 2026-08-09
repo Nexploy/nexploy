@@ -32,8 +32,28 @@ export function AlertConfirmationDialog() {
     const resolvedCancelLabel = cancelLabel ?? tCommon('cancel');
     const resolvedActionLabel = actionLabel ?? tCommon('confirm');
 
+    const runCancel = () => {
+        if (!onCancel) {
+            closeAlertDialog();
+            return;
+        }
+
+        useAlertConfirmationDialogStore.setState({ isPending: true });
+        onCancel()
+            .catch(() => {})
+            .then(closeAlertDialog)
+            .finally(() => useAlertConfirmationDialogStore.setState({ isPending: false }));
+    };
+
     return (
-        <AlertDialog open={isOpen} onOpenChange={closeAlertDialog}>
+        <AlertDialog
+            open={isOpen}
+            onOpenChange={(open) => {
+                if (open) return;
+
+                runCancel();
+            }}
+        >
             <AlertDialogContent>
                 <AlertDialogHeader className={'break-all'}>
                     <AlertDialogTitle asChild={isValidElement(title)}>{title}</AlertDialogTitle>
@@ -41,24 +61,7 @@ export function AlertConfirmationDialog() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     {!disableCancelButton && (
-                        <Button
-                            variant={'outline'}
-                            disabled={isPending}
-                            onClick={() => {
-                                if (onCancel) {
-                                    useAlertConfirmationDialogStore.setState({ isPending: true });
-                                    onCancel()
-                                        .then(closeAlertDialog)
-                                        .finally(() =>
-                                            useAlertConfirmationDialogStore.setState({
-                                                isPending: false,
-                                            }),
-                                        );
-                                } else {
-                                    closeAlertDialog();
-                                }
-                            }}
-                        >
+                        <Button variant={'outline'} disabled={isPending} onClick={runCancel}>
                             {resolvedCancelLabel}
                         </Button>
                     )}
@@ -72,6 +75,7 @@ export function AlertConfirmationDialog() {
                                 if (onAction) {
                                     onAction()
                                         .then(closeAlertDialog)
+                                        .catch(() => {})
                                         .finally(() =>
                                             useAlertConfirmationDialogStore.setState({
                                                 isPending: false,

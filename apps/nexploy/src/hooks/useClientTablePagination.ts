@@ -32,9 +32,15 @@ export function useClientTablePagination(
         (updater) => {
             const next = typeof updater === 'function' ? updater(state) : updater;
 
+            if (next.pageSize !== state.pageSize && !isShowingAll) {
+                setPageSizeState(Math.max(1, next.pageSize));
+                setPageIndex(0);
+                return;
+            }
+
             setPageIndex(Math.max(0, next.pageIndex));
         },
-        [state],
+        [state, isShowingAll],
     );
 
     const setPageSize = useCallback((nextPageSize: PageSize) => {

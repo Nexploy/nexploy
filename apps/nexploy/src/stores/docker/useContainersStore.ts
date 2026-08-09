@@ -65,6 +65,10 @@ export const useContainersStore = create<ContainerState>((set, get) => ({
     connect: () => {
         const state = get();
 
+        if (state.eventSource) {
+            return;
+        }
+
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }

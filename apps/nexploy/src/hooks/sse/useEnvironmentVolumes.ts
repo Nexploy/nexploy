@@ -16,6 +16,7 @@ export function useEnvironmentVolumes(environmentId?: string): {
     useEffect(() => {
         if (!environmentId) return;
 
+        setVolumes([]);
         setIsLoading(true);
 
         const params = { environment: environmentId };

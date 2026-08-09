@@ -8,6 +8,7 @@ import {
 import { useTranslations } from 'next-intl';
 import type { SwarmNode } from '@workspace/typescript-interface/docker/swarm';
 import { useNodeActions } from '@/hooks/useNodeActions';
+import { runToolAction } from '@/lib/runToolAction';
 
 interface NodeDropdownActionsProps {
     node: SwarmNode;
@@ -29,7 +30,7 @@ export function NodeDropdownActions({ node }: NodeDropdownActionsProps) {
                         disabled={tool.disabled}
                         onClick={(event) => {
                             event.stopPropagation();
-                            tool.onClick?.();
+                            runToolAction(tool.onClick);
                         }}
                     >
                         <tool.icon />

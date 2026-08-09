@@ -123,18 +123,20 @@ export const GET = route
         }
 
         const channelKeys = channelsParam.split(',').map(decodeURIComponent);
-        const channelConfigs = channelKeys.map(parseChannelConfig);
+        const requestedConfigs = channelKeys.map(parseChannelConfig);
 
-        if (channelConfigs.length === 0) {
-            return NextResponse.json({ error: 'At least one valid channel is required' }, { status: 400 });
-        }
-
-        const invalidChannels = channelConfigs.filter((config) => !CHANNEL_ENDPOINTS[config.channel]);
-        if (invalidChannels.length > 0) {
+        const unknownChannels = requestedConfigs.filter((config) => !(config.channel in CHANNEL_ENDPOINTS));
+        if (unknownChannels.length > 0) {
             return NextResponse.json(
-                { error: `Invalid channels: ${invalidChannels.map((c) => c.channel).join(', ')}` },
+                { error: `Invalid channels: ${unknownChannels.map((c) => c.channel).join(', ')}` },
                 { status: 400 },
             );
+        }
+
+        const channelConfigs = requestedConfigs.filter((config) => CHANNEL_ENDPOINTS[config.channel] !== '');
+
+        if (channelConfigs.length === 0) {
+            return NextResponse.json({ error: 'At least one proxyable channel is required' }, { status: 400 });
         }
 
         const serverUrl = process.env.DOCKER_API_URL;

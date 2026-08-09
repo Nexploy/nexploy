@@ -88,7 +88,11 @@ export function ActivityRetentionCard({ settings }: { settings: ActivitySettings
                                                 min={0}
                                                 className="w-28"
                                                 {...field}
-                                                onChange={(event) => field.onChange(Number(event.target.value))}
+                                                onChange={(event) =>
+                                                    field.onChange(
+                                                        event.target.value === '' ? '' : Number(event.target.value),
+                                                    )
+                                                }
                                             />
                                         </FormControl>
                                         <FormMessage />

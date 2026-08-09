@@ -47,7 +47,30 @@
     }
   },
   "linter": {
-    "enabled": false
+    "enabled": true,
+    "rules": {
+      "preset": "none",
+      "correctness": {
+        "noUnreachable": "error",
+        "noConstantCondition": "error",
+        "noSwitchDeclarations": "error",
+        "noVoidElementsWithChildren": "error",
+        "useValidTypeof": "error",
+        "noChildrenProp": "error",
+        "useJsxKeyInIterable": "error"
+      },
+      "suspicious": {
+        "noDoubleEquals": "error",
+        "noDuplicateCase": "error",
+        "noDuplicateObjectKeys": "error",
+        "noDuplicateParameters": "error",
+        "noSelfCompare": "error",
+        "noUnsafeNegation": "error",
+        "useAwait": "off",
+        "noAsyncPromiseExecutor": "error",
+        "noArrayIndexKey": "off"
+      }
+    }
   },
   "assist": {
     "enabled": false

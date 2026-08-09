@@ -78,6 +78,10 @@ export const useNetworksStore = create<NetworkState>((set, get) => ({
     connect: () => {
         const state = get();
 
+        if (state.eventSource) {
+            return;
+        }
+
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }

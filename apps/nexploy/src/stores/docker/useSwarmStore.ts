@@ -102,6 +102,10 @@ export const useSwarmStore = create<SwarmState>((set, get) => ({
     connect: () => {
         const state = get();
 
+        if (state.eventSource) {
+            return;
+        }
+
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }

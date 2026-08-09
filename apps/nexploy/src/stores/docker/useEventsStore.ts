@@ -178,6 +178,10 @@ export const useEventsStore = create<EventsState>((set, get) => ({
             set({ filter });
         }
 
+        if (state.eventSource) {
+            return;
+        }
+
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }

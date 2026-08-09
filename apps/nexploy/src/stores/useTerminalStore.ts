@@ -3,21 +3,36 @@ import { TerminalState } from '@workspace/typescript-interface/stores/terminalSt
 
 const INACTIVITY_TIMEOUT = 60000;
 
-const defaultValue = {
-    connectionState: 'disconnected',
-    socketRef: null,
-    terminalInstance: null,
-    fitAddon: null,
-    inactivityTimer: null,
-    lastActivity: Date.now(),
-    cleanupFunction: null,
-    isConnecting: false,
-    terminalRef: { current: null },
-    socketUrl: null,
-} as const;
+const createDefaultValue = () =>
+    ({
+        connectionState: 'disconnected',
+        socketRef: null,
+        terminalInstance: null,
+        fitAddon: null,
+        inactivityTimer: null,
+        lastActivity: Date.now(),
+        cleanupFunction: null,
+        isConnecting: false,
+        terminalRef: { current: null },
+        socketUrl: null,
+    }) as const;
+
+const parseControlFrame = (data: unknown): { type: string; error?: string } | null => {
+    if (typeof data !== 'string') return null;
+
+    try {
+        const parsed = JSON.parse(data);
+
+        if (parsed && typeof parsed === 'object' && typeof parsed.type === 'string') return parsed;
+
+        return null;
+    } catch {
+        return null;
+    }
+};
 
 export const useTerminalStore = create<TerminalState>((set, get) => ({
-    ...defaultValue,
+    ...createDefaultValue(),
 
     setConnectionState: (state) => set({ connectionState: state }),
     setSocket: (socket) => set({ socketRef: socket }),
@@ -83,16 +98,30 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
             clearTimeout(state.inactivityTimer);
         }
 
-        set(defaultValue);
+        set({ ...createDefaultValue(), terminalRef: state.terminalRef, socketUrl: state.socketUrl });
     },
 
     connect: async (url) => {
         try {
+            if (!get().terminalRef.current) {
+                set({ connectionState: 'error', isConnecting: false });
+                return;
+            }
+
+            if (get().terminalInstance) {
+                get().disconnect();
+            }
+
             const { Terminal } = await import('@xterm/xterm');
             const { FitAddon } = await import('@xterm/addon-fit');
 
-            const terminalRef = get().terminalRef;
+            const terminalElement = get().terminalRef.current;
             const socketUrl = url ?? get().socketUrl;
+
+            if (!terminalElement) {
+                set({ connectionState: 'error', isConnecting: false });
+                return;
+            }
 
             const term = new Terminal({
                 cursorBlink: true,
@@ -108,7 +137,7 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
 
             const fitAddon = new FitAddon();
             term.loadAddon(fitAddon);
-            term.open(terminalRef.current!);
+            term.open(terminalElement);
             fitAddon.fit();
             term.focus();
 
@@ -133,7 +162,7 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
             window.addEventListener('resize', handleResize);
 
             const observer = new ResizeObserver(() => fitAddon.fit());
-            observer.observe(terminalRef.current!);
+            observer.observe(terminalElement);
 
             set({
                 cleanupFunction: () => {
@@ -161,16 +190,12 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
         socket.onmessage = (event) => {
             get().resetInactivityTimer();
 
-            try {
-                const data = JSON.parse(event.data);
-                if (data && typeof data === 'object' && data.type === 'error') {
-                    set({ connectionState: 'error' });
-                    term.writeln(`\r\x1b[31m*** ${data.error} ***\x1b[0m\r\n`);
-                    return;
-                }
-                if (typeof data === 'object') return;
-            } catch {
-                /* empty */
+            const controlFrame = parseControlFrame(event.data);
+
+            if (controlFrame?.type === 'error') {
+                set({ connectionState: 'error' });
+                term.writeln(`\r\x1b[31m*** ${controlFrame.error} ***\x1b[0m\r\n`);
+                return;
             }
 
             if (typeof event.data === 'string') {

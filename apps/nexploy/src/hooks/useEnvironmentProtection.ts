@@ -12,8 +12,10 @@ function computeBlocked(
     environment: ProtectionFields | undefined,
     action: EnvironmentProtectedAction,
     isAdmin: boolean,
+    isExpected: boolean,
 ): boolean {
-    if (!environment?.isProtected) return false;
+    if (!environment) return isExpected;
+    if (!environment.isProtected) return false;
     if (!environment.protectedActions.includes(action)) return false;
     return !(isAdmin && environment.allowAdminBypass);
 }
@@ -26,8 +28,8 @@ export function useEnvironmentProtection() {
     const current = environments.find((environment) => environment.id === selectedEnvironmentId);
 
     const isBlocked = useCallback(
-        (action: EnvironmentProtectedAction) => computeBlocked(current, action, isAdmin),
-        [current, isAdmin],
+        (action: EnvironmentProtectedAction) => computeBlocked(current, action, isAdmin, !!selectedEnvironmentId),
+        [current, isAdmin, selectedEnvironmentId],
     );
 
     const isBlockedOn = useCallback(
@@ -36,6 +38,7 @@ export function useEnvironmentProtection() {
                 environments.find((environment) => environment.id === environmentId),
                 action,
                 isAdmin,
+                true,
             ),
         [environments, isAdmin],
     );

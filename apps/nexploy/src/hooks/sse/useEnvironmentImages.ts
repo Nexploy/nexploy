@@ -16,6 +16,7 @@ export function useEnvironmentImages(environmentId?: string): {
     useEffect(() => {
         if (!environmentId) return;
 
+        setImages([]);
         setIsLoading(true);
 
         const params = { environment: environmentId };

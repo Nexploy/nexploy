@@ -9,6 +9,7 @@ import { createOrganizationAction } from '@/actions/organization/createOrganizat
 import { setActiveOrganizationAction } from '@/actions/organization/setActiveOrganization.action';
 import { GET as listOrganizations } from '@/app/api/organizations/route';
 import { GET as listMembers } from '@/app/api/organizations/[organizationId]/members/route';
+import { GET as searchInvitableUsers } from '@/app/api/organizations/[organizationId]/members/search-users/route';
 import { callRoute, readJson, type ActionResult, type RouteHandler } from '../setup/invoke';
 import { allowOnly, describePermissionMatrix, EVERY_ROLE } from './permissionMatrix';
 import { resetDatabase } from '../setup/db';
@@ -95,6 +96,16 @@ describePermissionMatrix('organization read endpoints', [
             }),
         expected: EVERY_ROLE,
     },
+    {
+        name: 'GET /api/organizations/[organizationId]/members/search-users',
+        kind: 'route',
+        invoke: (world) =>
+            callRoute(searchInvitableUsers as RouteHandler, {
+                url: `http://localhost:3022/api/organizations/${world.orgA.id}/members/search-users?q=`,
+                params: { organizationId: world.orgA.id },
+            }),
+        expected: EVERY_ROLE,
+    },
 ]);
 
 describe('organization behaviour', () => {
@@ -142,6 +153,40 @@ describe('organization behaviour', () => {
         const body = await readJson<unknown>(response);
 
         expect(Array.isArray(body) ? body : []).toEqual([]);
+    });
+
+    it('lets an organization admin search invitable users', async () => {
+        await loginAs(world.users.orgAdmin);
+
+        const response = await callRoute(searchInvitableUsers as RouteHandler, {
+            url: `http://localhost:3022/api/organizations/${world.orgA.id}/members/search-users?q=`,
+            params: { organizationId: world.orgA.id },
+        });
+
+        expect(response.status).toBe(200);
+        expect(Array.isArray(await readJson<unknown>(response))).toBe(true);
+    });
+
+    it('hides the invitable users from a plain member', async () => {
+        await loginAs(world.users.orgMember);
+
+        const response = await callRoute(searchInvitableUsers as RouteHandler, {
+            url: `http://localhost:3022/api/organizations/${world.orgA.id}/members/search-users?q=`,
+            params: { organizationId: world.orgA.id },
+        });
+
+        expect(response.status).toBe(404);
+    });
+
+    it('hides the invitable users from an outsider', async () => {
+        await loginAs(world.users.outsider);
+
+        const response = await callRoute(searchInvitableUsers as RouteHandler, {
+            url: `http://localhost:3022/api/organizations/${world.orgA.id}/members/search-users?q=`,
+            params: { organizationId: world.orgA.id },
+        });
+
+        expect(response.status).toBe(404);
     });
 
     it('lets an organization admin invite a member', async () => {

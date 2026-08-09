@@ -48,6 +48,10 @@ export const useVolumesStore = create<VolumeState>((set, get) => ({
     connect: () => {
         const state = get();
 
+        if (state.eventSource) {
+            return;
+        }
+
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }

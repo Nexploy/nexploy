@@ -74,6 +74,10 @@ export const useImagesStore = create<ImageState>((set, get) => ({
     connect: () => {
         const state = get();
 
+        if (state.eventSource) {
+            return;
+        }
+
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
         }

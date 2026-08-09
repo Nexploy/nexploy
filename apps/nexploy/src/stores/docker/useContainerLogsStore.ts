@@ -4,7 +4,7 @@ import { sseMultiplexer } from '@/services/SSEMultiplexer';
 import { ContainerLogsEvent, LogEntry } from '@workspace/typescript-interface/docker/docker.container.logs';
 import { ContainerLogsState } from '@workspace/typescript-interface/stores/docker/containerLogsStore';
 
-const defaultValue = {
+const createDefaultValue = () => ({
     containerId: null,
     logs: [],
     isLoading: false,
@@ -15,21 +15,27 @@ const defaultValue = {
     eventSource: null,
     reconnectTimeout: null,
     connectionState: 'disconnected' as ContainerLogsState['connectionState'],
-};
+});
 
 let logsBuffer: LogEntry[] = [];
 let bufferTimeout: NodeJS.Timeout | null = null;
 const BUFFER_DELAY = 10;
 
 let lastConnectionParams: { containerId: string; follow: boolean; tail: number } | null = null;
+let reconnectDelayTimeout: NodeJS.Timeout | null = null;
 
 export const useContainerLogsStore = create<ContainerLogsState>((set, get) => ({
-    ...defaultValue,
+    ...createDefaultValue(),
 
     connect: ({ containerId, follow = true, tail = 50 }) => {
         const state = get();
 
-        if (state.isConnected && state.containerId === containerId) {
+        if (
+            state.isConnected &&
+            state.containerId === containerId &&
+            lastConnectionParams?.follow === follow &&
+            lastConnectionParams?.tail === tail
+        ) {
             return;
         }
 
@@ -77,7 +83,9 @@ export const useContainerLogsStore = create<ContainerLogsState>((set, get) => ({
                         try {
                             const logEntry: ContainerLogsEvent = JSON.parse(e.data);
 
-                            logsBuffer.push(logEntry.log!);
+                            if (!logEntry.log) return;
+
+                            logsBuffer.push(logEntry.log);
 
                             if (!bufferTimeout) {
                                 bufferTimeout = setTimeout(flushBuffer, BUFFER_DELAY);
@@ -184,13 +192,17 @@ export const useContainerLogsStore = create<ContainerLogsState>((set, get) => ({
         const state = get();
         if (!lastConnectionParams) return;
 
+        const params = lastConnectionParams;
+
         if (state.isConnected) {
             state.disconnect();
         }
 
-        setTimeout(() => {
-            const { containerId, follow, tail } = lastConnectionParams!;
-            get().connect({ containerId, follow, tail });
+        if (reconnectDelayTimeout) clearTimeout(reconnectDelayTimeout);
+
+        reconnectDelayTimeout = setTimeout(() => {
+            reconnectDelayTimeout = null;
+            get().connect(params);
         }, 100);
     },
 
@@ -199,6 +211,11 @@ export const useContainerLogsStore = create<ContainerLogsState>((set, get) => ({
 
         if (state.reconnectTimeout) {
             clearTimeout(state.reconnectTimeout);
+        }
+
+        if (reconnectDelayTimeout) {
+            clearTimeout(reconnectDelayTimeout);
+            reconnectDelayTimeout = null;
         }
 
         if (bufferTimeout) {
@@ -212,7 +229,7 @@ export const useContainerLogsStore = create<ContainerLogsState>((set, get) => ({
             state.eventSource.close();
         }
 
-        set(defaultValue);
+        set(createDefaultValue());
     },
 
     addLog: (log: LogEntry) => {

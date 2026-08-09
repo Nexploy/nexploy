@@ -55,6 +55,30 @@ interface SSEProviderProps extends PropsWithChildren {
 const DEFAULT_SSE_CONNECTIONS: SSEChannel[] = ['docker', 'containers', 'images', 'volumes', 'networks', 'events'];
 const DEFAULT_SSE_PARAMS: SSEParams = {};
 
+const channelRefCounts = new Map<string, number>();
+
+const getRefCountKey = (channel: SSEChannel, param: unknown): string =>
+    param === undefined ? channel : `${channel}:${JSON.stringify(param)}`;
+
+const acquireChannel = (channel: SSEChannel, param: unknown): number => {
+    const key = getRefCountKey(channel, param);
+    const next = (channelRefCounts.get(key) ?? 0) + 1;
+
+    channelRefCounts.set(key, next);
+
+    return next;
+};
+
+const releaseChannel = (channel: SSEChannel, param: unknown): number => {
+    const key = getRefCountKey(channel, param);
+    const next = Math.max(0, (channelRefCounts.get(key) ?? 0) - 1);
+
+    if (next === 0) channelRefCounts.delete(key);
+    else channelRefCounts.set(key, next);
+
+    return next;
+};
+
 export function SSEProvider({
     children,
     connections = DEFAULT_SSE_CONNECTIONS,
@@ -172,6 +196,9 @@ export function SSEProvider({
 
         memoizedConnections.forEach((conn) => {
             const param = memoizedParams[conn as keyof SSEParams];
+
+            if (acquireChannel(conn, param) > 1) return;
+
             if (param !== undefined) connectFns[conn]?.(param);
             else connectFns[conn]?.();
         });
@@ -179,6 +206,9 @@ export function SSEProvider({
         return () => {
             memoizedConnections.forEach((conn) => {
                 const param = memoizedParams[conn as keyof SSEParams];
+
+                if (releaseChannel(conn, param) > 0) return;
+
                 if (param !== undefined) disconnectFns[conn]?.(param);
                 else disconnectFns[conn]?.();
             });

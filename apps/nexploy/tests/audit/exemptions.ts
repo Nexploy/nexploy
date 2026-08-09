@@ -180,6 +180,10 @@ export const GUARD_EXEMPTIONS: Record<string, Exemption> = {
         category: 'session-scoped',
         reason: 'Returns members of an organization the caller belongs to',
     },
+    'GET src/app/api/organizations/[organizationId]/members/search-users/route.ts': {
+        category: 'org-role-check',
+        reason: 'Inline getCallerOrgRole check requires owner or admin in the target organization',
+    },
     'GET src/app/api/git/accounts/route.ts': {
         category: 'session-scoped',
         reason: 'Returns only the git accounts owned by the caller',

@@ -22,13 +22,18 @@ export function ContainerActionButtons() {
 
     const handleActionClick = async (action: (typeof containerActions)[0]) => {
         if (!action.onClick) return;
-        const result = await action.onClick();
 
-        if (action.id === 'destroy') {
-            router.replace('/docker/containers');
+        try {
+            const result = await action.onClick();
+
+            if (action.id === 'destroy' && result !== null) {
+                router.replace('/docker/containers');
+            }
+
+            return result;
+        } catch (error) {
+            console.error('Container action failed:', error);
         }
-
-        return result;
     };
 
     if (!canOnContainer(container?.labels, 'manage')) return null;

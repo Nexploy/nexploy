@@ -16,6 +16,7 @@ export function useEnvironmentContainers(environmentId?: string): {
     useEffect(() => {
         if (!environmentId) return;
 
+        setContainers([]);
         setIsLoading(true);
 
         const params = { environment: environmentId };
