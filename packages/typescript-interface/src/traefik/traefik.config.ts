@@ -12,7 +12,7 @@ export interface Domain {
     stripPath: boolean;
     containerPort: number;
     https: boolean;
-    cloudflareZoneId?: string;
-    cloudflareZoneName?: string;
-    cloudflareDnsRecordId?: string;
+    dnsZoneId?: string;
+    dnsZoneName?: string;
+    dnsRecordId?: string;
 }

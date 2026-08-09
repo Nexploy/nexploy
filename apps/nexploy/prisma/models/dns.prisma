@@ -1,0 +1,24 @@
+enum DnsProviderType {
+  CLOUDFLARE
+  HETZNER
+  DIGITALOCEAN
+  VULTR
+  LINODE
+  PORKBUN
+  POWERDNS
+  OVH
+}
+
+model DnsCredential {
+  id          String          @id @default(cuid())
+  displayName String
+  provider    DnsProviderType @default(CLOUDFLARE)
+  credentials String
+  serverIp    String          @default("")
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("dns_credential")
+}

@@ -34,6 +34,10 @@ export const domainSchema = z
         https: z.boolean().default(false),
         certificateId: z.string().optional(),
         environmentId: z.string({ error: 'Environment is required' }),
+        dnsCredentialId: z.string().optional(),
+        dnsZoneId: z.string().optional(),
+        dnsZoneName: z.string().optional(),
+        dnsRecordId: z.string().optional(),
         cloudflareCredentialId: z.string().optional(),
         cloudflareZoneId: z.string().optional(),
         cloudflareZoneName: z.string().optional(),
@@ -47,7 +51,26 @@ export const domainSchema = z
                 path: ['certificateId'],
             });
         }
-    });
+    })
+    .transform(
+        ({
+            cloudflareCredentialId,
+            cloudflareZoneId,
+            cloudflareZoneName,
+            cloudflareDnsRecordId,
+            dnsCredentialId,
+            dnsZoneId,
+            dnsZoneName,
+            dnsRecordId,
+            ...rest
+        }) => ({
+            ...rest,
+            dnsCredentialId: dnsCredentialId ?? cloudflareCredentialId,
+            dnsZoneId: dnsZoneId ?? cloudflareZoneId,
+            dnsZoneName: dnsZoneName ?? cloudflareZoneName,
+            dnsRecordId: dnsRecordId ?? cloudflareDnsRecordId,
+        }),
+    );
 
 export const domainFormSchema = z.object({
     domain: domainSchema,

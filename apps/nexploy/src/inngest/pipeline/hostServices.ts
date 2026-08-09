@@ -19,7 +19,8 @@ import { getGitProviderToken, getValidToken } from '@/services/git/core/token.se
 import { getGitAdapter } from '@/services/git/core/registry';
 import { getRegistryWithPassword } from '@/services/registry.service';
 import { generateTraefikConfig, getDomainKey, getDomains } from '@/services/traefik.service';
-import { provisionDomainDns } from '@/services/domainCloudflare.service';
+import { provisionDomainDns } from '@/services/dns/domainDns.service';
+import { normalizeDomainDnsFields } from '@/services/dns/core/domainDnsFields';
 import { createCustomCertificate, createLetsEncryptCertificate } from '@/services/sslCertificate.service';
 import { getBucketStorageCredentials } from '@/services/bucketStorage.service';
 import { createBucketStorageClient, putBucketStorageObject } from '@/lib/bucket-storage/bucketStorage';
@@ -140,7 +141,7 @@ const domainHostService: DomainHostService = {
     },
 
     provisionDns(domain, host) {
-        return provisionDomainDns(domain as Domain, host);
+        return provisionDomainDns(normalizeDomainDnsFields(domain as Domain), host);
     },
 };
 

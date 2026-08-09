@@ -1,19 +1,19 @@
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { generateTraefikConfig, getDomainKey, getDomains } from '@/services/traefik.service';
-import { provisionDomainDns, removeDomainDns, syncDomainDns } from '@/services/domainCloudflare.service';
+import { provisionDomainDns, removeDomainDns, syncDomainDns } from '@/services/dns/domainDns.service';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 
 export async function createDomain(domain: Domain): Promise<Domain> {
     const existingDomains = await getDomains();
     const host = cleanDomainHost(domain.host);
 
-    const cloudflareDnsRecordId = await provisionDomainDns(domain, host);
+    const dnsRecordId = await provisionDomainDns(domain, host);
 
     const newDomain: Domain = {
         ...domain,
         host,
         id: getDomainKey({ host }),
-        cloudflareDnsRecordId,
+        dnsRecordId,
     };
 
     const others = existingDomains.filter((d) => d.id !== newDomain.id);
@@ -31,12 +31,12 @@ export async function updateDomain(domain: Domain): Promise<Domain> {
     }
 
     const host = cleanDomainHost(domain.host);
-    const cloudflareDnsRecordId = await syncDomainDns(domain, original, host);
+    const dnsRecordId = await syncDomainDns(domain, original, host);
 
     const updatedDomain: Domain = {
         ...domain,
         host,
-        cloudflareDnsRecordId: cloudflareDnsRecordId ?? undefined,
+        dnsRecordId: dnsRecordId ?? undefined,
     };
 
     const nextDomains = existingDomains.map((d) => (d.id === domain.id ? updatedDomain : d));

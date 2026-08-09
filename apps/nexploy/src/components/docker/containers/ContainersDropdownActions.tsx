@@ -32,39 +32,43 @@ export function ContainersDropdownActions({ container: { id, name, state } }: Co
         });
     };
 
+    const destroyTool = containerTools.find((tool) => tool.id === 'destroy');
+    const otherTools = containerTools.filter((tool) => tool.id !== 'destroy');
+
+    const renderTool = (tool: (typeof containerTools)[number], key: number) => {
+        const item = (
+            <DropdownMenuItem
+                variant={tool.variant}
+                onClick={(event) => {
+                    event.stopPropagation();
+                    tool.onClick?.();
+                }}
+                disabled={tool.disabled || (state && tool.disabledStates.includes(state))}
+            >
+                <tool.icon />
+                {tool.label}
+            </DropdownMenuItem>
+        );
+
+        return (
+            <Fragment key={key}>
+                {tool.tooltipContent ? (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div>{item}</div>
+                        </TooltipTrigger>
+                        <TooltipContent>{tool.tooltipContent}</TooltipContent>
+                    </Tooltip>
+                ) : (
+                    item
+                )}
+            </Fragment>
+        );
+    };
+
     return (
         <DropdownMenuContent align="end">
-            {containerTools.map((tool, index) => {
-                const item = (
-                    <DropdownMenuItem
-                        variant={tool.variant}
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            tool.onClick?.();
-                        }}
-                        disabled={tool.disabled || (state && tool.disabledStates.includes(state))}
-                    >
-                        <tool.icon />
-                        {tool.label}
-                    </DropdownMenuItem>
-                );
-
-                return (
-                    <Fragment key={index}>
-                        {tool.separator && <DropdownMenuSeparator />}
-                        {tool.tooltipContent ? (
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <div>{item}</div>
-                                </TooltipTrigger>
-                                <TooltipContent>{tool.tooltipContent}</TooltipContent>
-                            </Tooltip>
-                        ) : (
-                            item
-                        )}
-                    </Fragment>
-                );
-            })}
+            {otherTools.map(renderTool)}
             <DropdownMenuSeparator />
             {migrateOut.blocked ? (
                 <Tooltip>
@@ -88,6 +92,12 @@ export function ContainersDropdownActions({ container: { id, name, state } }: Co
                     <ArrowRightLeft />
                     {t('moveEnvironment')}
                 </DropdownMenuItem>
+            )}
+            {destroyTool && (
+                <>
+                    <DropdownMenuSeparator />
+                    {renderTool(destroyTool, containerTools.length)}
+                </>
             )}
         </DropdownMenuContent>
     );

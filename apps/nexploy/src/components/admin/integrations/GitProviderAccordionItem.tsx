@@ -2,6 +2,7 @@ import { ProviderInstanceCard } from '@/components/admin/integrations/ProviderIn
 import { IntegrationsAddButtons } from '@/components/admin/integrations/IntegrationsAddButtons';
 import { cn } from '@workspace/ui/lib/utils';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
+import { Badge } from '@workspace/ui/components/badge';
 import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import { GitProviderInfo } from '@/services/git/gitProviders.service';
@@ -11,9 +12,16 @@ type GitProviderAccordionItemProps = {
     icon: ReactNode;
     titleKey: string;
     instances: GitProviderInfo[];
+    experimental?: boolean;
 };
 
-export async function GitProviderAccordionItem({ value, icon, titleKey, instances }: GitProviderAccordionItemProps) {
+export async function GitProviderAccordionItem({
+    value,
+    icon,
+    titleKey,
+    instances,
+    experimental,
+}: GitProviderAccordionItemProps) {
     const t = await getTranslations('integrations');
     const hasInstances = instances.length > 0;
 
@@ -33,7 +41,10 @@ export async function GitProviderAccordionItem({ value, icon, titleKey, instance
                 <div className="flex min-w-0 flex-1 items-center gap-3">
                     <div className="bg-muted flex size-10 items-center justify-center rounded-lg">{icon}</div>
                     <div className="flex min-w-0 flex-col text-left">
-                        <span>{t(titleKey)}</span>
+                        <span className="flex items-center gap-2">
+                            {t(titleKey)}
+                            {experimental && <Badge className="h-4.5 text-[10px]">{t('experimental')}</Badge>}
+                        </span>
                         <span className="text-muted-foreground text-xs">
                             ({t('oauth.instanceCount', { count: instances.length })})
                         </span>

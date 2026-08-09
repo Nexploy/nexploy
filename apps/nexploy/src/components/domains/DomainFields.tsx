@@ -19,7 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
-import { CloudflareDomainSelector } from '@/components/domains/CloudflareDomainSelector';
+import { DnsDomainSelector } from '@/components/domains/DnsDomainSelector';
 import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { useEnvironmentContainers } from '@/hooks/sse/useEnvironmentContainers';
 import { useTranslations } from 'next-intl';
@@ -35,7 +35,7 @@ interface DomainFieldsProps {
 
 export function DomainFields({ form }: DomainFieldsProps) {
     const t = useTranslations('repository.settings.domains');
-    const cloudflareZoneId = form.watch('domain.cloudflareZoneId');
+    const dnsZoneId = form.watch('domain.dnsZoneId');
     const httpsEnabled = form.watch('domain.https');
 
     const { data: certificates = [] } = useSWR<CertOption[]>(
@@ -94,7 +94,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                     </FormItem>
                 )}
             />
-            <CloudflareDomainSelector form={form} basePath="domain" />
+            <DnsDomainSelector form={form} basePath="domain" />
             <div className="grid items-start gap-4 md:grid-cols-2">
                 <FormField
                     control={form.control}
@@ -108,12 +108,12 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                     value={field.value}
                                     placeholder="example.com"
                                     className="font-mono"
-                                    readOnly={!!cloudflareZoneId}
-                                    disabled={!!cloudflareZoneId}
+                                    readOnly={!!dnsZoneId}
+                                    disabled={!!dnsZoneId}
                                 />
                             </FormControl>
-                            {cloudflareZoneId ? (
-                                <FormDescription>{t('managedByCloudflare')}</FormDescription>
+                            {dnsZoneId ? (
+                                <FormDescription>{t('managedByDnsProvider')}</FormDescription>
                             ) : (
                                 <FormMessage />
                             )}

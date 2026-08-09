@@ -15,8 +15,8 @@ import { saveAzureReposProviderAction } from '@/actions/git/saveAzureReposProvid
 import { saveTraefikFile } from '@/actions/traefik/saveTraefikFile.action';
 import { deleteTraefikFile } from '@/actions/traefik/deleteTraefikFile.action';
 import { moveTraefikEntry } from '@/actions/traefik/moveTraefikEntry.action';
-import { connectCloudflareAction } from '@/actions/cloudflare/connect.action';
-import { disconnectCloudflareAction } from '@/actions/cloudflare/disconnect.action';
+import { connectDnsAction } from '@/actions/dns/connect.action';
+import { disconnectDnsAction } from '@/actions/dns/disconnect.action';
 import { addBucketStorageAccountAction } from '@/actions/bucket-storage/addAccount.action';
 import { deleteBucketStorageAccountAction } from '@/actions/bucket-storage/deleteAccount.action';
 import { createBackupScheduleAction } from '@/actions/bucket-storage/createSchedule.action';
@@ -25,8 +25,8 @@ import { uploadVolumeToBucketStorageAction } from '@/actions/bucket-storage/uplo
 import { GET as listEnvironments } from '@/app/api/environments/route';
 import { GET as getEnvironment } from '@/app/api/environments/[id]/route';
 import { GET as listRegistries } from '@/app/api/registries/route';
-import { GET as listCloudflareAccounts } from '@/app/api/cloudflare/accounts/route';
-import { GET as getCloudflareZone } from '@/app/api/cloudflare/zone/route';
+import { GET as listDnsAccounts } from '@/app/api/dns/accounts/route';
+import { GET as listDnsZones } from '@/app/api/dns/zones/route';
 import { GET as listBucketStorageAccounts } from '@/app/api/bucket-storage/accounts/route';
 import { GET as listBackupSchedules } from '@/app/api/backup/schedules/route';
 import { GET as listSslCertificates } from '@/app/api/ssl-certificates/route';
@@ -246,27 +246,27 @@ describePermissionMatrix('traefik endpoints', [
 
 describePermissionMatrix('DNS endpoints', [
     {
-        name: 'connectCloudflareAction',
+        name: 'connectDnsAction',
         kind: 'action',
-        invoke: () => connectCloudflareAction({ apiToken: 'token', accountName: 'nexploy' } as never),
+        invoke: () => connectDnsAction({ credentials: { apiToken: 'token' }, displayName: 'nexploy' } as never),
         expected: ADMIN_ONLY,
     },
     {
-        name: 'disconnectCloudflareAction',
+        name: 'disconnectDnsAction',
         kind: 'action',
-        invoke: () => disconnectCloudflareAction({ id: 'credential-1' } as never),
+        invoke: () => disconnectDnsAction({ id: 'credential-1' } as never),
         expected: ADMIN_ONLY,
     },
     {
-        name: 'GET /api/cloudflare/accounts',
+        name: 'GET /api/dns/accounts',
         kind: 'route',
-        invoke: () => route(listCloudflareAccounts, '/api/cloudflare/accounts'),
+        invoke: () => route(listDnsAccounts, '/api/dns/accounts'),
         expected: DEVELOPER_AND_ABOVE,
     },
     {
-        name: 'GET /api/cloudflare/zone',
+        name: 'GET /api/dns/zones',
         kind: 'route',
-        invoke: () => route(getCloudflareZone, '/api/cloudflare/zone?domain=example.test'),
+        invoke: () => route(listDnsZones, '/api/dns/zones?credentialId=credential-1'),
         expected: DEVELOPER_AND_ABOVE,
     },
 ]);

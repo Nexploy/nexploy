@@ -40,7 +40,7 @@ export const getColumnsDomains = (t: TranslationFunction, options: ColumnsOption
 
                 return (
                     <div className="flex min-w-0 items-center gap-2">
-                        {domain.cloudflareDnsRecordId ? (
+                        {domain.dnsRecordId ? (
                             <Cloud className="size-4 shrink-0 text-orange-500" />
                         ) : domain.https ? (
                             <Lock className="size-4 shrink-0 text-green-500" />

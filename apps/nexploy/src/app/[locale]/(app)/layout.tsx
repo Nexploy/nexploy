@@ -13,6 +13,9 @@ import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import { getAllGitProviders } from '@/services/git/gitProviders.service';
 import { PendingInvitations } from '@/components/organization/PendingInvitations.tsx';
 import { getCallerOrgRole, resolveActiveOrganizationId } from '@/lib/auth/resolveOrgContext';
+import { SheetProvider } from '@/providers/SheetProvider';
+import { AlertConfirmationDialog } from '@/components/dialog/AlertConfirmationDialog';
+import { ConfirmationDialog } from '@/components/dialog/ConfirmationDialog';
 
 export default async function AppLayout({
     children,
@@ -52,6 +55,9 @@ export default async function AppLayout({
                 </div>
                 {showOnboardingTour && <OnboardingTour />}
                 <PendingInvitations />
+                <SheetProvider />
+                <AlertConfirmationDialog />
+                <ConfirmationDialog />
             </SidebarProvider>
         </PermissionProvider>
     );

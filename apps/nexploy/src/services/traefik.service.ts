@@ -6,6 +6,7 @@ import { getContainerPortMappings } from '@/services/docker/container.service';
 import { getEnvironmentById } from '@/services/environment/environment.service';
 import { prisma } from '../../prisma/prisma';
 import { TRAEFIK_SERVICE_DIR } from '@/lib/traefik/paths';
+import { normalizeDomainDnsFields } from '@/services/dns/core/domainDnsFields';
 
 const DOMAINS_FILE = path.join(TRAEFIK_SERVICE_DIR, 'domains.yml');
 
@@ -16,8 +17,10 @@ export function getDomainKey(domain: { host: string }): string {
     return `domain-${sanitizedHost}`;
 }
 
-export async function generateTraefikConfig(domains: TraefikDomainInput[]): Promise<void> {
+export async function generateTraefikConfig(inputDomains: TraefikDomainInput[]): Promise<void> {
     await fs.mkdir(TRAEFIK_SERVICE_DIR, { recursive: true });
+
+    const domains = inputDomains.map(normalizeDomainDnsFields);
 
     if (domains.length === 0) {
         await deleteTraefikDomainsFile();
@@ -136,11 +139,11 @@ export async function generateTraefikConfig(domains: TraefikDomainInput[]): Prom
             containerPort: domain.containerPort,
             environmentId: domain.environmentId,
             certificateId: domain.certificateId,
-            cloudflare: domain.cloudflareZoneId && {
-                credentialId: domain.cloudflareCredentialId,
-                zoneId: domain.cloudflareZoneId,
-                zoneName: domain.cloudflareZoneName,
-                dnsRecordId: domain.cloudflareDnsRecordId,
+            dns: domain.dnsZoneId && {
+                credentialId: domain.dnsCredentialId,
+                zoneId: domain.dnsZoneId,
+                zoneName: domain.dnsZoneName,
+                recordId: domain.dnsRecordId,
             },
         };
     }
@@ -186,7 +189,9 @@ export async function getDomains(): Promise<Domain[]> {
             const portMatch = serverUrl.match(/:(\d+)$/);
 
             const domainMeta = nexployDomains[routerName] ?? {};
-            const cloudflare = domainMeta.cloudflare;
+            const legacyCloudflare = domainMeta.cloudflare;
+            const dns =
+                domainMeta.dns ?? (legacyCloudflare && { ...legacyCloudflare, recordId: legacyCloudflare.dnsRecordId });
 
             const containerPort = domainMeta.containerPort
                 ? Number(domainMeta.containerPort)
@@ -205,10 +210,10 @@ export async function getDomains(): Promise<Domain[]> {
                 https: !!router.tls,
                 certificateId: domainMeta.certificateId,
                 environmentId: domainMeta.environmentId,
-                cloudflareCredentialId: cloudflare?.credentialId,
-                cloudflareZoneId: cloudflare?.zoneId,
-                cloudflareZoneName: cloudflare?.zoneName,
-                cloudflareDnsRecordId: cloudflare?.dnsRecordId,
+                dnsCredentialId: dns?.credentialId,
+                dnsZoneId: dns?.zoneId,
+                dnsZoneName: dns?.zoneName,
+                dnsRecordId: dns?.recordId,
             };
         });
     } catch {

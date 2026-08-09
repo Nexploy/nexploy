@@ -671,7 +671,7 @@ exports[`permission matrix > resolves the same verdict for every endpoint and gl
   {
     "admin": "allow",
     "developer": "allow",
-    "endpoint": "GET src/app/api/cloudflare/accounts/route.ts",
+    "endpoint": "GET src/app/api/dns/accounts/route.ts",
     "guards": "dns.read",
     "guest": "deny",
     "system": "deny",
@@ -679,7 +679,7 @@ exports[`permission matrix > resolves the same verdict for every endpoint and gl
   {
     "admin": "allow",
     "developer": "allow",
-    "endpoint": "GET src/app/api/cloudflare/zone/route.ts",
+    "endpoint": "GET src/app/api/dns/zones/route.ts",
     "guards": "dns.read",
     "guest": "deny",
     "system": "deny",
@@ -1311,7 +1311,7 @@ exports[`permission matrix > resolves the same verdict for every endpoint and gl
   {
     "admin": "allow",
     "developer": "deny",
-    "endpoint": "src/actions/cloudflare/connect.action.ts#connectCloudflareAction",
+    "endpoint": "src/actions/dns/connect.action.ts#connectDnsAction",
     "guards": "dns.manage",
     "guest": "deny",
     "system": "deny",
@@ -1319,7 +1319,7 @@ exports[`permission matrix > resolves the same verdict for every endpoint and gl
   {
     "admin": "allow",
     "developer": "deny",
-    "endpoint": "src/actions/cloudflare/disconnect.action.ts#disconnectCloudflareAction",
+    "endpoint": "src/actions/dns/disconnect.action.ts#disconnectDnsAction",
     "guards": "dns.manage",
     "guest": "deny",
     "system": "deny",

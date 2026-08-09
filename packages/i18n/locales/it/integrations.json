@@ -134,30 +134,143 @@
     "configured": "Configurato",
     "instanceCount": "{count, plural, =0 {Nessun account} one {# account} other {# account}}"
   },
-  "cloudflare": {
-    "title": "Cloudflare",
-    "description": "Gestisci record DNS e tunnel con Cloudflare",
-    "tooltip": "Utilizzato per gestire i record DNS dei tuoi domini. Collega un account Cloudflare per abilitare il routing dei domini personalizzati.",
+  "dns": {
+    "title": "Provider DNS",
+    "description": "Gestisci i record DNS dei tuoi domini",
+    "tooltip": "Utilizzato per gestire i record DNS dei tuoi domini. Collega un account provider DNS per abilitare il routing dei domini personalizzati.",
+    "provider": "Provider",
+    "selectProvider": "Seleziona un provider",
     "displayName": "Nome visualizzato",
     "displayNamePlaceholder": "es. Produzione, Personale",
-    "apiTokenLabel": "Token API",
-    "apiTokenPlaceholder": "Il tuo token API Cloudflare",
-    "permissionZoneRead": "Zone.Zone: Read",
-    "permissionDnsEdit": "Zone.DNS: Edit",
-    "connectedSuccess": "Account Cloudflare aggiunto con successo",
-    "addedSuccess": "Account Cloudflare aggiunto con successo",
-    "addFailed": "Aggiunta dell'account Cloudflare non riuscita",
-    "deletedSuccess": "Account Cloudflare rimosso",
-    "deleteConfirmTitle": "Rimuovi account Cloudflare",
+    "connectedSuccess": "Account DNS aggiunto con successo",
+    "addFailed": "Aggiunta dell'account DNS non riuscita",
+    "deletedSuccess": "Account DNS rimosso",
+    "deleteConfirmTitle": "Rimuovi account DNS",
     "deleteConfirmDescription": "Sei sicuro di voler rimuovere \"{name}\"? Questa azione non può essere annullata.",
     "deleteConfirmAction": "Rimuovi",
-    "addTitle": "Aggiungi account Cloudflare",
-    "addDescription": "Inserisci il tuo token API Cloudflare con i seguenti permessi:",
+    "addTitle": "Aggiungi account DNS",
+    "addDescription": "Inserisci le credenziali del tuo provider con i seguenti permessi:",
     "addAccount": "Aggiungi account",
     "add": "Aggiungi",
     "configured": "Configurato",
     "instanceCount": "{count, plural, =0 {Nessun account} one {# account} other {# account}}",
-    "connect": "Connetti"
+    "connect": "Connetti",
+    "experimental": "Sperimentale",
+    "experimentalWarning": "Questo provider è sperimentale: non è ancora stato validato su un account di produzione. Verifica che il record DNS venga creato correttamente dopo aver aggiunto il tuo primo dominio.",
+    "providers": {
+      "CLOUDFLARE": {
+        "name": "Cloudflare",
+        "requirementZone": "Zone.Zone: Read",
+        "requirementRecord": "Zone.DNS: Edit",
+        "fields": {
+          "apiToken": {
+            "label": "Token API",
+            "placeholder": "Il tuo token API Cloudflare"
+          }
+        }
+      },
+      "HETZNER": {
+        "name": "Hetzner DNS",
+        "requirementZone": "Un token API Hetzner DNS (DNS Console > API tokens)",
+        "requirementRecord": "Accesso completo alle zone che vuoi gestire",
+        "fields": {
+          "apiToken": {
+            "label": "Token API",
+            "placeholder": "Il tuo token API Hetzner DNS"
+          }
+        }
+      },
+      "DIGITALOCEAN": {
+        "name": "DigitalOcean",
+        "requirementZone": "Un personal access token con ambito domain",
+        "requirementRecord": "Accesso in scrittura, necessario per creare i record",
+        "fields": {
+          "apiToken": {
+            "label": "Personal Access Token",
+            "placeholder": "Il tuo token API DigitalOcean"
+          }
+        }
+      },
+      "VULTR": {
+        "name": "Vultr",
+        "requirementZone": "Una chiave API Vultr (Account > API)",
+        "requirementRecord": "L'API deve essere abilitata e il tuo IP autorizzato nella lista di accesso",
+        "fields": {
+          "apiToken": {
+            "label": "Chiave API",
+            "placeholder": "La tua chiave API Vultr"
+          }
+        }
+      },
+      "LINODE": {
+        "name": "Linode",
+        "requirementZone": "Un personal access token con Domains in lettura/scrittura",
+        "requirementRecord": "Ambito di lettura/scrittura, necessario per creare i record",
+        "fields": {
+          "apiToken": {
+            "label": "Personal Access Token",
+            "placeholder": "Il tuo token API Linode"
+          }
+        }
+      },
+      "PORKBUN": {
+        "name": "Porkbun",
+        "requirementZone": "Una chiave API e una chiave segreta (Account > API Access)",
+        "requirementRecord": "L'accesso API deve essere abilitato su ogni dominio da gestire",
+        "fields": {
+          "apiKey": {
+            "label": "Chiave API",
+            "placeholder": "pk1_..."
+          },
+          "secretApiKey": {
+            "label": "Chiave API segreta",
+            "placeholder": "sk1_..."
+          }
+        }
+      },
+      "POWERDNS": {
+        "name": "PowerDNS",
+        "requirementZone": "L'API deve essere abilitata sul tuo server (api=yes, api-key=...)",
+        "requirementRecord": "L'URL di base deve essere raggiungibile da Nexploy",
+        "fields": {
+          "baseUrl": {
+            "label": "URL del server",
+            "placeholder": "https://ns1.example.com:8081"
+          },
+          "apiKey": {
+            "label": "Chiave API",
+            "placeholder": "La tua chiave API PowerDNS"
+          },
+          "serverId": {
+            "label": "ID del server (opzionale)",
+            "placeholder": "localhost"
+          }
+        }
+      },
+      "OVH": {
+        "name": "OVHcloud",
+        "requirementZone": "Tre chiavi generate su api.ovh.com/createToken",
+        "requirementRecord": "Diritti GET/POST/PUT/DELETE su /domain/zone/*",
+        "fields": {
+          "applicationKey": {
+            "label": "Application Key",
+            "placeholder": "La tua application key"
+          },
+          "applicationSecret": {
+            "label": "Application Secret",
+            "placeholder": "Il tuo application secret"
+          },
+          "consumerKey": {
+            "label": "Consumer Key",
+            "placeholder": "La tua consumer key"
+          },
+          "endpoint": {
+            "label": "Endpoint (opzionale)",
+            "placeholder": "https://eu.api.ovh.com/1.0"
+          }
+        }
+      }
+    }
   },
   "connect": "Connetti",
   "disconnect": "Disconnetti",
@@ -170,5 +283,6 @@
   "azureRepos": {
     "title": "Azure Repos",
     "description": "Collega le tue organizzazioni Azure DevOps per distribuire i repository Azure Repos"
-  }
+  },
+  "experimental": "Sperimentale"
 }

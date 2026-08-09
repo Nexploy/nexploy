@@ -47,6 +47,7 @@ export async function GitProvidersSection() {
                     value="azureRepos"
                     icon={<PROVIDER_ICONS.AZURE_REPOS className="size-5" />}
                     titleKey="azureRepos.title"
+                    experimental
                     instances={providers.filter((p) => p.provider === 'AZURE_REPOS')}
                 />
             </Accordion>

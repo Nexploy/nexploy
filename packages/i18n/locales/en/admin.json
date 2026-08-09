@@ -101,7 +101,7 @@
   "roleDescriptions": {
     "guest": "Read-only access: repositories, builds, Docker resources and monitoring. No modifications and no access to secrets.",
     "developer": "Day-to-day deployment work: manage repositories, builds, deployments, environment variables, pipelines, domains, SSL certificates and Docker resources. No integration or user management.",
-    "admin": "Full access: everything a Developer can do, plus management of integrations (Git, registries, Cloudflare, Bucket Storage), Swarm infrastructure, Traefik, cleanup, AI and users."
+    "admin": "Full access: everything a Developer can do, plus management of integrations (Git, registries, DNS, Bucket Storage), Swarm infrastructure, Traefik, cleanup, AI and users."
   },
   "email": "Email",
   "name": "Name",

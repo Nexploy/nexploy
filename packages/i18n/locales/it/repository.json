@@ -160,7 +160,7 @@
       "cancel": "Annulla",
       "updated": "Domini aggiornati con successo",
       "host": "Host",
-      "managedByCloudflare": "Gestito dalla selezione della zona Cloudflare",
+      "managedByDnsProvider": "Gestito dalla selezione della zona DNS",
       "path": "Percorso",
       "internalPath": "Percorso interno",
       "internalPathDescription": "Il percorso su cui la tua applicazione si aspetta le richieste internamente",
@@ -278,20 +278,22 @@
       "noRepositoryOnAccount": "Nessun repository trovato su questo account",
       "allRepositoriesAlreadyAdded": "Tutti i repository di questo account sono già stati aggiunti a questa organizzazione"
     },
-    "cloudflare": {
-      "loading": "Caricamento delle zone Cloudflare...",
-      "title": "Configurazione Cloudflare",
+    "dns": {
+      "loading": "Caricamento delle zone DNS...",
+      "title": "Configurazione DNS",
       "automaticDns": "DNS automatico",
-      "account": "Account Cloudflare",
+      "proxied": "Con proxy",
+      "account": "Account DNS",
       "selectAccount": "Seleziona un account",
-      "zone": "Zona Cloudflare",
+      "zone": "Zona DNS",
       "selectZone": "Seleziona una zona",
       "manualEntry": "Inserimento manuale",
       "zoneNotFound": "zona non trovata",
       "zoneUnavailable": "La zona originale non è più disponibile. Seleziona un'altra zona o passa all'inserimento manuale.",
       "selectZoneForDns": "Seleziona una zona per creare automaticamente il DNS",
       "subdomain": "Sottodominio",
-      "emptyForRoot": "Lascia vuoto per il dominio radice"
+      "emptyForRoot": "Lascia vuoto per il dominio radice",
+      "experimental": "Sperimentale"
     },
     "ssl": {
       "title": "Certificati SSL",

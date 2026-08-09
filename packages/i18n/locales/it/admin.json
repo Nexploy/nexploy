@@ -98,7 +98,7 @@
   "roleDescriptions": {
     "guest": "Accesso in sola lettura: repository, build, risorse Docker e monitoraggio. Nessuna modifica e nessun accesso ai segreti.",
     "developer": "Lavoro quotidiano di deployment: gestione di repository, build, deployment, variabili d'ambiente, pipeline, domini, certificati SSL e risorse Docker. Nessuna gestione delle integrazioni o degli utenti.",
-    "admin": "Accesso completo: tutto ciò che può fare uno Sviluppatore, più la gestione delle integrazioni (Git, registry, Cloudflare, storage su bucket), dell'infrastruttura Swarm, di Traefik, della pulizia, dell'IA e degli utenti."
+    "admin": "Accesso completo: tutto ciò che può fare uno Sviluppatore, più la gestione delle integrazioni (Git, registry, DNS, storage su bucket), dell'infrastruttura Swarm, di Traefik, della pulizia, dell'IA e degli utenti."
   },
   "email": "Email",
   "name": "Nome",

@@ -65,16 +65,15 @@
     "writeFilesFailed": "Scrittura dei file del certificato per Traefik non riuscita",
     "fetchFailed": "Recupero dei certificati SSL non riuscito"
   },
-  "cloudflare": {
-    "saveCredentialFailed": "Errore Cloudflare durante il salvataggio della credenziale",
-    "deleteCredentialFailed": "Errore Cloudflare durante l'eliminazione della credenziale",
-    "fetchAccountsFailed": "Errore Cloudflare durante il recupero degli account",
-    "credentialNotFound": "Credenziale Cloudflare non trovata",
-    "getCredentialByIdFailed": "Errore Cloudflare durante il recupero della credenziale tramite ID",
-    "listZonesFailed": "Errore Cloudflare durante l'elenco delle zone",
-    "createDnsFailed": "Errore Cloudflare durante la creazione del record DNS",
-    "deleteDnsFailed": "Errore Cloudflare durante l'eliminazione del record DNS",
-    "updateDnsFailed": "Errore Cloudflare durante l'aggiornamento del record DNS",
+  "dns": {
+    "saveCredentialFailed": "Errore DNS durante il salvataggio della credenziale",
+    "deleteCredentialFailed": "Errore DNS durante l'eliminazione della credenziale",
+    "fetchAccountsFailed": "Errore DNS durante il recupero degli account",
+    "credentialNotFound": "Credenziale DNS non trovata",
+    "listZonesFailed": "Errore DNS durante l'elenco delle zone",
+    "createRecordFailed": "Errore DNS durante la creazione del record",
+    "deleteRecordFailed": "Errore DNS durante l'eliminazione del record",
+    "updateRecordFailed": "Errore DNS durante l'aggiornamento del record",
     "getServerIpFailed": "Recupero dell'IP del server non riuscito"
   },
   "backupSchedule": {

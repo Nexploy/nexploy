@@ -65,16 +65,15 @@
     "writeFilesFailed": "Failed to write certificate files for Traefik",
     "fetchFailed": "Failed to fetch SSL certificates"
   },
-  "cloudflare": {
-    "saveCredentialFailed": "Cloudflare error saving credential",
-    "deleteCredentialFailed": "Cloudflare error deleting credential",
-    "fetchAccountsFailed": "Cloudflare error fetching accounts",
-    "credentialNotFound": "Cloudflare credential not found",
-    "getCredentialByIdFailed": "Cloudflare error getting credential by ID",
-    "listZonesFailed": "Cloudflare error listing zones",
-    "createDnsFailed": "Cloudflare error creating DNS record",
-    "deleteDnsFailed": "Cloudflare error deleting DNS record",
-    "updateDnsFailed": "Cloudflare error updating DNS record",
+  "dns": {
+    "saveCredentialFailed": "DNS error saving credential",
+    "deleteCredentialFailed": "DNS error deleting credential",
+    "fetchAccountsFailed": "DNS error fetching accounts",
+    "credentialNotFound": "DNS credential not found",
+    "listZonesFailed": "DNS error listing zones",
+    "createRecordFailed": "DNS error creating record",
+    "deleteRecordFailed": "DNS error deleting record",
+    "updateRecordFailed": "DNS error updating record",
     "getServerIpFailed": "Failed to get server IP"
   },
   "backupSchedule": {

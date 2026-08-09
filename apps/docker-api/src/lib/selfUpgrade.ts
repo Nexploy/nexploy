@@ -3,10 +3,30 @@ import { recreateContainerWithImage } from '@/utils/recreateWithImage';
 import { pullImage } from '@/utils/pullImage';
 import { waitForContainerHealthy } from '@/utils/wait';
 import { logger } from '@/utils/logger';
-import { DOCKER_API_NETWORK_ALIAS, NEXPLOY_APP_HEALTHCHECK, NEXPLOY_APP_NETWORK_ALIAS } from '@/lib/config';
+import {
+    DOCKER_API_NETWORK_ALIAS,
+    INNGEST_CONTAINER_NAME,
+    NEXPLOY_APP_HEALTHCHECK,
+    NEXPLOY_APP_NETWORK_ALIAS,
+    POSTGRES_CONTAINER_NAME,
+    TRAEFIK_CONTAINER_NAME,
+} from '@/lib/config';
 
 const DOCKER_API_READY_TIMEOUT_MS = 60_000;
 const APP_READY_TIMEOUT_MS = 180_000;
+
+const SIDECAR_CONTAINER_NAMES = [INNGEST_CONTAINER_NAME, TRAEFIK_CONTAINER_NAME, POSTGRES_CONTAINER_NAME];
+
+async function restartSidecarContainers(): Promise<void> {
+    for (const name of SIDECAR_CONTAINER_NAMES) {
+        try {
+            logger.info({ container: name }, 'Restarting sidecar container');
+            await defaultDocker.getContainer(name).restart();
+        } catch (error) {
+            logger.warn({ error, container: name }, 'Failed to restart sidecar container, continuing');
+        }
+    }
+}
 
 export async function runSelfUpgradeAndExit(): Promise<void> {
     const dockerApiImage = process.env.SELF_UPGRADE_TARGET_IMAGE;
@@ -51,6 +71,7 @@ export async function runSelfUpgradeAndExit(): Promise<void> {
     }
 
     if (!appTarget) {
+        await restartSidecarContainers();
         logger.info({ image: dockerApiImage }, 'Upgrade complete (docker-api only)');
         process.exit(0);
     }
@@ -70,6 +91,8 @@ export async function runSelfUpgradeAndExit(): Promise<void> {
             );
             process.exit(1);
         }
+
+        await restartSidecarContainers();
 
         logger.info({ appImage: appTarget.image, dockerApiImage }, 'Upgrade complete');
         process.exit(0);

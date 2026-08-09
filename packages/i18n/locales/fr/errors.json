@@ -65,16 +65,15 @@
     "writeFilesFailed": "Échec de l'écriture des fichiers de certificat pour Traefik",
     "fetchFailed": "Échec de la récupération des certificats SSL"
   },
-  "cloudflare": {
-    "saveCredentialFailed": "Erreur Cloudflare lors de l'enregistrement de l'identifiant",
-    "deleteCredentialFailed": "Erreur Cloudflare lors de la suppression de l'identifiant",
-    "fetchAccountsFailed": "Erreur Cloudflare lors de la récupération des comptes",
-    "credentialNotFound": "Identifiant Cloudflare introuvable",
-    "getCredentialByIdFailed": "Erreur Cloudflare lors de la récupération de l'identifiant par ID",
-    "listZonesFailed": "Erreur Cloudflare lors de la liste des zones",
-    "createDnsFailed": "Erreur Cloudflare lors de la création de l'enregistrement DNS",
-    "deleteDnsFailed": "Erreur Cloudflare lors de la suppression de l'enregistrement DNS",
-    "updateDnsFailed": "Erreur Cloudflare lors de la mise à jour de l'enregistrement DNS",
+  "dns": {
+    "saveCredentialFailed": "Erreur DNS lors de l'enregistrement de l'identifiant",
+    "deleteCredentialFailed": "Erreur DNS lors de la suppression de l'identifiant",
+    "fetchAccountsFailed": "Erreur DNS lors de la récupération des comptes",
+    "credentialNotFound": "Identifiant DNS introuvable",
+    "listZonesFailed": "Erreur DNS lors de la liste des zones",
+    "createRecordFailed": "Erreur DNS lors de la création de l'enregistrement",
+    "deleteRecordFailed": "Erreur DNS lors de la suppression de l'enregistrement",
+    "updateRecordFailed": "Erreur DNS lors de la mise à jour de l'enregistrement",
     "getServerIpFailed": "Échec de la récupération de l'IP du serveur"
   },
   "backupSchedule": {
