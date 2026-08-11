@@ -123,7 +123,7 @@ describePermissionMatrix('instance maintenance endpoints', [
     {
         name: 'updateInstanceDomainAction',
         kind: 'action',
-        invoke: () => updateInstanceDomainAction({ domain: 'nexploy.test', useTls: false } as never),
+        invoke: () => updateInstanceDomainAction({ domain: 'nexploy.test', mode: 'ip' } as never),
         expected: DEVELOPER_AND_ABOVE,
     },
     {

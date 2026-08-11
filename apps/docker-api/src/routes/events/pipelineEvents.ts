@@ -6,13 +6,18 @@ import { logger } from '@/utils/logger';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { buildDockerHostEnv, runDockerCompose } from '@/utils/compose/dockerComposeRunner';
-import path from 'path';
 import fs from 'fs';
 import yaml from 'yaml';
-import { findUnresolvedVariables, substituteEnvVars } from '@/utils/compose/composePreprocessor';
-import { cleanupEnvFile, ensureEnvIgnoredInBuildContext, writeEnvFile } from '@/utils/compose/composePhases';
-import { getTransformationSummary, transformBindMountsForRemote } from '@/utils/compose/composeVolumeTransformer';
-import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
+import {
+    cleanupEnvFile,
+    cleanupGeneratedDockerfiles,
+    cleanupProcessedComposeFile,
+    findUnbuildableServices,
+    preprocessComposeProject,
+    publishRemoteServicePorts,
+    resolveBuiltImageReferences,
+    writeEnvFile,
+} from '@/utils/compose/composePhases';
 import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 import { networksStateManager } from '@/managers/list/networksStateManager';
@@ -21,11 +26,12 @@ import { docker } from '@/utils/dockerClient';
 const app = new Hono();
 
 app.post('/stream/compose', async (c) => {
-    const { workDir, projectName, composePath, envVars, labels, noCache } = await c.req.json<{
+    const { workDir, projectName, composePath, envVars, labels, noCache, profiles } = await c.req.json<{
         workDir: string;
         projectName: string;
         composePath: string;
         envVars?: Record<string, string>;
+        profiles?: string[];
         buildId?: string;
         repositoryId?: string;
         labels?: Record<string, string>;
@@ -67,119 +73,36 @@ app.post('/stream/compose', async (c) => {
         };
 
         try {
-            const composeFile = composePath;
-            const composeFilePath = path.join(workDir, composeFile);
-            composeDir = path.dirname(composeFilePath);
-
             logger.info(
-                { workDir, projectName, composeFile, environmentId, hasEnvVars: !!envVars },
+                { workDir, projectName, composePath, environmentId, hasEnvVars: !!envVars },
                 'Starting Docker Compose deployment',
             );
 
-            const composeYamlRaw = fs.readFileSync(composeFilePath, 'utf8');
-
             const effectiveEnvVars: Record<string, string> = { ...(envVars || {}) };
-
-            ensureEnvIgnoredInBuildContext(workDir);
-
-            const composeYamlContent = substituteEnvVars(composeYamlRaw, effectiveEnvVars);
-
-            const unresolvedVars = findUnresolvedVariables(composeYamlContent);
-            if (unresolvedVars.length > 0) {
-                sendLog(
-                    `WARNING: Unresolved variables in compose file: ${unresolvedVars.map((v) => `$\{${v}}`).join(', ')}`,
-                );
-            }
-
-            let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
-            let composeModified = false;
-
             const isRemoteEnvironment = envConfig?.connectionType === 'TCP' || envConfig?.connectionType === 'TCP_TLS';
 
-            if (isRemoteEnvironment) {
-                sendLog('Remote Docker environment detected - transforming bind mounts...');
+            const preprocessed = await preprocessComposeProject({
+                workDir,
+                projectName,
+                composePath,
+                envVars: effectiveEnvVars,
+                dockerEnv,
+                labels,
+                profiles,
+                isRemoteEnvironment,
+                sendLog,
+                signal: abortController.signal,
+            });
 
-                volumeTransformResult = transformBindMountsForRemote(composeContent, workDir, projectName);
+            const composeContent = preprocessed.composeContent;
+            const servicesToBuild = preprocessed.servicesToBuild;
+            const servicesToPull = preprocessed.servicesToPull;
 
-                for (const warning of volumeTransformResult.warnings) {
-                    sendLog(`WARNING: ${warning}`);
-                }
+            composeDir = preprocessed.composeDir;
+            volumeTransformResult = preprocessed.volumeTransformResult;
+            modifiedComposeFile = preprocessed.processedComposeFile;
 
-                const summary = getTransformationSummary(volumeTransformResult);
-                for (const line of summary) {
-                    sendLog(line);
-                }
-
-                composeContent = volumeTransformResult.modifiedComposeContent as ComposeContent;
-
-                for (const [serviceName, dockerfileContent] of volumeTransformResult.generatedDockerfiles) {
-                    const dockerfilePath = path.join(composeDir, `.nexploy-${serviceName}.Dockerfile`);
-                    fs.writeFileSync(dockerfilePath, dockerfileContent, 'utf8');
-                    sendLog(`Generated Dockerfile for service: ${serviceName}`);
-                }
-
-                if (volumeTransformResult.volumesToCreate.length > 0) {
-                    sendLog(`Creating ${volumeTransformResult.volumesToCreate.length} named volume(s)...`);
-                    for (const volumeName of volumeTransformResult.volumesToCreate) {
-                        try {
-                            await docker.createVolume({ Name: volumeName });
-                            sendLog(`  Created volume: ${volumeName}`);
-                        } catch (err: unknown) {
-                            const errorMessage = err instanceof Error ? err.message : String(err);
-                            if (!errorMessage.includes('already exists')) {
-                                throw err;
-                            }
-                            sendLog(`  Volume exists: ${volumeName}`);
-                        }
-                    }
-                }
-
-                if (volumeTransformResult.transformations.length > 0) {
-                    sendLog('Bind mount transformation complete');
-                }
-
-                composeModified = true;
-            }
-
-            const servicesToBuild = Object.entries(composeContent.services || {})
-                .filter(([, s]) => !!s.build)
-                .map(([name]) => name);
-
-            for (const [serviceName, service] of Object.entries(composeContent.services || {})) {
-                if (!service.container_name) {
-                    service.container_name = serviceName;
-                }
-
-                if (labels && Object.keys(labels).length > 0) {
-                    const existingLabels =
-                        service.labels && !Array.isArray(service.labels)
-                            ? (service.labels as Record<string, string>)
-                            : {};
-                    service.labels = { ...existingLabels, ...labels };
-
-                    if (typeof service.build === 'string') {
-                        service.build = { context: service.build, labels: { ...labels } };
-                    } else if (service.build) {
-                        const existingBuildLabels = !Array.isArray(service.build.labels)
-                            ? (service.build.labels ?? {})
-                            : {};
-                        service.build.labels = { ...existingBuildLabels, ...labels };
-                    }
-                }
-
-                composeModified = true;
-            }
-
-            if (composeModified) {
-                modifiedComposeFile = path.join(composeDir, '.nexploy-compose-processed.yml');
-                fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
-            }
-
-            const activeComposeFile = modifiedComposeFile || composeFilePath;
-
-            const servicesToPull = Object.entries(composeContent.services || {})
-                .filter(([, s]) => s.image && !s.build)
-                .map(([name]) => name);
+            const activeComposeFile = modifiedComposeFile;
 
             if (servicesToPull.length > 0) {
                 sendLog(`Pulling images for ${servicesToPull.length} service(s)...`);
@@ -245,66 +168,25 @@ app.post('/stream/compose', async (c) => {
                 }
 
                 sendLog('Resolving built image references...');
-                for (const serviceName of servicesToBuild) {
-                    const service = composeContent.services![serviceName];
-                    const builtRef = service.image
-                        ? (service.image as string).includes(':')
-                            ? (service.image as string)
-                            : `${service.image}:latest`
-                        : `${projectName}-${serviceName}:latest`;
-
-                    service.image = builtRef;
-                    delete (service as any).build;
-
-                    sendLog(`  ${serviceName} → ${builtRef}`);
-                }
-
-                modifiedComposeFile = path.join(composeDir, '.nexploy-compose-processed.yml');
-                fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
+                resolveBuiltImageReferences(composeContent, projectName, servicesToBuild, sendLog);
             } else if (servicesToPull.length === 0) {
+                for (const { serviceName, hint } of findUnbuildableServices(composeContent)) {
+                    sendLog(`Service "${serviceName}" declares neither "build" nor "image"${hint ? ` — ${hint}` : ''}`);
+                }
                 sendLog('No images to pull or build');
             }
 
             if (isRemoteEnvironment) {
-                let portsAdded = false;
                 sendLog('Ensuring container ports are published on remote host...');
-                for (const [serviceName, service] of Object.entries(composeContent.services || {})) {
-                    const servicePorts = service.ports as string[] | undefined;
-                    if (!servicePorts || servicePorts.length === 0) {
-                        const imageName = service.image;
-                        if (imageName) {
-                            try {
-                                const imageInfo = await docker.getImage(imageName).inspect();
-                                const exposedPorts = Object.keys(imageInfo.Config?.ExposedPorts || {});
-                                if (exposedPorts.length > 0) {
-                                    const portMappings = exposedPorts.map((p) => {
-                                        const port = p.split('/')[0];
-                                        return `0:${port}`;
-                                    });
-                                    (service as Record<string, unknown>).ports = portMappings;
-                                    sendLog(
-                                        `  Added port mappings for service ${serviceName}: ${portMappings.join(', ')}`,
-                                    );
-                                    portsAdded = true;
-                                }
-                            } catch {
-                                sendLog(
-                                    `  Warning: Could not inspect image for service ${serviceName} to determine ports`,
-                                );
-                            }
-                        }
-                    }
-                }
-
+                const portsAdded = await publishRemoteServicePorts(composeContent, sendLog);
                 if (portsAdded) {
-                    modifiedComposeFile =
-                        modifiedComposeFile || path.join(composeDir, '.nexploy-compose-processed.yml');
-                    fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
                     sendLog('Updated compose file with port mappings for remote environment');
                 }
             }
 
-            const deployComposeFile = modifiedComposeFile || composeFilePath;
+            fs.writeFileSync(modifiedComposeFile, yaml.stringify(composeContent), 'utf8');
+
+            const deployComposeFile = modifiedComposeFile;
 
             sendLog('Removing existing containers if any...');
             try {
@@ -421,27 +303,12 @@ app.post('/stream/compose', async (c) => {
                 logger.info({ workDir }, 'Cleaned up .env file after compose deployment');
             }
 
-            if (modifiedComposeFile && fs.existsSync(modifiedComposeFile)) {
-                try {
-                    fs.unlinkSync(modifiedComposeFile);
-                    logger.info({ path: modifiedComposeFile }, 'Cleaned up temporary compose file');
-                } catch (e) {
-                    logger.warn({ path: modifiedComposeFile, error: e }, 'Failed to cleanup temporary compose file');
-                }
+            if (modifiedComposeFile) {
+                cleanupProcessedComposeFile(modifiedComposeFile);
             }
 
             if (volumeTransformResult) {
-                for (const serviceName of volumeTransformResult.generatedDockerfiles.keys()) {
-                    const dockerfilePath = path.join(composeDir, `.nexploy-${serviceName}.Dockerfile`);
-                    try {
-                        if (fs.existsSync(dockerfilePath)) {
-                            fs.unlinkSync(dockerfilePath);
-                            logger.info({ path: dockerfilePath }, 'Cleaned up generated Dockerfile');
-                        }
-                    } catch (e) {
-                        logger.warn({ path: dockerfilePath, error: e }, 'Failed to cleanup generated Dockerfile');
-                    }
-                }
+                cleanupGeneratedDockerfiles(composeDir, volumeTransformResult.generatedDockerfiles.keys());
             }
         }
     });

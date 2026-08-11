@@ -3,9 +3,9 @@ import fs from 'fs';
 import yaml from 'yaml';
 import { logger } from '@/utils/logger';
 import { docker } from '@/utils/dockerClient';
-import { findUnresolvedVariables, substituteEnvVars } from '@/utils/compose/composePreprocessor';
+import { discoverComposeFiles, normalizeComposeProject } from '@/utils/compose/composeNormalizer';
 import { getTransformationSummary, transformBindMountsForRemote } from '@/utils/compose/composeVolumeTransformer';
-import type { ComposeContent } from '@workspace/typescript-interface/docker/docker.compose.build';
+import type { ComposeContent, ComposeService } from '@workspace/typescript-interface/docker/docker.compose.build';
 import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
 
 export const PROCESSED_COMPOSE_FILENAME = '.nexploy-compose-processed.yml';
@@ -126,14 +126,44 @@ export function parseCommandArgs(command: string): string[] {
     return args;
 }
 
+export function mergeComposeLabels(
+    existing: Record<string, string> | string[] | undefined,
+    injected: Record<string, string>,
+): Record<string, string> | string[] {
+    if (Array.isArray(existing)) {
+        const injectedKeys = new Set(Object.keys(injected));
+        const kept = existing.filter((entry) => !injectedKeys.has(String(entry).split('=')[0]));
+
+        return [...kept, ...Object.entries(injected).map(([key, value]) => `${key}=${value}`)];
+    }
+
+    return { ...(existing ?? {}), ...injected };
+}
+
+export function applyComposeLabels(service: ComposeService, labels: Record<string, string>): void {
+    service.labels = mergeComposeLabels(service.labels as Record<string, string> | string[] | undefined, labels);
+
+    if (typeof service.build === 'string') {
+        service.build = { context: service.build, labels: { ...labels } };
+        return;
+    }
+
+    if (service.build) {
+        service.build.labels = mergeComposeLabels(service.build.labels, labels);
+    }
+}
+
 export interface PreprocessComposeOptions {
     workDir: string;
     projectName: string;
     composePath: string;
     envVars: Record<string, string>;
+    dockerEnv: Record<string, string>;
     labels?: Record<string, string>;
+    profiles?: string[];
     isRemoteEnvironment: boolean;
     sendLog: (message: string) => void;
+    signal?: AbortSignal;
 }
 
 export interface PreprocessComposeResult {
@@ -150,31 +180,54 @@ export async function preprocessComposeProject({
     projectName,
     composePath,
     envVars,
+    dockerEnv,
     labels,
+    profiles,
     isRemoteEnvironment,
     sendLog,
+    signal,
 }: PreprocessComposeOptions): Promise<PreprocessComposeResult> {
     const composeFilePath = path.join(workDir, composePath);
     const composeDir = path.dirname(composeFilePath);
 
-    const composeYamlRaw = fs.readFileSync(composeFilePath, 'utf8');
+    if (!fs.existsSync(composeFilePath)) {
+        throw new Error(`Compose file not found: ${composePath}`);
+    }
 
     ensureEnvIgnoredInBuildContext(workDir);
 
-    const composeYamlContent = substituteEnvVars(composeYamlRaw, envVars);
+    const composeFiles = discoverComposeFiles(composeFilePath);
 
-    const unresolvedVars = findUnresolvedVariables(composeYamlContent);
-    if (unresolvedVars.length > 0) {
-        sendLog(`WARNING: Unresolved variables in compose file: ${unresolvedVars.map((v) => `$\{${v}}`).join(', ')}`);
+    if (composeFiles.length > 1) {
+        sendLog(
+            `Merging override file(s): ${composeFiles
+                .slice(1)
+                .map((file) => path.basename(file))
+                .join(', ')}`,
+        );
     }
 
-    let composeContent = yaml.parse(composeYamlContent) as ComposeContent;
+    const normalized = await normalizeComposeProject({
+        composeFiles,
+        projectDirectory: composeDir,
+        projectName,
+        envVars,
+        dockerEnv,
+        profiles,
+        signal,
+    });
+
+    for (const warning of normalized.warnings) {
+        sendLog(warning);
+    }
+
+    let composeContent = normalized.composeContent;
     let volumeTransformResult: VolumeTransformationResult | null = null;
 
     if (isRemoteEnvironment) {
         sendLog('Remote Docker environment detected - transforming bind mounts...');
 
-        volumeTransformResult = transformBindMountsForRemote(composeContent, workDir, projectName);
+        volumeTransformResult = transformBindMountsForRemote(composeContent, composeDir, projectName);
 
         for (const warning of volumeTransformResult.warnings) {
             sendLog(`WARNING: ${warning}`);
@@ -213,22 +266,9 @@ export async function preprocessComposeProject({
         }
     }
 
-    for (const [serviceName, service] of Object.entries(composeContent.services || {})) {
-        if (!service.container_name) {
-            service.container_name = serviceName;
-        }
-
-        if (labels && Object.keys(labels).length > 0) {
-            const existingLabels =
-                service.labels && !Array.isArray(service.labels) ? (service.labels as Record<string, string>) : {};
-            service.labels = { ...existingLabels, ...labels };
-
-            if (typeof service.build === 'string') {
-                service.build = { context: service.build, labels: { ...labels } };
-            } else if (service.build) {
-                const existingBuildLabels = !Array.isArray(service.build.labels) ? (service.build.labels ?? {}) : {};
-                service.build.labels = { ...existingBuildLabels, ...labels };
-            }
+    if (labels && Object.keys(labels).length > 0) {
+        for (const service of Object.values(composeContent.services || {})) {
+            applyComposeLabels(service, labels);
         }
     }
 
@@ -262,24 +302,20 @@ export function findUnbuildableServices(composeContent: ComposeContent): Unbuild
     return Object.entries(composeContent.services || {})
         .filter(([, service]) => !service?.build && !service?.image)
         .map(([serviceName, service]) => {
-            const keys = Object.keys(service ?? {});
-
-            if (keys.includes('<<')) {
+            if (Array.isArray(service?.profiles) && service.profiles.length > 0) {
                 return {
                     serviceName,
-                    hint: 'it inherits its keys from a YAML anchor ("<<"), which is not resolved here — declare "build" or "image" directly on the service',
-                };
-            }
-
-            if (keys.includes('extends')) {
-                return {
-                    serviceName,
-                    hint: 'it relies on "extends", which is not resolved here — declare "build" or "image" directly on the service',
+                    hint: `it is gated behind the profile(s) ${service.profiles.join(', ')} — enable the profile or declare "build" or "image"`,
                 };
             }
 
             return { serviceName };
         });
+}
+
+function hasExplicitTag(imageReference: string): boolean {
+    const lastSlash = imageReference.lastIndexOf('/');
+    return imageReference.indexOf(':', lastSlash + 1) !== -1;
 }
 
 export function resolveBuiltImageReferences(
@@ -291,8 +327,8 @@ export function resolveBuiltImageReferences(
     for (const serviceName of servicesToBuild) {
         const service = composeContent.services![serviceName];
         const builtRef = service.image
-            ? (service.image as string).includes(':')
-                ? (service.image as string)
+            ? hasExplicitTag(service.image)
+                ? service.image
                 : `${service.image}:latest`
             : `${projectName}-${serviceName}:latest`;
 
@@ -310,7 +346,7 @@ export async function publishRemoteServicePorts(
     let portsAdded = false;
 
     for (const [serviceName, service] of Object.entries(composeContent.services || {})) {
-        const servicePorts = service.ports as string[] | undefined;
+        const servicePorts = service.ports as unknown[] | undefined;
         if (servicePorts && servicePorts.length > 0) {
             continue;
         }
@@ -324,7 +360,10 @@ export async function publishRemoteServicePorts(
             const imageInfo = await docker.getImage(imageName).inspect();
             const exposedPorts = Object.keys(imageInfo.Config?.ExposedPorts || {});
             if (exposedPorts.length > 0) {
-                const portMappings = exposedPorts.map((p) => `0:${p.split('/')[0]}`);
+                const portMappings = exposedPorts.map((exposed) => {
+                    const [port, protocol] = exposed.split('/');
+                    return protocol && protocol !== 'tcp' ? `0:${port}/${protocol}` : `0:${port}`;
+                });
                 (service as Record<string, unknown>).ports = portMappings;
                 sendLog(`  Added port mappings for service ${serviceName}: ${portMappings.join(', ')}`);
                 portsAdded = true;

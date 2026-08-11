@@ -74,13 +74,17 @@ const DATA_DIRECTORY_PATTERNS = [
     'build',
 ];
 
+function isHostPath(source: string | undefined): boolean {
+    if (!source) return false;
+    return source.startsWith('./') || source.startsWith('../') || source.startsWith('/') || source.startsWith('~/');
+}
+
 export function isBindMount(volumeSpec: string | ComposeVolumeConfig): boolean {
     if (typeof volumeSpec === 'object') {
-        return (
-            volumeSpec.type === 'bind' || volumeSpec.source?.startsWith('./') || volumeSpec.source?.startsWith('../')
-        );
+        if (volumeSpec.type && volumeSpec.type !== 'bind') return false;
+        return volumeSpec.type === 'bind' || isHostPath(volumeSpec.source);
     }
-    return volumeSpec.startsWith('./') || volumeSpec.startsWith('../');
+    return isHostPath(volumeSpec.split(':')[0]);
 }
 
 export function parseVolumeSpec(volumeSpec: string | ComposeVolumeConfig): {
@@ -89,14 +93,13 @@ export function parseVolumeSpec(volumeSpec: string | ComposeVolumeConfig): {
     readOnly: boolean;
 } | null {
     if (typeof volumeSpec === 'object') {
-        if (volumeSpec.type === 'bind' || volumeSpec.source?.startsWith('./') || volumeSpec.source?.startsWith('../')) {
-            return {
-                hostPath: volumeSpec.source,
-                containerPath: volumeSpec.target,
-                readOnly: volumeSpec.read_only || false,
-            };
-        }
-        return null;
+        if (!isBindMount(volumeSpec)) return null;
+
+        return {
+            hostPath: volumeSpec.source,
+            containerPath: volumeSpec.target,
+            readOnly: volumeSpec.read_only || false,
+        };
     }
 
     const parts = volumeSpec.split(':');
@@ -104,9 +107,9 @@ export function parseVolumeSpec(volumeSpec: string | ComposeVolumeConfig): {
 
     const hostPath = parts[0];
     const containerPath = parts[1];
-    const readOnly = parts[2] === 'ro';
+    const readOnly = (parts[2] || '').split(',').includes('ro');
 
-    if (!hostPath.startsWith('./') && !hostPath.startsWith('../')) {
+    if (!isHostPath(hostPath)) {
         return null;
     }
 
@@ -174,7 +177,12 @@ export function classifyBindMount(
     return { classification: 'data', reason: 'Unable to determine, defaulting to data' };
 }
 
-export function parseComposeBindMounts(composeContent: ComposeContent, workDir: string): ParsedBindMount[] {
+export function isInsideDirectory(absolutePath: string, directory: string): boolean {
+    const relative = path.relative(directory, absolutePath);
+    return relative !== '' && !relative.startsWith('..') && !path.isAbsolute(relative);
+}
+
+export function parseComposeBindMounts(composeContent: ComposeContent, projectDir: string): ParsedBindMount[] {
     const bindMounts: ParsedBindMount[] = [];
 
     for (const [serviceName, service] of Object.entries(composeContent.services || {})) {
@@ -187,7 +195,10 @@ export function parseComposeBindMounts(composeContent: ComposeContent, workDir: 
             const parsed = parseVolumeSpec(volumeSpec as string | ComposeVolumeConfig);
             if (!parsed) continue;
 
-            const absoluteHostPath = path.resolve(workDir, parsed.hostPath);
+            const absoluteHostPath = path.resolve(projectDir, parsed.hostPath);
+
+            if (!isInsideDirectory(absoluteHostPath, projectDir)) continue;
+
             const exists = fs.existsSync(absoluteHostPath);
 
             const { classification, reason } = exists
@@ -200,6 +211,7 @@ export function parseComposeBindMounts(composeContent: ComposeContent, workDir: 
                 containerPath: parsed.containerPath,
                 readOnly: parsed.readOnly,
                 absoluteHostPath,
+                projectRelativePath: path.relative(projectDir, absoluteHostPath),
                 exists,
                 classification,
                 classificationReason: reason,

@@ -21,6 +21,7 @@ import {
     Plug,
     ScrollText,
     Send,
+    Server,
     Settings,
     ShieldLock,
     Users,
@@ -151,6 +152,12 @@ const groups: PermissionedSidebarNavGroup[] = [
                     { titleKey: 'mcp', icon: Network, href: '/admin/ai/mcp' },
                     { titleKey: 'settings', icon: Settings, href: '/admin/ai/settings' },
                 ],
+            },
+            {
+                titleKey: 'servers',
+                href: '/admin/servers',
+                icon: Server,
+                permission: { resource: 'buildRunner', action: 'read' },
             },
             {
                 titleKey: 'backups',

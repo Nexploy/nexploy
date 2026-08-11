@@ -27,6 +27,19 @@ export interface DiskUsage {
     totalReclaimable: number;
 }
 
+export interface DockerEngineVersion {
+    version: string;
+    apiVersion: string;
+    minApiVersion: string | null;
+    gitCommit: string | null;
+    goVersion: string | null;
+    os: string | null;
+    arch: string | null;
+    kernelVersion: string | null;
+    buildTime: string | null;
+    platformName: string | null;
+}
+
 export interface CleanupResult {
     reclaimedSpace: number;
 }

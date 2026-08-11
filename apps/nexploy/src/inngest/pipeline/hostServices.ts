@@ -7,6 +7,7 @@ import {
     type GitHostService,
     type NodeHostServices,
     type RegistryHostService,
+    type RunnerHostService,
     type SslHostService,
     type VersionHostService,
 } from '@nexploy/nodes/core/nodeServices';
@@ -26,6 +27,7 @@ import { getBucketStorageCredentials } from '@/services/bucketStorage.service';
 import { createBucketStorageClient, putBucketStorageObject } from '@/lib/bucket-storage/bucketStorage';
 import { getNextVersionNumber, upsertVersion } from '@/services/repository/version.service';
 import { getDefaultEnvironment } from '@/services/environment/environment.service';
+import { checkRunnerAvailability, dispatchRunnerBuild } from '@/services/runnerDispatch.service';
 
 const buildHostService: BuildHostService = {
     async getStageEnvVariables(stageId) {
@@ -173,6 +175,16 @@ const versionHostService: VersionHostService = {
     },
 };
 
+const runnerHostService: RunnerHostService = {
+    checkAvailability(runnerId) {
+        return checkRunnerAvailability(runnerId);
+    },
+
+    dispatchBuild(request, options) {
+        return dispatchRunnerBuild(request, options);
+    },
+};
+
 const environmentHostService: EnvironmentHostService = {
     async getDefaultEnvironmentId() {
         const environment = await getDefaultEnvironment();
@@ -190,4 +202,5 @@ export const hostServices: NodeHostServices = {
     bucketStorage: bucketStorageHostService,
     version: versionHostService,
     environment: environmentHostService,
+    runner: runnerHostService,
 };

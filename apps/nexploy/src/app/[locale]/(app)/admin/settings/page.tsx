@@ -7,6 +7,7 @@ import { CleanupScheduleCard } from '@/components/admin/settings/CleanupSchedule
 import { InstanceDomainCard } from '@/components/admin/settings/InstanceDomainCard';
 import { UpgradeCard } from '@/components/admin/settings/UpgradeCard';
 import { ActivityRetentionCard } from '@/components/admin/settings/ActivityRetentionCard';
+import { DockerEngineCard } from '@/components/admin/settings/DockerEngineCard';
 import { getActivitySettings } from '@/services/activityLog.service';
 import { getInstanceDomainSettings } from '@/lib/instance/domain';
 
@@ -41,6 +42,7 @@ export default async function SettingsPage() {
                 <ScrollAreaWithShadow className="h-full overflow-hidden px-5">
                     <div className="flex flex-col gap-5 pb-5">
                         <UpgradeCard />
+                        <DockerEngineCard />
                         <CleanupScheduleCard settings={settings} />
                         <ActivityRetentionCard settings={activitySettings} />
                         {instanceDomainSettings && <InstanceDomainCard settings={instanceDomainSettings} />}

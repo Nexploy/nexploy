@@ -63,7 +63,12 @@
     "keyMismatch": "La clave privada no coincide con el certificado",
     "createLetsEncryptFailed": "No se ha podido crear el certificado LetsEncrypt",
     "writeFilesFailed": "No se han podido escribir los archivos del certificado para Traefik",
-    "fetchFailed": "No se han podido obtener los certificados SSL"
+    "fetchFailed": "No se han podido obtener los certificados SSL",
+    "notFound": "El certificado seleccionado ya no existe",
+    "notCustom": "Aquí solo se puede usar un certificado personalizado",
+    "domainMismatch": "El certificado seleccionado no cubre este dominio",
+    "filesMissing": "Faltan los archivos del certificado en el disco: vuelve a subir el certificado",
+    "inUseByInstance": "Este certificado lo está usando el dominio de la instancia de Nexploy"
   },
   "dns": {
     "saveCredentialFailed": "Error DNS al guardar la credencial",
@@ -238,5 +243,13 @@
     "providerNotConfigured": "Proveedor no configurado",
     "unsupportedProvider": "Proveedor no compatible",
     "invitableUsersFetchFailed": "Error al buscar usuarios"
+  },
+  "buildRunner": {
+    "getFailed": "No se han podido obtener los runners de compilación",
+    "createFailed": "No se ha podido crear el runner de compilación",
+    "updateFailed": "No se ha podido actualizar el runner de compilación",
+    "deleteFailed": "No se ha podido eliminar el runner de compilación",
+    "regenerateFailed": "No se ha podido regenerar el token del runner",
+    "nameTaken": "Ya existe un runner de compilación con ese nombre"
   }
 }

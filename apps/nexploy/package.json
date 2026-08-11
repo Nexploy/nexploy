@@ -43,7 +43,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@monaco-editor/react": "^4.7.0",
-    "@nexploy/nodes": "^0.5.0",
+    "@nexploy/nodes": "file:../../../nodes/nexploy-nodes-0.6.1.tgz",
     "@nexploy/shared": "^0.3.0",
     "@next-safe-action/adapter-react-hook-form": "^2.0.0",
     "@openrouter/ai-sdk-provider": "^2.9.0",
@@ -55,6 +55,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tanstack/react-table": "^8.21.3",
     "@thesvg/react": "^3.0.10",
+    "@types/ws": "^8.18.1",
     "@workspace/i18n": "workspace:*",
     "@workspace/schemas-zod": "workspace:*",
     "@workspace/typescript-interface": "workspace:*",
@@ -93,6 +94,7 @@
     "sonner": "^2.0.7",
     "swr": "^2.4.1",
     "usehooks-ts": "^3.1.1",
+    "ws": "^8.20.0",
     "yaml": "^2.8.3",
     "zod": "^4.3.6",
     "zustand": "^5.0.12"
@@ -110,5 +112,6 @@
     "typescript": "7.0.2",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.10"
-  }
+  },
+  "nodesVersion": "^0.6.0"
 }

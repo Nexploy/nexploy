@@ -6,6 +6,7 @@ export interface ParsedBindMount {
     containerPath: string;
     readOnly: boolean;
     absoluteHostPath: string;
+    projectRelativePath: string;
     exists: boolean;
     classification: BindMountClassification;
     classificationReason: string;

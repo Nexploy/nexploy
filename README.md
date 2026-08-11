@@ -422,8 +422,10 @@ maintenance page shown on the wrong entrypoint).
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `TRAEFIK_USE_TLS` | `true` | Whether Traefik terminates TLS. Controls which entrypoint (`web` vs `websecure`) receives the maintenance-page override during an upgrade, and which static config template is rendered on first boot |
-| `ACME_EMAIL` | *(unset)* | Let's Encrypt contact email, required when `TRAEFIK_USE_TLS=true` and `traefik.yml` doesn't already exist |
+| `NEXPLOY_TLS_MODE` | derived from `TRAEFIK_USE_TLS` | How the instance is served: `ip` (plain HTTP), `letsencrypt` (HTTPS with an ACME certificate) or `custom` (HTTPS with a certificate uploaded in **SSL certificates**). Set by the *Instance domain* admin card when the app container is recreated |
+| `NEXPLOY_TLS_CERTIFICATE_ID` | *(unset)* | Id of the custom `SslCertificate` serving the instance when `NEXPLOY_TLS_MODE=custom`. That certificate cannot be deleted while it is in use |
+| `TRAEFIK_USE_TLS` | `true` | Legacy switch, still written for compatibility and used as the fallback when `NEXPLOY_TLS_MODE` is unset. Controls which entrypoint (`web` vs `websecure`) receives the maintenance-page override during an upgrade |
+| `ACME_EMAIL` | *(unset)* | Let's Encrypt contact email, required when `NEXPLOY_TLS_MODE=letsencrypt` and `traefik.yml` doesn't already exist. Optional in `custom` mode, where it keeps the `letsencrypt` resolver available for deployed domains |
 | `TRAEFIK_TEMPLATES_DIR` | `apps/nexploy/traefik-templates` (relative to cwd) | Where the Traefik dynamic-config templates are seeded from on first boot |
 | `NEXPLOY_API_KEY_FILE` | `/tmp/nexploy-api-key` | Temp file the seed writes the plaintext internal API key to; read once by `entrypoint.sh` |
 

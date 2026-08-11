@@ -1,0 +1,28 @@
+enum BuildRunnerStatus {
+  OFFLINE
+  ONLINE
+  DRAINING
+}
+
+model BuildRunner {
+  id             String            @id @default(cuid())
+  name           String            @unique
+  description    String?
+  tokenHash      String            @unique
+  tokenPrefix    String
+  labels         String[]          @default([])
+  maxConcurrency Int               @default(2)
+  enabled        Boolean           @default(true)
+  status         BuildRunnerStatus @default(OFFLINE)
+  lastSeenAt     DateTime?
+  version        String?
+  platforms      String[]          @default([])
+  activeJobs     Int               @default(0)
+  createdById    String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([tokenHash])
+  @@index([enabled])
+  @@map("build_runner")
+}

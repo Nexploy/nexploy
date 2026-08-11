@@ -16,6 +16,25 @@ export const NODE_ICONS: Record<string, LucideIcon> = Object.fromEntries(
     ALL_NODE_DESCRIPTORS.map((descriptor) => [descriptor.type, ICON_NAME_MAP[descriptor.icon]]),
 );
 
+export const CATEGORY_ORDER = [
+    'source',
+    'build',
+    'deploy',
+    'script',
+    'database',
+    'config',
+    'files',
+    'flow',
+    'integration',
+    'utility',
+] as const;
+
+export const compareCategories = (a: string, b: string) => {
+    const indexA = CATEGORY_ORDER.indexOf(a as (typeof CATEGORY_ORDER)[number]);
+    const indexB = CATEGORY_ORDER.indexOf(b as (typeof CATEGORY_ORDER)[number]);
+    return (indexA === -1 ? CATEGORY_ORDER.length : indexA) - (indexB === -1 ? CATEGORY_ORDER.length : indexB);
+};
+
 export const TEMPLATE_ICONS: Record<string, LucideIcon> = {
     dockerfile: FileCode2,
     compose: Layers,

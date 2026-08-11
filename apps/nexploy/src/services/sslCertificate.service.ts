@@ -2,12 +2,11 @@ import { prisma } from '../../prisma/prisma';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import * as yaml from 'yaml';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
-import { TRAEFIK_SERVICE_DIR } from '@/lib/traefik/paths';
+import { CUSTOM_CERTS_DIR, regenerateCustomCertsConfig } from '@/lib/traefik/customCerts';
+import { getInstanceCertificateId } from '@/lib/instance/tlsMode';
 
-const CERTS_DIR = path.join(TRAEFIK_SERVICE_DIR, 'certs');
-const TRAEFIK_CERTS_CONTAINER_PATH = process.env.TRAEFIK_CERTS_CONTAINER_PATH ?? '/etc/nexploy/traefik/service/certs';
+const CERTS_DIR = CUSTOM_CERTS_DIR;
 
 function parseCertExpiry(certPem: string): Date | null {
     try {
@@ -84,7 +83,7 @@ export async function createCustomCertificate(name: string, domain: string, cert
         await fs.writeFile(path.join(CERTS_DIR, `${cert.id}.pem`), certificate, 'utf-8');
         await fs.writeFile(path.join(CERTS_DIR, `${cert.id}.key`), privateKey, 'utf-8');
 
-        await regenerateCertsTlsConfig();
+        await regenerateCustomCertsConfig();
     } catch (error) {
         await prisma.sslCertificate.delete({ where: { id: cert.id } }).catch(() => {});
         await fs.unlink(path.join(CERTS_DIR, `${cert.id}.pem`)).catch(() => {});
@@ -99,37 +98,16 @@ export async function deleteSslCertificate(id: string) {
     const cert = await prisma.sslCertificate.findUnique({ where: { id } });
     if (!cert) return;
 
+    if (getInstanceCertificateId() === id) {
+        const t = await getErrorTranslator();
+        throw new Error(t('sslCertificate.inUseByInstance'));
+    }
+
     await prisma.sslCertificate.delete({ where: { id } });
 
     if (cert.type === 'CUSTOM') {
         await fs.unlink(path.join(CERTS_DIR, `${id}.pem`)).catch(() => {});
         await fs.unlink(path.join(CERTS_DIR, `${id}.key`)).catch(() => {});
-        await regenerateCertsTlsConfig();
+        await regenerateCustomCertsConfig();
     }
-}
-
-async function regenerateCertsTlsConfig(): Promise<void> {
-    const customCerts = await prisma.sslCertificate.findMany({
-        where: { type: 'CUSTOM' },
-        select: { id: true },
-    });
-
-    const filePath = path.join(TRAEFIK_SERVICE_DIR, 'nexploy-certs.yml');
-
-    if (customCerts.length === 0) {
-        await fs.unlink(filePath).catch(() => {});
-        return;
-    }
-
-    const config = {
-        tls: {
-            certificates: customCerts.map((c) => ({
-                certFile: `${TRAEFIK_CERTS_CONTAINER_PATH}/${c.id}.pem`,
-                keyFile: `${TRAEFIK_CERTS_CONTAINER_PATH}/${c.id}.key`,
-            })),
-        },
-    };
-
-    await fs.mkdir(TRAEFIK_SERVICE_DIR, { recursive: true });
-    await fs.writeFile(filePath, yaml.stringify(config), 'utf-8');
 }

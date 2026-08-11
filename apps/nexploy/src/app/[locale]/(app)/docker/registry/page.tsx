@@ -2,6 +2,7 @@ import { Warehouse } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { RegistryList } from '@/components/registry/RegistryList';
 import { AddRegistryButton } from '@/components/registry/AddRegistryButton';
+import { CreateLocalRegistryButton } from '@/components/registry/CreateLocalRegistryButton';
 import { MirrorImageSection } from '@/components/registry/MirrorImageSection';
 import { getRegistries } from '@/services/registry.service';
 import type { Metadata } from 'next';
@@ -27,7 +28,10 @@ export default async function RegistryPage() {
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>
                 </div>
-                <AddRegistryButton />
+                <div className="flex gap-2">
+                    <CreateLocalRegistryButton />
+                    <AddRegistryButton />
+                </div>
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">
                 <div className="flex flex-col gap-4 px-5 pb-5">

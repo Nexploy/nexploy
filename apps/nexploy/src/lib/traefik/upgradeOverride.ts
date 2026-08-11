@@ -2,6 +2,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'yaml';
 import { TRAEFIK_SERVICE_DIR } from './paths';
+import { instanceTlsEnabled } from '@/lib/instance/tlsMode';
 
 const OVERRIDE_FILE = path.join(TRAEFIK_SERVICE_DIR, 'upgrade-override.yml');
 
@@ -18,7 +19,7 @@ function resolveDomain(): string | null {
 
 function resolveEntryPoints(): string[] {
     const entryPoints = ['web'];
-    if (process.env.TRAEFIK_USE_TLS !== 'false') entryPoints.push('websecure');
+    if (instanceTlsEnabled()) entryPoints.push('websecure');
     return entryPoints;
 }
 

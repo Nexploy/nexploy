@@ -4,6 +4,7 @@ import { setDefaultEnvironmentAction } from '@/actions/environment/setDefaultEnv
 import { updateEnvironmentAction } from '@/actions/environment/updateEnvironment.action';
 import { updateEnvironmentProtectionAction } from '@/actions/environment/updateEnvironmentProtection.action';
 import { createRegistryAction } from '@/actions/registry/createRegistry.action';
+import { createLocalRegistryAction } from '@/actions/registry/createLocalRegistry.action';
 import { deleteRegistryAction } from '@/actions/registry/deleteRegistry.action';
 import { updateRegistryAction } from '@/actions/registry/updateRegistry.action';
 import { mirrorImageAction } from '@/actions/registry/mirrorImage.action';
@@ -107,6 +108,19 @@ describePermissionMatrix('registry endpoints', [
                 url: 'https://ghcr.io',
                 username: 'nexploy',
                 password: 'secret',
+            } as never),
+        expected: ADMIN_ONLY,
+    },
+    {
+        name: 'createLocalRegistryAction',
+        kind: 'action',
+        invoke: () =>
+            createLocalRegistryAction({
+                name: 'Local registry',
+                containerName: 'nexploy-registry',
+                host: '192.168.1.10',
+                port: 5000,
+                dataPath: '/var/lib/nexploy/registry',
             } as never),
         expected: ADMIN_ONLY,
     },

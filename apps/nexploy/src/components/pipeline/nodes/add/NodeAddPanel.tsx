@@ -8,7 +8,13 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '
 import { useNodeRegistryStore } from '@/stores/useNodeRegistryStore';
 import { NodeId } from '@nexploy/nodes/core/node';
 import { NodeItem } from '@/components/pipeline/nodes/add/NodeItem';
-import { CATEGORY_BG, CATEGORY_BG_MUTED, CATEGORY_ICONS, CATEGORY_TEXT } from '@/components/pipeline/pipelineTheme';
+import {
+    CATEGORY_BG,
+    CATEGORY_BG_MUTED,
+    CATEGORY_ICONS,
+    CATEGORY_TEXT,
+    compareCategories,
+} from '@/components/pipeline/pipelineTheme';
 import { useReactFlow } from '@xyflow/react';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigDefaults } from '@/components/pipeline/nodeManifestRegistry';
@@ -99,6 +105,9 @@ export function NodeAddPanel() {
         return acc;
     }, {});
 
+    const orderedCategories = Object.entries(grouped).sort(([a], [b]) => compareCategories(a, b));
+    const orderedSearchCategories = Object.entries(groupedSearchResults).sort(([a], [b]) => compareCategories(a, b));
+
     const CategoryIcon = activeCategory ? (CATEGORY_ICONS[activeCategory] ?? Wrench) : Wrench;
     const categoryNodes = activeCategory ? (grouped[activeCategory] ?? []) : [];
 
@@ -143,12 +152,12 @@ export function NodeAddPanel() {
                 </div>
 
                 {activeCategory && !isSearching && (
-                    <div className={'mb-2 flex items-center gap-2'}>
+                    <div className={'mb-2 mx-2 flex items-center gap-2'}>
                         <button
                             type="button"
                             onClick={() => setActiveCategory(null)}
                             aria-label={t('palette')}
-                            className="hover:bg-muted mx-2 flex flex-1 shrink-0 items-center gap-2 rounded-md p-1 pl-2 transition-colors"
+                            className="hover:bg-muted flex flex-1 shrink-0 items-center gap-2 rounded-md p-1 pl-2 transition-colors"
                         >
                             <ArrowLeft className="text-muted-foreground size-3.5 shrink-0" />
                             <div className={'flex flex-1 items-center gap-2'}>
@@ -190,7 +199,7 @@ export function NodeAddPanel() {
                                     </div>
                                 ) : (
                                     <div className="flex flex-col gap-1.5">
-                                        {Object.entries(groupedSearchResults).map(([category, defs]) => (
+                                        {orderedSearchCategories.map(([category, defs]) => (
                                             <div key={category} className="flex flex-col gap-1.5">
                                                 {defs.map((def) => (
                                                     <NodeItem
@@ -210,7 +219,7 @@ export function NodeAddPanel() {
                         )}
                         {!isSearching && !activeCategory && (
                             <div className="@[420px]:grid-cols-2 grid grid-cols-1 gap-1.5">
-                                {Object.entries(grouped).map(([category, defs]) => {
+                                {orderedCategories.map(([category, defs]) => {
                                     const Icon = CATEGORY_ICONS[category] ?? Wrench;
                                     return (
                                         <button

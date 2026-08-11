@@ -3,8 +3,13 @@ import { containersStateManager } from '@/managers/list/containersStateManager';
 import { route } from '@/utils/route';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
-import { buildDockerHostEnv, getComposeContainerIds, runDockerCompose } from '@/utils/compose/dockerComposeRunner';
-import { substituteEnvVars } from '@/utils/compose/composePreprocessor';
+import {
+    buildComposeEnv,
+    buildDockerHostEnv,
+    getComposeContainerIds,
+    runDockerCompose,
+} from '@/utils/compose/dockerComposeRunner';
+import { applyComposeLabels } from '@/utils/compose/composePhases';
 import { deployComposeSchema, deploySchema } from '@workspace/schemas-zod/docker/pipeline/pipelineAction.schema';
 import yaml from 'yaml';
 import fs from 'fs';
@@ -35,10 +40,9 @@ app.post(
         const envConfig = environmentId ? dockerClientRegistry.getEnvironmentConfig(environmentId) : null;
         const dockerEnvResult = buildDockerHostEnv(envConfig);
         const dockerEnv = dockerEnvResult.env;
+        const composeEnv = buildComposeEnv(dockerEnv, envVars);
 
-        let composeYaml = Buffer.from(composeConfig, 'base64').toString('utf8');
-
-        composeYaml = substituteEnvVars(composeYaml, envVars || {});
+        const composeYaml = Buffer.from(composeConfig, 'base64').toString('utf8');
 
         const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nexploy-compose-'));
         const composeFilePath = path.join(tmpDir, 'docker-compose.yml');
@@ -63,7 +67,7 @@ app.post(
 
             if (labels && Object.keys(labels).length > 0 && composeContent.services) {
                 for (const service of Object.values(composeContent.services) as any[]) {
-                    service.labels = { ...(service.labels || {}), ...labels };
+                    applyComposeLabels(service, labels);
                 }
                 fs.writeFileSync(composeFilePath, yaml.stringify(composeContent), 'utf8');
             }
@@ -72,7 +76,7 @@ app.post(
                 await runDockerCompose(
                     ['-p', projectName, '-f', composeFilePath, 'down', '--remove-orphans'],
                     tmpDir,
-                    dockerEnv,
+                    composeEnv,
                     () => {},
                 );
             } catch {
@@ -141,7 +145,7 @@ app.post(
             const upCode = await runDockerCompose(
                 ['-p', projectName, '-f', composeFilePath, 'up', '-d', '--remove-orphans'],
                 tmpDir,
-                dockerEnv,
+                composeEnv,
                 () => {},
             );
             if (upCode !== 0) {

@@ -63,7 +63,12 @@
     "keyMismatch": "La clé privée ne correspond pas au certificat",
     "createLetsEncryptFailed": "Échec de la création du certificat LetsEncrypt",
     "writeFilesFailed": "Échec de l'écriture des fichiers de certificat pour Traefik",
-    "fetchFailed": "Échec de la récupération des certificats SSL"
+    "fetchFailed": "Échec de la récupération des certificats SSL",
+    "notFound": "Le certificat sélectionné n'existe plus",
+    "notCustom": "Seul un certificat personnalisé peut être utilisé ici",
+    "domainMismatch": "Le certificat sélectionné ne couvre pas ce domaine",
+    "filesMissing": "Les fichiers du certificat sont introuvables sur le disque — réimporte le certificat",
+    "inUseByInstance": "Ce certificat est actuellement utilisé par le domaine de l'instance Nexploy"
   },
   "dns": {
     "saveCredentialFailed": "Erreur DNS lors de l'enregistrement de l'identifiant",
@@ -238,5 +243,13 @@
     "providerNotConfigured": "Fournisseur non configuré",
     "unsupportedProvider": "Fournisseur non pris en charge",
     "invitableUsersFetchFailed": "Échec de la recherche d'utilisateurs"
+  },
+  "buildRunner": {
+    "getFailed": "Impossible de récupérer les runners de build",
+    "createFailed": "Impossible de créer le runner de build",
+    "updateFailed": "Impossible de mettre à jour le runner de build",
+    "deleteFailed": "Impossible de supprimer le runner de build",
+    "regenerateFailed": "Impossible de régénérer le token du runner",
+    "nameTaken": "Un runner de build porte déjà ce nom"
   }
 }

@@ -10,6 +10,37 @@ export interface DockerEnvResult {
     cleanup?: () => void;
 }
 
+const RESERVED_ENV_KEYS = new Set([
+    'PATH',
+    'HOME',
+    'LD_PRELOAD',
+    'LD_LIBRARY_PATH',
+    'DYLD_INSERT_LIBRARIES',
+    'NODE_OPTIONS',
+    'DOCKER_HOST',
+    'DOCKER_TLS_VERIFY',
+    'DOCKER_CERT_PATH',
+    'DOCKER_CONFIG',
+    'DOCKER_CONTEXT',
+    'COMPOSE_FILE',
+    'COMPOSE_PATH_SEPARATOR',
+    'COMPOSE_PROJECT_NAME',
+]);
+
+export function buildComposeEnv(
+    dockerEnv: Record<string, string>,
+    interpolationVars?: Record<string, string>,
+): Record<string, string> {
+    const env: Record<string, string> = {};
+
+    for (const [key, value] of Object.entries(interpolationVars || {})) {
+        if (RESERVED_ENV_KEYS.has(key)) continue;
+        env[key] = value;
+    }
+
+    return { ...env, ...dockerEnv };
+}
+
 export function buildDockerHostEnv(envConfig: EnvironmentConfig | null): DockerEnvResult {
     if (!envConfig) {
         return { env: {} };
@@ -82,6 +113,56 @@ export function runDockerCompose(
         proc.on('close', (code) => {
             signal?.removeEventListener('abort', onAbort);
             resolve(code ?? 1);
+        });
+
+        proc.on('error', (err) => {
+            signal?.removeEventListener('abort', onAbort);
+            reject(err);
+        });
+    });
+}
+
+export interface DockerComposeCaptureResult {
+    exitCode: number;
+    stdout: string;
+    stderr: string;
+}
+
+export function captureDockerCompose(
+    args: string[],
+    cwd: string,
+    dockerEnv: Record<string, string>,
+    signal?: AbortSignal,
+): Promise<DockerComposeCaptureResult> {
+    return new Promise((resolve, reject) => {
+        if (signal?.aborted) {
+            reject(new Error('Aborted'));
+            return;
+        }
+
+        const env = { ...process.env, ...dockerEnv };
+        const proc = spawn('docker', ['compose', ...args], { cwd, env });
+
+        let stdout = '';
+        let stderr = '';
+
+        const onAbort = () => {
+            proc.kill('SIGTERM');
+            reject(new Error('Aborted'));
+        };
+        signal?.addEventListener('abort', onAbort, { once: true });
+
+        proc.stdout.on('data', (data: Buffer) => {
+            stdout += data.toString();
+        });
+
+        proc.stderr.on('data', (data: Buffer) => {
+            stderr += data.toString();
+        });
+
+        proc.on('close', (code) => {
+            signal?.removeEventListener('abort', onAbort);
+            resolve({ exitCode: code ?? 1, stdout, stderr });
         });
 
         proc.on('error', (err) => {

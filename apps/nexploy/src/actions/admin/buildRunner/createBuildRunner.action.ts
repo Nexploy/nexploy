@@ -1,0 +1,26 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import { authActionServer, requirePermission } from '@/lib/api/safe-action';
+import { createBuildRunnerSchema } from '@workspace/schemas-zod/buildRunner/buildRunner.schema';
+import { createBuildRunner } from '@/services/buildRunner.service';
+import { setToastServer } from '@/lib/toastServer';
+
+export const createBuildRunnerAction = authActionServer
+    .metadata({ name: 'buildRunner.create' })
+    .use(requirePermission('buildRunner', 'create'))
+    .inputSchema(createBuildRunnerSchema)
+    .action(async ({ parsedInput, ctx }) => {
+        try {
+            const { runner, token } = await createBuildRunner(parsedInput, ctx.session.user.id);
+
+            revalidatePath('/admin/servers');
+
+            return { id: runner.id, name: runner.name, token };
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                await setToastServer({ type: 'error', message: error.message });
+            }
+            throw error;
+        }
+    });

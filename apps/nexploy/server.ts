@@ -1,21 +1,36 @@
 import '@/server/asyncLocalStorage';
 import 'dotenv/config';
-import { createServer, IncomingMessage, ServerResponse } from 'http';
+import { createServer, IncomingMessage, Server, ServerResponse } from 'http';
 import next from 'next';
 import { isDev, nextHostname, port, resolveStandaloneConf } from '@/server/config';
 import { pruneTurbopackCache } from '@/server/turbopackCache';
-import { handleUpgrade } from '@/server/upgradeHandler';
+import { handleUpgrade, setNextUpgradeHandler, type NextUpgradeHandler } from '@/server/upgradeHandler';
 import { ensureTraefikReady, registerGracefulShutdown, startHeapMonitor, trackOpenSockets } from '@/server/lifecycle';
 
-const app = next({
+const nextUpgradeSink = new Server();
+
+const nextOptions = {
     dev: isDev,
     hostname: nextHostname,
     port,
     turbopack: isDev,
     conf: resolveStandaloneConf(),
-});
+    httpServer: nextUpgradeSink,
+};
+
+const app = next(nextOptions as Parameters<typeof next>[0]);
 
 const handle = app.getRequestHandler();
+
+function resolveNextUpgradeHandler(): NextUpgradeHandler {
+    const routerUpgradeHandler = (app as unknown as { upgradeHandler?: NextUpgradeHandler }).upgradeHandler;
+
+    if (typeof routerUpgradeHandler !== 'function') {
+        throw new Error('Next.js did not expose its router upgrade handler');
+    }
+
+    return routerUpgradeHandler;
+}
 
 pruneTurbopackCache();
 
@@ -35,6 +50,7 @@ app.prepare().then(async () => {
 
     const openSockets = trackOpenSockets(server);
 
+    setNextUpgradeHandler(resolveNextUpgradeHandler());
     server.on('upgrade', handleUpgrade);
 
     server.once('error', (err) => {

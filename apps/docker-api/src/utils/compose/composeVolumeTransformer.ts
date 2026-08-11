@@ -10,10 +10,10 @@ import { logger } from '../logger';
 
 export function transformBindMountsForRemote(
     composeContent: ComposeContent,
-    workDir: string,
+    projectDir: string,
     projectName: string,
 ): VolumeTransformationResult {
-    const bindMounts = parseComposeBindMounts(composeContent, workDir);
+    const bindMounts = parseComposeBindMounts(composeContent, projectDir);
     const transformations: BindMountTransformation[] = [];
     const generatedDockerfiles = new Map<string, string>();
     const volumesToCreate: string[] = [];
@@ -110,7 +110,7 @@ function generateDockerfileForCodeMounts(
     const lines = [`FROM ${service.image}`];
 
     for (const mount of codeMounts) {
-        lines.push(`COPY ${mount.hostPath} ${mount.containerPath}`);
+        lines.push(`COPY ${mount.projectRelativePath} ${mount.containerPath}`);
     }
 
     return lines.join('\n');
@@ -128,30 +128,22 @@ function applyTransformations(
         const serviceTransforms = transformations.filter((t) => t.serviceName === serviceName);
         if (serviceTransforms.length === 0) continue;
 
-        const originalVolumes = (service.volumes as (string | Record<string, unknown>)[]) || [];
-        const newVolumes: string[] = [];
+        const originalVolumes = (service.volumes as (string | ComposeVolumeConfig)[]) || [];
+        const newVolumes: (string | ComposeVolumeConfig)[] = [];
 
-        for (const vol of originalVolumes) {
-            const volumeSpec = vol as string | ComposeVolumeConfig;
-            if (!isBindMount(volumeSpec)) {
-                newVolumes.push(typeof vol === 'string' ? vol : JSON.stringify(vol));
-                continue;
-            }
+        for (const volumeSpec of originalVolumes) {
+            const parsed = isBindMount(volumeSpec) ? parseVolumeSpec(volumeSpec) : null;
 
-            const parsed = parseVolumeSpec(volumeSpec);
-            if (!parsed) {
-                newVolumes.push(typeof vol === 'string' ? vol : JSON.stringify(vol));
-                continue;
-            }
-
-            const transform = serviceTransforms.find(
-                (t) =>
-                    t.originalMount.hostPath === parsed.hostPath &&
-                    t.originalMount.containerPath === parsed.containerPath,
-            );
+            const transform = parsed
+                ? serviceTransforms.find(
+                      (t) =>
+                          t.originalMount.hostPath === parsed.hostPath &&
+                          t.originalMount.containerPath === parsed.containerPath,
+                  )
+                : undefined;
 
             if (!transform) {
-                newVolumes.push(typeof vol === 'string' ? vol : JSON.stringify(vol));
+                newVolumes.push(volumeSpec);
                 continue;
             }
 
@@ -161,8 +153,12 @@ function applyTransformations(
 
                 case 'named_volume':
                     if (transform.volumeName) {
-                        const volSpec = `${transform.volumeName}:${parsed.containerPath}${parsed.readOnly ? ':ro' : ''}`;
-                        newVolumes.push(volSpec);
+                        newVolumes.push({
+                            type: 'volume',
+                            source: transform.volumeName,
+                            target: parsed!.containerPath,
+                            read_only: parsed!.readOnly,
+                        });
                         namedVolumes.add(transform.volumeName);
                     }
                     break;
@@ -186,7 +182,7 @@ function applyTransformations(
     if (namedVolumes.size > 0) {
         modified.volumes = modified.volumes || {};
         for (const volName of namedVolumes) {
-            (modified.volumes as Record<string, unknown>)[volName] = {};
+            (modified.volumes as Record<string, unknown>)[volName] = { name: volName };
         }
     }
 

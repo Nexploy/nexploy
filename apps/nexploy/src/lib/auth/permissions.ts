@@ -22,6 +22,7 @@ export type PermissionActions = {
 
     gitProvider: 'create' | 'read' | 'update' | 'delete';
     registry: 'create' | 'read' | 'update' | 'delete' | 'mirror';
+    buildRunner: 'create' | 'read' | 'update' | 'delete';
     dns: 'read' | 'manage';
     cloudBackup: 'read' | 'manage';
 
@@ -58,6 +59,7 @@ const statement = {
     swarm: ['read', 'manage'] as const,
     gitProvider: ['create', 'read', 'update', 'delete'] as const,
     registry: ['create', 'read', 'update', 'delete', 'mirror'] as const,
+    buildRunner: ['create', 'read', 'update', 'delete'] as const,
     dns: ['read', 'manage'] as const,
     cloudBackup: ['read', 'manage'] as const,
     backup: ['create', 'read', 'restore', 'delete'] as const,
@@ -133,6 +135,7 @@ const admin = ac.newRole({
     swarm: ['read', 'manage'],
     gitProvider: ['create', 'read', 'update', 'delete'],
     registry: ['create', 'read', 'update', 'delete', 'mirror'],
+    buildRunner: ['create', 'read', 'update', 'delete'],
     dns: ['read', 'manage'],
     cloudBackup: ['read', 'manage'],
     backup: ['create', 'read', 'restore', 'delete'],

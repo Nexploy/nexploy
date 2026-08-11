@@ -1,10 +1,20 @@
 import type { IncomingMessage } from 'http';
 import type { Socket } from 'net';
-import { isDev } from '@/server/config';
+import type { Duplex } from 'stream';
 import { getDockerApiProxy, getInngestProxy } from '@/server/proxies';
 import { WS_PROXY_PREFIX, matchAndTransformWsUrl } from '@/server/wsRoutes';
 import { authorizeContainerUpgrade } from '@/server/wsAuthorization';
+import { handleRunnerUpgrade } from '@/server/runner/gateway';
+import { RUNNER_WS_PATH } from '@/server/runner/protocol';
 import { actorToHeaders } from '@nexploy/shared/actor';
+
+export type NextUpgradeHandler = (req: IncomingMessage, socket: Duplex, head: Buffer) => Promise<void>;
+
+let nextUpgradeHandler: NextUpgradeHandler | null = null;
+
+export function setNextUpgradeHandler(handler: NextUpgradeHandler): void {
+    nextUpgradeHandler = handler;
+}
 
 function denyUpgrade(socket: Socket, status: number, reason: string): void {
     socket.write(`HTTP/1.1 ${status} ${reason}\r\n\r\n`);
@@ -16,7 +26,16 @@ export async function handleUpgrade(req: IncomingMessage, socket: Socket, head: 
     const pathname = parsedUrl.pathname;
 
     try {
-        if (isDev && pathname.startsWith('/_next/webpack-hmr')) return;
+        if (pathname.startsWith('/_next/')) {
+            if (nextUpgradeHandler) await nextUpgradeHandler(req, socket, head);
+            else socket.destroy();
+            return;
+        }
+
+        if (pathname === RUNNER_WS_PATH) {
+            await handleRunnerUpgrade(req, socket, head);
+            return;
+        }
 
         if (pathname.startsWith('/v1/realtime/')) {
             console.log('🔌 Proxying Inngest realtime WS:', pathname);

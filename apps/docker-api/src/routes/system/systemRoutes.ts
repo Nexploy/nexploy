@@ -8,7 +8,7 @@ import { logger } from '@/utils/logger';
 import { HttpError } from '@nexploy/shared/http-error';
 import { buildCachePruneSchema, type CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
 import { instanceDomainSchema, upgradeSchema } from '@workspace/schemas-zod/admin/instance.schema';
-import type { DiskUsage } from '@workspace/typescript-interface/docker/docker.system';
+import type { DiskUsage, DockerEngineVersion } from '@workspace/typescript-interface/docker/docker.system';
 import {
     DOCKER_API_CONTAINER_NAME,
     DOCKER_API_IMAGE_REPOSITORY,
@@ -106,6 +106,26 @@ app.get(
             },
             totalSize,
             totalReclaimable,
+        };
+    }),
+);
+
+app.get(
+    '/docker-version',
+    route(async (): Promise<DockerEngineVersion> => {
+        const version = await docker.version();
+
+        return {
+            version: version.Version ?? 'unknown',
+            apiVersion: version.ApiVersion ?? 'unknown',
+            minApiVersion: version.MinAPIVersion ?? null,
+            gitCommit: version.GitCommit ?? null,
+            goVersion: version.GoVersion ?? null,
+            os: version.Os ?? null,
+            arch: version.Arch ?? null,
+            kernelVersion: version.KernelVersion ?? null,
+            buildTime: version.BuildTime ? new Date(version.BuildTime).toISOString() : null,
+            platformName: version.Platform?.Name ?? null,
         };
     }),
 );
@@ -208,7 +228,8 @@ app.post(
 app.post(
     '/instance-domain',
     route({ json: instanceDomainSchema }, async (c) => {
-        const { domain, useTls, acmeEmail } = c.req.valid('json');
+        const { domain, mode, acmeEmail, certificateId } = c.req.valid('json');
+        const useTls = mode !== 'ip';
 
         const appContainer = docker.getContainer(NEXPLOY_APP_CONTAINER_NAME);
         let appInfo;
@@ -229,17 +250,30 @@ app.post(
         envMap.set('BETTER_AUTH_URL', publicUrl);
         envMap.set('NEXPLOY_URL', publicUrl);
         envMap.set('TRAEFIK_USE_TLS', String(useTls));
+        envMap.set('NEXPLOY_TLS_MODE', mode);
         envMap.set('ACME_EMAIL', acmeEmail ?? '');
+        if (mode === 'custom' && certificateId) {
+            envMap.set('NEXPLOY_TLS_CERTIFICATE_ID', certificateId);
+        } else {
+            envMap.delete('NEXPLOY_TLS_CERTIFICATE_ID');
+        }
         const env = Array.from(envMap.entries()).map(([key, value]) => `${key}=${value}`);
 
         const labels = { ...(appInfo.Config.Labels ?? {}) };
         labels['traefik.http.routers.nexploy-app.rule'] = `Host(\`${domain}\`)`;
-        if (useTls) {
+        if (mode === 'letsencrypt') {
             labels['traefik.http.routers.nexploy-app.entrypoints'] = 'websecure';
+            labels['traefik.http.routers.nexploy-app.tls'] = 'true';
             labels['traefik.http.routers.nexploy-app.tls.certresolver'] = 'letsencrypt';
+            delete labels['traefik.http.routers.nexploy-app.priority'];
+        } else if (mode === 'custom') {
+            labels['traefik.http.routers.nexploy-app.entrypoints'] = 'websecure';
+            labels['traefik.http.routers.nexploy-app.tls'] = 'true';
+            delete labels['traefik.http.routers.nexploy-app.tls.certresolver'];
             delete labels['traefik.http.routers.nexploy-app.priority'];
         } else {
             labels['traefik.http.routers.nexploy-app.entrypoints'] = 'web';
+            delete labels['traefik.http.routers.nexploy-app.tls'];
             delete labels['traefik.http.routers.nexploy-app.tls.certresolver'];
             labels['traefik.http.routers.nexploy-app.priority'] = '1000';
         }

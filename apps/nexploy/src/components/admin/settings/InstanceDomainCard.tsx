@@ -1,19 +1,39 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Globe } from 'lucide-react';
+import { Globe, ShieldCheck } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
-import { Switch } from '@workspace/ui/components/switch';
+import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select';
 import { Button } from '@workspace/ui/components/button';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
-import { instanceDomainSchema } from '@workspace/schemas-zod/admin/instance.schema';
+import { instanceDomainSchema, instanceTlsModes } from '@workspace/schemas-zod/admin/instance.schema';
+import type { InstanceTlsMode } from '@workspace/schemas-zod/admin/instance.schema';
+import type { CertOption } from '@workspace/typescript-interface/traefik/certificate';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 import { updateInstanceDomainAction } from '@/actions/admin/updateInstanceDomain.action';
 import type { InstanceDomainSettings } from '@/lib/instance/domain';
+
+const MODE_LABEL_KEYS: Record<InstanceTlsMode, { title: string; description: string }> = {
+    ip: { title: 'domainModeIp', description: 'domainModeIpDescription' },
+    letsencrypt: { title: 'domainModeLetsEncrypt', description: 'domainModeLetsEncryptDescription' },
+    custom: { title: 'domainModeCustom', description: 'domainModeCustomDescription' },
+};
 
 export function InstanceDomainCard({ settings }: { settings: InstanceDomainSettings }) {
     const t = useTranslations('admin.settings');
@@ -26,8 +46,9 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
             formProps: {
                 defaultValues: {
                     domain: settings.domain,
-                    useTls: settings.useTls,
+                    mode: settings.mode,
                     acmeEmail: settings.acmeEmail || undefined,
+                    certificateId: settings.certificateId ?? undefined,
                 },
             },
             actionProps: {
@@ -37,7 +58,20 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
         },
     );
 
-    const useTls = form.watch('useTls');
+    const mode = form.watch('mode');
+
+    const { data: certificates = [] } = useSWR<CertOption[]>(
+        mode === 'custom' ? { url: '/api/ssl-certificates' } : null,
+        fetcherApi,
+    );
+    const customCertificates = certificates.filter((certificate) => certificate.type === 'CUSTOM');
+
+    const handleModeChange = (value: string) => {
+        const nextMode = value as InstanceTlsMode;
+        form.setValue('mode', nextMode, { shouldDirty: true });
+        if (nextMode !== 'custom') form.setValue('certificateId', undefined);
+        form.clearErrors(['domain', 'acmeEmail', 'certificateId']);
+    };
 
     return (
         <Card>
@@ -50,20 +84,35 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                         <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4">
                             <FormField
                                 control={form.control}
-                                name="useTls"
+                                name="mode"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
-                                            <div className="flex flex-col">
-                                                <span className="text-base">{t('domainModeLabel')}</span>
-                                                <span className="text-muted-foreground text-xs">
-                                                    {t('domainModeDescription')}
-                                                </span>
-                                            </div>
-                                            <FormControl>
-                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                            </FormControl>
-                                        </FormLabel>
+                                        <FormLabel>{t('domainModeLabel')}</FormLabel>
+                                        <FormControl>
+                                            <RadioGroup value={field.value} onValueChange={handleModeChange}>
+                                                {instanceTlsModes.map((tlsMode) => (
+                                                    <FormLabel
+                                                        key={tlsMode}
+                                                        htmlFor={`instance-tls-mode-${tlsMode}`}
+                                                        className="flex cursor-pointer items-start gap-3 rounded-lg border p-4 font-normal"
+                                                    >
+                                                        <RadioGroupItem
+                                                            id={`instance-tls-mode-${tlsMode}`}
+                                                            value={tlsMode}
+                                                            className="mt-0.5"
+                                                        />
+                                                        <div className="flex flex-col gap-1">
+                                                            <span className="text-base">
+                                                                {t(MODE_LABEL_KEYS[tlsMode].title)}
+                                                            </span>
+                                                            <span className="text-muted-foreground text-xs">
+                                                                {t(MODE_LABEL_KEYS[tlsMode].description)}
+                                                            </span>
+                                                        </div>
+                                                    </FormLabel>
+                                                ))}
+                                            </RadioGroup>
+                                        </FormControl>
                                     </FormItem>
                                 )}
                             />
@@ -73,10 +122,12 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                 name="domain"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{useTls ? t('domainLabel') : t('domainLabelIp')}</FormLabel>
+                                        <FormLabel>{mode === 'ip' ? t('domainLabelIp') : t('domainLabel')}</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder={useTls ? t('domainPlaceholder') : t('domainPlaceholderIp')}
+                                                placeholder={
+                                                    mode === 'ip' ? t('domainPlaceholderIp') : t('domainPlaceholder')
+                                                }
                                                 {...field}
                                             />
                                         </FormControl>
@@ -85,7 +136,55 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                 )}
                             />
 
-                            {useTls && (
+                            {mode === 'custom' && (
+                                <FormField
+                                    control={form.control}
+                                    name="certificateId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('certificateLabel')}</FormLabel>
+                                            <Select
+                                                value={field.value ?? ''}
+                                                onValueChange={(value) => field.onChange(value || undefined)}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder={t('selectCertificate')} />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent align="start">
+                                                    {customCertificates.length === 0 ? (
+                                                        <div className="text-muted-foreground px-2 py-4 text-center text-sm">
+                                                            {t('noCustomCertificates')}
+                                                        </div>
+                                                    ) : (
+                                                        customCertificates.map((certificate) => (
+                                                            <SelectItem key={certificate.id} value={certificate.id}>
+                                                                <span className="flex items-center gap-2">
+                                                                    <ShieldCheck className="text-primary" />
+                                                                    <span>{certificate.name}</span>
+                                                                    <span className="text-muted-foreground font-mono text-xs">
+                                                                        {certificate.domain}
+                                                                    </span>
+                                                                </span>
+                                                            </SelectItem>
+                                                        ))
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                            <FormDescription>
+                                                {t('certificateDescription')}{' '}
+                                                <Link href="/ssl-certificates" className="underline">
+                                                    {t('manageCertificates')}
+                                                </Link>
+                                            </FormDescription>
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
+
+                            {mode !== 'ip' && (
                                 <FormField
                                     control={form.control}
                                     name="acmeEmail"
@@ -98,9 +197,15 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                                     placeholder={t('acmeEmailPlaceholder')}
                                                     {...field}
                                                     value={field.value ?? ''}
+                                                    onChange={(event) =>
+                                                        field.onChange(event.target.value || undefined)
+                                                    }
                                                 />
                                             </FormControl>
                                             <FormMessage />
+                                            {mode === 'custom' && (
+                                                <FormDescription>{t('acmeEmailOptionalDescription')}</FormDescription>
+                                            )}
                                         </FormItem>
                                     )}
                                 />

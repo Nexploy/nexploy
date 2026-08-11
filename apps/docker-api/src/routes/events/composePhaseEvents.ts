@@ -112,11 +112,12 @@ function runComposePhase(
 }
 
 app.post('/stream/compose-build', async (c) => {
-    const { workDir, projectName, composePath, envVars, labels, noCache } = await c.req.json<{
+    const { workDir, projectName, composePath, envVars, labels, noCache, profiles } = await c.req.json<{
         workDir: string;
         projectName: string;
         composePath: string;
         envVars?: Record<string, string>;
+        profiles?: string[];
         labels?: Record<string, string>;
         noCache?: boolean;
     }>();
@@ -139,9 +140,12 @@ app.post('/stream/compose-build', async (c) => {
             projectName,
             composePath,
             envVars: effectiveEnvVars,
+            dockerEnv,
             labels,
+            profiles,
             isRemoteEnvironment,
             sendLog,
+            signal: abortController.signal,
         });
 
         try {

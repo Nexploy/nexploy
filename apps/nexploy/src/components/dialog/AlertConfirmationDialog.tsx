@@ -9,6 +9,7 @@ import {
     AlertDialogTitle,
 } from '@workspace/ui/components/alert-dialog';
 import { Button } from '@workspace/ui/components/button';
+import { cn } from '@workspace/ui/lib/utils';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { isValidElement } from 'react';
 import { useTranslations } from 'next-intl';
@@ -19,6 +20,7 @@ export function AlertConfirmationDialog() {
         isOpen,
         title,
         description,
+        props,
         cancelLabel,
         actionLabel,
         isPending,
@@ -54,8 +56,8 @@ export function AlertConfirmationDialog() {
                 runCancel();
             }}
         >
-            <AlertDialogContent>
-                <AlertDialogHeader className={'break-all'}>
+            <AlertDialogContent {...props} className={cn('max-h-[85vh] overflow-y-auto', props?.className)}>
+                <AlertDialogHeader className={'min-w-0 [overflow-wrap:anywhere]'}>
                     <AlertDialogTitle asChild={isValidElement(title)}>{title}</AlertDialogTitle>
                     <AlertDialogDescription asChild={isValidElement(description)}>{description}</AlertDialogDescription>
                 </AlertDialogHeader>
