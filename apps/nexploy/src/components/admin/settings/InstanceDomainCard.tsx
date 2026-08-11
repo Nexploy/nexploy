@@ -86,33 +86,34 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                 control={form.control}
                                 name="mode"
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="space-y-3 rounded-lg border p-3">
                                         <FormLabel>{t('domainModeLabel')}</FormLabel>
                                         <FormControl>
                                             <RadioGroup value={field.value} onValueChange={handleModeChange}>
                                                 {instanceTlsModes.map((tlsMode) => (
-                                                    <FormLabel
+                                                    <label
                                                         key={tlsMode}
                                                         htmlFor={`instance-tls-mode-${tlsMode}`}
-                                                        className="flex cursor-pointer items-start gap-3 rounded-lg border p-4 font-normal"
+                                                        className="flex cursor-pointer items-start gap-3"
                                                     >
                                                         <RadioGroupItem
                                                             id={`instance-tls-mode-${tlsMode}`}
                                                             value={tlsMode}
                                                             className="mt-0.5"
                                                         />
-                                                        <div className="flex flex-col gap-1">
-                                                            <span className="text-base">
+                                                        <div className="space-y-0.5">
+                                                            <p className="text-sm leading-none font-medium">
                                                                 {t(MODE_LABEL_KEYS[tlsMode].title)}
-                                                            </span>
-                                                            <span className="text-muted-foreground text-xs">
+                                                            </p>
+                                                            <p className="text-muted-foreground text-xs">
                                                                 {t(MODE_LABEL_KEYS[tlsMode].description)}
-                                                            </span>
+                                                            </p>
                                                         </div>
-                                                    </FormLabel>
+                                                    </label>
                                                 ))}
                                             </RadioGroup>
                                         </FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />

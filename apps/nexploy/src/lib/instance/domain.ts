@@ -9,7 +9,7 @@ export interface InstanceDomainSettings {
 }
 
 export function getInstanceDomainSettings(): InstanceDomainSettings | null {
-    if (!process.env.TRAEFIK_STATIC_CONFIG_PATH) return null;
+    // if (!process.env.TRAEFIK_STATIC_CONFIG_PATH) return null;
 
     const publicUrl = process.env.NEXPLOY_URL ?? process.env.BETTER_AUTH_URL ?? '';
     const domain = publicUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '');
