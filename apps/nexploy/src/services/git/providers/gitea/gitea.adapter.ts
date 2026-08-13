@@ -140,6 +140,8 @@ export const giteaAdapter: GitProviderAdapter = {
             return null;
         }
 
+        if (body.after && /^0+$/.test(body.after)) return null;
+
         return {
             event: 'push',
             repositoryUrl,

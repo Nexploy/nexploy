@@ -135,7 +135,7 @@ export async function getRepositorieBuildLogs(repositoryId: string, buildId: str
             },
             include: {
                 repository: {
-                    select: { name: true },
+                    select: { name: true, repositoryUrl: true, gitProvider: true },
                 },
                 log: {
                     orderBy: {

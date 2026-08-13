@@ -158,6 +158,8 @@ export const githubAdapter: GitProviderAdapter = {
             return null;
         }
 
+        if (body.deleted) return null;
+
         return {
             event: 'push',
             repositoryUrl,

@@ -17,7 +17,6 @@ import { type CommitInfo } from '@nexploy/nodes/core/pipeline';
 import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
 import { isBuildLive } from '@/utils/buildStatus';
 import { BuildDropdownActions } from '@/components/repositories/BuildDropdownActions';
-import { useTranslations } from 'next-intl';
 
 interface BuildLogsProps {
     repositoryId: string;
@@ -25,7 +24,6 @@ interface BuildLogsProps {
 }
 
 export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
-    const t = useTranslations('repository.builds');
     const isLive = isBuildLive(build.status);
     const [liveCommitInfo, setLiveCommitInfo] = useState<CommitInfo | null>(null);
     const processedCountRef = useRef(0);

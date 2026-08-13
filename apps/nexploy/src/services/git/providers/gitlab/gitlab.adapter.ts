@@ -159,6 +159,8 @@ export const gitlabAdapter: GitProviderAdapter = {
             return null;
         }
 
+        if (body.after && /^0+$/.test(body.after)) return null;
+
         const lastCommit = body.commits?.[body.commits.length - 1];
         return {
             event: 'push',

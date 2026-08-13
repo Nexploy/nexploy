@@ -72,6 +72,11 @@ const AZURE_PULL_REQUEST_ACTIONS: Record<string, MergeRequestAction | undefined>
     'git.pullrequest.merged': 'merged',
 };
 
+const AZURE_PULL_REQUEST_STATUS_ACTIONS: Record<string, MergeRequestAction | undefined> = {
+    completed: 'merged',
+    abandoned: 'closed',
+};
+
 export const azureReposAdapter: GitProviderAdapter = {
     type: 'AZURE_REPOS',
     cloneCredentialUsername: 'nexploy',
@@ -188,7 +193,7 @@ export const azureReposAdapter: GitProviderAdapter = {
                 repositoryUrl,
                 branch: branchFromRef(pullRequest.sourceRefName),
                 targetBranch: branchFromRef(pullRequest.targetRefName ?? ''),
-                mergeRequestAction: pullRequest.status === 'completed' ? 'merged' : mergeRequestAction,
+                mergeRequestAction: AZURE_PULL_REQUEST_STATUS_ACTIONS[pullRequest.status] ?? mergeRequestAction,
                 commitHash: pullRequest.lastMergeSourceCommit?.commitId?.substring(0, 8),
                 commitMessage: pullRequest.title,
             };

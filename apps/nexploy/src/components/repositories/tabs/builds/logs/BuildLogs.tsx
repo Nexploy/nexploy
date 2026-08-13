@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useRealtime } from 'inngest/react';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { Button } from '@workspace/ui/components/button';
-import { ArrowLeft, GitBranch, GitCommit } from 'lucide-react';
+import { ArrowLeft, ExternalLink, GitBranch, GitCommit } from 'lucide-react';
 import { Separator } from '@workspace/ui/components/separator';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { BuildLogsViewer } from '@/components/repositories/tabs/builds/logs/BuildLogsViewer';
@@ -12,7 +12,9 @@ import { useRouter } from 'next/navigation';
 import { getRepositorieBuildLogs } from '@/services/repository.service';
 import { useBuildActions } from '@/hooks/useBuildActions';
 import { isBuildLive } from '@/utils/buildStatus';
+import { getCommitUrl } from '@/utils/url';
 import type { BuildMessage } from '@workspace/typescript-interface/repository/buildRealtime';
+import { Link } from '@/i18n/navigation.ts';
 
 interface BuildLogsProps {
     build: NonNullable<Awaited<ReturnType<typeof getRepositorieBuildLogs>>>;
@@ -48,18 +50,33 @@ export function BuildLogs({ build }: BuildLogsProps) {
     const commitHash = liveCommitInfo?.commitHash ?? build.commitHash;
     const commitMessage = liveCommitInfo?.commitMessage ?? build.commitMessage;
 
+    const commitUrl = getCommitUrl(build.repository.repositoryUrl, build.repository.gitProvider, commitHash);
+    const title = commitMessage ?? `#${build.id}`;
+
     return (
         <div className="flex h-full w-full flex-col">
             <div className="border-b p-3">
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                     <Button variant="ghost" size="icon" className="shrink-0" onClick={router.back}>
                         <ArrowLeft className="size-4" />
                     </Button>
                     <div className="flex flex-1 flex-col">
                         {isLive && !commitMessage ? (
                             <Skeleton className="h-6 w-64" />
+                        ) : commitUrl ? (
+                            <Link
+                                href={commitUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group flex w-fit items-center gap-1 text-xl font-semibold hover:underline"
+                            >
+                                {title}
+                                <ExternalLink
+                                    className={'size-4 opacity-0 transition-opacity group-hover:opacity-100'}
+                                />
+                            </Link>
                         ) : (
-                            <span className="text-xl font-semibold">{commitMessage ?? `#${build.id}`}</span>
+                            <span className="text-xl font-semibold">{title}</span>
                         )}
                         <div className="text-muted-foreground flex items-center gap-2 text-xs">
                             {isLive && !branch ? (
