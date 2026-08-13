@@ -110,7 +110,7 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus, nodeDurationMs, nod
                                 )}
                                 <div className="min-w-0 break-all whitespace-pre-wrap">
                                     {parseAnsiColors(log.message).map((part, j) => (
-                                        <span key={j} className={part.color}>
+                                        <span key={j} className={part.color} style={part.style}>
                                             {part.text}
                                         </span>
                                     ))}

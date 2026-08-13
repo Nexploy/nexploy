@@ -28,6 +28,11 @@ import { currentViewer } from '@/lib/containerOwnership';
 import { NEXPLOY_ORGANIZATION_LABEL } from '@nexploy/shared/ownership';
 import { stripProtectedLabelEntries } from '@nexploy/shared/protectedLabels';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
+import {
+    assertContainerAccessible,
+    assertContainerNameAvailable,
+    assertContainersAccessible,
+} from '@/lib/infrastructureGuard';
 import { assertSafeBindPath } from '@/utils/hostBindGuard';
 import { TrackedTaskContext, runTrackedTask } from '@/lib/taskRunner';
 import { resolveContainersOwner } from '@/lib/taskOwnership';
@@ -57,6 +62,7 @@ app.get(
     '/:idOrName',
     route({ param: containerIdOrNameParamSchema }, async (c) => {
         const { idOrName } = c.req.valid('param');
+        await assertContainerAccessible(idOrName);
 
         const container = docker.getContainer(idOrName);
         const containerInfo = await container.inspect();
@@ -123,6 +129,7 @@ app.get(
     route({ param: containerIdOrNameParamSchema, query: containerLogsQuerySchema }, async (c) => {
         const { idOrName } = c.req.valid('param');
         const { tail = '100', since } = c.req.valid('query');
+        await assertContainerAccessible(idOrName);
 
         const container = docker.getContainer(idOrName);
 
@@ -146,6 +153,7 @@ app.post(
     route({ param: containerIdOrNameParamSchema, json: containerExecBodySchema }, async (c) => {
         const { idOrName } = c.req.valid('param');
         const { command, workdir, user } = c.req.valid('json');
+        await assertContainerAccessible(idOrName);
 
         const container = docker.getContainer(idOrName);
 
@@ -188,6 +196,7 @@ app.post(
         const { envVars, volumes, networks, labels, hostname, name, ports, restart, image, autoRemove, auth } =
             c.req.valid('json');
 
+        assertContainerNameAvailable(name);
         volumes.forEach((vol) => assertSafeBindPath(vol.hostPath));
 
         const createOptions: ContainerCreateOptions = {
@@ -283,6 +292,7 @@ app.post(
     '/recreate',
     route({ json: ContainerRecreateFormSchema }, async (c) => {
         const payload = c.req.valid('json');
+        await assertContainerAccessible(payload.containerId);
 
         const containerInfo = await docker.getContainer(payload.containerId).inspect();
         const containerName = containerInfo.Name.replace(/^\//, '');
@@ -304,7 +314,10 @@ app.post(
 app.post(
     '/migrate',
     route({ json: containerMigrateApiSchema }, async (c) => {
-        return startContainerMigration(c.req.valid('json'));
+        const payload = c.req.valid('json');
+        await assertContainerAccessible(payload.containerId);
+
+        return startContainerMigration(payload);
     }),
 );
 
@@ -312,6 +325,8 @@ app.post(
     '/rename',
     route({ json: containerRenameBodySchema }, async (c) => {
         const { containerId, name } = c.req.valid('json');
+        assertContainerNameAvailable(name);
+        await assertContainerAccessible(containerId);
 
         return runTrackedTask({
             kind: 'container-rename',
@@ -329,6 +344,7 @@ app.post(
     '/restart-policy',
     route({ json: containerRestartPolicySchema }, async (c) => {
         const { containerId, policy, maximumRetryCount } = c.req.valid('json');
+        await assertContainerAccessible(containerId);
 
         const container = docker.getContainer(containerId);
         const containerInfo = await container.inspect();
@@ -360,6 +376,7 @@ app.post(
     '/start',
     route({ json: containerActionsSchema }, async (c) => {
         const { containerIds } = c.req.valid('json');
+        await assertContainersAccessible(containerIds);
 
         await runTrackedTask({
             kind: 'container-start',
@@ -374,6 +391,7 @@ app.post(
     '/stop',
     route({ json: containerActionsSchema }, async (c) => {
         const { containerIds } = c.req.valid('json');
+        await assertContainersAccessible(containerIds);
 
         await runTrackedTask({
             kind: 'container-stop',
@@ -388,6 +406,7 @@ app.post(
     '/pause',
     route({ json: containerActionsSchema }, async (c) => {
         const { containerIds } = c.req.valid('json');
+        await assertContainersAccessible(containerIds);
 
         await runTrackedTask({
             kind: 'container-pause',
@@ -402,6 +421,7 @@ app.post(
     '/unpause',
     route({ json: containerActionsSchema }, async (c) => {
         const { containerIds } = c.req.valid('json');
+        await assertContainersAccessible(containerIds);
 
         await runTrackedTask({
             kind: 'container-unpause',
@@ -416,6 +436,7 @@ app.post(
     '/restart',
     route({ json: containerActionsSchema }, async (c) => {
         const { containerIds } = c.req.valid('json');
+        await assertContainersAccessible(containerIds);
 
         await runTrackedTask({
             kind: 'container-restart',
@@ -430,6 +451,7 @@ app.delete(
     '/remove',
     route({ json: containerRemoveSchema }, async (c) => {
         const { containerIds, removeVolumes, force } = c.req.valid('json');
+        await assertContainersAccessible(containerIds);
 
         await runTrackedTask({
             kind: 'container-remove',

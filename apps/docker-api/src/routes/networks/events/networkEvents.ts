@@ -6,6 +6,7 @@ import { NetworkDetailEvent } from '@workspace/typescript-interface/docker/docke
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { SingleResourceManagerRegistry } from '@/lib/SingleResourceManagerRegistry';
+import { isInfrastructureNetwork } from '@/lib/infrastructureGuard';
 
 const networkManagerRegistry = new SingleResourceManagerRegistry(
     'Network',
@@ -14,8 +15,11 @@ const networkManagerRegistry = new SingleResourceManagerRegistry(
 
 const app = new Hono();
 
-app.get('/stream/:networkId', (c) => {
+app.get('/stream/:networkId', async (c) => {
     const networkId = c.req.param('networkId');
+    if (await isInfrastructureNetwork(networkId)) {
+        return c.json({ error: `Network '${networkId}' not found` }, 404);
+    }
 
     const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
 

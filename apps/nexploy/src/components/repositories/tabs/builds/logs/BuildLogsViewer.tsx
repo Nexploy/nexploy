@@ -93,7 +93,7 @@ export function BuildLogsViewer({
                                 )}
                                 <div className="min-w-0 break-all whitespace-pre-wrap">
                                     {parseAnsiColors(log.message).map((part, partIndex) => (
-                                        <span key={partIndex} className={part.color}>
+                                        <span key={partIndex} className={part.color} style={part.style}>
                                             {part.text}
                                         </span>
                                     ))}

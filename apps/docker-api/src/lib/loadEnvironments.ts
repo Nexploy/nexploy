@@ -2,12 +2,13 @@ import { HTTPError } from 'ky';
 import { logger } from '@/utils/logger';
 import { kyNexploy } from '@/lib/kyNexploy';
 import { DOCKER_SOCKET_PATH } from '@/lib/config';
+import { getNexployApiKey } from '@/lib/apiKey';
 import { EnvironmentConfig } from '@workspace/typescript-interface/docker/environment/environment';
 
 export async function loadEnvironmentsFromAPI(): Promise<EnvironmentConfig[]> {
     try {
-        if (!process.env.NEXPLOY_API_KEY) {
-            throw new Error('INTERNAL_API_KEY environment variable is required');
+        if (!(await getNexployApiKey())) {
+            throw new Error('No Nexploy API key available (env NEXPLOY_API_KEY or GET /api/internal/docker-api-key)');
         }
 
         logger.info('Loading environments from nexploy API');
@@ -34,8 +35,8 @@ export async function loadEnvironmentsFromAPI(): Promise<EnvironmentConfig[]> {
 
 export async function loadEnvironmentByIdFromAPI(environmentId: string): Promise<EnvironmentConfig | null> {
     try {
-        if (!process.env.NEXPLOY_API_KEY) {
-            throw new Error('INTERNAL_API_KEY environment variable is required');
+        if (!(await getNexployApiKey())) {
+            throw new Error('No Nexploy API key available (env NEXPLOY_API_KEY or GET /api/internal/docker-api-key)');
         }
 
         logger.info({ environmentId }, 'Loading specific environment from nexploy API');

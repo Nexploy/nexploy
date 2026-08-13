@@ -11,6 +11,7 @@ import { BaseStateManager } from '@/lib/base/BaseStateManager';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+import { isNexployInfrastructureNetwork } from '@nexploy/shared/nexployFilter';
 
 const NETWORK_STATE_CHANGE_EVENTS = new Set<NetworkAction>([
     'create',
@@ -139,6 +140,8 @@ export class NetworksStateManager extends BaseStateManager {
         const network = this.docker.getNetwork(networkId);
         const info = await network.inspect();
         const newState = this.parseNetworkInfo(info);
+
+        if (isNexployInfrastructureNetwork(newState)) return;
 
         const oldState = this.networks.get(newState.id);
         this.networks.set(newState.id, newState);
@@ -283,6 +286,7 @@ export class NetworksStateManager extends BaseStateManager {
         const networkMap = new Map<string, Network>();
         for (const network of inspected) {
             const state = this.parseNetworkInfo(network);
+            if (isNexployInfrastructureNetwork(state)) continue;
             networkMap.set(state.id, state);
         }
 

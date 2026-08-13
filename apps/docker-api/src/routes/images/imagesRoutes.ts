@@ -31,6 +31,11 @@ import { Readable } from 'node:stream';
 import { runTrackedTask } from '@/lib/taskRunner';
 import { describeImages } from '@/utils/taskSubjects';
 import { docker } from '@/utils/dockerClient';
+import {
+    assertImageAccessible,
+    assertImageReferenceAvailable,
+    assertImagesAccessible,
+} from '@/lib/infrastructureGuard';
 
 const app = new Hono();
 
@@ -60,7 +65,12 @@ app.get(
     '/:id',
     route({ param: imageIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
-        return imagesStateManager.getById(id);
+        await assertImageAccessible(id);
+
+        const image = imagesStateManager.getById(id);
+        if (!image) throw new HttpError(`Image '${id}' not found`, 404);
+
+        return image;
     }),
 );
 
@@ -96,6 +106,8 @@ app.post(
     '/tag',
     route({ json: imageTagSchema }, async (c) => {
         const { imageId, repo, tag } = c.req.valid('json');
+        assertImageReferenceAvailable(repo);
+        await assertImageAccessible(imageId);
 
         return runTrackedTask({
             kind: 'image-tag',
@@ -109,6 +121,7 @@ app.post(
     '/untag',
     route({ json: imageUntagSchema }, async (c) => {
         const { tags } = c.req.valid('json');
+        await assertImagesAccessible(tags);
 
         return runTrackedTask({
             kind: 'image-untag',
@@ -122,6 +135,7 @@ app.post(
     '/import',
     route({ json: imageImportSchema }, async (c) => {
         const { source, repo, tag } = c.req.valid('json');
+        assertImageReferenceAvailable(repo);
 
         return startImageImport(source, repo, tag);
     }),
@@ -151,6 +165,8 @@ app.post('/save', async (c) => {
     const missing = parsed.data.imageIds.find((imageId) => !imagesStateManager.getById(imageId));
     if (missing) return c.json({ message: `Image ${missing} not found.` }, 404);
 
+    await assertImagesAccessible(parsed.data.imageIds);
+
     const archive = await saveImages(parsed.data.imageIds);
 
     return new Response(Readable.toWeb(archive as Readable) as ReadableStream, {
@@ -165,6 +181,8 @@ app.get(
     '/:id/history',
     route({ param: imageIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
+        await assertImageAccessible(id);
+
         return await docker.getImage(id).history();
     }),
 );
@@ -174,6 +192,8 @@ app.post(
     route({ param: imageIdParamSchema, json: imageTagBodySchema }, async (c) => {
         const { id } = c.req.valid('param');
         const { repo, tag } = c.req.valid('json');
+        assertImageReferenceAvailable(repo);
+        await assertImageAccessible(id);
 
         return runTrackedTask({
             kind: 'image-tag',
@@ -187,6 +207,7 @@ app.post(
     '/mirror',
     route({ json: imageMirrorSchema }, async (c) => {
         const { sourceImage, sourceAuth, targetName, targetAuth } = c.req.valid('json');
+        assertImageReferenceAvailable(targetName);
         return startImageMirror(sourceImage, sourceAuth, targetName, targetAuth);
     }),
 );
@@ -195,6 +216,7 @@ app.post(
     '/delete',
     route({ json: imageDeleteSchema }, async (c) => {
         const { imageIds, force } = c.req.valid('json');
+        await assertImagesAccessible(imageIds);
 
         return runTrackedTask({
             kind: 'image-remove',

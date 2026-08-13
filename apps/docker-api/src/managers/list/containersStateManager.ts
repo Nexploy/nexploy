@@ -15,6 +15,7 @@ import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import { networksStateManager } from '@/managers/list/networksStateManager';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
+import { isNexployInfrastructureContainer } from '@nexploy/shared/nexployFilter';
 
 export const containerImageEvents = new EventEmitter();
 
@@ -48,6 +49,7 @@ export class ContainersStateManager extends BaseStateManager {
 
             for (const container of containers) {
                 const state = this.parseContainerInfo(container);
+                if (isNexployInfrastructureContainer(state)) continue;
                 containerMap.set(state.id, state);
             }
 
@@ -166,6 +168,8 @@ export class ContainersStateManager extends BaseStateManager {
             const container = this.docker.getContainer(containerId);
             const info = await container.inspect();
             const newState = this.parseContainerInspect(info);
+
+            if (isNexployInfrastructureContainer(newState)) return;
 
             const oldState = this.containers.get(containerId);
             this.containers.set(containerId, newState);
@@ -389,6 +393,7 @@ export class ContainersStateManager extends BaseStateManager {
 
         for (const container of containers) {
             const state = this.parseContainerInfo(container);
+            if (isNexployInfrastructureContainer(state)) continue;
             const previous = this.containers.get(state.id);
 
             newContainerMap.set(state.id, {

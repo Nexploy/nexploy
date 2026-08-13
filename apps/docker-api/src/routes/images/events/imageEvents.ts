@@ -6,6 +6,7 @@ import { ImageDetailEvent } from '@workspace/typescript-interface/docker/docker.
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { SingleResourceManagerRegistry } from '@/lib/SingleResourceManagerRegistry';
+import { isInfrastructureImage } from '@/lib/infrastructureGuard';
 
 const imageManagerRegistry = new SingleResourceManagerRegistry(
     'Image',
@@ -14,8 +15,11 @@ const imageManagerRegistry = new SingleResourceManagerRegistry(
 
 const app = new Hono();
 
-app.get('/stream/:imageId', (c) => {
+app.get('/stream/:imageId', async (c) => {
     const imageId = c.req.param('imageId');
+    if (await isInfrastructureImage(imageId)) {
+        return c.json({ error: `Image '${imageId}' not found` }, 404);
+    }
 
     const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
 

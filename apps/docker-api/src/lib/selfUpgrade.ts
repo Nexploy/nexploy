@@ -4,10 +4,8 @@ import { pullImage } from '@/utils/pullImage';
 import { waitForContainerHealthy } from '@/utils/wait';
 import { logger } from '@/utils/logger';
 import {
-    DOCKER_API_NETWORK_ALIAS,
     INNGEST_CONTAINER_NAME,
     NEXPLOY_APP_HEALTHCHECK,
-    NEXPLOY_APP_NETWORK_ALIAS,
     POSTGRES_CONTAINER_NAME,
     TRAEFIK_CONTAINER_NAME,
 } from '@/lib/config';
@@ -53,9 +51,7 @@ export async function runSelfUpgradeAndExit(): Promise<void> {
 
     try {
         logger.info({ container: dockerApiContainer, image: dockerApiImage }, 'Upgrading docker-api');
-        await recreateContainerWithImage(defaultDocker, dockerApiContainer, dockerApiImage, {
-            aliases: [DOCKER_API_NETWORK_ALIAS],
-        });
+        await recreateContainerWithImage(defaultDocker, dockerApiContainer, dockerApiImage);
 
         const dockerApiReady = await waitForContainerHealthy(
             defaultDocker,
@@ -79,7 +75,6 @@ export async function runSelfUpgradeAndExit(): Promise<void> {
     try {
         logger.info({ container: appTarget.container, image: appTarget.image }, 'Upgrading Nexploy');
         await recreateContainerWithImage(defaultDocker, appTarget.container, appTarget.image, {
-            aliases: [NEXPLOY_APP_NETWORK_ALIAS],
             healthcheck: NEXPLOY_APP_HEALTHCHECK,
         });
 

@@ -1,5 +1,6 @@
 import { logger } from '@/utils/logger';
 import { kyNexploy } from '@/lib/kyNexploy';
+import { getNexployApiKey } from '@/lib/apiKey';
 import { VolumeInspectInfo } from 'dockerode';
 import {
     Volume,
@@ -9,6 +10,7 @@ import {
 } from '@workspace/typescript-interface/docker/docker.volume';
 import { BaseStateManager } from '@/lib/base/BaseStateManager';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { isNexployInfrastructureVolumeName } from '@nexploy/shared/nexployFilter';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
@@ -43,6 +45,7 @@ export class VolumesStateManager extends BaseStateManager {
 
             for (const volume of volumes) {
                 const state = this.parseVolumeInfo(volume);
+                if (isNexployInfrastructureVolumeName(state.name)) continue;
                 volumeMap.set(state.name, state);
             }
 
@@ -139,6 +142,8 @@ export class VolumesStateManager extends BaseStateManager {
     }
 
     private async refreshVolumeState(volumeName: string): Promise<void> {
+        if (isNexployInfrastructureVolumeName(volumeName)) return;
+
         const [info, dfResult] = await Promise.all([this.docker.getVolume(volumeName).inspect(), this.docker.df()]);
         const dfVolume = dfResult.Volumes?.find((v: VolumeInspectInfo) => v.Name === volumeName);
         const newState = this.parseVolumeInfo({ ...info, UsageData: dfVolume?.UsageData ?? info.UsageData });
@@ -211,8 +216,8 @@ export class VolumesStateManager extends BaseStateManager {
     }
 
     private async syncVolumeDelete(volumeName: string): Promise<void> {
-        if (!process.env.NEXPLOY_API_URL || !process.env.NEXPLOY_API_KEY) {
-            logger.warn('Cannot sync volume delete: NEXPLOY_API_URL or NEXPLOY_API_KEY not set');
+        if (!process.env.NEXPLOY_API_URL || !(await getNexployApiKey())) {
+            logger.warn('Cannot sync volume delete: NEXPLOY_API_URL or the Nexploy API key is not available');
             return;
         }
 
@@ -233,6 +238,7 @@ export class VolumesStateManager extends BaseStateManager {
 
         for (const volume of volumes) {
             const state = this.parseVolumeInfo(volume);
+            if (isNexployInfrastructureVolumeName(state.name)) continue;
             newVolumeMap.set(state.name, state);
         }
 

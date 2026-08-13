@@ -177,7 +177,19 @@ export const preventInfrastructureNetworkAction = createMiddleware().define(asyn
 
     if (input.networkIds?.length) {
         for (const networkId of input.networkIds) {
-            const info = await kyDocker.get(`networks/${networkId}`).json<{ Name: string }>();
+            if (isNexployInfrastructureNetworkName(networkId)) {
+                throw new Error(`Cannot ${input.action} infrastructure network "${networkId}"`);
+            }
+
+            const info = await kyDocker
+                .get(`networks/${networkId}`)
+                .json<{ Name: string }>()
+                .catch(() => null);
+
+            if (!info) {
+                throw new Error(`Cannot ${input.action} network "${networkId}"`);
+            }
+
             if (isNexployInfrastructureNetworkName(info.Name)) {
                 throw new Error(`Cannot ${input.action} infrastructure network "${info.Name}"`);
             }

@@ -10,6 +10,7 @@ import { ContainerStatsEvent } from '@workspace/typescript-interface/docker/dock
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { SingleResourceManagerRegistry } from '@/lib/SingleResourceManagerRegistry';
+import { isInfrastructureContainer } from '@/lib/infrastructureGuard';
 
 const containerManagerRegistry = new SingleResourceManagerRegistry(
     'Container',
@@ -18,8 +19,11 @@ const containerManagerRegistry = new SingleResourceManagerRegistry(
 
 const app = new Hono();
 
-app.get('/stream/:containerId', (c) => {
+app.get('/stream/:containerId', async (c) => {
     const containerId = c.req.param('containerId');
+    if (await isInfrastructureContainer(containerId)) {
+        return c.json({ error: `Container '${containerId}' not found` }, 404);
+    }
 
     const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
 
@@ -146,8 +150,11 @@ app.get('/stream/:containerId', (c) => {
     });
 });
 
-app.get('/stream/:containerId/logs/:follow/:tail', (c) => {
+app.get('/stream/:containerId/logs/:follow/:tail', async (c) => {
     const containerId = c.req.param('containerId');
+    if (await isInfrastructureContainer(containerId)) {
+        return c.json({ error: `Container '${containerId}' not found` }, 404);
+    }
 
     const follow = true;
     const tail = parseInt(c.req.param('tail') || '500', 10);
@@ -215,8 +222,11 @@ app.get('/stream/:containerId/logs/:follow/:tail', (c) => {
     });
 });
 
-app.get('/stream/:containerId/stats/:refreshRate', (c) => {
+app.get('/stream/:containerId/stats/:refreshRate', async (c) => {
     const containerId = c.req.param('containerId');
+    if (await isInfrastructureContainer(containerId)) {
+        return c.json({ error: `Container '${containerId}' not found` }, 404);
+    }
     const refreshRate = parseInt(c.req.param('refreshRate'), 10);
 
     const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;

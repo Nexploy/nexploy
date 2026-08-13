@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import dayjs from 'dayjs';
 import { LogEntry } from '@workspace/typescript-interface/docker/docker.container.logs';
+import { parseAnsiColors } from '@/utils/color';
 
 interface LogLineProps {
     log: LogEntry;
@@ -25,7 +26,11 @@ export const LogLine = memo(
                     </>
                 )}
                 <span className={log.stream === 'stderr' ? 'text-destructive' : 'text-green-400'}>[{log.stream}]</span>
-                <span className="text-white">{log.message}</span>
+                {parseAnsiColors(log.message).map((part, index) => (
+                    <span key={index} className={part.color ?? 'text-white'} style={part.style}>
+                        {part.text}
+                    </span>
+                ))}
             </div>
         );
     },

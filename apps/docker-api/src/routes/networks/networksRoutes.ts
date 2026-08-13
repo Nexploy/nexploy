@@ -13,6 +13,11 @@ import { filterNexployNetworks } from '@nexploy/shared/nexployFilter';
 import { deleteNetworks, pruneNetworks } from '@/services/networkService';
 import { runTrackedTask } from '@/lib/taskRunner';
 import { describeNetworks } from '@/utils/taskSubjects';
+import {
+    assertNetworkAccessible,
+    assertNetworkNameAvailable,
+    assertNetworksAccessible,
+} from '@/lib/infrastructureGuard';
 
 const app = new Hono();
 
@@ -57,6 +62,8 @@ app.post(
             ? {}
             : { Scope: scope, Internal: internal, Attachable: attachable, Ingress: ingress };
 
+        assertNetworkNameAvailable(name);
+
         try {
             const info = (await docker.getNetwork(name).inspect()) as { Id: string };
             return { id: info.Id, name, alreadyExisted: true };
@@ -88,6 +95,8 @@ app.get(
     '/:id',
     route({ param: networkIdParamSchema }, async (c) => {
         const { id: networkId } = c.req.valid('param');
+        await assertNetworkAccessible(networkId);
+
         return await docker.getNetwork(networkId).inspect();
     }),
 );
@@ -96,6 +105,7 @@ app.post(
     '/delete',
     route({ json: networkDeleteSchema }, async (c) => {
         const { networkIds, force } = c.req.valid('json');
+        await assertNetworksAccessible(networkIds);
 
         return runTrackedTask({
             kind: 'network-remove',

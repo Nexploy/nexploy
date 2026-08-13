@@ -145,7 +145,8 @@ NEXPLOY_API_KEY=nxp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 > Re-running the seed **revokes and recreates** the key. If `docker-api` suddenly answers `401`, copy it again.
-> In the Docker deployments this is automated: the app writes the key to a file and `docker-api` fetches it at boot.
+> In the Docker deployments this is automated: the seed hands the key to the app, and `docker-api` fetches it from
+> `GET /api/internal/docker-api-key` on its first call, authenticated with `ENCRYPTION_KEY`.
 
 ## 6. Start the apps
 
@@ -411,8 +412,6 @@ maintenance page shown on the wrong entrypoint).
 | `NEXPLOY_IMAGE_REPOSITORY` | `nexploy/nexploy` | Image repository pulled when upgrading the app |
 | `DOCKER_API_IMAGE_REPOSITORY` | `nexploy/docker-api` | Image repository pulled when upgrading docker-api |
 | `NEXPLOY_GITHUB_REPO` | `Nexploy/nexploy` | Repository checked for the latest available release/version |
-| `NEXPLOY_APP_NETWORK_ALIAS` | `nexploy` | Network alias re-applied to `nexploy_app` on every recreation — lets docker-api resolve it as `http://nexploy:3000` |
-| `DOCKER_API_NETWORK_ALIAS` | `docker-api` | Network alias re-applied to `nexploy_docker_api` on every recreation — lets the app resolve it as `http://docker-api:3300` |
 | `SELF_UPGRADE_TARGET_IMAGE` | *(unset)* | docker-api image the upgrader recreates `nexploy_docker_api` with. Set only on the `nexploy_upgrader` container — never set manually |
 | `SELF_UPGRADE_CONTAINER_NAME` | *(unset)* | docker-api container the upgrader recreates. Set only on the `nexploy_upgrader` container — never set manually |
 | `SELF_UPGRADE_APP_TARGET_IMAGE` | *(unset)* | App image the upgrader recreates `nexploy_app` with. Set only on the `nexploy_upgrader` container — never set manually |

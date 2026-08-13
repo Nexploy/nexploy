@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import ky from 'ky';
 import { Hono } from 'hono';
-import { docker } from '@/utils/dockerClient';
+import { defaultDocker, docker } from '@/utils/dockerClient';
 import { route } from '@/utils/route';
 import { waitForFile } from '@/utils/wait';
 import { logger } from '@/utils/logger';
@@ -257,7 +257,7 @@ app.post(
         const { domain, mode, acmeEmail, certificateId } = c.req.valid('json');
         const useTls = mode !== 'ip';
 
-        const appContainer = docker.getContainer(NEXPLOY_APP_CONTAINER_NAME);
+        const appContainer = defaultDocker.getContainer(NEXPLOY_APP_CONTAINER_NAME);
         let appInfo;
         try {
             appInfo = await appContainer.inspect();
@@ -309,7 +309,7 @@ app.post(
         if (appInfo.State.Running) await appContainer.stop();
         await appContainer.remove();
 
-        const newContainer = await docker.createContainer({
+        const newContainer = await defaultDocker.createContainer({
             name: appInfo.Name.replace('/', ''),
             Image: appInfo.Config.Image,
             Hostname: appInfo.Config.Hostname,
@@ -340,7 +340,7 @@ app.post(
         }
 
         try {
-            await docker.getContainer(TRAEFIK_CONTAINER_NAME).restart();
+            await defaultDocker.getContainer(TRAEFIK_CONTAINER_NAME).restart();
         } catch (error) {
             logger.error({ error }, 'Failed to restart Traefik after instance domain change');
         }
@@ -356,8 +356,16 @@ function buildReleaseUrl(tag: string): string {
 app.get(
     '/version',
     route(async () => {
-        const appInfo = await docker.getContainer(NEXPLOY_APP_CONTAINER_NAME).inspect();
-        const current = appInfo.Config.Image.split(':').pop() ?? 'unknown';
+        let current = 'unknown';
+        try {
+            const appInfo = await defaultDocker.getContainer(NEXPLOY_APP_CONTAINER_NAME).inspect();
+            current = appInfo.Config.Image.split(':').pop() ?? 'unknown';
+        } catch (error) {
+            logger.warn(
+                { error, container: NEXPLOY_APP_CONTAINER_NAME },
+                'Failed to inspect the Nexploy app container while resolving the current version',
+            );
+        }
 
         let latest = current;
         let releaseUrl: string | null = null;
@@ -378,7 +386,7 @@ app.get(
         return {
             current,
             latest,
-            updateAvailable: latest !== current,
+            updateAvailable: current !== 'unknown' && latest !== current,
             releaseUrl,
             releasesUrl: `https://github.com/${NEXPLOY_GITHUB_REPO}/releases`,
         };
@@ -392,18 +400,18 @@ app.post(
         const appImage = `${NEXPLOY_IMAGE_REPOSITORY}:${version}`;
         const dockerApiImage = `${DOCKER_API_IMAGE_REPOSITORY}:${version}`;
 
-        await pullImage(docker, dockerApiImage);
+        await pullImage(defaultDocker, dockerApiImage);
 
         try {
-            await docker.getContainer(UPGRADER_CONTAINER_NAME).remove({ force: true });
+            await defaultDocker.getContainer(UPGRADER_CONTAINER_NAME).remove({ force: true });
         } catch {}
 
-        const currentDockerApiInfo = await docker.getContainer(DOCKER_API_CONTAINER_NAME).inspect();
+        const currentDockerApiInfo = await defaultDocker.getContainer(DOCKER_API_CONTAINER_NAME).inspect();
         const inheritedEnv = (currentDockerApiInfo.Config.Env ?? []).filter(
             (entry) => !entry.startsWith('SELF_UPGRADE_') && !entry.startsWith('DOCKER_SOCKET='),
         );
 
-        const upgrader = await docker.createContainer({
+        const upgrader = await defaultDocker.createContainer({
             name: UPGRADER_CONTAINER_NAME,
             Image: dockerApiImage,
             Env: [

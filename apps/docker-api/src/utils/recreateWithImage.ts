@@ -2,7 +2,6 @@ import type Docker from 'dockerode';
 import { logger } from '@/utils/logger';
 
 interface RecreateOverrides {
-    aliases?: string[];
     healthcheck?: Docker.HealthConfig;
 }
 
@@ -29,9 +28,7 @@ export async function recreateContainerWithImage(
             EndpointsConfig: Object.fromEntries(
                 Object.entries(info.NetworkSettings.Networks ?? {}).map(([name, network]) => [
                     name,
-                    {
-                        Aliases: Array.from(new Set([...(network.Aliases ?? []), ...(overrides.aliases ?? [])])),
-                    },
+                    { Aliases: network.Aliases ?? [] },
                 ]),
             ),
         },

@@ -1,91 +1,63 @@
-name: nexploy_prod
+name: nexploy
+
 services:
   postgres:
     image: postgres:18.0
-    container_name: nexploy_postgres_prod
-    restart: unless-stopped
+    container_name: nexploy_postgres
+    restart: always
     networks:
-      - nexploy_network_prod
+      - app
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-nexploy}
       POSTGRES_USER: ${POSTGRES_USER:-nexploy}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     volumes:
       - db:/var/lib/postgresql
+    ports:
+      - "127.0.0.1:5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nexploy}"]
       interval: 2s
       timeout: 3s
       retries: 15
-      start_period: 5s
-
-  inngest:
-    image: inngest/inngest:v1.14.0
-    container_name: nexploy_inngest_prod
-    restart: unless-stopped
-    networks:
-      - nexploy_network_prod
-    environment:
-      INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY:?INNGEST_EVENT_KEY is required}
-      INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY:?INNGEST_SIGNING_KEY is required}
-    command: inngest start -u http://nexploy:3000/api/inngest
-    depends_on:
-      nexploy:
-        condition: service_healthy
-
-  traefik:
-    image: traefik:v3.6.2
-    container_name: nexploy_traefik_prod
-    restart: unless-stopped
-    volumes:
-      - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock:ro
-      - ${TRAEFIK_STATIC_CONFIG:-../traefik/traefik.prod.yml}:/etc/traefik/traefik.yml:ro
-      - ../traefik/service:/etc/nexploy/traefik/service
-      - traefik_acme:/etc/traefik
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      - nexploy_network_prod
-      - nexploy_traefik_network_prod
-    healthcheck:
-      test: ["CMD", "traefik", "healthcheck", "--ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
 
   nexploy:
-    image: nexploy/nexploy:${NEXPLOY_VERSION:-latest}
-    container_name: nexploy_app_prod
-    restart: unless-stopped
+    image: nexploy/nexploy:latest
+    pull_policy: always
+    container_name: nexploy_app
+    restart: always
     networks:
-      - nexploy_network_prod
-      - nexploy_traefik_network_prod
+      - app
+      - edge
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-nexploy}:${POSTGRES_PASSWORD}@nexploy_postgres:5432/${POSTGRES_DB:-nexploy}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}
+      BETTER_AUTH_URL: ${NEXPLOY_PUBLIC_URL:?NEXPLOY_PUBLIC_URL is required}
+      NEXPLOY_URL: ${NEXPLOY_PUBLIC_URL}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY is required}
+      DOCKER_API_URL: http://nexploy_docker_api:3300
+      DEPLOYER_WORK_DIR: /tmp/deployer
+      INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY:?INNGEST_EVENT_KEY is required}
+      INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY:?INNGEST_SIGNING_KEY is required}
+      INNGEST_BASE_URL: http://nexploy_inngest:8288
+      TRUSTED_ORIGINS: ${TRUSTED_ORIGINS:-}
+      TRAEFIK_SERVICE_DIR: /etc/nexploy/traefik/service
+      TRAEFIK_CERTS_CONTAINER_PATH: /etc/nexploy/traefik/service/certs
+      TRAEFIK_STATIC_CONFIG_PATH: /etc/nexploy/traefik/traefik.yml
+      TRAEFIK_USE_TLS: ${TRAEFIK_USE_TLS:-true}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    volumes:
+      - ${NEXPLOY_DIR:-/etc/nexploy}/traefik:/etc/nexploy/traefik
+      - deployer_workdir:/tmp/deployer
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=nexploy_traefik_network_prod"
+      - "traefik.docker.network=nexploy_traefik_network"
       - "traefik.http.routers.nexploy-app.rule=Host(`${DOMAIN:?DOMAIN is required}`)"
       - "traefik.http.routers.nexploy-app.entrypoints=websecure"
       - "traefik.http.routers.nexploy-app.tls.certresolver=letsencrypt"
       - "traefik.http.routers.nexploy-app.middlewares=gzip-compress@file,security-headers@file"
       - "traefik.http.services.nexploy-app.loadbalancer.server.port=3000"
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgresql://${POSTGRES_USER:-nexploy}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nexploy}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL:?BETTER_AUTH_URL is required}
-      DOCKER_API_URL: http://docker-api:3300
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY is required}
-      DEPLOYER_WORK_DIR: /tmp/deployer
-      INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY}
-      INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY}
-      INNGEST_BASE_URL: http://inngest:8288
-      TRUSTED_ORIGINS: ${TRUSTED_ORIGINS:-}
-      TRAEFIK_SERVICE_DIR: /etc/nexploy/traefik/service
-      TRAEFIK_CERTS_CONTAINER_PATH: /etc/nexploy/traefik/service/certs
-    volumes:
-      - deployer_workdir:/tmp/deployer
-      - ../traefik/service:/etc/nexploy/traefik/service
     depends_on:
       postgres:
         condition: service_healthy
@@ -96,23 +68,54 @@ services:
       retries: 30
       start_period: 60s
 
-  docker-api:
-    image: nexploy/docker-api:${NEXPLOY_VERSION:-latest}
-    container_name: nexploy_docker_api_prod
-    restart: unless-stopped
+  traefik:
+    image: traefik:v3.6.2
+    container_name: nexploy_traefik
+    restart: always
     networks:
-      - nexploy_network_prod
+      - edge
+      - app
+    volumes:
+      - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock:ro
+      - ${NEXPLOY_DIR:-/etc/nexploy}/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ${NEXPLOY_DIR:-/etc/nexploy}/traefik/service:/etc/nexploy/traefik/service
+      - traefik_acme:/etc/traefik/acme
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+      - "443:443/udp"
+    depends_on:
+      nexploy:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  docker-api:
+    image: nexploy/docker-api:latest
+    pull_policy: always
+    container_name: nexploy_docker_api
+    restart: always
+    networks:
+      - app
     environment:
       NODE_ENV: production
       PORT: 3300
       DOCKER_SOCKET: /var/run/docker.sock
-      NEXPLOY_API_URL: http://nexploy:3000
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY is required}
+      NEXPLOY_API_URL: http://nexploy_app:3000
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       LOG_LEVEL: ${LOG_LEVEL:-info}
-      TRAEFIK_CONTAINER_NAME: nexploy_traefik_prod
-      TRAEFIK_NETWORK_NAME: nexploy_traefik_network_prod
+      TRAEFIK_CONTAINER_NAME: nexploy_traefik
+      TRAEFIK_NETWORK_NAME: nexploy_traefik_network
+      NEXPLOY_APP_CONTAINER_NAME: nexploy_app
+      DOCKER_API_CONTAINER_NAME: nexploy_docker_api
+      TRAEFIK_SERVICE_DIR: /etc/nexploy/traefik/service
+      TRAEFIK_STATIC_CONFIG_PATH: /etc/nexploy/traefik/traefik.yml
     volumes:
       - ${DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
+      - ${NEXPLOY_DIR:-/etc/nexploy}/traefik:/etc/nexploy/traefik
       - deployer_workdir:/tmp/deployer
     depends_on:
       nexploy:
@@ -120,15 +123,32 @@ services:
     expose:
       - "3300"
 
+  inngest:
+    image: inngest/inngest:v1.14.0
+    container_name: nexploy_inngest
+    restart: always
+    networks:
+      - app
+    environment:
+      INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY}
+      INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY}
+    command: inngest start -u http://nexploy_app:3000/api/inngest
+    depends_on:
+      nexploy:
+        condition: service_healthy
+
 volumes:
   db:
+    name: nexploy_db
   traefik_acme:
+    name: nexploy_traefik_acme
   deployer_workdir:
+    name: nexploy_deployer_workdir
 
 networks:
-  nexploy_network_prod:
-    name: nexploy_network_prod
+  app:
+    name: nexploy_network
     driver: bridge
-  nexploy_traefik_network_prod:
-    name: nexploy_traefik_network_prod
+  edge:
+    name: nexploy_traefik_network
     driver: bridge
