@@ -1,6 +1,6 @@
 {
   "name": "nexploy-monorepo",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Nexploy - Self-hosted alternative to Vercel/Netlify, powered by Docker",
   "license": "GPL-3.0",
   "scripts": {
@@ -17,6 +17,7 @@
     "nodes:npm": "node scripts/nodes-source.mjs npm",
     "shared:local": "node scripts/shared-source.mjs local",
     "shared:npm": "node scripts/shared-source.mjs npm",
+    "version:set": "node scripts/set-version.mjs",
     "format": "biome format --write .",
     "check-types": "turbo run typecheck",
     "test:api": "turbo run test --filter=nexploy",
