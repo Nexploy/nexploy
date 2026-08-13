@@ -43,7 +43,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@monaco-editor/react": "^4.7.0",
-    "@nexploy/nodes": "^0.6.3",
+    "@nexploy/nodes": "^0.6.4",
     "@nexploy/shared": "^0.3.0",
     "@next-safe-action/adapter-react-hook-form": "^2.0.0",
     "@openrouter/ai-sdk-provider": "^2.9.0",
