@@ -8,6 +8,9 @@ import {
 } from '@/services/dns/providers/cloudflare/cloudflare.client';
 import { toFqdn } from '@/services/dns/core/recordName';
 
+const ZONES_PER_PAGE = 50;
+const MAX_ZONE_PAGES = 20;
+
 function clientFor(credentials: DnsCredentialValues) {
     const apiToken = credentials.apiToken;
     if (!apiToken) {
@@ -43,15 +46,31 @@ export const cloudflareDnsAdapter: DnsProviderAdapter = {
     capabilities: { supportsProxy: true, supportsWildcard: true },
 
     async verifyCredentials(credentials) {
-        await clientFor(credentials).get('zones').json<CloudflareApiResponse<CloudflareZonePayload[]>>();
+        await clientFor(credentials)
+            .get('zones', { searchParams: { per_page: 1 } })
+            .json<CloudflareApiResponse<CloudflareZonePayload[]>>();
     },
 
     async listZones(credentials): Promise<DnsZone[]> {
-        const response = await clientFor(credentials)
-            .get('zones')
-            .json<CloudflareApiResponse<CloudflareZonePayload[]>>();
+        const client = clientFor(credentials);
+        const zones: DnsZone[] = [];
+        let page = 1;
 
-        return response.result.map((zone) => ({ id: zone.id, name: zone.name, status: zone.status }));
+        while (page <= MAX_ZONE_PAGES) {
+            const response = await client
+                .get('zones', { searchParams: { page, per_page: ZONES_PER_PAGE } })
+                .json<CloudflareApiResponse<CloudflareZonePayload[]>>();
+
+            for (const zone of response.result ?? []) {
+                zones.push({ id: zone.id, name: zone.name, status: zone.status });
+            }
+
+            const totalPages = response.result_info?.total_pages ?? 1;
+            if (page >= totalPages) break;
+            page += 1;
+        }
+
+        return zones;
     },
 
     async createRecord(credentials, input) {

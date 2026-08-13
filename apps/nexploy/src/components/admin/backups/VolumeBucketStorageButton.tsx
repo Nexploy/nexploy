@@ -36,7 +36,7 @@ export function VolumeBucketStorageButton({ volumeName, bucketStorageAccounts }:
                         icon={CloudBackup}
                         disabled={bucketStorageAccounts.length === 0}
                     >
-                        {t('uploadToBucketStorage')}
+                        {t('bucketStorageButton')}
                     </Button>
                 </div>
             </TooltipTrigger>

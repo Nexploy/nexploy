@@ -171,12 +171,12 @@
       },
       "HETZNER": {
         "name": "Hetzner DNS",
-        "requirementZone": "Un token API Hetzner DNS (DNS Console > API tokens)",
-        "requirementRecord": "Accesso completo alle zone che vuoi gestire",
+        "requirementZone": "Un token API Hetzner Cloud (Hetzner Console > Security > API tokens) con accesso in lettura e scrittura",
+        "requirementRecord": "La zona deve essere gestita nel DNS della Hetzner Console (la vecchia API dns.hetzner.com è stata dismessa a maggio 2026)",
         "fields": {
           "apiToken": {
             "label": "Token API",
-            "placeholder": "Il tuo token API Hetzner DNS"
+            "placeholder": "Il tuo token API Hetzner Cloud"
           }
         }
       },

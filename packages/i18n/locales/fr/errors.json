@@ -219,6 +219,7 @@
     }
   },
   "api": {
+    "volumeImportFileRequired": "Un fichier d'archive de sauvegarde est requis",
     "repositoriesFetchFailed": "Échec de la récupération des dépôts",
     "repositoryFetchFailed": "Échec de la récupération du dépôt",
     "repositoryNotFound": "Dépôt introuvable",

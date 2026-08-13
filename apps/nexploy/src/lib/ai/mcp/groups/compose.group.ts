@@ -120,6 +120,10 @@ export const composeGroup: ToolGroup = {
                             environmentId: ctx.environmentId,
                         } as KyDockerOptions)
                         .json<any>();
+                    if (result.taskId) {
+                        return ok(`Deployment of stack "${stackName}" started (task ${result.taskId}).`);
+                    }
+
                     return ok(`Stack "${stackName}" deployed. Logs: ${(result.logs ?? []).slice(-3).join(' | ')}`);
                 } catch (e: any) {
                     return fail(e.message);

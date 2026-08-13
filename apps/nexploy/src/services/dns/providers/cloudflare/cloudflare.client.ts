@@ -1,10 +1,19 @@
 import ky, { type KyInstance } from 'ky';
 
+export interface CloudflareResultInfo {
+    page: number;
+    per_page: number;
+    total_pages: number;
+    count: number;
+    total_count: number;
+}
+
 export interface CloudflareApiResponse<T> {
     success: boolean;
     errors: Array<{ code: number; message: string }>;
     messages: string[];
     result: T;
+    result_info?: CloudflareResultInfo;
 }
 
 export interface CloudflareZonePayload {

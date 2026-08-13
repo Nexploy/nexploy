@@ -6,6 +6,7 @@ import { HttpError } from '@nexploy/shared/http-error';
 import { initActionSchema } from '@workspace/schemas-zod/docker/swarm/init.schema';
 import { swarmJoinSchema } from '@workspace/schemas-zod/docker/swarm/join.schema';
 import { swarmLeaveSchema } from '@workspace/schemas-zod/docker/swarm/leave.schema';
+import { runTrackedTask } from '@/lib/taskRunner';
 
 const app = new Hono();
 
@@ -14,15 +15,21 @@ app.post(
     route({ json: initActionSchema }, async (c) => {
         const { advertiseAddr, listenAddr, forceNewCluster } = c.req.valid('json');
 
-        const result = await docker.swarmInit({
-            AdvertiseAddr: advertiseAddr,
-            ListenAddr: listenAddr,
-            ForceNewCluster: forceNewCluster,
+        return runTrackedTask({
+            kind: 'swarm-init',
+            subjectName: advertiseAddr ?? listenAddr ?? '',
+            run: async () => {
+                const result = await docker.swarmInit({
+                    AdvertiseAddr: advertiseAddr,
+                    ListenAddr: listenAddr,
+                    ForceNewCluster: forceNewCluster,
+                });
+
+                await swarmStateManager.hardRefresh();
+
+                return { success: true, nodeId: result };
+            },
         });
-
-        await swarmStateManager.hardRefresh();
-
-        return { success: true, nodeId: result };
     }),
 );
 
@@ -35,16 +42,22 @@ app.post(
             throw new HttpError('Remote addresses are required.', 400);
         }
 
-        await docker.swarmJoin({
-            AdvertiseAddr: advertiseAddr,
-            ListenAddr: listenAddr || '0.0.0.0:2377',
-            RemoteAddrs: remoteAddrs,
-            JoinToken: joinToken,
+        return runTrackedTask({
+            kind: 'swarm-join',
+            subjectName: remoteAddrs[0] ?? '',
+            run: async () => {
+                await docker.swarmJoin({
+                    AdvertiseAddr: advertiseAddr,
+                    ListenAddr: listenAddr || '0.0.0.0:2377',
+                    RemoteAddrs: remoteAddrs,
+                    JoinToken: joinToken,
+                });
+
+                await swarmStateManager.hardRefresh();
+
+                return { success: true };
+            },
         });
-
-        await swarmStateManager.hardRefresh();
-
-        return { success: true };
     }),
 );
 
@@ -53,10 +66,16 @@ app.post(
     route({ json: swarmLeaveSchema }, async (c) => {
         const { force } = c.req.valid('json');
 
-        await docker.swarmLeave({ force });
-        await swarmStateManager.hardRefresh();
+        return runTrackedTask({
+            kind: 'swarm-leave',
+            subjectName: '',
+            run: async () => {
+                await docker.swarmLeave({ force });
+                await swarmStateManager.hardRefresh();
 
-        return { success: true };
+                return { success: true };
+            },
+        });
     }),
 );
 

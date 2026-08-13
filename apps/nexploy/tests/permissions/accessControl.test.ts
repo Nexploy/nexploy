@@ -49,8 +49,13 @@ describe('hasPermission', () => {
         expect(hasPermission('developer', 'environment', 'create')).toBe(false);
         expect(hasPermission('developer', 'setting', 'manage')).toBe(false);
         expect(hasPermission('developer', 'activity', 'read')).toBe(false);
-        expect(hasPermission('developer', 'backup', 'create')).toBe(false);
+        expect(hasPermission('developer', 'backup', 'delete')).toBe(false);
         expect(hasPermission('developer', 'gitProvider', 'create')).toBe(false);
+    });
+
+    it('lets the developer role export and import volume backups', () => {
+        expect(hasPermission('developer', 'backup', 'create')).toBe(true);
+        expect(hasPermission('developer', 'backup', 'restore')).toBe(true);
     });
 
     it('keeps the AI assistant out of the guest and system roles', () => {

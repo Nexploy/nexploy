@@ -6,6 +6,8 @@ import { formatBytes } from '@/utils/formatBytes';
 import { getAllBucketStorageAccounts } from '@/services/bucketStorage.service';
 import { getBackupSchedulesForVolumes } from '@/services/backupSchedule.service';
 import { VolumeBucketStorageButton } from '@/components/admin/backups/VolumeBucketStorageButton';
+import { VolumeExportButton } from '@/components/admin/backups/VolumeExportButton';
+import { Can } from '@/components/permission/Can';
 import { SchedulesAccordion } from '@/components/admin/backups/SchedulesAccordion';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
@@ -61,6 +63,9 @@ export default async function BackupsPage() {
                                                 </div>
                                             </div>
                                             <div className="flex shrink-0 items-center gap-2">
+                                                <Can resource="backup" action="create">
+                                                    <VolumeExportButton volumeName={volume.name} />
+                                                </Can>
                                                 <VolumeBucketStorageButton
                                                     volumeName={volume.name}
                                                     bucketStorageAccounts={bucketStorageAccounts}

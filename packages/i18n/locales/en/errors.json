@@ -219,6 +219,7 @@
     }
   },
   "api": {
+    "volumeImportFileRequired": "A backup archive file is required",
     "repositoriesFetchFailed": "Failed to fetch repositories",
     "repositoryFetchFailed": "Failed to fetch repository",
     "repositoryNotFound": "Repository not found",

@@ -109,6 +109,7 @@ const developer = ac.newRole({
     registry: ['read', 'mirror'],
     dns: ['read'],
     cloudBackup: ['read'],
+    backup: ['create', 'restore'],
     traefik: ['read', 'manage'],
     setting: ['read'],
     ai: ['read', 'chat'],

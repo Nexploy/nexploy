@@ -32,8 +32,8 @@ function zonesPath(credentials: DnsCredentialValues, zoneId?: string): string {
     return zoneId ? `${base}/${encodeURIComponent(zoneId)}` : base;
 }
 
-function dottedName(zoneId: string, subdomain: string): string {
-    const zone = zoneId.endsWith('.') ? zoneId : `${zoneId}.`;
+function dottedName(zoneNameOrId: string, subdomain: string): string {
+    const zone = zoneNameOrId.endsWith('.') ? zoneNameOrId : `${zoneNameOrId}.`;
     return subdomain === '@' ? zone : `${subdomain}.${zone}`;
 }
 
@@ -90,8 +90,15 @@ export const powerDnsAdapter: DnsProviderAdapter = {
         };
     },
 
-    async updateRecord(credentials, _recordId, input) {
-        await patchRrset(credentials, input.zoneId, toDottedFqdn(input), 'REPLACE', input.content);
+    async updateRecord(credentials, recordId, input) {
+        const name = toDottedFqdn(input);
+        const previousName = dottedName(input.zoneName, recordId);
+
+        if (previousName !== name) {
+            await patchRrset(credentials, input.zoneId, previousName, 'DELETE');
+        }
+
+        await patchRrset(credentials, input.zoneId, name, 'REPLACE', input.content);
 
         return {
             id: toRelativeAtRoot(input),

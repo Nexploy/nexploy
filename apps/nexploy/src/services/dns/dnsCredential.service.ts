@@ -34,7 +34,8 @@ export async function saveDnsCredential(
             serverIp: created.serverIp,
             createdAt: created.createdAt,
         };
-    } catch {
+    } catch (error) {
+        console.error('Failed to save DNS credential:', error);
         throw new Error(t('dns.saveCredentialFailed'));
     }
 }
@@ -43,7 +44,8 @@ export async function removeDnsCredential(id: string): Promise<void> {
     const t = await getErrorTranslator();
     try {
         await prisma.dnsCredential.delete({ where: { id } });
-    } catch {
+    } catch (error) {
+        console.error('Failed to delete DNS credential:', error);
         throw new Error(t('dns.deleteCredentialFailed'));
     }
 }
@@ -58,7 +60,8 @@ export async function getDnsAccounts(): Promise<DnsAccountInfo[]> {
             select: { id: true, displayName: true, provider: true, serverIp: true, createdAt: true },
             orderBy: { createdAt: 'asc' },
         });
-    } catch {
+    } catch (error) {
+        console.error('Failed to fetch DNS accounts:', error);
         throw new Error(t('dns.fetchAccountsFailed'));
     }
 }
@@ -81,7 +84,8 @@ export async function listDnsZones(credentialId: string): Promise<DnsZone[]> {
     try {
         const { adapter, credentials } = await resolveCredential(credentialId);
         return await adapter.listZones(credentials);
-    } catch {
+    } catch (error) {
+        console.error('Failed to list DNS zones:', error);
         throw new Error(t('dns.listZonesFailed'));
     }
 }
@@ -103,7 +107,8 @@ export async function createDnsRecord(
             content: serverIp,
             proxied: adapter.capabilities.supportsProxy,
         });
-    } catch {
+    } catch (error) {
+        console.error('Failed to create DNS record:', error);
         throw new Error(t('dns.createRecordFailed'));
     }
 }
@@ -126,7 +131,8 @@ export async function updateDnsRecord(
             content: serverIp,
             proxied: adapter.capabilities.supportsProxy,
         });
-    } catch {
+    } catch (error) {
+        console.error('Failed to update DNS record:', error);
         throw new Error(t('dns.updateRecordFailed'));
     }
 }
@@ -136,7 +142,8 @@ export async function deleteDnsRecord(credentialId: string, zoneId: string, reco
     try {
         const { adapter, credentials } = await resolveCredential(credentialId);
         await adapter.deleteRecord(credentials, zoneId, recordId);
-    } catch {
+    } catch (error) {
+        console.error('Failed to delete DNS record:', error);
         throw new Error(t('dns.deleteRecordFailed'));
     }
 }

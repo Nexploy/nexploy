@@ -149,41 +149,57 @@ app.get(
     }),
 );
 
+async function deployStack(stackName: string, yaml: string, organizationId: string | null) {
+    const environmentId = getCurrentEnvironmentId();
+    const envConfig = environmentId ? dockerClientRegistry.getEnvironmentConfig(environmentId) : null;
+    const dockerEnvResult = buildDockerHostEnv(envConfig);
+    const dockerEnv = dockerEnvResult.env;
+
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nexploy-mcp-compose-'));
+    const composeFile = path.join(tmpDir, 'docker-compose.yml');
+
+    try {
+        fs.writeFileSync(composeFile, withOwnershipLabels(yaml, organizationId), 'utf8');
+
+        const logs: string[] = [];
+        const exitCode = await runDockerCompose(
+            ['-p', stackName, '-f', composeFile, 'up', '-d', '--remove-orphans'],
+            tmpDir,
+            dockerEnv,
+            (line) => logs.push(line),
+        );
+
+        if (exitCode !== 0) {
+            throw new HttpError(`docker compose up failed (exit ${exitCode}): ${logs.slice(-5).join('; ')}`, 500);
+        }
+
+        return { success: true, stackName, logs };
+    } finally {
+        dockerEnvResult.cleanup?.();
+        try {
+            fs.rmSync(tmpDir, { recursive: true, force: true });
+        } catch {}
+    }
+}
+
 app.post(
     '/deploy',
     route({ json: deployComposeSchema }, async (c) => {
         const { stackName, yaml } = c.req.valid('json');
+        const organizationId = currentViewer().organizationId;
 
-        const environmentId = getCurrentEnvironmentId();
-        const envConfig = environmentId ? dockerClientRegistry.getEnvironmentConfig(environmentId) : null;
-        const dockerEnvResult = buildDockerHostEnv(envConfig);
-        const dockerEnv = dockerEnvResult.env;
-
-        const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nexploy-mcp-compose-'));
-        const composeFile = path.join(tmpDir, 'docker-compose.yml');
-
-        try {
-            fs.writeFileSync(composeFile, withOwnershipLabels(yaml, currentViewer().organizationId), 'utf8');
-
-            const logs: string[] = [];
-            const exitCode = await runDockerCompose(
-                ['-p', stackName, '-f', composeFile, 'up', '-d', '--remove-orphans'],
-                tmpDir,
-                dockerEnv,
-                (line) => logs.push(line),
-            );
-
-            if (exitCode !== 0) {
-                throw new HttpError(`docker compose up failed (exit ${exitCode}): ${logs.slice(-5).join('; ')}`, 500);
-            }
-
-            return { success: true, stackName, logs };
-        } finally {
-            dockerEnvResult.cleanup?.();
-            try {
-                fs.rmSync(tmpDir, { recursive: true, force: true });
-            } catch {}
+        if (!isUserAction()) {
+            return deployStack(stackName, yaml, organizationId);
         }
+
+        return runAsTask({
+            kind: 'stack-deploy',
+            subjectName: stackName,
+            stepKeys: [],
+            environmentId: getCurrentEnvironmentId(),
+            ownerOrganizationId: organizationId,
+            run: () => deployStack(stackName, yaml, organizationId),
+        });
     }),
 );
 

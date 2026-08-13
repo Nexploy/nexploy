@@ -10,8 +10,15 @@ import {
     updateServiceImageSchema,
 } from '@workspace/schemas-zod/docker/swarm/serviceAction.schema';
 import { stripProtectedLabelEntries } from '@nexploy/shared/protectedLabels';
+import { runTrackedTask, runUserTask } from '@/lib/taskRunner';
+import { getCurrentEnvironmentId } from '@/lib/dockerContext';
+import { joinSubjects } from '@/utils/taskSubjects';
 
 const app = new Hono();
+
+function serviceSubjectName(serviceId: string): string {
+    return swarmStateManager.getService(serviceId)?.name ?? serviceId;
+}
 
 app.get(
     '/',
@@ -172,9 +179,14 @@ app.post(
             };
         }
 
-        const result = await docker.createService(serviceSpec);
-
-        return { success: true, id: result.ID };
+        return runTrackedTask({
+            kind: 'swarm-service-create',
+            subjectName: name,
+            run: async () => {
+                const result = await docker.createService(serviceSpec);
+                return { success: true, id: result.ID };
+            },
+        });
     }),
 );
 
@@ -184,23 +196,29 @@ app.patch(
         const { id } = c.req.valid('param');
         const { image, forceUpdate } = c.req.valid('json');
 
-        const service = docker.getService(id);
-        const serviceInfo = await service.inspect();
+        return runTrackedTask({
+            kind: 'swarm-service-update',
+            subjectName: serviceSubjectName(id),
+            run: async () => {
+                const service = docker.getService(id);
+                const serviceInfo = await service.inspect();
 
-        await service.update({
-            version: serviceInfo.Version.Index,
-            ...serviceInfo.Spec,
-            TaskTemplate: {
-                ...serviceInfo.Spec.TaskTemplate,
-                ContainerSpec: {
-                    ...serviceInfo.Spec.TaskTemplate.ContainerSpec,
-                    Image: image,
-                },
-                ...(forceUpdate ? { ForceUpdate: (serviceInfo.Spec.TaskTemplate.ForceUpdate ?? 0) + 1 } : {}),
+                await service.update({
+                    version: serviceInfo.Version.Index,
+                    ...serviceInfo.Spec,
+                    TaskTemplate: {
+                        ...serviceInfo.Spec.TaskTemplate,
+                        ContainerSpec: {
+                            ...serviceInfo.Spec.TaskTemplate.ContainerSpec,
+                            Image: image,
+                        },
+                        ...(forceUpdate ? { ForceUpdate: (serviceInfo.Spec.TaskTemplate.ForceUpdate ?? 0) + 1 } : {}),
+                    },
+                });
+
+                return { success: true };
             },
         });
-
-        return { success: true };
     }),
 );
 
@@ -209,19 +227,27 @@ app.post(
     route({ param: serviceIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
 
-        const service = docker.getService(id);
-        const serviceInfo = await service.inspect();
+        return runUserTask({
+            kind: 'swarm-service-force-update',
+            subjectName: serviceSubjectName(id),
+            stepKeys: [],
+            environmentId: getCurrentEnvironmentId(),
+            run: async () => {
+                const service = docker.getService(id);
+                const serviceInfo = await service.inspect();
 
-        await service.update({
-            version: serviceInfo.Version.Index,
-            ...serviceInfo.Spec,
-            TaskTemplate: {
-                ...serviceInfo.Spec.TaskTemplate,
-                ForceUpdate: (serviceInfo.Spec.TaskTemplate.ForceUpdate ?? 0) + 1,
+                await service.update({
+                    version: serviceInfo.Version.Index,
+                    ...serviceInfo.Spec,
+                    TaskTemplate: {
+                        ...serviceInfo.Spec.TaskTemplate,
+                        ForceUpdate: (serviceInfo.Spec.TaskTemplate.ForceUpdate ?? 0) + 1,
+                    },
+                });
+
+                return { success: true };
             },
         });
-
-        return { success: true };
     }),
 );
 
@@ -231,21 +257,29 @@ app.post(
         const { id } = c.req.valid('param');
         const { replicas } = c.req.valid('json');
 
-        const service = docker.getService(id);
-        const serviceInfo = await service.inspect();
+        return runUserTask({
+            kind: 'swarm-service-scale',
+            subjectName: serviceSubjectName(id),
+            stepKeys: [],
+            environmentId: getCurrentEnvironmentId(),
+            run: async () => {
+                const service = docker.getService(id);
+                const serviceInfo = await service.inspect();
 
-        await service.update({
-            version: serviceInfo.Version.Index,
-            ...serviceInfo.Spec,
-            Mode: {
-                ...serviceInfo.Spec.Mode,
-                Replicated: {
-                    Replicas: replicas,
-                },
+                await service.update({
+                    version: serviceInfo.Version.Index,
+                    ...serviceInfo.Spec,
+                    Mode: {
+                        ...serviceInfo.Spec.Mode,
+                        Replicated: {
+                            Replicas: replicas,
+                        },
+                    },
+                });
+
+                return { success: true };
             },
         });
-
-        return { success: true };
     }),
 );
 
@@ -254,10 +288,16 @@ app.delete(
     route({ param: serviceIdParamSchema }, async (c) => {
         const { id } = c.req.valid('param');
 
-        const service = docker.getService(id);
-        await service.remove();
-
-        return { success: true };
+        return runUserTask({
+            kind: 'swarm-service-remove',
+            subjectName: serviceSubjectName(id),
+            stepKeys: [],
+            environmentId: getCurrentEnvironmentId(),
+            run: async () => {
+                await docker.getService(id).remove();
+                return { success: true };
+            },
+        });
     }),
 );
 
@@ -266,9 +306,16 @@ app.delete(
     route({ json: removeServicesSchema }, async (c) => {
         const { serviceIds } = c.req.valid('json');
 
-        await Promise.all(serviceIds.map((id) => docker.getService(id).remove()));
-
-        return { success: true };
+        return runUserTask({
+            kind: 'swarm-service-remove',
+            subjectName: joinSubjects(serviceIds.map(serviceSubjectName)),
+            stepKeys: [],
+            environmentId: getCurrentEnvironmentId(),
+            run: async () => {
+                await Promise.all(serviceIds.map((id) => docker.getService(id).remove()));
+                return { success: true };
+            },
+        });
     }),
 );
 

@@ -29,15 +29,36 @@ export type TaskKind =
     | 'volume-create'
     | 'volume-remove'
     | 'volume-prune'
+    | 'volume-import'
     | 'stack-start'
     | 'stack-stop'
     | 'stack-restart'
     | 'stack-pause'
     | 'stack-unpause'
     | 'stack-remove'
-    | 'build-pipeline';
+    | 'build-pipeline'
+    | 'system-prune-containers'
+    | 'system-prune-images'
+    | 'system-prune-volumes'
+    | 'system-prune-build'
+    | 'system-prune-all'
+    | 'stack-deploy'
+    | 'swarm-init'
+    | 'swarm-join'
+    | 'swarm-leave'
+    | 'swarm-node-promote'
+    | 'swarm-node-demote'
+    | 'swarm-node-drain'
+    | 'swarm-node-activate'
+    | 'swarm-node-pause'
+    | 'swarm-node-remove'
+    | 'swarm-service-create'
+    | 'swarm-service-update'
+    | 'swarm-service-scale'
+    | 'swarm-service-force-update'
+    | 'swarm-service-remove';
 
-export type TaskResource = 'container' | 'image' | 'network' | 'volume' | 'build';
+export type TaskResource = 'container' | 'image' | 'network' | 'volume' | 'build' | 'setting' | 'swarm';
 
 export type TaskStepStatus = 'pending' | 'running' | 'done' | 'skipped' | 'failed';
 

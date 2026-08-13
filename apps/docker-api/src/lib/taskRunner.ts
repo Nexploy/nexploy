@@ -84,6 +84,25 @@ export function runAsTask<T>({
     return { taskId: task.id, name: subjectName };
 }
 
+const UNTRACKED_TASK_CONTEXT: TaskContext = {
+    taskId: '',
+    signal: new AbortController().signal,
+    step: () => {},
+    completeStep: () => {},
+    setProgress: () => {},
+    warn: () => {},
+    assertNotCancelled: () => {},
+    lockCancellation: () => {},
+};
+
+export async function runUserTask<T>(input: RunAsTaskInput<T>): Promise<StartedTask | T> {
+    if (!isUserAction()) {
+        return input.run(UNTRACKED_TASK_CONTEXT);
+    }
+
+    return runAsTask(input);
+}
+
 export interface TrackedTaskContext {
     setProgress: (progress: number) => void;
     warn: (message: string) => void;

@@ -171,12 +171,12 @@
       },
       "HETZNER": {
         "name": "Hetzner DNS",
-        "requirementZone": "A Hetzner DNS API token (DNS Console > API tokens)",
-        "requirementRecord": "Full access to the zones you want to manage",
+        "requirementZone": "A Hetzner Cloud API token (Hetzner Console > Security > API tokens) with read & write access",
+        "requirementRecord": "The zone must be managed in Hetzner Console DNS (the legacy dns.hetzner.com API was shut down in May 2026)",
         "fields": {
           "apiToken": {
             "label": "API Token",
-            "placeholder": "Your Hetzner DNS API Token"
+            "placeholder": "Your Hetzner Cloud API Token"
           }
         }
       },

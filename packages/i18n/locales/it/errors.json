@@ -219,6 +219,7 @@
     }
   },
   "api": {
+    "volumeImportFileRequired": "È richiesto un file di archivio di backup",
     "repositoriesFetchFailed": "Recupero dei repository non riuscito",
     "repositoryFetchFailed": "Recupero del repository non riuscito",
     "repositoryNotFound": "Repository non trovato",

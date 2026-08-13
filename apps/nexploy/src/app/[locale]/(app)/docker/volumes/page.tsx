@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { Can } from '@/components/permission/Can';
+import { ImportVolumeButton } from '@/components/docker/volume/ImportVolumeButton';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 import { cn } from '@workspace/ui/lib/utils';
 
@@ -30,17 +31,24 @@ export default function VolumesPage() {
                             <p className="text-muted-foreground text-sm">{t('description')}</p>
                         </div>
                     </div>
-                    <Can resource="volume" action="manage">
-                        <Button asChild className={'mt-5'}>
-                            <Link
-                                href={'/docker/volumes/create'}
-                                className={cn(statusDocker !== 'connected' && 'pointer-events-none opacity-50')}
-                            >
-                                <Plus />
-                                {tDocker('createVolume')}
-                            </Link>
-                        </Button>
-                    </Can>
+                    <div className={'mt-5 flex gap-2'}>
+                        <Can resource="backup" action="restore">
+                            <Can resource="volume" action="manage">
+                                <ImportVolumeButton disabled={statusDocker !== 'connected'} />
+                            </Can>
+                        </Can>
+                        <Can resource="volume" action="manage">
+                            <Button asChild>
+                                <Link
+                                    href={'/docker/volumes/create'}
+                                    className={cn(statusDocker !== 'connected' && 'pointer-events-none opacity-50')}
+                                >
+                                    <Plus />
+                                    {tDocker('createVolume')}
+                                </Link>
+                            </Button>
+                        </Can>
+                    </div>
                 </div>
 
                 <ScrollAreaWithShadow className="h-full overflow-hidden">

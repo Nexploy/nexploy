@@ -1,6 +1,10 @@
 import { Hono } from 'hono';
 import { HttpError } from '@nexploy/shared/http-error';
-import { createVolumeBackup } from '@/services/backupService';
+import { createVolumeBackup, restoreVolumeBackup } from '@/services/backupService';
+import { route } from '@/utils/route';
+import { volumeNameParamSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
+import { volumeRestoreQuerySchema } from '@workspace/schemas-zod/docker/volume/volumeBackup.schema';
+import { runTrackedTask } from '@/lib/taskRunner';
 
 const app = new Hono();
 
@@ -23,5 +27,29 @@ app.get('/download/:volumeName', async (c) => {
         },
     });
 });
+
+app.post(
+    '/restore/:name',
+    route(
+        { param: volumeNameParamSchema, query: volumeRestoreQuerySchema },
+        async (c) => {
+            const { name: volumeName } = c.req.valid('param');
+            const { overwrite } = c.req.valid('query');
+
+            const archive = Buffer.from(await c.req.arrayBuffer());
+
+            if (archive.length === 0) {
+                throw new HttpError('Backup archive is empty.', 400);
+            }
+
+            return runTrackedTask({
+                kind: 'volume-import',
+                subjectName: volumeName,
+                run: () => restoreVolumeBackup(volumeName, archive, overwrite),
+            });
+        },
+        { timeoutMs: 900_000 },
+    ),
+);
 
 export default app;

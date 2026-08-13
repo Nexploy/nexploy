@@ -3,7 +3,7 @@ import type { DnsCredentialValues } from '@workspace/typescript-interface/dns/dn
 
 const DEFAULT_ENDPOINT = 'https://eu.api.ovh.com/1.0';
 
-let clockDeltaSeconds: number | null = null;
+const clockDeltaByEndpoint = new Map<string, number>();
 
 export interface OvhCredentials {
     applicationKey: string;
@@ -26,12 +26,16 @@ export function readOvhCredentials(credentials: DnsCredentialValues): OvhCredent
 }
 
 async function serverTimestamp(endpoint: string): Promise<number> {
-    if (clockDeltaSeconds === null) {
+    let delta = clockDeltaByEndpoint.get(endpoint);
+
+    if (delta === undefined) {
         const response = await fetch(`${endpoint}/auth/time`);
         const serverTime = Number(await response.text());
-        clockDeltaSeconds = Number.isFinite(serverTime) ? serverTime - Math.floor(Date.now() / 1000) : 0;
+        delta = Number.isFinite(serverTime) ? serverTime - Math.floor(Date.now() / 1000) : 0;
+        clockDeltaByEndpoint.set(endpoint, delta);
     }
-    return Math.floor(Date.now() / 1000) + clockDeltaSeconds;
+
+    return Math.floor(Date.now() / 1000) + delta;
 }
 
 function sign(credentials: OvhCredentials, method: string, url: string, body: string, timestamp: number): string {

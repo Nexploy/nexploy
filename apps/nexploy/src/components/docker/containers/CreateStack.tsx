@@ -70,18 +70,9 @@ export default function CreateStack() {
                 },
             },
             actionProps: {
-                onExecute: () => {
-                    toast.loading(t('deploying'), { id: 'stack-deploy' });
-                },
-                onSuccess: ({ data }) => {
-                    toast.dismiss('stack-deploy');
-                    if (data?.success) {
-                        toast.success(t('deploySuccess', { name: data.stackName }));
-                        router.push('/docker/containers');
-                    }
-                },
-                onError: () => {
-                    toast.dismiss('stack-deploy');
+                onSuccess: ({ input }) => {
+                    toast.info(t('deployStarted', { name: input.stackName }));
+                    router.push('/docker/containers');
                 },
             },
         },

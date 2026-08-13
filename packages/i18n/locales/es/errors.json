@@ -219,6 +219,7 @@
     }
   },
   "api": {
+    "volumeImportFileRequired": "Se requiere un archivo de copia de seguridad",
     "repositoriesFetchFailed": "No se han podido obtener los repositorios",
     "repositoryFetchFailed": "No se ha podido obtener el repositorio",
     "repositoryNotFound": "Repositorio no encontrado",

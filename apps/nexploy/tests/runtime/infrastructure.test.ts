@@ -30,6 +30,8 @@ import { GET as listDnsAccounts } from '@/app/api/dns/accounts/route';
 import { GET as listDnsZones } from '@/app/api/dns/zones/route';
 import { GET as listBucketStorageAccounts } from '@/app/api/bucket-storage/accounts/route';
 import { GET as listBackupSchedules } from '@/app/api/backup/schedules/route';
+import { GET as downloadVolumeBackup } from '@/app/api/backup/volumes/[volumeName]/download/route';
+import { POST as importVolumeBackup } from '@/app/api/backup/volumes/import/route';
 import { GET as listSslCertificates } from '@/app/api/ssl-certificates/route';
 import { GET as getTraefik, POST as postTraefik } from '@/app/api/traefik/route';
 import { GET as getTraefikSlug, DELETE as deleteTraefikSlug } from '@/app/api/traefik/[...slug]/route';
@@ -339,6 +341,26 @@ describePermissionMatrix('cloud backup endpoints', [
         name: 'GET /api/backup/schedules',
         kind: 'route',
         invoke: () => route(listBackupSchedules, '/api/backup/schedules?volume=data'),
+        expected: ADMIN_ONLY,
+    },
+    {
+        name: 'GET /api/backup/volumes/[volumeName]/download',
+        kind: 'route',
+        invoke: () =>
+            route(downloadVolumeBackup, '/api/backup/volumes/data/download', { params: { volumeName: 'data' } }),
+        expected: DEVELOPER_AND_ABOVE,
+    },
+    {
+        name: 'POST /api/backup/volumes/import',
+        kind: 'route',
+        invoke: () => {
+            const body = new FormData();
+            body.append('file', new File([new Uint8Array([1, 2, 3])], 'data.tar.gz', { type: 'application/gzip' }));
+            body.append('volumeName', 'data');
+            body.append('overwrite', 'false');
+
+            return route(importVolumeBackup, '/api/backup/volumes/import', { method: 'POST', body });
+        },
         expected: ADMIN_ONLY,
     },
 ]);

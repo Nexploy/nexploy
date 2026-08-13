@@ -2,9 +2,7 @@
 
 exports[`permission usage > records which declared permissions no endpoint requires 1`] = `
 [
-  "backup.create",
   "backup.delete",
-  "backup.restore",
   "deployment.rollback",
   "domain.read",
   "gitProvider.read",

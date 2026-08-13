@@ -1,31 +1,44 @@
 import ky, { type KyInstance } from 'ky';
 
 export interface HetznerZonePayload {
-    id: string;
+    id: number;
     name: string;
     status: string;
 }
 
-export interface HetznerRecordPayload {
-    id: string;
-    type: string;
-    name: string;
+export interface HetznerRecordValue {
     value: string;
-    ttl?: number;
-    zone_id: string;
+    comment?: string;
+}
+
+export interface HetznerRrsetPayload {
+    id: string;
+    name: string;
+    type: string;
+    ttl: number | null;
+    records: HetznerRecordValue[];
+}
+
+export interface HetznerPaginationMeta {
+    pagination?: {
+        page: number;
+        per_page: number;
+        next_page: number | null;
+    };
 }
 
 export interface HetznerZonesResponse {
     zones: HetznerZonePayload[];
+    meta?: HetznerPaginationMeta;
 }
 
-export interface HetznerRecordResponse {
-    record: HetznerRecordPayload;
+export interface HetznerRrsetResponse {
+    rrset: HetznerRrsetPayload;
 }
 
 export function createHetznerClient(apiToken: string): KyInstance {
     return ky.create({
-        prefixUrl: 'https://dns.hetzner.com/api/v1',
-        headers: { 'Auth-API-Token': apiToken },
+        prefixUrl: 'https://api.hetzner.cloud/v1',
+        headers: { Authorization: `Bearer ${apiToken}` },
     });
 }

@@ -494,7 +494,7 @@ exports[`permission matrix > records the full role capability table 1`] = `
   },
   {
     "admin": true,
-    "developer": false,
+    "developer": true,
     "guest": false,
     "permission": "backup.create",
     "system": false,
@@ -508,7 +508,7 @@ exports[`permission matrix > records the full role capability table 1`] = `
   },
   {
     "admin": true,
-    "developer": false,
+    "developer": true,
     "guest": false,
     "permission": "backup.restore",
     "system": false,
@@ -685,6 +685,14 @@ exports[`permission matrix > resolves the same verdict for every endpoint and gl
     "developer": "deny",
     "endpoint": "GET src/app/api/backup/schedules/route.ts",
     "guards": "backup.read",
+    "guest": "deny",
+    "system": "deny",
+  },
+  {
+    "admin": "allow",
+    "developer": "allow",
+    "endpoint": "GET src/app/api/backup/volumes/[volumeName]/download/route.ts",
+    "guards": "backup.create",
     "guest": "deny",
     "system": "deny",
   },
@@ -1023,6 +1031,14 @@ exports[`permission matrix > resolves the same verdict for every endpoint and gl
     "guards": null,
     "guest": "exempt:framework",
     "system": "exempt:framework",
+  },
+  {
+    "admin": "allow",
+    "developer": "deny",
+    "endpoint": "POST src/app/api/backup/volumes/import/route.ts",
+    "guards": "backup.restore + volume.manage",
+    "guest": "deny",
+    "system": "deny",
   },
   {
     "admin": "allow",

@@ -33,14 +33,16 @@ export async function callRoute(handler: RouteHandler, options: CallRouteOptions
 
     const cookie = currentSessionCookie();
 
+    const isFormData = body instanceof FormData;
+
     const request = new Request(url, {
         method,
         headers: {
             ...(cookie ? { cookie } : {}),
-            ...(body !== undefined ? { 'content-type': 'application/json' } : {}),
+            ...(body !== undefined && !isFormData ? { 'content-type': 'application/json' } : {}),
             ...headers,
         },
-        body: body !== undefined ? JSON.stringify(body) : undefined,
+        body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
     });
 
     return handler(request, { params: Promise.resolve(params) });

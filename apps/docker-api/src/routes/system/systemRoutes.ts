@@ -21,6 +21,8 @@ import {
     UPGRADER_CONTAINER_NAME,
 } from '@/lib/config';
 import { pullImage } from '@/utils/pullImage';
+import { runTrackedTask, type TrackedTaskContext } from '@/lib/taskRunner';
+import type { TaskKind } from '@workspace/typescript-interface/task';
 
 const app = new Hono();
 
@@ -150,7 +152,15 @@ async function pruneBuild(): Promise<number> {
     return result.SpaceReclaimed ?? 0;
 }
 
-async function runCleanup(target: CleanupTarget): Promise<number> {
+const CLEANUP_TASK_KINDS: Record<CleanupTarget, TaskKind> = {
+    containers: 'system-prune-containers',
+    images: 'system-prune-images',
+    volumes: 'system-prune-volumes',
+    build: 'system-prune-build',
+    all: 'system-prune-all',
+};
+
+async function runCleanup(target: CleanupTarget, context: TrackedTaskContext): Promise<number> {
     switch (target) {
         case 'images':
             return pruneImages();
@@ -161,8 +171,14 @@ async function runCleanup(target: CleanupTarget): Promise<number> {
         case 'build':
             return pruneBuild();
         case 'all': {
-            const results = await Promise.all([pruneContainers(), pruneImages(), pruneVolumes(), pruneBuild()]);
-            return results.reduce((acc, n) => acc + n, 0);
+            const steps = [pruneContainers, pruneImages, pruneVolumes, pruneBuild];
+
+            let reclaimed = 0;
+            for (const [index, step] of steps.entries()) {
+                reclaimed += await step();
+                context.setProgress(((index + 1) / steps.length) * 100);
+            }
+            return reclaimed;
         }
     }
 }
@@ -171,8 +187,18 @@ app.post(
     '/prune/:target',
     route(async (c) => {
         const target = c.req.param('target') as CleanupTarget;
-        const reclaimedSpace = await runCleanup(target);
-        return { reclaimedSpace };
+        const kind = CLEANUP_TASK_KINDS[target];
+
+        if (!kind) throw new HttpError(`Unknown cleanup target '${target}'`, 400);
+
+        return runTrackedTask({
+            kind,
+            subjectName: '',
+            run: async (context) => {
+                const reclaimedSpace = await runCleanup(target, context);
+                return { reclaimedSpace };
+            },
+        });
     }),
 );
 
