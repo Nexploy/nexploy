@@ -11,6 +11,8 @@ export const NEXPLOY_IMAGE_REPOSITORY = process.env.NEXPLOY_IMAGE_REPOSITORY ?? 
 export const DOCKER_API_IMAGE_REPOSITORY = process.env.DOCKER_API_IMAGE_REPOSITORY ?? 'nexploy/docker-api';
 export const NEXPLOY_GITHUB_REPO = process.env.NEXPLOY_GITHUB_REPO ?? 'Nexploy/nexploy';
 
+export const INFRASTRUCTURE_BYPASS = process.env.NEXPLOY_DEBUG === 'true';
+
 export const NEXPLOY_APP_HEALTHCHECK = {
     Test: ['CMD-SHELL', 'wget -qO- http://0.0.0.0:3000 || exit 1'],
     Interval: 5_000_000_000,

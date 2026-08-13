@@ -3,7 +3,7 @@ import { streamSSE } from 'hono/streaming';
 import { logger } from '@/utils/logger';
 import { ContainersEvent } from '@workspace/typescript-interface/docker/docker.containers';
 import { getContainersStateManager } from '@/managers/list/containersStateManager';
-import { filterNexployContainers, isNexployInfrastructureContainer } from '@nexploy/shared/nexployFilter';
+import { filterInfrastructureContainers, hidesInfrastructureContainer } from '@/lib/infrastructureGuard';
 import {
     currentViewer,
     filterVisibleContainers,
@@ -43,7 +43,9 @@ app.get('/stream', (c) => {
                 const filteredEvent = {
                     ...containerEvent,
                     containers: await visibleContainers(
-                        containerEvent.containers ? filterNexployContainers(containerEvent.containers) : undefined,
+                        containerEvent.containers
+                            ? filterInfrastructureContainers(containerEvent.containers)
+                            : undefined,
                     ),
                 };
                 await stream.writeSSE({
@@ -62,7 +64,9 @@ app.get('/stream', (c) => {
                 const filteredEvent = {
                     ...containerEvent,
                     containers: await visibleContainers(
-                        containerEvent.containers ? filterNexployContainers(containerEvent.containers) : undefined,
+                        containerEvent.containers
+                            ? filterInfrastructureContainers(containerEvent.containers)
+                            : undefined,
                     ),
                 };
                 await stream.writeSSE({
@@ -78,7 +82,7 @@ app.get('/stream', (c) => {
 
         const handleContainerAdded = async (containerEvent: ContainersEvent) => {
             try {
-                if (containerEvent.container && isNexployInfrastructureContainer(containerEvent.container)) {
+                if (containerEvent.container && hidesInfrastructureContainer(containerEvent.container)) {
                     return;
                 }
                 if (containerEvent.container && (await isHidden(containerEvent.container))) {
@@ -100,7 +104,7 @@ app.get('/stream', (c) => {
 
         const handleContainerUpdated = async (containerEvent: ContainersEvent) => {
             try {
-                if (containerEvent.container && isNexployInfrastructureContainer(containerEvent.container)) {
+                if (containerEvent.container && hidesInfrastructureContainer(containerEvent.container)) {
                     return;
                 }
                 if (containerEvent.container && (await isHidden(containerEvent.container))) {
@@ -122,7 +126,7 @@ app.get('/stream', (c) => {
 
         const handleContainerRemoved = async (containerEvent: ContainersEvent) => {
             try {
-                if (containerEvent.container && isNexployInfrastructureContainer(containerEvent.container)) {
+                if (containerEvent.container && hidesInfrastructureContainer(containerEvent.container)) {
                     return;
                 }
                 if (containerEvent.container && (await isHidden(containerEvent.container))) {

@@ -13,8 +13,7 @@ import { cacheRestoreSchema, cacheSaveSchema } from '@workspace/schemas-zod/dock
 import { stripProtectedLabelEntries } from '@nexploy/shared/protectedLabels';
 import { restoreCache, saveCache } from '@/services/cacheService';
 import { deleteVolumes } from '@/services/volumeService';
-import { isNexployInfrastructureVolumeName } from '@nexploy/shared/nexployFilter';
-import { assertVolumeNameAvailable } from '@/lib/infrastructureGuard';
+import { assertVolumeNameAvailable, hidesInfrastructureVolume } from '@/lib/infrastructureGuard';
 import { runTrackedTask } from '@/lib/taskRunner';
 import { joinSubjects } from '@/utils/taskSubjects';
 
@@ -38,7 +37,7 @@ app.get(
     '/:name/inspect',
     route({ param: volumeNameParamSchema }, async (c) => {
         const { name: volumeName } = c.req.valid('param');
-        if (isNexployInfrastructureVolumeName(volumeName)) {
+        if (hidesInfrastructureVolume(volumeName)) {
             throw new HttpError(`Volume ${volumeName} not found.`, 404);
         }
         return await docker.getVolume(volumeName).inspect();
@@ -126,7 +125,7 @@ app.post(
     '/cache/restore',
     route({ json: cacheRestoreSchema }, async (c) => {
         const { volumeName, cachePath, workDir, cacheKey } = c.req.valid('json');
-        if (isNexployInfrastructureVolumeName(volumeName)) {
+        if (hidesInfrastructureVolume(volumeName)) {
             throw new HttpError(`Volume ${volumeName} not found.`, 404);
         }
         return await restoreCache(volumeName, cachePath, workDir, cacheKey);
@@ -137,7 +136,7 @@ app.post(
     '/cache/save',
     route({ json: cacheSaveSchema }, async (c) => {
         const { volumeName, sourcePath, workDir, cacheKey } = c.req.valid('json');
-        if (isNexployInfrastructureVolumeName(volumeName)) {
+        if (hidesInfrastructureVolume(volumeName)) {
             throw new HttpError(`Volume ${volumeName} not found.`, 404);
         }
         return await saveCache(volumeName, sourcePath, workDir, cacheKey);

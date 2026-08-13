@@ -12,7 +12,7 @@ import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import dayjs from 'dayjs';
 import { NEXPLOY_LABELS } from '@nexploy/shared/nexployLabels';
-import { isNexployInfrastructureImage } from '@nexploy/shared/nexployFilter';
+import { hidesInfrastructureImage } from '@/lib/infrastructureGuard';
 
 const IMAGE_STATE_CHANGE_EVENTS = new Set<ImageAction>([
     'pull',
@@ -128,7 +128,7 @@ export class ImagesStateManager extends BaseStateManager {
 
         const imageMap = new Map<string, Image>();
         for (const state of parsed) {
-            if (isNexployInfrastructureImage(state)) continue;
+            if (hidesInfrastructureImage(state)) continue;
             imageMap.set(state.id, {
                 ...state,
                 containersUsed: imageUsageMap.get(state.id) ?? 0,
@@ -277,7 +277,7 @@ export class ImagesStateManager extends BaseStateManager {
         const info = await image.inspect();
         const newState = await this.parseImageInfo(info);
 
-        if (isNexployInfrastructureImage(newState)) return;
+        if (hidesInfrastructureImage(newState)) return;
 
         const oldState = this.images.get(newState.id);
         this.images.set(newState.id, newState);

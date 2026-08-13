@@ -1169,5 +1169,11 @@
     "untagLastTagWarning": "This image only has one tag: removing it deletes the image.",
     "untagSuccess": "{count, plural, one {# tag removed} other {# tags removed}}",
     "untagTitle": "Remove the image tags"
+  },
+  "infrastructure": {
+    "badge": "Infrastructure",
+    "badgeTooltip": "Internal Nexploy resource. Stopping, deleting or changing it takes this instance down.",
+    "bypassTitle": "Debug mode on — infrastructure exposed",
+    "bypassDescription": "NEXPLOY_DEBUG=true: Nexploy’s own containers, images, networks and volumes are visible and every action on them is allowed. Stopping or deleting one of them takes this instance down, and deleting the database volume is unrecoverable. Turn it off as soon as you are done debugging."
   }
 }

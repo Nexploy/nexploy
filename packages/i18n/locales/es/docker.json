@@ -1169,5 +1169,11 @@
     "untagLastTagWarning": "Esta imagen solo tiene una etiqueta: eliminarla borra la imagen.",
     "untagSuccess": "{count, plural, one {# etiqueta eliminada} other {# etiquetas eliminadas}}",
     "untagTitle": "Eliminar las etiquetas de la imagen"
+  },
+  "infrastructure": {
+    "badge": "Infraestructura",
+    "badgeTooltip": "Recurso interno de Nexploy. Detenerlo, eliminarlo o modificarlo deja esta instancia fuera de servicio.",
+    "bypassTitle": "Modo debug activo — infraestructura expuesta",
+    "bypassDescription": "NEXPLOY_DEBUG=true: los contenedores, imágenes, redes y volúmenes de Nexploy son visibles y todas las acciones sobre ellos están permitidas. Detener o eliminar uno de ellos deja esta instancia fuera de servicio, y eliminar el volumen de la base de datos es irrecuperable. Desactívalo en cuanto termines de depurar."
   }
 }

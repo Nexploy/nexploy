@@ -3,7 +3,7 @@ import { streamSSE } from 'hono/streaming';
 import { getNetworksStateManager } from '@/managers/list/networksStateManager';
 import { logger } from '@/utils/logger';
 import { NetworkEvent } from '@workspace/typescript-interface/docker/docker.network';
-import { filterNexployNetworks, isNexployInfrastructureNetwork } from '@nexploy/shared/nexployFilter';
+import { filterInfrastructureNetworks, hidesInfrastructureNetwork } from '@/lib/infrastructureGuard';
 import { createInitialStateGate } from '@/utils/initialStateGate';
 
 const app = new Hono();
@@ -18,7 +18,7 @@ app.get('/stream', (c) => {
             try {
                 const filteredEvent = {
                     ...networkEvent,
-                    networks: networkEvent.networks ? filterNexployNetworks(networkEvent.networks) : undefined,
+                    networks: networkEvent.networks ? filterInfrastructureNetworks(networkEvent.networks) : undefined,
                 };
                 await stream.writeSSE({
                     data: JSON.stringify(filteredEvent),
@@ -32,7 +32,7 @@ app.get('/stream', (c) => {
         };
 
         const handleNetworkAdded = async (networkEvent: NetworkEvent) => {
-            if (networkEvent.network && isNexployInfrastructureNetwork(networkEvent.network)) {
+            if (networkEvent.network && hidesInfrastructureNetwork(networkEvent.network)) {
                 return;
             }
             await stream.writeSSE({
@@ -43,7 +43,7 @@ app.get('/stream', (c) => {
         };
 
         const handleNetworkUpdated = async (networkEvent: NetworkEvent) => {
-            if (networkEvent.network && isNexployInfrastructureNetwork(networkEvent.network)) {
+            if (networkEvent.network && hidesInfrastructureNetwork(networkEvent.network)) {
                 return;
             }
             await stream.writeSSE({
@@ -54,7 +54,7 @@ app.get('/stream', (c) => {
         };
 
         const handleNetworkRemoved = async (networkEvent: NetworkEvent) => {
-            if (networkEvent.network && isNexployInfrastructureNetwork(networkEvent.network)) {
+            if (networkEvent.network && hidesInfrastructureNetwork(networkEvent.network)) {
                 return;
             }
             await stream.writeSSE({
@@ -67,7 +67,7 @@ app.get('/stream', (c) => {
         const handleStateChange = async (networkEvent: NetworkEvent) => {
             const filteredEvent = {
                 ...networkEvent,
-                networks: networkEvent.networks ? filterNexployNetworks(networkEvent.networks) : undefined,
+                networks: networkEvent.networks ? filterInfrastructureNetworks(networkEvent.networks) : undefined,
             };
             await stream.writeSSE({
                 data: JSON.stringify(filteredEvent),
@@ -118,7 +118,7 @@ app.get('/stream', (c) => {
         manager.on('network-removed', onNetworkRemoved);
 
         const allNetworks = manager.getAllNetworks();
-        const initialNetworks = filterNexployNetworks(allNetworks);
+        const initialNetworks = filterInfrastructureNetworks(allNetworks);
         await handleInitialState({
             type: 'initial',
             networks: initialNetworks,

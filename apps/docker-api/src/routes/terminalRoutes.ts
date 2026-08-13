@@ -6,7 +6,7 @@ import { Duplex } from 'stream';
 import type Docker from 'dockerode';
 import { Exec, ExecCreateOptions } from 'dockerode';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
-import { isNexployInfrastructureContainer } from '@nexploy/shared/nexployFilter';
+import { hidesInfrastructureContainer } from '@/lib/infrastructureGuard';
 
 const EXEC_USER_PATTERN = /^[a-zA-Z0-9_.-]+(:[a-zA-Z0-9_.-]+)?$/;
 
@@ -62,7 +62,7 @@ export const createTerminalRoutes = (
                         const container = dockerClient.getContainer(containerId);
                         const containerInfo = await container.inspect();
 
-                        if (isNexployInfrastructureContainer({ name: containerInfo.Name })) {
+                        if (hidesInfrastructureContainer({ name: containerInfo.Name })) {
                             ws.send(JSON.stringify({ type: 'error', error: `Container '${containerId}' not found` }));
                             ws.close();
                             return;
@@ -210,7 +210,7 @@ export const createTerminalRoutes = (
                         const container = dockerClient.getContainer(containerId);
                         const containerInfo = await container.inspect();
 
-                        if (isNexployInfrastructureContainer({ name: containerInfo.Name })) {
+                        if (hidesInfrastructureContainer({ name: containerInfo.Name })) {
                             ws.send(JSON.stringify({ type: 'error', error: `Container '${containerId}' not found` }));
                             ws.close();
                             return;

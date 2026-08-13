@@ -9,7 +9,6 @@ import {
     networkPruneSchema,
 } from '@workspace/schemas-zod/docker/network/networkAction.schema';
 import { stripProtectedLabelEntries } from '@nexploy/shared/protectedLabels';
-import { filterNexployNetworks } from '@nexploy/shared/nexployFilter';
 import { deleteNetworks, pruneNetworks } from '@/services/networkService';
 import { runTrackedTask } from '@/lib/taskRunner';
 import { describeNetworks } from '@/utils/taskSubjects';
@@ -17,6 +16,7 @@ import {
     assertNetworkAccessible,
     assertNetworkNameAvailable,
     assertNetworksAccessible,
+    filterInfrastructureNetworks,
 } from '@/lib/infrastructureGuard';
 
 const app = new Hono();
@@ -31,7 +31,7 @@ app.post(
 app.get(
     '/',
     route(async () => {
-        return filterNexployNetworks(networksStateManager.getAllNetworks());
+        return filterInfrastructureNetworks(networksStateManager.getAllNetworks());
     }),
 );
 

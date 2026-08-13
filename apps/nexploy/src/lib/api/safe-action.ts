@@ -175,6 +175,10 @@ export const requireUnprotectedEnvironment = (
 export const preventInfrastructureNetworkAction = createMiddleware().define(async ({ clientInput, next }) => {
     const input = clientInput as { action?: string; networkIds?: string[] };
 
+    if (process.env.NEXPLOY_DEBUG === 'true') {
+        return next();
+    }
+
     if (input.networkIds?.length) {
         for (const networkId of input.networkIds) {
             if (isNexployInfrastructureNetworkName(networkId)) {

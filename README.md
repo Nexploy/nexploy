@@ -412,10 +412,22 @@ maintenance page shown on the wrong entrypoint).
 | `NEXPLOY_IMAGE_REPOSITORY` | `nexploy/nexploy` | Image repository pulled when upgrading the app |
 | `DOCKER_API_IMAGE_REPOSITORY` | `nexploy/docker-api` | Image repository pulled when upgrading docker-api |
 | `NEXPLOY_GITHUB_REPO` | `Nexploy/nexploy` | Repository checked for the latest available release/version |
+| `NEXPLOY_DEBUG` | *(unset)* | `true` exposes Nexploy's own containers, images, networks and volumes and lifts every guard on them — see the warning below. Set it on both containers |
 | `SELF_UPGRADE_TARGET_IMAGE` | *(unset)* | docker-api image the upgrader recreates `nexploy_docker_api` with. Set only on the `nexploy_upgrader` container — never set manually |
 | `SELF_UPGRADE_CONTAINER_NAME` | *(unset)* | docker-api container the upgrader recreates. Set only on the `nexploy_upgrader` container — never set manually |
 | `SELF_UPGRADE_APP_TARGET_IMAGE` | *(unset)* | App image the upgrader recreates `nexploy_app` with. Set only on the `nexploy_upgrader` container — never set manually |
 | `SELF_UPGRADE_APP_CONTAINER_NAME` | *(unset)* | App container the upgrader recreates. Set only on the `nexploy_upgrader` container — never set manually |
+
+> **`NEXPLOY_DEBUG=true` is dangerous.** Nexploy hides its own containers (`nexploy_app`, `nexploy_docker_api`,
+> `nexploy_traefik`, `nexploy_postgres`, `nexploy_inngest`, `nexploy_upgrader`), its images (`nexploy/nexploy`,
+> `nexploy/docker-api`), its networks (`nexploy_network`, `nexploy_traefik_network`) and its volumes
+> (`nexploy_db`, `nexploy_traefik_acme`, `nexploy_deployer_workdir`) from the dashboard, and blocks every route
+> that could reach them by id. `NEXPLOY_DEBUG=true` lifts all of it: they become listable, inspectable and
+> actionable like any other resource. Stopping `nexploy_postgres`, deleting `nexploy_db` or removing
+> `nexploy_traefik_network` takes the instance down, and deleting the database volume is unrecoverable.
+> It is meant for debugging a broken instance, on a machine you can afford to break. Set it on **both**
+> `nexploy_app` and `nexploy_docker_api` — docker-api enforces the guards, the app enforces one of its own.
+> `install.sh` forwards it only when you export it, and an `upgrade` drops it unless you export it again.
 
 ### `nexploy` app
 

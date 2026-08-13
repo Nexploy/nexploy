@@ -1,7 +1,7 @@
 import { route } from '@/utils/route';
 import { Hono } from 'hono';
 import { containersStateManager } from '@/managers/list/containersStateManager';
-import { filterNexployContainers } from '@nexploy/shared/nexployFilter';
+import { filterInfrastructureContainers } from '@/lib/infrastructureGuard';
 import { filterVisibleContainers } from '@/lib/containerOwnership';
 import { docker } from '@/utils/dockerClient';
 import { containerPruneSchema } from '@workspace/schemas-zod/docker/container/containerAction.schema';
@@ -15,7 +15,7 @@ app.get(
     route({ query: containersQuerySchema }, async (c) => {
         const { name } = c.req.valid('query');
         const allContainers = containersStateManager.getAllStates();
-        const containers = await filterVisibleContainers(filterNexployContainers(allContainers));
+        const containers = await filterVisibleContainers(filterInfrastructureContainers(allContainers));
 
         if (!name) return containers;
 

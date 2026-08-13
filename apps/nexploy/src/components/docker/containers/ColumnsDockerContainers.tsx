@@ -14,6 +14,7 @@ import { StackActionsCell } from './StackActionsCell';
 import { ContainersDropdownActions } from './ContainersDropdownActions';
 import { containerDisplayState } from '@/utils/containerDisplayState';
 import { Can } from '@/components/permission/Can';
+import { isNexployInfrastructureContainer } from '@nexploy/shared/nexployFilter';
 import type { TranslationFunction } from '@workspace/typescript-interface/commun';
 
 export function getColumnsDockerContainers(
@@ -103,13 +104,15 @@ export function getColumnsDockerContainers(
                     );
                 }
                 return (
-                    <Link
-                        href={`/docker/containers/${row.original.id}`}
-                        className="flex hover:underline"
+                    <div
+                        className="flex items-center gap-2"
                         style={{ paddingLeft: depth > 0 ? `${depth * 24 + 8}px` : undefined }}
                     >
-                        <span>{row.original.name}</span>
-                    </Link>
+                        <Link href={`/docker/containers/${row.original.id}`} className="hover:underline">
+                            <span>{row.original.name}</span>
+                        </Link>
+                        {isNexployInfrastructureContainer({ name: row.original.name }) && <InfrastructureBadge />}
+                    </div>
                 );
             },
         },

@@ -47,6 +47,7 @@ services:
       TRAEFIK_STATIC_CONFIG_PATH: /etc/nexploy/traefik/traefik.yml
       TRAEFIK_USE_TLS: ${TRAEFIK_USE_TLS:-true}
       ACME_EMAIL: ${ACME_EMAIL:-}
+      NEXPLOY_DEBUG: ${NEXPLOY_DEBUG:-}
     volumes:
       - ${NEXPLOY_DIR:-/etc/nexploy}/traefik:/etc/nexploy/traefik
       - deployer_workdir:/tmp/deployer
@@ -107,6 +108,7 @@ services:
       NEXPLOY_API_URL: http://nexploy_app:3000
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       LOG_LEVEL: ${LOG_LEVEL:-info}
+      NEXPLOY_DEBUG: ${NEXPLOY_DEBUG:-}
       TRAEFIK_CONTAINER_NAME: nexploy_traefik
       TRAEFIK_NETWORK_NAME: nexploy_traefik_network
       NEXPLOY_APP_CONTAINER_NAME: nexploy_app

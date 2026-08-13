@@ -1169,5 +1169,11 @@
     "untagLastTagWarning": "Questa immagine ha un solo tag: rimuoverlo elimina l’immagine.",
     "untagSuccess": "{count, plural, one {# tag rimosso} other {# tag rimossi}}",
     "untagTitle": "Rimuovi i tag dell’immagine"
+  },
+  "infrastructure": {
+    "badge": "Infrastruttura",
+    "badgeTooltip": "Risorsa interna di Nexploy. Arrestarla, eliminarla o modificarla mette questa istanza fuori servizio.",
+    "bypassTitle": "Modalità debug attiva — infrastruttura esposta",
+    "bypassDescription": "NEXPLOY_DEBUG=true: i container, le immagini, le reti e i volumi di Nexploy sono visibili e ogni azione su di essi è consentita. Arrestarne o eliminarne uno mette questa istanza fuori servizio, e l’eliminazione del volume del database è irrecuperabile. Disattivala non appena hai finito di eseguire il debug."
   }
 }

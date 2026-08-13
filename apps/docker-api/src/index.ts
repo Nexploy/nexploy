@@ -52,7 +52,7 @@ import { NetworksStateManager } from '@/managers/list/networksStateManager';
 import { EventsStateManager } from '@/managers/list/eventsStateManager';
 import { SwarmStateManager } from '@/managers/list/swarmStateManager';
 import { TraefikLogsManager } from '@/managers/traefikLogsManager';
-import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
+import { INFRASTRUCTURE_BYPASS, TRAEFIK_NETWORK_NAME } from '@/lib/config';
 import { runSelfUpgradeAndExit } from '@/lib/selfUpgrade';
 
 const app = new Hono();
@@ -146,6 +146,14 @@ const startServer = async () => {
             traefik: TraefikLogsManager,
             dockerStatus: DockerStatusManager,
         });
+
+        if (INFRASTRUCTURE_BYPASS) {
+            logger.warn(
+                'NEXPLOY_DEBUG=true — Nexploy infrastructure containers, images, networks and volumes are exposed ' +
+                    'and every action on them is allowed. Stopping or deleting one of them takes this instance down. ' +
+                    'Do not leave this enabled on a production instance.',
+            );
+        }
 
         const environments = await loadEnvironmentsFromAPI();
 

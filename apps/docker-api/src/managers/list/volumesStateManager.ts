@@ -10,7 +10,7 @@ import {
 } from '@workspace/typescript-interface/docker/docker.volume';
 import { BaseStateManager } from '@/lib/base/BaseStateManager';
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
-import { isNexployInfrastructureVolumeName } from '@nexploy/shared/nexployFilter';
+import { hidesInfrastructureVolume } from '@/lib/infrastructureGuard';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 
@@ -45,7 +45,7 @@ export class VolumesStateManager extends BaseStateManager {
 
             for (const volume of volumes) {
                 const state = this.parseVolumeInfo(volume);
-                if (isNexployInfrastructureVolumeName(state.name)) continue;
+                if (hidesInfrastructureVolume(state.name)) continue;
                 volumeMap.set(state.name, state);
             }
 
@@ -142,7 +142,7 @@ export class VolumesStateManager extends BaseStateManager {
     }
 
     private async refreshVolumeState(volumeName: string): Promise<void> {
-        if (isNexployInfrastructureVolumeName(volumeName)) return;
+        if (hidesInfrastructureVolume(volumeName)) return;
 
         const [info, dfResult] = await Promise.all([this.docker.getVolume(volumeName).inspect(), this.docker.df()]);
         const dfVolume = dfResult.Volumes?.find((v: VolumeInspectInfo) => v.Name === volumeName);
@@ -238,7 +238,7 @@ export class VolumesStateManager extends BaseStateManager {
 
         for (const volume of volumes) {
             const state = this.parseVolumeInfo(volume);
-            if (isNexployInfrastructureVolumeName(state.name)) continue;
+            if (hidesInfrastructureVolume(state.name)) continue;
             newVolumeMap.set(state.name, state);
         }
 

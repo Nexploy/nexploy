@@ -1,12 +1,13 @@
 import { docker } from '@/utils/dockerClient';
 import { networksStateManager } from '@/managers/list/networksStateManager';
-import { filterNexployNetworks, isBuiltinNetwork } from '@nexploy/shared/nexployFilter';
+import { isBuiltinNetwork } from '@nexploy/shared/nexployFilter';
+import { filterInfrastructureNetworks } from '@/lib/infrastructureGuard';
 
 export async function pruneNetworks(): Promise<{
     deleted: string[];
     skipped: { id: string; name: string; reason?: string }[];
 }> {
-    const candidates = filterNexployNetworks(networksStateManager.getAllNetworks()).filter(
+    const candidates = filterInfrastructureNetworks(networksStateManager.getAllNetworks()).filter(
         (network) =>
             !isBuiltinNetwork(network.name) &&
             network.containers.length === 0 &&
