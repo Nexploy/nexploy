@@ -75,6 +75,18 @@ export async function resolveOrganizationIdForContainers(containerIds: string[])
     return Array.from(new Set(orgIds.map((id) => id ?? HOST_OWNED)));
 }
 
+export async function resolveOrganizationIdForStack(stackName: string): Promise<string[] | null> {
+    try {
+        const { containers } = await kyDocker
+            .get(`composes/${encodeURIComponent(stackName)}/status`)
+            .json<{ containers: { id: string }[] }>();
+
+        return resolveOrganizationIdForContainers(containers.map((container) => container.id));
+    } catch {
+        return null;
+    }
+}
+
 export async function getCallerOrgRole(userId: string, organizationId: string): Promise<string | null> {
     const member = await prisma.member.findFirst({
         where: { organizationId, userId },
@@ -109,6 +121,9 @@ export const byStageEntityId: OrgResolver = (input) => resolveOrganizationIdForS
 
 export const byBoundRepositoryId: OrgResolver = (_input, bindArgsClientInputs) =>
     resolveOrganizationIdForRepository(bindArgsClientInputs?.[0] as string);
+
+export const byStackName: OrgResolver = (input) =>
+    resolveOrganizationIdForStack((input as { stackName: string }).stackName);
 
 export const byContainerIds: OrgResolver = (input) => {
     const raw = input as { containerIds?: string[]; containerId?: string };

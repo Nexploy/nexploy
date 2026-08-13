@@ -7,6 +7,8 @@ import {
 } from '@workspace/schemas-zod/docker/composes/composesAction.schema';
 import { docker } from '@/utils/dockerClient';
 import { controlComposeStack } from '@/services/composeService';
+import { startStackMigration } from '@/services/stackMigrationService';
+import { stackMigrateApiSchema } from '@workspace/schemas-zod/docker/composes/stackMigrate.schema';
 import { runAsTask, runTrackedTask } from '@/lib/taskRunner';
 import { isUserAction } from '@/lib/actorContext';
 import { resolveStackOwner } from '@/lib/taskOwnership';
@@ -200,6 +202,13 @@ app.post(
             ownerOrganizationId: organizationId,
             run: () => deployStack(stackName, yaml, organizationId),
         });
+    }),
+);
+
+app.post(
+    '/migrate',
+    route({ json: stackMigrateApiSchema }, async (c) => {
+        return startStackMigration(c.req.valid('json'));
     }),
 );
 

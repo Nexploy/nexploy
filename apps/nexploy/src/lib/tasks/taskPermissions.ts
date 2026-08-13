@@ -37,6 +37,7 @@ const TASK_KIND_RESOURCE: Record<TaskKind, TaskResource> = {
     'stack-pause': 'container',
     'stack-unpause': 'container',
     'stack-remove': 'container',
+    'stack-migrate': 'container',
     'build-pipeline': 'build',
     'system-prune-containers': 'setting',
     'system-prune-images': 'setting',

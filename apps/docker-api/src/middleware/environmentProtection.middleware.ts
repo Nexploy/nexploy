@@ -54,6 +54,7 @@ const rules: ProtectionRule[] = [
     },
 
     { methods: ['POST'], pattern: /^\/api\/composes\/deploy$/, action: 'deployment.deploy' },
+    { methods: ['POST'], pattern: /^\/api\/composes\/migrate$/, action: 'container.migrateOut' },
     {
         methods: ['POST'],
         pattern: /^\/api\/composes\/[^/]+\/(start|stop|pause|unpause|restart)$/,

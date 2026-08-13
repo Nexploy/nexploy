@@ -996,6 +996,41 @@
     "startedTitle": "Move of \"{name}\" started",
     "startedDescription": "Follow its progress from the running actions menu in the header."
   },
+  "moveStack": {
+    "dialogTitle": "Move the stack to another environment",
+    "dialogDescription": "Recreate every container of the stack on another Docker environment.",
+    "moveWarning": "\"{name}\" and its {count} containers will be recreated on the target environment with the same images, configuration, ports and networks.",
+    "targetLabel": "Target environment",
+    "targetPlaceholder": "Select an environment",
+    "targetDescription": "The Docker environment the stack will be recreated on.",
+    "registryLabel": "Registry",
+    "registryNone": "Public (no authentication)",
+    "registryDescription": "Used to pull the images on the target environment. If an image is unavailable there, it is streamed directly from the source environment.",
+    "volumeDataLabel": "Migrate volume data",
+    "volumeDataDescription": "Copy the content of the named volumes to the target environment. Can take a while on large volumes.",
+    "startLabel": "Start after the move",
+    "startDescription": "Start the containers as soon as they have been created on the target environment.",
+    "sourceActionLabel": "Source stack",
+    "sourceAction": {
+      "stop": {
+        "label": "Stop and keep",
+        "description": "The stack stays on the source environment, stopped."
+      },
+      "remove": {
+        "label": "Remove",
+        "description": "The stack is deleted from the source environment once the move succeeds."
+      },
+      "keep": {
+        "label": "Leave running",
+        "description": "The stack keeps running on the source environment."
+      }
+    },
+    "noTargetEnvironment": "No other environment is configured. Add a second Docker environment to move stacks.",
+    "cancel": "Cancel",
+    "move": "Move",
+    "startedTitle": "Move of \"{name}\" started",
+    "startedDescription": "Follow its progress from the running actions menu in the header."
+  },
   "tasks": {
     "title": "Running actions",
     "runningCount": "{count} action(s) in progress",
@@ -1046,6 +1081,7 @@
       "stack-pause": "Pausing the stack {name}",
       "stack-unpause": "Resuming the stack {name}",
       "stack-remove": "Removing the stack {name}",
+      "stack-migrate": "Moving the stack {name}",
       "build-pipeline": "Build of {name}",
       "image-push": "Pushing {name}",
       "image-untag": "Removing the tags {name}",
@@ -1082,6 +1118,7 @@
     },
     "steps": {
       "image": "Transferring the image",
+      "images": "Transferring the images",
       "networks": "Preparing the networks",
       "create": "Creating the container",
       "volumes": "Copying the volume data",

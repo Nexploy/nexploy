@@ -29,6 +29,7 @@ exports[`docker-api contract > records the calls nexploy makes, so a change to t
   "POST /api/backups/restore/:param?overwrite=:param",
   "POST /api/composes/:param/:param",
   "POST /api/composes/deploy",
+  "POST /api/composes/migrate",
   "POST /api/composes/validate-syntax",
   "POST /api/container/:param",
   "POST /api/container/:param/exec",

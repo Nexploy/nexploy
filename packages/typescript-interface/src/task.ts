@@ -36,6 +36,7 @@ export type TaskKind =
     | 'stack-pause'
     | 'stack-unpause'
     | 'stack-remove'
+    | 'stack-migrate'
     | 'build-pipeline'
     | 'system-prune-containers'
     | 'system-prune-images'

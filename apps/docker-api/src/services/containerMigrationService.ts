@@ -14,15 +14,15 @@ import { StartedTask, TaskContext, runAsTask } from '@/lib/taskRunner';
 import { resolveContainersOwner } from '@/lib/taskOwnership';
 import { logger } from '@/utils/logger';
 
-type RegistryAuth = { username: string; password: string; serveraddress?: string };
+export type RegistryAuth = { username: string; password: string; serveraddress?: string };
 
-type VolumeMount = { name: string; destination: string; readOnly: boolean };
+export type VolumeMount = { name: string; destination: string; readOnly: boolean };
 
 const PREDEFINED_NETWORKS = new Set(['bridge', 'host', 'none']);
 
 const MIGRATION_STEPS = ['image', 'networks', 'create', 'volumes', 'start', 'source'] as const;
 
-async function resolveTargetClient(targetEnvironmentId: string): Promise<Docker> {
+export async function resolveTargetClient(targetEnvironmentId: string): Promise<Docker> {
     const registered = dockerClientRegistry.getClientSafe(targetEnvironmentId);
     if (registered) return registered;
 
@@ -67,7 +67,7 @@ async function streamImageToTarget(source: Docker, target: Docker, image: string
     });
 }
 
-async function ensureImageOnTarget(
+export async function ensureImageOnTarget(
     source: Docker,
     target: Docker,
     image: string,
@@ -96,7 +96,7 @@ async function ensureImageOnTarget(
     }
 }
 
-async function ensureNetworksOnTarget(
+export async function ensureNetworksOnTarget(
     source: Docker,
     target: Docker,
     info: ContainerInspectInfo,
@@ -141,7 +141,7 @@ async function ensureNetworksOnTarget(
     return endpoints;
 }
 
-function collectVolumeMounts(info: ContainerInspectInfo, warn: (message: string) => void): VolumeMount[] {
+export function collectVolumeMounts(info: ContainerInspectInfo, warn: (message: string) => void): VolumeMount[] {
     const mounts: VolumeMount[] = [];
 
     for (const mount of info.Mounts ?? []) {
@@ -160,7 +160,7 @@ function collectVolumeMounts(info: ContainerInspectInfo, warn: (message: string)
     return mounts;
 }
 
-function buildCreateOptions(
+export function buildCreateOptions(
     info: ContainerInspectInfo,
     endpoints: Record<string, EndpointSettings>,
 ): ContainerCreateOptions {
@@ -204,7 +204,7 @@ function buildCreateOptions(
     } as ContainerCreateOptions;
 }
 
-async function connectRemainingNetworks(
+export async function connectRemainingNetworks(
     target: Docker,
     containerId: string,
     endpoints: Record<string, EndpointSettings>,
@@ -221,7 +221,7 @@ async function connectRemainingNetworks(
     }
 }
 
-async function copyVolumeData(
+export async function copyVolumeData(
     sourceContainer: Docker.Container,
     targetContainer: Docker.Container,
     mounts: VolumeMount[],

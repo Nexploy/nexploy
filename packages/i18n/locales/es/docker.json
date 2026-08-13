@@ -996,6 +996,41 @@
     "startedTitle": "Traslado de «{name}» iniciado",
     "startedDescription": "Sigue su progreso desde el menú de acciones en curso en la cabecera."
   },
+  "moveStack": {
+    "dialogTitle": "Mover el stack a otro entorno",
+    "dialogDescription": "Recrear todos los contenedores del stack en otro entorno Docker.",
+    "moveWarning": "«{name}» y sus {count} contenedores se recrearán en el entorno de destino con las mismas imágenes, configuración, puertos y redes.",
+    "targetLabel": "Entorno de destino",
+    "targetPlaceholder": "Selecciona un entorno",
+    "targetDescription": "El entorno Docker en el que se recreará el stack.",
+    "registryLabel": "Registro",
+    "registryNone": "Público (sin autenticación)",
+    "registryDescription": "Se usa para descargar las imágenes en el entorno de destino. Si una imagen no está disponible allí, se transfiere directamente desde el entorno de origen.",
+    "volumeDataLabel": "Migrar los datos de los volúmenes",
+    "volumeDataDescription": "Copiar el contenido de los volúmenes con nombre al entorno de destino. Puede tardar en volúmenes grandes.",
+    "startLabel": "Iniciar tras el movimiento",
+    "startDescription": "Iniciar los contenedores en cuanto se hayan creado en el entorno de destino.",
+    "sourceActionLabel": "Stack de origen",
+    "sourceAction": {
+      "stop": {
+        "label": "Detener y conservar",
+        "description": "El stack permanece en el entorno de origen, detenido."
+      },
+      "remove": {
+        "label": "Eliminar",
+        "description": "El stack se elimina del entorno de origen cuando el movimiento tiene éxito."
+      },
+      "keep": {
+        "label": "Dejar en ejecución",
+        "description": "El stack sigue ejecutándose en el entorno de origen."
+      }
+    },
+    "noTargetEnvironment": "No hay ningún otro entorno configurado. Añade un segundo entorno Docker para mover stacks.",
+    "cancel": "Cancelar",
+    "move": "Mover",
+    "startedTitle": "Movimiento de «{name}» iniciado",
+    "startedDescription": "Sigue su progreso desde el menú de acciones en curso de la cabecera."
+  },
   "tasks": {
     "title": "Acciones en curso",
     "runningCount": "{count} acción(es) en curso",
@@ -1046,6 +1081,7 @@
       "stack-pause": "Pausando el stack {name}",
       "stack-unpause": "Reanudando el stack {name}",
       "stack-remove": "Eliminando el stack {name}",
+      "stack-migrate": "Moviendo el stack {name}",
       "build-pipeline": "Build de {name}",
       "image-push": "Subiendo {name}",
       "image-untag": "Eliminando las etiquetas {name}",
@@ -1082,6 +1118,7 @@
     },
     "steps": {
       "image": "Transfiriendo la imagen",
+      "images": "Transfiriendo las imágenes",
       "networks": "Preparando las redes",
       "create": "Creando el contenedor",
       "volumes": "Copiando los datos de los volúmenes",

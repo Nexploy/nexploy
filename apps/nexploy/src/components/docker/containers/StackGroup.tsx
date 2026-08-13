@@ -1,19 +1,18 @@
 'use client';
 
 import * as React from 'react';
-import { MouseEvent, useRef, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { ContainerCard } from '@/components/docker/containers/ContainerCard';
-import { Layers, Play, RotateCw, Square, Trash2 } from 'lucide-react';
+import { Layers, Play, RotateCw, Square } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { ProtectedAction } from '@/components/permission/ProtectedAction';
 import { Separator } from '@workspace/ui/components/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@workspace/ui/components/accordion';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
-import { Switch } from '@workspace/ui/components/switch';
 import { onComposesAction } from '@/actions/docker/composes/composeAction';
 import { ComposesAction } from '@workspace/typescript-interface/docker/docker.composeStack';
 import { Containers } from '@workspace/typescript-interface/docker/docker.containers';
-import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { StackDropdownActions } from '@/components/docker/containers/StackDropdownActions';
 import { useTranslations } from 'next-intl';
 
 interface StackGroupProps {
@@ -24,8 +23,6 @@ interface StackGroupProps {
 export function StackGroup({ stackName, containers }: StackGroupProps) {
     const [isLoading, setIsloading] = useState(false);
     const t = useTranslations('common');
-    const tDocker = useTranslations('docker');
-    const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
     const runningCount = containers.filter((c) => c.state === 'running').length;
     const stoppedCount = containers.filter((c) => c.state === 'exited').length;
@@ -38,45 +35,6 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
         setIsloading(true);
         await onComposesAction({ stackName, action });
         setIsloading(false);
-    };
-
-    const forceRef = useRef(false);
-
-    const handleRemove = (event: MouseEvent) => {
-        event.stopPropagation();
-        forceRef.current = false;
-
-        openAlertDialog({
-            title: tDocker('stack.removeTitle'),
-            description: (
-                <div className={'space-y-4'}>
-                    <p>{tDocker('stack.removeDescription', { name: stackName })}</p>
-                    <label
-                        htmlFor={'force-remove-stack'}
-                        className={
-                            'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
-                        }
-                    >
-                        <div className={'space-y-0.5'}>
-                            <p className={'text-destructive text-sm font-medium'}>{tDocker('stack.forceRemove')}</p>
-                            <p className={'text-xs'}>{tDocker('stack.forceRemoveDescription')}</p>
-                        </div>
-                        <Switch
-                            id={'force-remove-stack'}
-                            className={'data-[state=checked]:bg-destructive!'}
-                            onCheckedChange={(checked) => (forceRef.current = checked)}
-                        />
-                    </label>
-                </div>
-            ),
-            cancelLabel: t('cancel'),
-            actionLabel: t('delete'),
-            onAction: async () => {
-                setIsloading(true);
-                await onComposesAction({ stackName, action: 'remove', force: forceRef.current });
-                setIsloading(false);
-            },
-        });
     };
 
     return (
@@ -136,18 +94,11 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
 
                                 <Separator orientation="vertical" className="h-6!" />
 
-                                <ProtectedAction action="container.remove">
-                                    <Button
-                                        onClick={handleRemove}
-                                        disabled={isLoading}
-                                        isLoading={isLoading}
-                                        variant={'destructiveOutline'}
-                                        icon={Trash2}
-                                        size="icon"
-                                    >
-                                        <span className="sr-only">{t('delete')}</span>
-                                    </Button>
-                                </ProtectedAction>
+                                <StackDropdownActions
+                                    stackName={stackName}
+                                    containerCount={containers.length}
+                                    triggerClassName="size-9"
+                                />
                             </div>
                         </div>
                     }

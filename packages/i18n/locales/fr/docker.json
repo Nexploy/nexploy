@@ -996,6 +996,41 @@
     "startedTitle": "Déplacement de « {name} » lancé",
     "startedDescription": "Suivez sa progression depuis le menu des actions en cours dans le header."
   },
+  "moveStack": {
+    "dialogTitle": "Déplacer la stack vers un autre environnement",
+    "dialogDescription": "Recréer tous les conteneurs de la stack sur un autre environnement Docker.",
+    "moveWarning": "« {name} » et ses {count} conteneurs seront recréés sur l’environnement cible avec les mêmes images, configuration, ports et réseaux.",
+    "targetLabel": "Environnement cible",
+    "targetPlaceholder": "Sélectionner un environnement",
+    "targetDescription": "L’environnement Docker sur lequel la stack sera recréée.",
+    "registryLabel": "Registry",
+    "registryNone": "Public (sans authentification)",
+    "registryDescription": "Utilisé pour récupérer les images sur l’environnement cible. Si une image y est indisponible, elle est transférée directement depuis l’environnement source.",
+    "volumeDataLabel": "Migrer les données des volumes",
+    "volumeDataDescription": "Copier le contenu des volumes nommés vers l’environnement cible. Peut être long sur de gros volumes.",
+    "startLabel": "Démarrer après le déplacement",
+    "startDescription": "Démarrer les conteneurs dès qu’ils ont été créés sur l’environnement cible.",
+    "sourceActionLabel": "Stack source",
+    "sourceAction": {
+      "stop": {
+        "label": "Arrêter et conserver",
+        "description": "La stack reste sur l’environnement source, arrêtée."
+      },
+      "remove": {
+        "label": "Supprimer",
+        "description": "La stack est supprimée de l’environnement source une fois le déplacement réussi."
+      },
+      "keep": {
+        "label": "Laisser en marche",
+        "description": "La stack continue de tourner sur l’environnement source."
+      }
+    },
+    "noTargetEnvironment": "Aucun autre environnement n’est configuré. Ajoutez un second environnement Docker pour déplacer des stacks.",
+    "cancel": "Annuler",
+    "move": "Déplacer",
+    "startedTitle": "Déplacement de « {name} » démarré",
+    "startedDescription": "Suivez sa progression depuis le menu des actions en cours dans l’en-tête."
+  },
   "tasks": {
     "title": "Actions en cours",
     "runningCount": "{count} action(s) en cours",
@@ -1046,6 +1081,7 @@
       "stack-pause": "Mise en pause de la stack {name}",
       "stack-unpause": "Reprise de la stack {name}",
       "stack-remove": "Suppression de la stack {name}",
+      "stack-migrate": "Déplacement de la stack {name}",
       "build-pipeline": "Build de {name}",
       "image-push": "Envoi de {name}",
       "image-untag": "Suppression des tags {name}",
@@ -1082,6 +1118,7 @@
     },
     "steps": {
       "image": "Transfert de l'image",
+      "images": "Transfert des images",
       "networks": "Préparation des réseaux",
       "create": "Création du conteneur",
       "volumes": "Copie des données des volumes",
