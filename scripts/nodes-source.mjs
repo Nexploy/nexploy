@@ -45,12 +45,16 @@ if (mode === 'local') {
     if (!current.startsWith('file:')) manifest.nodesVersion = current;
     manifest.dependencies['@nexploy/nodes'] = `file:../../../nodes/${tarball}`;
 } else {
-    const pinned = manifest.nodesVersion;
-    if (!pinned) {
-        console.error('No recorded version to restore — set @nexploy/nodes by hand.');
+    const nodesManifestPath = join(nodesRepo, 'package.json');
+    const localVersion = existsSync(nodesManifestPath)
+        ? JSON.parse(readFileSync(nodesManifestPath, 'utf8')).version
+        : undefined;
+    const restored = localVersion ? `^${localVersion}` : manifest.nodesVersion;
+    if (!restored) {
+        console.error('No version to restore — set @nexploy/nodes by hand.');
         process.exit(1);
     }
-    manifest.dependencies['@nexploy/nodes'] = pinned;
+    manifest.dependencies['@nexploy/nodes'] = restored;
     delete manifest.nodesVersion;
 }
 
