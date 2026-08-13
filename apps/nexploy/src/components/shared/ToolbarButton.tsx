@@ -20,10 +20,10 @@ export function ToolbarButton({
             <TooltipTrigger asChild>
                 <Button variant="outline" aria-disabled={disabled} onClick={disabled ? undefined : onClick}>
                     <Icon />
-                    <span className="sm:hidden md:block">{label}</span>
+                    <span className="sm:hidden lg:block">{label}</span>
                 </Button>
             </TooltipTrigger>
-            <TooltipContent className={disabledReason ? undefined : 'hidden sm:block md:hidden'}>
+            <TooltipContent className={disabledReason ? undefined : 'hidden sm:block lg:hidden'}>
                 {disabledReason ?? label}
             </TooltipContent>
         </Tooltip>
