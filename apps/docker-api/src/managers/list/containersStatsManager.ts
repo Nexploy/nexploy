@@ -4,6 +4,7 @@ import type { ContainerInfo } from 'dockerode';
 import { logger } from '@/utils/logger';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+import { filterInfrastructureContainers } from '@/lib/infrastructureGuard';
 import { ContainerState } from '@workspace/typescript-interface/docker/docker.container';
 import {
     ContainersStatsEvent,
@@ -120,7 +121,10 @@ export class ContainersStatsManager extends EventEmitter {
         this.polling = true;
 
         try {
-            const containers = await this.docker.listContainers({ all: true });
+            const containers = filterInfrastructureContainers(
+                await this.docker.listContainers({ all: true }),
+                (container) => container.Names?.[0] ?? '',
+            );
 
             const stats = await mapWithConcurrency(containers, MAX_CONCURRENT_STATS_CALLS, (container) =>
                 this.buildSample(container),

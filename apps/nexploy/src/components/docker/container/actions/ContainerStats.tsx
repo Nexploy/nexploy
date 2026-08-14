@@ -124,6 +124,9 @@ export function ContainerStats({ children }: ContainerStatsProps) {
         },
     ];
 
+    const flushPanelClassName =
+        'rounded-none border-0 border-b bg-transparent shadow-none lg:[&:nth-child(odd)]:border-r';
+
     const details = [
         { label: t('memoryLimit'), value: formatBytes(stats?.memoryLimit ?? 0) },
         { label: t('memoryPercent'), value: formatPercent(stats?.memoryPercent ?? 0, 2) },
@@ -198,11 +201,23 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                         </DialogHeader>
 
                         <ScrollAreaWithShadow bottomShadow className="h-150 overflow-y-auto">
-                            <div className="space-y-4 p-4">
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                            <div className="bg-background pr-1">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                                     {isLoading
                                         ? Array.from({ length: 4 }).map((_, index) => (
-                                              <Skeleton key={index} className="h-[190px] w-full" />
+                                              <div
+                                                  key={index}
+                                                  className="flex flex-col gap-3 border-b p-5 md:not-nth-[2n]:border-r lg:not-last:border-r"
+                                              >
+                                                  <div className="flex items-start justify-between gap-2">
+                                                      <Skeleton className="h-4 w-24" />
+                                                      <Skeleton className="size-8 rounded-lg" />
+                                                  </div>
+                                                  <Skeleton className="h-8 w-32" />
+                                                  <Skeleton className="h-3 w-28" />
+                                                  <Skeleton className="h-1.5 w-full rounded-full" />
+                                                  <Skeleton className="h-8 w-full" />
+                                              </div>
                                           ))
                                         : summaryCards.map((card) => (
                                               <MetricCard
@@ -214,116 +229,159 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                                   description={card.description}
                                                   percent={card.percent}
                                                   sparklineValues={card.sparklineValues}
+                                                  className="rounded-none border-0 border-b bg-transparent shadow-none md:not-nth-[2n]:border-r lg:not-last:border-r"
                                               />
                                           ))}
                                 </div>
 
-                                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                                    <MetricAreaChart
-                                        title={t('cpuUsage')}
-                                        description={t('cpuDescription')}
-                                        data={chartData}
-                                        series={[
-                                            {
-                                                dataKey: 'cpuPercent',
-                                                label: t('cpuPercent'),
-                                                color: MONITORING_CHART_COLORS[0]!,
-                                            },
-                                        ]}
-                                        formatValue={(value) => formatPercent(value, 2)}
-                                        chartClassName="h-[200px]"
-                                        emptyLabel={t('waitingForData')}
-                                    />
-                                    <MetricAreaChart
-                                        title={t('memoryUsage')}
-                                        description={t('memoryDescription')}
-                                        data={chartData}
-                                        series={[
-                                            {
-                                                dataKey: 'memoryUsage',
-                                                label: t('memory'),
-                                                color: MONITORING_CHART_COLORS[1]!,
-                                            },
-                                        ]}
-                                        formatValue={(value) => formatBytes(value)}
-                                        chartClassName="h-[200px]"
-                                        emptyLabel={t('waitingForData')}
-                                    />
-                                    <MetricAreaChart
-                                        title={t('networkThroughput')}
-                                        description={t('networkThroughputDescription')}
-                                        data={chartData}
-                                        series={[
-                                            {
-                                                dataKey: 'networkRxRate',
-                                                label: t('rx'),
-                                                color: MONITORING_CHART_COLORS[0]!,
-                                            },
-                                            {
-                                                dataKey: 'networkTxRate',
-                                                label: t('tx'),
-                                                color: MONITORING_CHART_COLORS[3]!,
-                                            },
-                                        ]}
-                                        formatValue={(value) => formatRate(value)}
-                                        chartClassName="h-[200px]"
-                                        emptyLabel={t('waitingForData')}
-                                    />
-                                    <MetricAreaChart
-                                        title={t('blockThroughput')}
-                                        description={t('blockThroughputDescription')}
-                                        data={chartData}
-                                        series={[
-                                            {
-                                                dataKey: 'blockReadRate',
-                                                label: t('read'),
-                                                color: MONITORING_CHART_COLORS[2]!,
-                                            },
-                                            {
-                                                dataKey: 'blockWriteRate',
-                                                label: t('write'),
-                                                color: MONITORING_CHART_COLORS[4]!,
-                                            },
-                                        ]}
-                                        formatValue={(value) => formatRate(value)}
-                                        chartClassName="h-[200px]"
-                                        emptyLabel={t('waitingForData')}
-                                    />
-                                </div>
+                                {isLoading ? (
+                                    <>
+                                        <div className="grid grid-cols-1 lg:grid-cols-2">
+                                            {Array.from({ length: 4 }).map((_, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex flex-col gap-3 border-b p-4 lg:nth-[odd]:border-r"
+                                                >
+                                                    <Skeleton className="h-5 w-40" />
+                                                    <Skeleton className="h-3 w-56" />
+                                                    <Skeleton className="h-[200px] w-full" />
+                                                </div>
+                                            ))}
+                                        </div>
 
-                                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                                    <MetricAreaChart
-                                        title={t('pidsCount')}
-                                        description={t('pidsDescription')}
-                                        data={chartData}
-                                        series={[
-                                            {
-                                                dataKey: 'pidsCount',
-                                                label: t('pidsCount'),
-                                                color: MONITORING_CHART_COLORS[2]!,
-                                            },
-                                        ]}
-                                        formatValue={(value) => `${Math.round(value)}`}
-                                        className="lg:col-span-2"
-                                        chartClassName="h-[180px]"
-                                        emptyLabel={t('waitingForData')}
-                                    />
-                                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
-                                        {details.map((detail) => (
-                                            <div
-                                                key={detail.label}
-                                                className="bg-muted/40 flex items-center justify-between gap-2 rounded-md px-3 py-1.5"
-                                            >
-                                                <span className="text-muted-foreground truncate text-xs">
-                                                    {detail.label}
-                                                </span>
-                                                <span className="truncate text-sm font-medium tabular-nums">
-                                                    {detail.value}
-                                                </span>
+                                        <div className="grid grid-cols-1 lg:grid-cols-3">
+                                            <div className="flex flex-col gap-3 p-4 lg:col-span-2">
+                                                <Skeleton className="h-5 w-40" />
+                                                <Skeleton className="h-3 w-56" />
+                                                <Skeleton className="h-[180px] w-full" />
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                            <div className="bg-border grid grid-cols-1 gap-px border-t sm:grid-cols-2 lg:grid-cols-1 lg:border-l lg:border-t-0">
+                                                {details.map((detail) => (
+                                                    <div
+                                                        key={detail.label}
+                                                        className="bg-background flex items-center justify-between gap-2 px-4 py-2"
+                                                    >
+                                                        <Skeleton className="h-3 w-28" />
+                                                        <Skeleton className="h-3 w-16" />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="grid grid-cols-1 lg:grid-cols-2">
+                                            <MetricAreaChart
+                                                title={t('cpuUsage')}
+                                                description={t('cpuDescription')}
+                                                data={chartData}
+                                                series={[
+                                                    {
+                                                        dataKey: 'cpuPercent',
+                                                        label: t('cpuPercent'),
+                                                        color: MONITORING_CHART_COLORS[0]!,
+                                                    },
+                                                ]}
+                                                formatValue={(value) => formatPercent(value, 2)}
+                                                className={flushPanelClassName}
+                                                chartClassName="h-[200px]"
+                                                emptyLabel={t('waitingForData')}
+                                            />
+                                            <MetricAreaChart
+                                                title={t('memoryUsage')}
+                                                description={t('memoryDescription')}
+                                                data={chartData}
+                                                series={[
+                                                    {
+                                                        dataKey: 'memoryUsage',
+                                                        label: t('memory'),
+                                                        color: MONITORING_CHART_COLORS[1]!,
+                                                    },
+                                                ]}
+                                                formatValue={(value) => formatBytes(value)}
+                                                className={flushPanelClassName}
+                                                chartClassName="h-[200px]"
+                                                emptyLabel={t('waitingForData')}
+                                            />
+                                            <MetricAreaChart
+                                                title={t('networkThroughput')}
+                                                description={t('networkThroughputDescription')}
+                                                data={chartData}
+                                                series={[
+                                                    {
+                                                        dataKey: 'networkRxRate',
+                                                        label: t('rx'),
+                                                        color: MONITORING_CHART_COLORS[0]!,
+                                                    },
+                                                    {
+                                                        dataKey: 'networkTxRate',
+                                                        label: t('tx'),
+                                                        color: MONITORING_CHART_COLORS[3]!,
+                                                    },
+                                                ]}
+                                                formatValue={(value) => formatRate(value)}
+                                                className={flushPanelClassName}
+                                                chartClassName="h-[200px]"
+                                                emptyLabel={t('waitingForData')}
+                                            />
+                                            <MetricAreaChart
+                                                title={t('blockThroughput')}
+                                                description={t('blockThroughputDescription')}
+                                                data={chartData}
+                                                series={[
+                                                    {
+                                                        dataKey: 'blockReadRate',
+                                                        label: t('read'),
+                                                        color: MONITORING_CHART_COLORS[2]!,
+                                                    },
+                                                    {
+                                                        dataKey: 'blockWriteRate',
+                                                        label: t('write'),
+                                                        color: MONITORING_CHART_COLORS[4]!,
+                                                    },
+                                                ]}
+                                                formatValue={(value) => formatRate(value)}
+                                                className={flushPanelClassName}
+                                                chartClassName="h-[200px]"
+                                                emptyLabel={t('waitingForData')}
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 lg:grid-cols-3">
+                                            <MetricAreaChart
+                                                title={t('pidsCount')}
+                                                description={t('pidsDescription')}
+                                                data={chartData}
+                                                series={[
+                                                    {
+                                                        dataKey: 'pidsCount',
+                                                        label: t('pidsCount'),
+                                                        color: MONITORING_CHART_COLORS[2]!,
+                                                    },
+                                                ]}
+                                                formatValue={(value) => `${Math.round(value)}`}
+                                                className="rounded-none border-0 bg-transparent shadow-none lg:col-span-2"
+                                                chartClassName="h-[180px]"
+                                                emptyLabel={t('waitingForData')}
+                                            />
+                                            <div className="bg-border grid grid-cols-1 gap-px border-t sm:grid-cols-2 lg:grid-cols-1 lg:border-l lg:border-t-0">
+                                                {details.map((detail) => (
+                                                    <div
+                                                        key={detail.label}
+                                                        className="bg-background flex items-center justify-between gap-2 px-4 py-2"
+                                                    >
+                                                        <span className="text-muted-foreground truncate text-xs">
+                                                            {detail.label}
+                                                        </span>
+                                                        <span className="truncate text-sm font-medium tabular-nums">
+                                                            {detail.value}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </ScrollAreaWithShadow>
                     </SSEProvider>

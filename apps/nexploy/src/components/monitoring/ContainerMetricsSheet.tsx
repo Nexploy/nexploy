@@ -65,9 +65,11 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
 
     const status = container ? containerDisplayState[container.state] : 'offline';
 
+    const flushPanelClassName = 'rounded-none border-0 border-b bg-transparent shadow-none last:border-b-0';
+
     return (
         <Sheet open={Boolean(container)} onOpenChange={onOpenChange}>
-            <SheetContent side="right" className="sm:max-w-3/5 w-full">
+            <SheetContent side="right" className="sm:max-w-3/5 w-full gap-0">
                 {container ? (
                     <>
                         <SheetHeader className="flex flex-row items-start gap-3 border-b pr-12">
@@ -102,14 +104,14 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
                         </SheetHeader>
 
                         <ScrollAreaWithShadow bottomShadow className="h-full overflow-hidden">
-                            <div className="space-y-4 px-4 pb-6">
-                                <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-background pr-1">
+                                <div className="bg-border grid grid-cols-2 gap-px border-b">
                                     {details.map((detail) =>
                                         detail.href ? (
                                             <Link
                                                 key={detail.label}
                                                 href={detail.href}
-                                                className="bg-muted/40 hover:bg-muted/70 block rounded-md px-3 py-2 transition-colors"
+                                                className="bg-background hover:bg-muted/40 block px-4 py-2 transition-colors"
                                             >
                                                 <p className="text-muted-foreground text-xs">{detail.label}</p>
                                                 <p
@@ -120,7 +122,7 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
                                                 </p>
                                             </Link>
                                         ) : (
-                                            <div key={detail.label} className="bg-muted/40 rounded-md px-3 py-2">
+                                            <div key={detail.label} className="bg-background px-4 py-2">
                                                 <p className="text-muted-foreground text-xs">{detail.label}</p>
                                                 <p
                                                     className="truncate text-sm font-medium tabular-nums"
@@ -144,6 +146,7 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
                                         },
                                     ]}
                                     formatValue={(value) => formatPercent(value, 2)}
+                                    className={flushPanelClassName}
                                     emptyLabel={t('waitingForData')}
                                 />
                                 <MetricAreaChart
@@ -157,6 +160,7 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
                                         },
                                     ]}
                                     formatValue={(value) => formatBytes(value)}
+                                    className={flushPanelClassName}
                                     emptyLabel={t('waitingForData')}
                                 />
                                 <MetricAreaChart
@@ -175,6 +179,7 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
                                         },
                                     ]}
                                     formatValue={(value) => formatRate(value)}
+                                    className={flushPanelClassName}
                                     emptyLabel={t('waitingForData')}
                                 />
                                 <MetricAreaChart
@@ -193,6 +198,7 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
                                         },
                                     ]}
                                     formatValue={(value) => formatRate(value)}
+                                    className={flushPanelClassName}
                                     emptyLabel={t('waitingForData')}
                                 />
                             </div>

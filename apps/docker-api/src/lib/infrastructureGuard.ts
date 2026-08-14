@@ -37,8 +37,15 @@ export function hidesInfrastructureVolume(volumeName: string): boolean {
     return !INFRASTRUCTURE_BYPASS && isNexployInfrastructureVolumeName(volumeName);
 }
 
-export function filterInfrastructureContainers<T extends NamedResource>(containers: T[]): T[] {
-    return containers.filter((container) => !hidesInfrastructureContainer(container));
+export function filterInfrastructureContainers<T extends NamedResource>(containers: T[]): T[];
+export function filterInfrastructureContainers<T>(containers: T[], getName: (container: T) => string): T[];
+export function filterInfrastructureContainers<T>(containers: T[], getName?: (container: T) => string): T[] {
+    return containers.filter(
+        (container) =>
+            !hidesInfrastructureContainer({
+                name: getName ? getName(container) : (container as NamedResource).name,
+            }),
+    );
 }
 
 export function filterInfrastructureNetworks<T extends NamedResource>(networks: T[]): T[] {

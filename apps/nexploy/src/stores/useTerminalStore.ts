@@ -103,11 +103,6 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
 
     connect: async (url) => {
         try {
-            if (!get().terminalRef.current) {
-                set({ connectionState: 'error', isConnecting: false });
-                return;
-            }
-
             if (get().terminalInstance) {
                 get().disconnect();
             }

@@ -11,6 +11,7 @@ import {
     ContainerStatsSample,
 } from '@workspace/typescript-interface/docker/docker.containers.stats';
 import { formatBytes } from '@/utils/formatBytes';
+import { appendMetricsPoint, MAX_METRICS_HISTORY_SIZE } from '@/utils/metricsHistory';
 
 const defaultValue: Omit<
     ContainersStatsState,
@@ -26,7 +27,7 @@ const defaultValue: Omit<
     lastUpdate: null,
     eventSource: null,
     connectionState: 'disconnected',
-    maxHistorySize: 120,
+    maxHistorySize: MAX_METRICS_HISTORY_SIZE,
 };
 
 let lastConnectionParams: ContainersStatsParams | null = null;
@@ -51,10 +52,11 @@ const appendHistory = (
     const nextHistory: ContainersStatsState['history'] = {};
 
     stats.forEach((stat) => {
-        const previous = history[stat.containerId] ?? [];
-        const points = [...previous, toHistoryPoint(stat)];
-
-        nextHistory[stat.containerId] = points.slice(-maxHistorySize);
+        nextHistory[stat.containerId] = appendMetricsPoint(
+            history[stat.containerId] ?? [],
+            toHistoryPoint(stat),
+            maxHistorySize,
+        );
     });
 
     return nextHistory;
@@ -67,8 +69,8 @@ const applyEvent = (event: ContainersStatsEvent, state: ContainersStatsState) =>
         stats: event.stats,
         totals,
         history: appendHistory(state.history, event.stats, state.maxHistorySize),
-        totalsHistory: [
-            ...state.totalsHistory,
+        totalsHistory: appendMetricsPoint(
+            state.totalsHistory,
             {
                 timestamp: event.timestamp,
                 cpuPercent: totals.cpuPercent,
@@ -82,7 +84,8 @@ const applyEvent = (event: ContainersStatsEvent, state: ContainersStatsState) =>
                 runningCount: totals.runningCount,
                 containerCount: totals.containerCount,
             },
-        ].slice(-state.maxHistorySize),
+            state.maxHistorySize,
+        ),
         lastUpdate: Date.now(),
         isLoading: false,
         isConnected: true,

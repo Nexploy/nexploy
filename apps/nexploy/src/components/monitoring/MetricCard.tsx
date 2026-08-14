@@ -14,6 +14,7 @@ interface MetricCardProps {
     sparklineValues?: number[];
     sparklineMax?: number;
     valueClassName?: string;
+    className?: string;
 }
 
 export function MetricCard({
@@ -25,11 +26,12 @@ export function MetricCard({
     sparklineValues,
     sparklineMax,
     valueClassName,
+    className,
 }: MetricCardProps) {
     const boundedPercent = percent === undefined ? undefined : Math.max(0, Math.min(100, percent || 0));
 
     return (
-        <Card className="gap-3 py-5">
+        <Card className={cn('gap-3 py-5', className)}>
             <CardHeader className="flex flex-row items-start justify-between gap-2 space-y-0 px-5">
                 <CardTitle className="text-muted-foreground truncate text-sm font-medium">{title}</CardTitle>
                 <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">

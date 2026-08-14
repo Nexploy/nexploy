@@ -7,6 +7,7 @@ import {
 } from '@workspace/typescript-interface/stores/monitoring/monitoringStore';
 import { SystemMetricsEvent } from '@workspace/typescript-interface/monitoring/system.metrics';
 import { formatBytes } from '@/utils/formatBytes';
+import { appendMetricsPoint, MAX_METRICS_HISTORY_SIZE } from '@/utils/metricsHistory';
 
 const defaultValue: Omit<
     MonitoringState,
@@ -20,7 +21,7 @@ const defaultValue: Omit<
     eventSource: null,
     connectionState: 'disconnected',
     history: [],
-    maxHistorySize: 120,
+    maxHistorySize: MAX_METRICS_HISTORY_SIZE,
 };
 
 let lastConnectionParams: MonitoringStateParams | null = null;
@@ -85,11 +86,7 @@ export const useMonitoringStore = create<MonitoringState>((set, get) => ({
 
                             if (!event.metrics) return;
 
-                            const newHistory = [...state.history, event.metrics];
-
-                            if (newHistory.length > state.maxHistorySize) {
-                                newHistory.shift();
-                            }
+                            const newHistory = appendMetricsPoint(state.history, event.metrics, state.maxHistorySize);
 
                             set({
                                 metrics: event.metrics,

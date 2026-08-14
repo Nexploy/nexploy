@@ -7,6 +7,7 @@ import {
 } from '@workspace/typescript-interface/stores/docker/containerStatsStore';
 import { ContainerStatsEvent } from '@workspace/typescript-interface/docker/docker.container.stats';
 import { formatBytes } from '@/utils/formatBytes';
+import { appendMetricsPoint, MAX_METRICS_HISTORY_SIZE } from '@/utils/metricsHistory';
 
 const defaultValue: Omit<
     ContainerStatsState,
@@ -22,7 +23,7 @@ const defaultValue: Omit<
     reconnectTimeout: null,
     connectionState: 'disconnected',
     history: [],
-    maxHistorySize: 60,
+    maxHistorySize: MAX_METRICS_HISTORY_SIZE,
 };
 
 let lastConnectionParams: ContainerStatsParams | null = null;
@@ -93,11 +94,7 @@ export const useContainerStatsStore = create<ContainerStatsState>((set, get) => 
                             const event: ContainerStatsEvent = JSON.parse(e.data);
                             const state = get();
 
-                            const newHistory = [...state.history, event.stats!];
-
-                            if (newHistory.length > state.maxHistorySize) {
-                                newHistory.shift();
-                            }
+                            const newHistory = appendMetricsPoint(state.history, event.stats!, state.maxHistorySize);
 
                             set({
                                 stats: event.stats!,
