@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
 import { DropdownMenu, DropdownMenuTrigger } from '@workspace/ui/components/dropdown-menu';
 import { Button } from '@workspace/ui/components/button';
-import { Container as IconContainer, MoreVertical } from 'lucide-react';
+import { MoreVertical } from 'lucide-react';
 import { useMemo } from 'react';
 import { Status, StatusIndicator, StatusLabel } from '@workspace/ui/components/kibo-ui/status';
 import { ContainersDropdownActions } from '@/components/docker/containers/ContainersDropdownActions';
@@ -15,6 +15,7 @@ import { Badge } from '@workspace/ui/components/badge';
 import { Carousel, CarouselContent, CarouselItem } from '@workspace/ui/components/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import { useTranslations } from 'next-intl';
+import { ResourceIcon } from '@/components/docker/ResourceIcon';
 
 interface ContainerCardProps {
     container: Containers;
@@ -29,9 +30,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
             <Card className="relative h-full cursor-pointer rounded-xl border transition-all duration-300 hover:scale-[1.03] hover:shadow-xl">
                 <CardHeader className="flex items-center">
                     <div className="flex flex-1 items-center gap-3 truncate">
-                        <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                            <IconContainer className="text-primary size-5" />
-                        </div>
+                        <ResourceIcon kind="container" name={container.name} size="md" />
                         <CardTitle className="truncate text-lg font-semibold">{container.name}</CardTitle>
                     </div>
                     <Can resource="container" action="manage">

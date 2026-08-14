@@ -1,14 +1,6 @@
 'use client';
 
-import {
-    Activity,
-    ArrowRightLeft,
-    Container as IconContainer,
-    FileText,
-    PencilLine,
-    Replace,
-    Terminal,
-} from 'lucide-react';
+import { Activity, ArrowRightLeft, FileText, PencilLine, Replace, Terminal } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { CardInfoDetail } from '@/components/docker/container/cards/CardInfoDetail';
@@ -25,6 +17,7 @@ import { CardInfoContainer } from '@/components/docker/container/cards/CardInfoC
 import { ContainerActionButtons } from '@/components/docker/container/actions/ContainerActionButtons';
 import { ContainerTerminal } from '@/components/docker/container/actions/ContainerTerminal';
 import { useProtectionTooltip } from '@/hooks/useProtectionTooltip';
+import { ResourceIcon } from '@/components/docker/ResourceIcon';
 import { ContainerAttach } from '@/components/docker/container/actions/ContainerAttach';
 import { ButtonGroup } from '@workspace/ui/components/button-group';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
@@ -100,9 +93,7 @@ export function ContainerDetailPage() {
         <BreadcrumbProvider segments={{ containerId: container?.name }}>
             <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex gap-3 px-5">
-                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <IconContainer className="text-primary size-7" />
-                    </div>
+                    <ResourceIcon kind="container" name={container?.name} size="lg" className="mt-5" />
                     <div className="mt-3.5 flex flex-1 flex-col">
                         {isConnecting ? (
                             <Skeleton className="h-9 w-40" />

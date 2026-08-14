@@ -1,6 +1,6 @@
 'use client';
 
-import { EthernetPort, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useNetworkStore } from '@/stores/docker/useNetworkStore.ts';
 import { CardNetworkDetails } from '@/components/docker/network/cards/CardNetworkDetails';
@@ -14,6 +14,7 @@ import { onNetworkAction } from '@/actions/docker/network/networkAction.action';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
+import { ResourceIcon } from '@/components/docker/ResourceIcon';
 
 interface NetworkDetailPageProps {
     networkId: string;
@@ -60,9 +61,7 @@ export function NetworkDetailPage({ networkId }: NetworkDetailPageProps) {
         <BreadcrumbProvider segments={{ networkId: networkName }}>
             <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex gap-3 px-5">
-                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <EthernetPort className="text-primary size-7" />
-                    </div>
+                    <ResourceIcon kind="network" name={networkName} size="lg" className="mt-5" />
                     <div className="mt-3.5 flex flex-1 flex-col">
                         {isConnecting ? (
                             <Skeleton className="h-9 w-40" />

@@ -53,7 +53,7 @@ export const getColumnsTableVolumes = (t: TranslationFunction): ColumnDef<Volume
             const volumeUsed = usageData?.RefCount;
 
             return (
-                <Link href={`/docker/volumes/${encodeURIComponent(name)}`} className="flex w-fit items-start gap-2">
+                <Link href={`/docker/volumes/${encodeURIComponent(name)}`} className="flex w-fit items-center gap-2">
                     <Status className={'border-0 text-sm'} status={volumeUsed ? 'online' : 'offline'} variant="outline">
                         <Tooltip>
                             <TooltipTrigger asChild>

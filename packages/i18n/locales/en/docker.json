@@ -1175,5 +1175,8 @@
     "badgeTooltip": "Internal Nexploy resource. Stopping, deleting or changing it takes this instance down.",
     "bypassTitle": "Debug mode on — infrastructure exposed",
     "bypassDescription": "NEXPLOY_DEBUG=true: Nexploy’s own containers, images, networks and volumes are visible and every action on them is allowed. Stopping or deleting one of them takes this instance down, and deleting the database volume is unrecoverable. Turn it off as soon as you are done debugging."
+  },
+  "system": {
+    "tooltip": "Nexploy system resource. It runs this instance: changing, stopping or deleting it can take Nexploy down."
   }
 }

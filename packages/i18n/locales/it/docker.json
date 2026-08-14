@@ -1175,5 +1175,8 @@
     "badgeTooltip": "Risorsa interna di Nexploy. Arrestarla, eliminarla o modificarla mette questa istanza fuori servizio.",
     "bypassTitle": "Modalità debug attiva — infrastruttura esposta",
     "bypassDescription": "NEXPLOY_DEBUG=true: i container, le immagini, le reti e i volumi di Nexploy sono visibili e ogni azione su di essi è consentita. Arrestarne o eliminarne uno mette questa istanza fuori servizio, e l’eliminazione del volume del database è irrecuperabile. Disattivala non appena hai finito di eseguire il debug."
+  },
+  "system": {
+    "tooltip": "Risorsa di sistema Nexploy. Fa girare questa istanza: modificarla, arrestarla o eliminarla può mettere Nexploy fuori servizio."
   }
 }

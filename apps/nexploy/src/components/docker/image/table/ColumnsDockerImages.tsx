@@ -119,7 +119,7 @@ export const getColumnsTableImages = (t: TranslationFunction): ColumnDef<ImageRo
             return (
                 <Link
                     href={`/docker/images/${row.original.id}`}
-                    className="flex items-start gap-2"
+                    className="flex items-center gap-2"
                     style={{ paddingLeft: depth > 0 ? `${depth * 24}px` : undefined }}
                 >
                     <Status

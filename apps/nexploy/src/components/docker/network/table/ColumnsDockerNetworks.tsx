@@ -57,7 +57,7 @@ export const getColumnsTableNetworks = (t: TranslationFunction): ColumnDef<Netwo
             const isBuiltin = isBuiltinNetwork(name);
 
             return (
-                <Link href={`/docker/networks/${row.original.id}`} className="flex items-start gap-2">
+                <Link href={`/docker/networks/${row.original.id}`} className="flex items-center gap-2">
                     <Status
                         className="justify-start border-0 text-sm"
                         status={isBuiltin ? 'maintenance' : 'online'}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { Box, Play, Trash2 } from 'lucide-react';
+import { Play, Trash2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useImageStore } from '../../../stores/docker/useImageStore';
 import { CardImageDetails } from '@/components/docker/image/cards/CardImageDetails';
@@ -22,6 +22,7 @@ import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
 import { Switch } from '@workspace/ui/components/switch';
 import { Label } from '@workspace/ui/components/label';
 import { toast } from 'sonner';
+import { ResourceIcon } from '@/components/docker/ResourceIcon';
 
 interface ImageDetailPageProps {
     imageId: string;
@@ -102,9 +103,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
         <BreadcrumbProvider segments={{ imageId: imageName }}>
             <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex gap-3 px-5">
-                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Box className="text-primary size-7" />
-                    </div>
+                    <ResourceIcon kind="image" repoTags={image?.repoTags} size="lg" className="mt-5" />
                     <div className="mt-3.5 flex flex-1 flex-col">
                         {!image ? (
                             <Skeleton className="h-9 w-40" />

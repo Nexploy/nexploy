@@ -105,10 +105,9 @@ export function getColumnsDockerContainers(
                 return (
                     <Link
                         href={`/docker/containers/${row.original.id}`}
-                        className="flex hover:underline"
                         style={{ paddingLeft: depth > 0 ? `${depth * 24 + 8}px` : undefined }}
                     >
-                        <span>{row.original.name}</span>
+                        <span className="hover:underline">{row.original.name}</span>
                     </Link>
                 );
             },

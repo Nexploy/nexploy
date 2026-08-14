@@ -1,6 +1,6 @@
 'use client';
 
-import { HardDrive, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useVolumeStore } from '@/stores/docker/useVolumeStore.ts';
 import { CardVolumeDetails } from '@/components/docker/volume/cards/CardVolumeDetails';
@@ -15,6 +15,7 @@ import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfir
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
 import * as React from 'react';
+import { ResourceIcon } from '@/components/docker/ResourceIcon';
 
 interface VolumeDetailPageProps {
     volumeName: string;
@@ -65,9 +66,7 @@ export function VolumeDetailPage({ volumeName }: VolumeDetailPageProps) {
         <BreadcrumbProvider segments={{ volumeName }}>
             <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex gap-3 px-5">
-                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <HardDrive className="text-primary size-7" />
-                    </div>
+                    <ResourceIcon kind="volume" name={volumeName} size="lg" className="mt-5" />
                     <div className="mt-3.5 flex flex-1 flex-col">
                         {isConnecting ? (
                             <Skeleton className="h-9 w-40" />
