@@ -7,7 +7,7 @@ import { resolveInstanceTlsMode } from '@/lib/instance/tlsMode';
 
 const TEMPLATES_DIR = process.env.TRAEFIK_TEMPLATES_DIR ?? path.join(process.cwd(), 'traefik-templates');
 
-const SEED_FILES = ['middlewares.yml', 'routers.yml', 'maintenance.yml', 'upgrading.yml'];
+const MANAGED_FILES = ['middlewares.yml', 'routers.yml', 'maintenance.yml', 'upgrading.yml'];
 
 async function fileExists(filePath: string): Promise<boolean> {
     try {
@@ -18,19 +18,23 @@ async function fileExists(filePath: string): Promise<boolean> {
     }
 }
 
-async function seedDynamicConfigFiles(): Promise<void> {
-    for (const file of SEED_FILES) {
-        const target = path.join(TRAEFIK_SERVICE_DIR, file);
-        if (await fileExists(target)) continue;
+async function syncManagedConfigFiles(): Promise<void> {
+    if (!(await fileExists(TEMPLATES_DIR))) return;
 
+    for (const file of MANAGED_FILES) {
         const source = path.join(TEMPLATES_DIR, file);
         if (!(await fileExists(source))) {
-            console.warn(`⚠️ Traefik setup: template ${file} not found at ${source}, skipping seed`);
+            console.warn(`⚠️ Traefik setup: template ${file} not found at ${source}, skipping sync`);
             continue;
         }
 
-        await fs.copyFile(source, target);
-        console.log(`✓ Traefik setup: seeded ${file}`);
+        const target = path.join(TRAEFIK_SERVICE_DIR, file);
+        const template = await fs.readFile(source, 'utf8');
+        const current = (await fileExists(target)) ? await fs.readFile(target, 'utf8') : null;
+        if (current === template) continue;
+
+        await fs.writeFile(target, template, { mode: 0o644 });
+        console.log(`✓ Traefik setup: synced ${file}`);
     }
 }
 
@@ -116,7 +120,7 @@ export async function ensureTraefikSetup(): Promise<void> {
     await fs.mkdir(path.join(TRAEFIK_SERVICE_DIR, 'certs'), { recursive: true });
 
     await disableUpgradeOverride();
-    await seedDynamicConfigFiles();
+    await syncManagedConfigFiles();
     await renderStaticConfig();
     await syncCustomCertificates();
 }

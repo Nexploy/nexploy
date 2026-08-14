@@ -6,6 +6,9 @@ http:
           - "502"
           - "503"
           - "504"
+        statusRewrites:
+          "502": 503
+          "504": 503
         service: maintenance-loopback
         query: "/"
     redirect-to-https:
