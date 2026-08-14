@@ -6,6 +6,7 @@ import { VolumeDetailEvent } from '@workspace/typescript-interface/docker/docker
 import { getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { SingleResourceManagerRegistry } from '@/lib/SingleResourceManagerRegistry';
+import { hidesInfrastructureVolume } from '@/lib/infrastructureGuard';
 
 const volumeManagerRegistry = new SingleResourceManagerRegistry(
     'Volume',
@@ -16,6 +17,10 @@ const app = new Hono();
 
 app.get('/stream/:volumeName', (c) => {
     const volumeName = decodeURIComponent(c.req.param('volumeName'));
+
+    if (hidesInfrastructureVolume(volumeName)) {
+        return c.json({ error: `Volume '${volumeName}' not found` }, 404);
+    }
 
     const environmentId = getCurrentEnvironmentId() || dockerClientRegistry.getDefaultEnvironmentId()!;
 

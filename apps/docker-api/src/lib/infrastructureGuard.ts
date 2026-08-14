@@ -98,6 +98,29 @@ export async function assertContainersAccessible(idsOrNames: string[]): Promise<
     await Promise.all(idsOrNames.map(assertContainerAccessible));
 }
 
+export async function isInfrastructureStack(project: string): Promise<boolean> {
+    if (INFRASTRUCTURE_BYPASS) return false;
+
+    try {
+        const containers = await docker.listContainers({
+            all: true,
+            filters: { label: [`com.docker.compose.project=${project}`] },
+        });
+
+        return containers.some((container) =>
+            isNexployInfrastructureContainerName((container.Names?.[0] ?? '').replace(/^\//, '')),
+        );
+    } catch {
+        return false;
+    }
+}
+
+export async function assertStackAccessible(project: string): Promise<void> {
+    if (await isInfrastructureStack(project)) {
+        throw notFound('Stack', project);
+    }
+}
+
 export async function isInfrastructureImage(idOrReference: string): Promise<boolean> {
     if (INFRASTRUCTURE_BYPASS) return false;
     if (isNexployInfrastructureImageReference(idOrReference)) return true;

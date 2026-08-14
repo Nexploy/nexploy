@@ -24,6 +24,7 @@ import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { currentViewer, getRepositoryOrganizations } from '@/lib/containerOwnership';
 import { COMPOSE_PROJECT_LABEL, isVisibleToViewer, NEXPLOY_ORGANIZATION_LABEL } from '@nexploy/shared/ownership';
 import { isNexployManagedLabelKey, stripNexployManagedLabels } from '@nexploy/shared/protectedLabels';
+import { assertStackAccessible, hidesInfrastructureContainer } from '@/lib/infrastructureGuard';
 
 const app = new Hono();
 
@@ -99,10 +100,17 @@ app.get(
         const viewer = currentViewer();
         const repositoryOrganizations = await getRepositoryOrganizations();
         const stackMap = new Map<string, { running: number; total: number; services: string[] }>();
+        const infrastructureProjects = new Set<string>();
 
         for (const c of containers) {
             const project = c.Labels?.[COMPOSE_PROJECT_LABEL];
             if (!project) continue;
+
+            if (hidesInfrastructureContainer({ name: c.Names?.[0] ?? '' })) {
+                infrastructureProjects.add(project);
+                continue;
+            }
+
             if (!isVisibleToViewer(c.Labels, viewer, repositoryOrganizations)) continue;
 
             const service = c.Labels?.['com.docker.compose.service'] ?? '';
@@ -117,7 +125,9 @@ app.get(
             if (service && !entry.services.includes(service)) entry.services.push(service);
         }
 
-        return Array.from(stackMap.entries()).map(([name, stats]) => ({ name, ...stats }));
+        return Array.from(stackMap.entries())
+            .filter(([name]) => !infrastructureProjects.has(name))
+            .map(([name, stats]) => ({ name, ...stats }));
     }),
 );
 
@@ -125,6 +135,7 @@ app.get(
     '/:project/status',
     route({ param: composeProjectParamSchema }, async (c) => {
         const { project } = c.req.valid('param');
+        await assertStackAccessible(project);
 
         const containers = await docker.listContainers({
             all: true,
@@ -241,6 +252,7 @@ app.get(
     '/:project/list',
     route({ param: composeProjectParamSchema }, async (c) => {
         const { project: projectName } = c.req.valid('param');
+        await assertStackAccessible(projectName);
 
         return await docker.listContainers({
             filters: {
@@ -254,6 +266,7 @@ app.post(
     '/:project/start',
     route({ param: composeProjectParamSchema }, async (c) => {
         const { project } = c.req.valid('param');
+        await assertStackAccessible(project);
         return runStackAction(project, 'start');
     }),
 );
@@ -262,6 +275,7 @@ app.post(
     '/:project/stop',
     route({ param: composeProjectParamSchema }, async (c) => {
         const { project } = c.req.valid('param');
+        await assertStackAccessible(project);
         return runStackAction(project, 'stop');
     }),
 );
@@ -270,6 +284,7 @@ app.post(
     '/:project/pause',
     route({ param: composeProjectParamSchema }, async (c) => {
         const { project } = c.req.valid('param');
+        await assertStackAccessible(project);
         return runStackAction(project, 'pause');
     }),
 );
@@ -278,6 +293,7 @@ app.post(
     '/:project/unpause',
     route({ param: composeProjectParamSchema }, async (c) => {
         const { project } = c.req.valid('param');
+        await assertStackAccessible(project);
         return runStackAction(project, 'unpause');
     }),
 );
@@ -286,6 +302,7 @@ app.post(
     '/:project/restart',
     route({ param: composeProjectParamSchema }, async (c) => {
         const { project } = c.req.valid('param');
+        await assertStackAccessible(project);
         return runStackAction(project, 'restart');
     }),
 );
@@ -294,6 +311,7 @@ app.post(
     '/:project/remove',
     route({ param: composeProjectParamSchema }, async (c) => {
         const { project } = c.req.valid('param');
+        await assertStackAccessible(project);
         const body = await c.req.json().catch(() => ({}));
         const force = body?.force === true;
         return startStackRemove(project, force);

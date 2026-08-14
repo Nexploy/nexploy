@@ -5,6 +5,7 @@ import { route } from '@/utils/route';
 import { volumeNameParamSchema } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { volumeRestoreQuerySchema } from '@workspace/schemas-zod/docker/volume/volumeBackup.schema';
 import { runTrackedTask } from '@/lib/taskRunner';
+import { hidesInfrastructureVolume } from '@/lib/infrastructureGuard';
 
 const app = new Hono();
 
@@ -13,6 +14,10 @@ app.get('/download/:volumeName', async (c) => {
 
     if (!volumeName) {
         throw new HttpError('volumeName is required', 400);
+    }
+
+    if (hidesInfrastructureVolume(volumeName)) {
+        throw new HttpError(`Volume '${volumeName}' not found`, 404);
     }
 
     const backupData = await createVolumeBackup(volumeName);
@@ -35,6 +40,10 @@ app.post(
         async (c) => {
             const { name: volumeName } = c.req.valid('param');
             const { overwrite } = c.req.valid('query');
+
+            if (hidesInfrastructureVolume(volumeName)) {
+                throw new HttpError(`Volume '${volumeName}' not found`, 404);
+            }
 
             const archive = Buffer.from(await c.req.arrayBuffer());
 
