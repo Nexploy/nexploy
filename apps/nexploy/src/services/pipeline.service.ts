@@ -2,7 +2,7 @@ import { prisma } from '../../prisma/prisma';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { PipelineGraph } from '@nexploy/nodes/core/node';
 import { SavePipelineInput } from '@workspace/schemas-zod/pipeline/pipelineGraph.schema';
-import { type NodeRunStatus } from '@nexploy/nodes/core/pipeline';
+import { type NodeRunStatus, type NodeSummary } from '@nexploy/nodes/core/pipeline';
 import { decryptPipelineNodes, encryptPipelineNodes } from '@/lib/pipelineEncryption';
 import { getNodeDescriptor } from '@nexploy/nodes/registry/descriptors';
 
@@ -10,6 +10,7 @@ export interface BuildPipelineStatus {
     nodeStatuses: Record<string, NodeRunStatus>;
     nodeDurations: Record<string, number>;
     nodeStartTimes: Record<string, number>;
+    nodeSummaries: Record<string, NodeSummary>;
     status: string;
 }
 
@@ -22,6 +23,7 @@ export async function getBuildPipelineStatus(buildId: string): Promise<BuildPipe
                 nodeStatuses: true,
                 nodeDurations: true,
                 nodeStartTimes: true,
+                nodeSummaries: true,
                 status: true,
             },
         });
@@ -32,6 +34,7 @@ export async function getBuildPipelineStatus(buildId: string): Promise<BuildPipe
             nodeStatuses: (build.nodeStatuses as Record<string, NodeRunStatus>) ?? {},
             nodeDurations: (build.nodeDurations as Record<string, number>) ?? {},
             nodeStartTimes: (build.nodeStartTimes as Record<string, number>) ?? {},
+            nodeSummaries: (build.nodeSummaries as unknown as Record<string, NodeSummary>) ?? {},
             status: build.status,
         };
     } catch (e) {

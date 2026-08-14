@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
     Background,
     BackgroundVariant,
@@ -23,7 +23,9 @@ import { cn } from '@workspace/ui/lib/utils';
 import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useAutoLayout } from '@/hooks/useAutoLayout';
-import { usePipelineActions, usePipelineBuilds, usePipelineDisplay } from '@/stores/pipeline/usePipelineStore';
+import { useBuildViewLayout } from '@/hooks/useBuildViewLayout';
+import { NODE_TWEEN_MS, useAnimatedNodePositions } from '@/hooks/useAnimatedNodePositions';
+import { usePipelineActions, usePipelineDisplay } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
 import { useHotkeys } from '@/lib/useHotKeys';
@@ -32,8 +34,7 @@ import { BuildsPanel } from '@/components/pipeline/buildsPanel/BuildsPanel';
 import { LargeNode } from '@/components/pipeline/nodes/types/LargeNode';
 import { BaseNode } from '@/components/pipeline/nodes/types/BaseNode';
 import { AttachNode } from '@/components/pipeline/nodes/types/AttachNode';
-import { BuildPreviewBanner } from '@/components/pipeline/BuildPreviewBanner';
-import { useFitViewOptions } from '@/components/pipeline/utils/fitView';
+import { useFitRenderedContent, useFitViewOptions } from '@/components/pipeline/utils/fitView';
 import { PipelineSidePanel } from '@/components/pipeline/PipelineSidePanel.tsx';
 import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 
@@ -46,10 +47,13 @@ const edgeTypes = { 'gradient-edge': GradientEdge };
 
 const canvasControlButtonClassName = 'bg-sidebar/85 border-border/70 hover:bg-sidebar size-8 border  backdrop-blur-md';
 
+const FIT_SETTLE_MS = 120;
+const FIT_DURATION_MS = 400;
+
 export function PipelineCanvas() {
     const t = useTranslations('repository.pipeline');
     const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
-    const { zoomIn, zoomOut, fitView, getNodes } = useReactFlow();
+    const { zoomIn, zoomOut, getNodes } = useReactFlow();
 
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
     const [isSpaceHeld, setIsSpaceHeld] = useState(false);
@@ -58,7 +62,6 @@ export function PipelineCanvas() {
 
     const setHoveredEdgeId = usePipelineEditorStore((s) => s.setHoveredEdgeId);
     const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
-    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
     const isValidConnection = useCallback<IsValidConnection>(
         (connection) => {
@@ -90,10 +93,12 @@ export function PipelineCanvas() {
 
     const handleAutoLayout = useAutoLayout();
     const fitViewOptions = useFitViewOptions();
+    const fitRenderedContent = useFitRenderedContent();
 
     const { nodes, displayNodes, displayEdges, isViewingBuild } = usePipelineDisplay();
+    const { nodes: laidOutNodes, layoutKey } = useBuildViewLayout(displayNodes, displayEdges, isViewingBuild);
+    const animatedNodes = useAnimatedNodePositions(laidOutNodes, isViewingBuild);
     const isSidePanelOpen = usePipelinePanelStore((s) => s.activePanel !== null);
-    const { builds } = usePipelineBuilds();
     const {
         onNodesChange,
         onEdgesChange,
@@ -113,9 +118,6 @@ export function PipelineCanvas() {
         (s) => s.nodes.filter((n) => n.selected).length,
         (a, b) => a === b,
     );
-
-    const activeBuildIndex = builds.findIndex((b) => b.id === activeBuildId);
-    const activeBuildNumber = activeBuildIndex !== -1 ? builds.length - activeBuildIndex : null;
 
     const openContextMenu = useCallback((event: React.MouseEvent, nodeId: string) => {
         event.preventDefault();
@@ -195,6 +197,37 @@ export function PipelineCanvas() {
 
     const { onDragOver, onDragLeave, onDrop } = useDragAndDropFlow(rfInstance);
 
+    const userMovedRef = useRef(false);
+    const autoFittingRef = useRef(false);
+    const autoFitTokenRef = useRef(0);
+    const fittedBuildIdRef = useRef<string | null>(null);
+
+    useEffect(() => {
+        userMovedRef.current = false;
+        fittedBuildIdRef.current = null;
+    }, [activeBuildId]);
+
+    useEffect(() => {
+        if (!isViewingBuild || layoutKey === '') return;
+
+        const isFirstFitForBuild = fittedBuildIdRef.current !== activeBuildId;
+        if (!isFirstFitForBuild && userMovedRef.current) return;
+
+        const timer = window.setTimeout(() => {
+            fittedBuildIdRef.current = activeBuildId;
+            autoFittingRef.current = true;
+            autoFitTokenRef.current += 1;
+            const token = autoFitTokenRef.current;
+            void fitRenderedContent(FIT_DURATION_MS).finally(() => {
+                window.setTimeout(() => {
+                    if (autoFitTokenRef.current === token) autoFittingRef.current = false;
+                }, 0);
+            });
+        }, NODE_TWEEN_MS + FIT_SETTLE_MS);
+
+        return () => window.clearTimeout(timer);
+    }, [isViewingBuild, layoutKey, activeBuildId, fitRenderedContent, isSidePanelOpen]);
+
     return (
         <div
             ref={wrapperRef}
@@ -208,15 +241,18 @@ export function PipelineCanvas() {
             onDrop={onDrop}
         >
             <ReactFlow
-                nodes={displayNodes}
+                nodes={animatedNodes}
                 edges={displayEdges}
-                onNodesChange={isViewingBuild ? () => {} : onNodesChange}
+                onNodesChange={isViewingBuild ? undefined : onNodesChange}
                 onEdgesChange={isViewingBuild ? () => {} : onEdgesChange}
                 onEdgeMouseEnter={isViewingBuild ? undefined : (_, edge) => setHoveredEdgeId(edge.id)}
                 onEdgeMouseLeave={isViewingBuild ? undefined : () => setHoveredEdgeId(null)}
                 onConnect={isViewingBuild ? undefined : onConnect}
                 isValidConnection={isViewingBuild ? undefined : isValidConnection}
                 onInit={setRfInstance}
+                onMoveStart={(event) => {
+                    if (event && !autoFittingRef.current) userMovedRef.current = true;
+                }}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 onNodeDragStop={isViewingBuild ? undefined : triggerAutoSave}
@@ -248,9 +284,6 @@ export function PipelineCanvas() {
                 <BuildsPanel />
                 <ButtonPanel />
                 <PipelineSidePanel />
-                {isViewingBuild && activeBuildNumber && (
-                    <BuildPreviewBanner buildNumber={activeBuildNumber} onExit={() => setActiveBuildId(null)} />
-                )}
                 {displayNodes.length > 0 && (
                     <Panel className={'m-2!'} position="bottom-left">
                         <div className="flex gap-1.5">
@@ -267,7 +300,7 @@ export function PipelineCanvas() {
                                 variant="ghost"
                                 size="icon"
                                 className={canvasControlButtonClassName}
-                                onClick={() => fitView(fitViewOptions)}
+                                onClick={() => fitRenderedContent(FIT_DURATION_MS)}
                                 title={t('canvas.fitView')}
                             >
                                 <Maximize />
@@ -286,6 +319,7 @@ export function PipelineCanvas() {
                                 size="icon"
                                 className={canvasControlButtonClassName}
                                 onClick={handleAutoLayout}
+                                disabled={isViewingBuild}
                                 title={t('canvas.autoLayout')}
                             >
                                 <Paintbrush />

@@ -47,6 +47,8 @@ export function createPipelineStore({
         buildNodeStatuses: {},
         buildNodeDurations: {},
         buildNodeStartTimes: {},
+        buildNodeProgress: {},
+        buildNodeSummaries: {},
 
         setNodes: (updater) => set((s) => ({ nodes: typeof updater === 'function' ? updater(s.nodes) : updater })),
 
@@ -201,6 +203,20 @@ export function createPipelineStore({
                 const prev = s.buildNodeStartTimes[buildId] ?? {};
                 const next = typeof updater === 'function' ? updater(prev) : { ...prev, ...updater };
                 return { buildNodeStartTimes: { ...s.buildNodeStartTimes, [buildId]: next } };
+            }),
+
+        setBuildNodeProgress: (buildId, updater) =>
+            set((s) => {
+                const prev = s.buildNodeProgress[buildId] ?? {};
+                const next = typeof updater === 'function' ? updater(prev) : { ...prev, ...updater };
+                return { buildNodeProgress: { ...s.buildNodeProgress, [buildId]: next } };
+            }),
+
+        setBuildNodeSummaries: (buildId, updater) =>
+            set((s) => {
+                const prev = s.buildNodeSummaries[buildId] ?? {};
+                const next = typeof updater === 'function' ? updater(prev) : { ...prev, ...updater };
+                return { buildNodeSummaries: { ...s.buildNodeSummaries, [buildId]: next } };
             }),
 
         _commit: (snapshot) => {

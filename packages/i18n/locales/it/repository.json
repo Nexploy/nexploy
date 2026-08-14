@@ -424,7 +424,10 @@
     "nodeOutputs": "Output del nodo",
     "nodeOutputsHint": "Valori che questo nodo produrrà per i nodi successivi",
     "noOutputs": "Questo nodo non produce output",
-    "sslCertificates": "Certificati SSL"
+    "sslCertificates": "Certificati SSL",
+    "nodeRun": {
+      "waiting": "In attesa…"
+    }
   },
   "stages": {
     "selectStage": "Fase",

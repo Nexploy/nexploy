@@ -14,6 +14,24 @@ const buildChannelDef = realtime.channel({
                 startedAt: z.number().optional(),
             }),
         },
+        'node-progress': {
+            schema: z.object({
+                nodeId: z.string(),
+                current: z.number(),
+                total: z.number(),
+                labelKey: z.string(),
+                labelValues: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
+                detail: z.string().optional(),
+            }),
+        },
+        'node-summary': {
+            schema: z.object({
+                nodeId: z.string(),
+                key: z.string(),
+                values: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
+                tone: z.string().optional(),
+            }),
+        },
         'commit-info': { schema: z.any() },
     },
 });

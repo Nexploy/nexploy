@@ -7,7 +7,11 @@ import { type NodeRunStatus, type PipelineGraph } from '@nexploy/nodes/core/node
 import { graphToFlow } from '@/components/pipeline/utils/graphConvert';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { usePipelineStoreInstance } from '@/contexts/PipelineContext';
-import type { PipelineActionsContextValue } from '@workspace/typescript-interface/stores/pipelineStore';
+import type {
+    NodeProgressState,
+    NodeSummaryState,
+    PipelineActionsContextValue,
+} from '@workspace/typescript-interface/stores/pipelineStore';
 
 export type { PipelineStore } from './createPipelineStore';
 export { createPipelineStore } from './createPipelineStore';
@@ -21,6 +25,8 @@ export type {
 
 const EMPTY_NODE_STATUSES: Record<string, NodeRunStatus> = {};
 const EMPTY_NODE_DURATIONS: Record<string, number> = {};
+const EMPTY_NODE_PROGRESS: Record<string, NodeProgressState> = {};
+const EMPTY_NODE_SUMMARIES: Record<string, NodeSummaryState> = {};
 
 export function usePipelineActions(): PipelineActionsContextValue {
     const store = usePipelineStoreInstance();
@@ -46,6 +52,8 @@ export function usePipelineActions(): PipelineActionsContextValue {
             setBuildNodeStatuses: s.setBuildNodeStatuses,
             setBuildNodeDurations: s.setBuildNodeDurations,
             setBuildNodeStartTimes: s.setBuildNodeStartTimes,
+            setBuildNodeProgress: s.setBuildNodeProgress,
+            setBuildNodeSummaries: s.setBuildNodeSummaries,
         })),
     );
 }
@@ -130,6 +138,14 @@ export function usePipelineDisplay() {
         activeBuildId ? (s.buildNodeStartTimes[activeBuildId] ?? EMPTY_NODE_DURATIONS) : EMPTY_NODE_DURATIONS,
     );
 
+    const nodeProgress = useStore(store, (s) =>
+        activeBuildId ? (s.buildNodeProgress[activeBuildId] ?? EMPTY_NODE_PROGRESS) : EMPTY_NODE_PROGRESS,
+    );
+
+    const nodeSummaries = useStore(store, (s) =>
+        activeBuildId ? (s.buildNodeSummaries[activeBuildId] ?? EMPTY_NODE_SUMMARIES) : EMPTY_NODE_SUMMARIES,
+    );
+
     const isViewingBuild = !!snapshot;
 
     const snapshotFlow = useMemo(
@@ -146,6 +162,9 @@ export function usePipelineDisplay() {
                     ...node.data,
                     status: nodeStatuses[node.id] ?? undefined,
                     durationMs: nodeDurations[node.id] ?? undefined,
+                    startedAt: nodeStartTimes[node.id] ?? undefined,
+                    progress: nodeProgress[node.id] ?? undefined,
+                    summary: nodeSummaries[node.id] ?? undefined,
                     viewOnly: true,
                 },
             })),
@@ -154,9 +173,14 @@ export function usePipelineDisplay() {
                 animated:
                     nodeStatuses[edge.source] === 'running' ||
                     (nodeStatuses[edge.source] === 'completed' && nodeStatuses[edge.target] === 'running'),
+                data: {
+                    ...edge.data,
+                    sourceStatus: nodeStatuses[edge.source],
+                    targetStatus: nodeStatuses[edge.target],
+                },
             })),
         };
-    }, [snapshotFlow, nodeStatuses, nodeDurations, nodes, edges]);
+    }, [snapshotFlow, nodeStatuses, nodeDurations, nodeStartTimes, nodeProgress, nodeSummaries, nodes, edges]);
 
     return {
         nodes,
@@ -166,5 +190,7 @@ export function usePipelineDisplay() {
         nodeStatuses,
         nodeDurations,
         nodeStartTimes,
+        nodeProgress,
+        nodeSummaries,
     };
 }

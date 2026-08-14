@@ -42,10 +42,10 @@ export function BuildsPanel() {
     if (builds.length === 0) return null;
 
     return (
-        <Panel position="top-left" className="m-0!">
+        <Panel position="top-left" className="m-0!" data-canvas-overlay="left">
             <ScrollArea
                 viewportRef={scrollViewportRef}
-                className="h-[100px] transition-[height] duration-200 hover:h-[250px]"
+                className="h-[100px] w-64 transition-[height] duration-200 hover:h-[250px]"
             >
                 <div className={'m-2 flex flex-col gap-1'}>
                     {builds.map((build) => (

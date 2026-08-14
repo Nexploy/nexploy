@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import type { Realtime } from 'inngest';
 import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/repository/build';
 import { inngest } from '@/inngest/client';
-import { updateNodeStatus, updateStatusBuild } from '@/services/repository/build.service';
+import { updateNodeStatus, updateNodeSummary, updateStatusBuild } from '@/services/repository/build.service';
 import { createLogsBatch } from '@/services/repository/log.service';
 import { LogLevel, PipelineReporter, PipelineStatus } from '@nexploy/nodes/core/pipeline';
 import { createPipelineLogger, pipelineOrchestrator } from '@/inngest/pipeline/orchestrator';
@@ -110,6 +110,15 @@ export const buildFunction = inngest.createFunction(
                 markNotConfigured: (nodeId) => mark(nodeId, 'not-configured'),
                 async publishCommitInfo(data) {
                     await publishSafe(buildChannel['commit-info'], data);
+                },
+                async reportProgress(nodeId, progress) {
+                    await publishSafe(buildChannel['node-progress'], { nodeId, ...progress });
+                },
+                async reportSummary(nodeId, summary) {
+                    await Promise.all([
+                        updateNodeSummary(buildId, nodeId, summary),
+                        publishSafe(buildChannel['node-summary'], { nodeId, ...summary }),
+                    ]);
                 },
             };
 

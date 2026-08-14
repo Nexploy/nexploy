@@ -5,7 +5,7 @@ import { inngest } from '@/inngest/client';
 import { getRepositorieWithEnv } from '@/services/repository.service';
 import { decrypt } from '@/lib/encryption';
 import { StartBuildSchemaType } from '@workspace/schemas-zod/inngest/build.schema';
-import { BuildStatus } from 'generated/client';
+import { BuildStatus, Prisma } from 'generated/client';
 import { createLog } from '@/services/repository/log.service';
 import type { Realtime } from 'inngest';
 import { createBuildChannel } from '@/inngest/channels/build.channel';
@@ -13,6 +13,7 @@ import { getFirstStage } from '@/services/repository/deploymentStage.service';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
 import { WebhookTrigger } from '@workspace/typescript-interface/webhook';
 import { PipelineNode } from '@nexploy/nodes/core/node';
+import type { NodeSummary } from '@nexploy/nodes/core/pipeline';
 import { matchesWebhookTrigger, WebhookCloneFilters } from '@nexploy/nodes/core/webhookTrigger';
 import { publishBuildTaskFromDatabase } from '@/services/repository/buildTask.service';
 import {
@@ -232,6 +233,22 @@ export async function updateNodeStatus(
         });
     } catch {
         throw new Error(t('build.updateNodeStatusFailed'));
+    }
+}
+
+export async function updateNodeSummary(buildId: string, nodeId: string, summary: NodeSummary) {
+    try {
+        const build = await prisma.build.findUnique({
+            where: { id: buildId },
+            select: { nodeSummaries: true },
+        });
+        const current = (build?.nodeSummaries as unknown as Record<string, NodeSummary>) ?? {};
+        await prisma.build.update({
+            where: { id: buildId },
+            data: { nodeSummaries: { ...current, [nodeId]: summary } as unknown as Prisma.InputJsonValue },
+        });
+    } catch {
+        return;
     }
 }
 

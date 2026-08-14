@@ -20,11 +20,14 @@ import { StatusView } from '@/components/shared/StatusView';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { mod } from '@/components/pipeline/utils/modKey';
 import { usePermissions } from '@/contexts/PermissionContext';
+import { BuildPreviewBanner } from '@/components/pipeline/BuildPreviewBanner.tsx';
 
 export function PipelineToolbar() {
     const t = useTranslations('repository.pipeline');
 
     const selectedNodeIds = usePipelineEditorStore((s) => s.selectedNodeIds);
+    const activeBuildId = usePipelineEditorStore((s) => s.activeBuildId);
+    const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
     const {
         undo,
@@ -37,8 +40,11 @@ export function PipelineToolbar() {
     } = usePipelineActions();
     const { nodes } = usePipelineGraph();
     const { isSaving, canUndo, canRedo } = usePipelineSaveState();
-    const { activeBuild } = usePipelineBuilds();
+    const { builds, activeBuild } = usePipelineBuilds();
     const isViewingBuild = useIsViewingBuild();
+
+    const activeBuildIndex = builds.findIndex((b) => b.id === activeBuildId);
+    const activeBuildNumber = activeBuildIndex !== -1 ? builds.length - activeBuildIndex : null;
 
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
     const { can } = usePermissions();
@@ -63,7 +69,7 @@ export function PipelineToolbar() {
     };
 
     return (
-        <div className="mx-5 flex items-center justify-between gap-2 rounded-t-lg border border-b-0 px-2 py-1">
+        <div className="relative mx-5 flex items-center justify-between gap-2 rounded-t-lg border border-b-0 px-2 py-1">
             <div className={'flex items-center gap-1'}>
                 <div className={'flex items-center gap-1 pr-1'}>
                     <span className="text-muted-foreground text-xs">{t('nodeCount', { count: nodes.length })}</span>
@@ -209,6 +215,9 @@ export function PipelineToolbar() {
                             <StopBuild buildId={activeBuild.id} status={activeBuild.status} variant="outline" />
                         </div>
                     </div>
+                )}
+                {isViewingBuild && activeBuildNumber && (
+                    <BuildPreviewBanner buildNumber={activeBuildNumber} onExit={() => setActiveBuildId(null)} />
                 )}
             </div>
             <div className="flex items-center gap-2">

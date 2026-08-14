@@ -424,7 +424,10 @@
     "nodeOutputs": "Node outputs",
     "nodeOutputsHint": "Values this node will produce for downstream nodes",
     "noOutputs": "This node produces no outputs",
-    "sslCertificates": "SSL Certificates"
+    "sslCertificates": "SSL Certificates",
+    "nodeRun": {
+      "waiting": "Waiting…"
+    }
   },
   "stages": {
     "selectStage": "Stage",

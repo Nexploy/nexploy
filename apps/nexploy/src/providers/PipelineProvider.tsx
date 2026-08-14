@@ -8,7 +8,7 @@ import { fetcherApi } from '@/lib/api/fetcherApi';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { type PipelineGraph } from '@nexploy/nodes/core/node';
 import type { NodeRunStatus } from '@nexploy/nodes/core/pipeline';
-import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
+import type { NodeSummaryState, PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
 import { createPipelineStore, type PipelineStore } from '@/stores/pipeline/createPipelineStore';
 import { PipelineContext } from '@/contexts/PipelineContext';
 import { BuildTracker } from '@/components/pipeline/buildsPanel/BuildTracker';
@@ -63,8 +63,13 @@ export function PipelineProvider({
         nodeStatuses: Record<string, NodeRunStatus>;
         nodeDurations: Record<string, number>;
         nodeStartTimes: Record<string, number>;
+        nodeSummaries: Record<string, NodeSummaryState>;
     }>(activeBuildId ? { url: `/api/repositories/${repositoryId}/builds/${activeBuildId}` } : null, fetcherApi, {
         onSuccess: (data) => {
+            store.getState().setBuildNodeSummaries(activeBuildId!, (prev) => ({
+                ...(data?.nodeSummaries ?? {}),
+                ...prev,
+            }));
             store.getState().setBuildNodeStatuses(activeBuildId!, (prev) => ({
                 ...(data?.nodeStatuses ?? {}),
                 ...prev,

@@ -213,6 +213,71 @@ export const myActionExecutor = new MyActionExecutor();
 - The exported const **must** be named `<camelCaseType>Executor`.
 - Never write comments (project-wide rule).
 
+### Live progress and result summary — `ctx.reporter`
+
+While a build runs, the pipeline canvas expands each node into a card showing a live activity
+line, a progress bar and a result summary. That card is driven entirely by two reporter calls.
+A node that makes neither still works — the bar falls back to an indeterminate shimmer and the
+finished card shows only its duration — but instrument every node you add.
+
+```typescript
+import { createProgressTracker } from '@nexploy/nodes/core/nodeProgress';
+
+const tracker = createProgressTracker(reporter, nodeId, 3);
+
+await tracker.step('clone', { branch });        // 1/3 · "Cloning main"
+await tracker.detail('receiving objects 62%');  // refines the line, does not advance
+await tracker.step('checkout', { commit });     // 2/3
+await tracker.done();                           // fills the bar
+
+await reporter.reportSummary(nodeId, {
+    key: 'cloned',
+    values: { branch, commit },
+    tone: 'positive',
+});
+```
+
+`createProgressTracker(reporter, nodeId, total)` — `total` is the number of `step()` calls you
+will make. Call `step()` **before** the work, so the label describes what is happening now.
+
+When the real step count comes from the data, skip the tracker and call `reporter.reportProgress`
+directly — a Docker build parsing `Step 3/12`, a poll loop with a computed attempt budget:
+
+```typescript
+await reporter.reportProgress(nodeId, {
+    current: attempt,
+    total: maxAttempts,
+    labelKey: 'probe',
+    labelValues: { url },
+    detail: 'HTTP 502',
+});
+```
+
+#### Summary tones
+
+| tone | Use for |
+|---|---|
+| `positive` | Normal success |
+| `warning` | Succeeded with a caveat — already existed, fell back, skipped a step |
+| `negative` | Failure |
+| `neutral` | Plain fact, no judgement (default) |
+
+Emit a summary on **every** exit path, including the degraded ones — the "already exists" branch,
+the fallback branch. A terminal node with no summary shows nothing but its duration.
+
+Failures are the exception: the orchestrator emits a `negative` summary from the caught error
+itself, so `throw` is enough.
+
+#### Translating the strings
+
+`labelKey` and `key` are translation keys, resolved client-side against the node's own locale
+files under `nodes.<type>.steps.*` and `nodes.<type>.summary.*` — see Step 6. `values` are
+interpolated with next-intl syntax (`{branch}`), so keep them scalar.
+
+For runtime text that cannot be translated — an error message, a command's output — use `text`
+instead of `key`; it is rendered verbatim and bypasses lookup. `values` must be `string | number`,
+so wrap possibly-refable config fields in `String(...)`.
+
 ### Talking to docker-api — use `ctx.services.docker`
 
 Executors must **not** import `@/lib/api/kyDocker`; that would couple them to Next.js request internals.
@@ -411,7 +476,18 @@ that only this node uses:
 ```json
 {
   "nodes": {
-    "my-action": { "name": "My Action", "description": "Short description of what this node does" }
+    "my-action": {
+      "name": "My Action",
+      "description": "Short description of what this node does",
+      "steps": {
+        "prepare": "Preparing {targetPath}",
+        "apply": "Applying changes"
+      },
+      "summary": {
+        "done": "{count} files · {targetPath}",
+        "alreadyApplied": "Already applied"
+      }
+    }
   },
   "config": {
     "targetPath": "Target path",
@@ -421,6 +497,12 @@ that only this node uses:
 ```
 
 `name` and `description` are required in **both** locales.
+
+`steps` and `summary` back the `labelKey` and `key` passed to `ctx.reporter` (Step 3). Every key
+the executor can emit needs an entry in **every** locale — a missing key falls back to the raw
+key string, which is what the user then reads on the canvas. Keep them short: they render on one
+truncated line inside a 280px card. Put the identifying value first (`{branch} · {commit}`, not
+`Cloned repository on branch {branch}`).
 
 ### Shared vocabulary — `registry/locales/{en,fr}.json`
 
@@ -468,6 +550,9 @@ pnpm types
 - [ ] `outputs` match the executor's `return { output: … }` exactly; control keys marked `internal: true`
 - [ ] Executor exported as `<camelCase>Executor`; uses `ResolveRefs<>` if the schema has refable fields
 - [ ] Executor talks to the host only through `ctx.services.*` — zero `@/` imports
+- [ ] Progress reported via `createProgressTracker` or `reporter.reportProgress`
+- [ ] `reporter.reportSummary` on every non-throwing exit path, tone matching the outcome
+- [ ] Every `labelKey` / summary `key` present under `nodes.<type>.steps` / `.summary` in **all** locales
 - [ ] Config panel exported as `<PascalCase>Config`; uses `useFormContext()`; no props
 - [ ] No `className` on shadcn/ui components
 - [ ] Refable fields wrapped in `<RefAware>`; resource fields use `InputAutoComplete`

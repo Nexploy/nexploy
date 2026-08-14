@@ -424,7 +424,10 @@
     "nodeOutputs": "Sorties du nœud",
     "nodeOutputsHint": "Valeurs que ce nœud produira pour les nœuds en aval",
     "noOutputs": "Ce nœud ne produit aucune sortie",
-    "sslCertificates": "Certificats SSL"
+    "sslCertificates": "Certificats SSL",
+    "nodeRun": {
+      "waiting": "En attente…"
+    }
   },
   "stages": {
     "selectStage": "Stage",

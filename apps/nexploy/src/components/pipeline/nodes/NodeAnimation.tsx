@@ -3,7 +3,7 @@
 import { cn } from '@workspace/ui/lib/utils';
 import { CATEGORY_BORDER, CATEGORY_HEX } from '@/components/pipeline/pipelineTheme';
 import { type NodeData } from '@nexploy/nodes/ui/nodeDefinition';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 import { AnimatedCircleX } from '@/components/pipeline/nodes/animations/AnimatedCircleX.tsx';
 import { AnimatedBan } from '@/components/pipeline/nodes/animations/AnimatedBan.tsx';
 import { AnimatedAlertCircle } from '@/components/pipeline/nodes/animations/AnimatedAlertCircle.tsx';
@@ -14,46 +14,85 @@ interface NodeAnimationProps {
     data: NodeData;
     selected?: boolean;
     square?: boolean;
+    body?: ReactNode;
+    bodyAlwaysOpen?: boolean;
 }
 
-export function NodeAnimation({ data, selected, square = false, children }: PropsWithChildren<NodeAnimationProps>) {
+export function NodeAnimation({
+    data,
+    selected,
+    square = false,
+    body,
+    bodyAlwaysOpen = false,
+    children,
+}: PropsWithChildren<NodeAnimationProps>) {
     const Icon = data.definition.metadata.icon;
     const isStartNode = data.definition.isStartNode;
     const isEndNode = data.definition.isEndNode;
     const categoryHex = CATEGORY_HEX[data.definition.category];
+    const isFailed = data.status === 'failed';
 
-    const rounded = square
-        ? isStartNode
+    const hasBody = !!body;
+
+    const rounded = hasBody
+        ? 'rounded-3xl'
+        : square
+          ? isStartNode
+              ? 'rounded-l-4xl rounded-r-3xl'
+              : isEndNode
+                ? 'rounded-r-4xl rounded-l-3xl'
+                : 'rounded-3xl'
+          : isStartNode
             ? 'rounded-l-4xl rounded-r-3xl'
             : isEndNode
               ? 'rounded-r-4xl rounded-l-3xl'
-              : 'rounded-3xl'
-        : isStartNode
-          ? 'rounded-l-4xl rounded-r-3xl'
-          : isEndNode
-            ? 'rounded-r-4xl rounded-l-3xl'
-            : 'rounded-full';
+              : 'rounded-full';
 
-    const iconRounded = square ? 'rounded-xl' : 'rounded-full';
+    const iconRounded = square || hasBody ? 'rounded-xl' : 'rounded-full';
 
     const cornerClass = cn(
         'bg-card absolute size-4 rounded-full',
-        square ? 'top-1.5 right-1.5' : 'top-[11px] right-[11px]',
-        isEndNode && 'top-1.5 left-1.5',
+        square || hasBody ? 'top-1.5 right-1.5' : 'top-[11px] right-[11px]',
+        isEndNode && !hasBody && 'top-1.5 left-1.5',
     );
 
     const icon = (
         <div
             className={cn(
-                'flex size-11 items-center justify-center',
+                'flex size-11 shrink-0 items-center justify-center',
                 iconRounded,
-                isStartNode && 'rounded-l-2xl',
-                isEndNode && 'rounded-r-2xl',
+                !hasBody && isStartNode && 'rounded-l-2xl',
+                !hasBody && isEndNode && 'rounded-r-2xl',
                 data.definition.metadata.color,
             )}
         >
             <Icon className="size-6" strokeWidth={1.5} />
         </div>
+    );
+
+    const header = (
+        <div
+            className={cn('flex items-center', children ? 'gap-3' : 'justify-center', hasBody && 'w-full min-w-0 pr-6')}
+        >
+            {icon}
+            {children}
+        </div>
+    );
+
+    const content = hasBody ? (
+        <div className={cn('flex w-full max-w-[320px] min-w-0 flex-col', bodyAlwaysOpen ? 'w-[280px]' : 'w-[220px]')}>
+            {header}
+            <div
+                className={cn(
+                    'grid transition-[grid-template-rows] duration-200 ease-out',
+                    bodyAlwaysOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr] group-hover:grid-rows-[1fr]',
+                )}
+            >
+                <div className="overflow-hidden">{body}</div>
+            </div>
+        </div>
+    ) : (
+        header
     );
 
     if (data.status === 'running') {
@@ -71,19 +110,18 @@ export function NodeAnimation({ data, selected, square = false, children }: Prop
                 <div
                     className={cn(
                         'bg-card relative flex items-center p-4',
-                        children ? 'gap-3' : 'justify-center',
+                        children || hasBody ? 'gap-3' : 'justify-center',
                         'overflow-hidden',
                         rounded,
                     )}
                 >
-                    {icon}
-                    {children}
+                    {content}
                     <AnimatedNodeSpinner
                         categoryHex={categoryHex!}
                         className={cn(
                             'absolute',
-                            square ? 'top-1.5 right-1.5' : 'top-[11px] right-[11px]',
-                            isEndNode && 'top-1 left-1',
+                            square || hasBody ? 'top-1.5 right-1.5' : 'top-[11px] right-[11px]',
+                            isEndNode && !hasBody && 'top-1 left-1',
                         )}
                     />
                 </div>
@@ -93,10 +131,16 @@ export function NodeAnimation({ data, selected, square = false, children }: Prop
 
     return (
         <div
-            style={data.status === 'completed' ? { boxShadow: `0 0 20px 2px ${categoryHex}50` } : undefined}
+            style={
+                data.status === 'completed'
+                    ? { boxShadow: `0 0 20px 2px ${categoryHex}50` }
+                    : isFailed
+                      ? { boxShadow: '0 0 20px 2px var(--destructive)' }
+                      : undefined
+            }
             className={cn(
                 'bg-card relative flex items-center overflow-hidden border-2 p-4 shadow-lg transition-[border-color,box-shadow] duration-300',
-                children ? 'gap-3' : 'justify-center',
+                children || hasBody ? 'gap-3' : 'justify-center',
                 rounded,
                 data.status === 'completed'
                     ? CATEGORY_BORDER[data.definition.category]
@@ -105,16 +149,15 @@ export function NodeAnimation({ data, selected, square = false, children }: Prop
                       : selected
                         ? CATEGORY_BORDER[data.definition.category]
                         : 'border-border hover:border-accent',
-                (data.status === 'failed' || data.status === 'skipped' || data.status === 'cancelled') &&
-                    'border-border',
+                (data.status === 'skipped' || data.status === 'cancelled') && 'border-border',
+                isFailed && 'border-destructive',
             )}
         >
             {data.status === 'completed' && <AnimatedCheckCircle className={cornerClass} />}
-            {data.status === 'failed' && <AnimatedCircleX className={cornerClass} />}
+            {isFailed && <AnimatedCircleX className={cornerClass} />}
             {data.status === 'cancelled' && <AnimatedBan className={cornerClass} />}
             {data.status === 'not-configured' && <AnimatedAlertCircle className={cornerClass} />}
-            {icon}
-            {children}
+            {content}
         </div>
     );
 }

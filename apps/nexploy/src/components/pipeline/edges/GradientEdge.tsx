@@ -16,8 +16,11 @@ import { Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 
+type EdgeRunStatus = 'running' | 'completed' | 'skipped' | 'failed' | 'cancelled' | 'not-configured';
+
 export function GradientEdge(props: EdgeProps) {
-    const { id, source, target, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style } = props;
+    const { id, source, target, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style, data } =
+        props;
 
     const nodes = useNodes();
     const { deleteElements, getEdges } = useReactFlow();
@@ -58,6 +61,17 @@ export function GradientEdge(props: EdgeProps) {
         if (edge) deleteElements({ edges: [edge] });
     };
 
+    const sourceStatus = (data as { sourceStatus?: EdgeRunStatus } | undefined)?.sourceStatus;
+    const targetStatus = (data as { targetStatus?: EdgeRunStatus } | undefined)?.targetStatus;
+    const isBuildView = 'sourceStatus' in ((data ?? {}) as object);
+
+    const hasFailed = sourceStatus === 'failed' || sourceStatus === 'cancelled';
+    const hasFlowed = sourceStatus === 'completed' || sourceStatus === 'running';
+    const isPending = isBuildView && !hasFailed && !hasFlowed;
+    const showPulse = sourceStatus === 'completed' && targetStatus === 'running';
+
+    const strokeColor = hasFailed ? 'var(--destructive)' : `url(#${gradientId})`;
+
     return (
         <>
             <defs>
@@ -78,13 +92,19 @@ export function GradientEdge(props: EdgeProps) {
                 path={edgePath}
                 style={{
                     ...style,
-                    stroke: `url(#${gradientId})`,
+                    stroke: strokeColor,
                     strokeWidth: 2,
-                    opacity: isDimmed ? 0.4 : 1,
-                    transition: 'opacity 0.2s',
+                    strokeDasharray: hasFailed ? '6 6' : undefined,
+                    opacity: isDimmed ? 0.4 : isPending ? 0.45 : 1,
+                    transition: 'opacity 0.2s, stroke 0.3s',
                     ...(isAttachmentEdge && { animationDirection: 'reverse' }),
                 }}
             />
+            {showPulse && (
+                <circle r={4} fill={targetColor}>
+                    <animateMotion dur="1.6s" repeatCount="indefinite" path={edgePath} />
+                </circle>
+            )}
             <EdgeToolbar edgeId={id} x={centerX} y={centerY} isVisible={hoveredEdgeId === id}>
                 <Button
                     className="nodrag nopan bg-card! size-8 opacity-100 duration-0"

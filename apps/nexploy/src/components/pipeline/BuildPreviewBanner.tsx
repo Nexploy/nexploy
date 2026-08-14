@@ -1,9 +1,9 @@
 'use client';
 
-import { X } from 'lucide-react';
+import { Eye, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { Panel } from '@xyflow/react';
 import { Kbd } from '@workspace/ui/components/kbd';
+import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { useHotkeys } from '@/lib/useHotKeys.ts';
@@ -29,25 +29,23 @@ export function BuildPreviewBanner({ buildNumber, onExit }: BuildPreviewBannerPr
     );
 
     return (
-        <Panel position="top-center" className="m-2! flex-1">
-            <div className="bg-background/90 flex flex-1 items-center gap-2 rounded-lg border px-2 py-1.5 whitespace-nowrap shadow-sm backdrop-blur-sm">
-                <span className="text-muted-foreground text-xs">{t('viewingBuild', { number: buildNumber })}</span>
-                <div className={'flex'}>
-                    <Kbd className="text-muted-foreground/70 rounded-sm rounded-r-none text-xs">Esc</Kbd>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant={'outline'}
-                                onClick={onExit}
-                                className="text-muted-foreground hover:text-foreground size-5 rounded-sm rounded-l-none transition-colors"
-                            >
-                                <X className="size-3" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>{t('exitBuild')}</TooltipContent>
-                    </Tooltip>
-                </div>
-            </div>
-        </Panel>
+        <Badge variant="secondary" className="text-muted-foreground gap-1.5 py-0 pr-0.5 pl-2">
+            <Eye className="text-muted-foreground/70" />
+            {t('viewingBuild', { number: buildNumber })}
+            <Kbd className="text-muted-foreground/70 bg-background/60 h-4 px-1 text-[10px]">Esc</Kbd>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={onExit}
+                        className="hover:bg-background/60 hover:text-foreground size-5 rounded-sm"
+                    >
+                        <X className="size-3" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>{t('exitBuild')}</TooltipContent>
+            </Tooltip>
+        </Badge>
     );
 }

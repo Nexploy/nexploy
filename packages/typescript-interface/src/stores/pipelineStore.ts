@@ -17,6 +17,25 @@ export interface PipelineBuild {
     pipelineSnapshot?: unknown;
 }
 
+export type NodeReportValues = Record<string, string | number>;
+
+export type NodeSummaryTone = 'neutral' | 'positive' | 'warning' | 'negative';
+
+export interface NodeProgressState {
+    current: number;
+    total: number;
+    labelKey: string;
+    labelValues?: NodeReportValues;
+    detail?: string;
+}
+
+export interface NodeSummaryState {
+    key: string;
+    text?: string;
+    values?: NodeReportValues;
+    tone?: NodeSummaryTone;
+}
+
 export type Snapshot = { nodes: Node[]; edges: Edge[] };
 
 export interface PipelineActionsContextValue {
@@ -50,6 +69,18 @@ export interface PipelineActionsContextValue {
         buildId: string,
         updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>),
     ) => void;
+    setBuildNodeProgress: (
+        buildId: string,
+        updater:
+            | Record<string, NodeProgressState>
+            | ((prev: Record<string, NodeProgressState>) => Record<string, NodeProgressState>),
+    ) => void;
+    setBuildNodeSummaries: (
+        buildId: string,
+        updater:
+            | Record<string, NodeSummaryState>
+            | ((prev: Record<string, NodeSummaryState>) => Record<string, NodeSummaryState>),
+    ) => void;
 }
 
 export interface PipelineStateContextValue {
@@ -67,6 +98,8 @@ export interface PipelineStateContextValue {
     nodeStatuses: Record<string, NodeRunStatus>;
     nodeDurations: Record<string, number>;
     nodeStartTimes: Record<string, number>;
+    nodeProgress: Record<string, NodeProgressState>;
+    nodeSummaries: Record<string, NodeSummaryState>;
     canUndo: boolean;
     canRedo: boolean;
 }
@@ -89,6 +122,8 @@ export interface PipelineStoreState {
     buildNodeStatuses: Record<string, Record<string, NodeRunStatus>>;
     buildNodeDurations: Record<string, Record<string, number>>;
     buildNodeStartTimes: Record<string, Record<string, number>>;
+    buildNodeProgress: Record<string, Record<string, NodeProgressState>>;
+    buildNodeSummaries: Record<string, Record<string, NodeSummaryState>>;
 
     setNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
     setEdges: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
@@ -119,6 +154,18 @@ export interface PipelineStoreState {
     setBuildNodeStartTimes: (
         buildId: string,
         updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>),
+    ) => void;
+    setBuildNodeProgress: (
+        buildId: string,
+        updater:
+            | Record<string, NodeProgressState>
+            | ((prev: Record<string, NodeProgressState>) => Record<string, NodeProgressState>),
+    ) => void;
+    setBuildNodeSummaries: (
+        buildId: string,
+        updater:
+            | Record<string, NodeSummaryState>
+            | ((prev: Record<string, NodeSummaryState>) => Record<string, NodeSummaryState>),
     ) => void;
 
     _commit: (snapshot: Snapshot) => void;

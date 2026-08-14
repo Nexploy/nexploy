@@ -175,6 +175,11 @@ export class PipelineOrchestrator {
 
                 if (refWarnings.length > 0) {
                     await inngestStep.run(`node-${node.id}`, async () => {
+                        await reporter.reportSummary(node.id, {
+                            key: 'failed',
+                            text: refWarnings.join(' · '),
+                            tone: 'negative',
+                        });
                         await reporter.markFailed(node.id);
                         for (const msg of refWarnings) {
                             await logger.error(node.id, msg);
@@ -189,12 +194,15 @@ export class PipelineOrchestrator {
                 if (executor.configSchema) {
                     const validation = executor.configSchema.safeParse(resolvedConfig);
                     if (!validation.success) {
+                        const issues = validation.error.issues.map((i) => i.message).join(', ');
                         await inngestStep.run(`node-${node.id}`, async () => {
+                            await reporter.reportSummary(node.id, {
+                                key: 'notConfigured',
+                                text: issues,
+                                tone: 'warning',
+                            });
                             await reporter.markNotConfigured(node.id);
-                            await logger.warn(
-                                node.id,
-                                `${node.data.type}: Node is not configured — ${validation.error.issues.map((i) => i.message).join(', ')}`,
-                            );
+                            await logger.warn(node.id, `${node.data.type}: Node is not configured — ${issues}`);
                             await logger.flush();
                         });
                         pipelineHasFailed = true;
@@ -261,6 +269,11 @@ export class PipelineOrchestrator {
                                 }
                                 const message = execError instanceof Error ? execError.message : String(execError);
                                 await logger.error(node.id, message);
+                                await reporter.reportSummary(node.id, {
+                                    key: 'failed',
+                                    text: message,
+                                    tone: 'negative',
+                                });
                                 await reporter.markFailed(node.id);
                                 return { ok: false, error: message };
                             }

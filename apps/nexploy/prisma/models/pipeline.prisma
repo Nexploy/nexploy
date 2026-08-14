@@ -45,6 +45,7 @@ model Build {
   nodeStatuses     Json    @default("{}")
   nodeDurations    Json    @default("{}")
   nodeStartTimes   Json    @default("{}")
+  nodeSummaries    Json    @default("{}")
   pipelineSnapshot Json?
 
   log Log[]
