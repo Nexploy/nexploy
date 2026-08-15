@@ -1,19 +1,30 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import useSWR from 'swr';
 import { Boxes, Clock, Container, GitBranch, GitCommit } from 'lucide-react';
 import dayjs from 'dayjs';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { Separator } from '@workspace/ui/components/separator';
 import { Badge } from '@workspace/ui/components/badge';
 import { Version } from '@workspace/typescript-interface/docker/docker.version';
 import { useTranslations } from 'next-intl';
+import { cn } from '@workspace/ui/lib/utils';
 import { fetcherApi } from '@/lib/api/fetcherApi';
 import { usePipelineStage } from '@/hooks/pipeline/usePipelineStage.ts';
+import { useScrollAreaViewport } from '@/hooks/useScrollAreaViewport';
 import { useContainersStore } from '@/stores/docker/useContainersStore';
 import { NEXPLOY_LABELS } from '@nexploy/shared/nexployLabels';
 import { VersionDeployButton } from '@/components/repositories/tabs/versions/VersionDeployButton.tsx';
 import { VersionDropdownActions } from '@/components/repositories/tabs/versions/VersionDropdownActions';
+
+const ESTIMATED_HEADER_HEIGHT = 36;
+const ESTIMATED_VERSION_HEIGHT = 73;
+const OVERSCAN = 6;
+
+type VersionRow =
+    | { type: 'header'; id: string; name: string; isFirstGroup: boolean }
+    | { type: 'version'; id: string; version: Version; isFirstOfGroup: boolean; isLastOfGroup: boolean };
 
 interface RepositoryVersionsProps {
     repositoryId: string;
@@ -51,25 +62,64 @@ export function RepositoryVersions({ repositoryId, versions: initialVersions }: 
 
     const isCurrentVersion = (version: Version) => deployedBuildIds.has(version.imageTag);
 
-    const groups = versions.reduce<Map<string | undefined, { name: string; versions: Version[] }>>((acc, version) => {
-        const key = version.environmentId ?? undefined;
-        if (!acc.has(key)) {
-            acc.set(key, {
-                name: version.environmentName ?? tBuilds('noEnvironment'),
-                versions: [],
-            });
-        }
-        acc.get(key)!.versions.push(version);
-        return acc;
-    }, new Map());
+    const rows = useMemo<VersionRow[]>(() => {
+        const groups = versions.reduce<Map<string, { name: string; versions: Version[] }>>((acc, version) => {
+            const key = version.environmentId ?? 'none';
+            if (!acc.has(key)) {
+                acc.set(key, {
+                    name: version.environmentName ?? tBuilds('noEnvironment'),
+                    versions: [],
+                });
+            }
+            acc.get(key)!.versions.push(version);
+            return acc;
+        }, new Map());
 
-    const renderVersion = (version: Version) => {
+        const result: VersionRow[] = [];
+        let groupIndex = 0;
+
+        for (const [key, group] of groups) {
+            result.push({ type: 'header', id: `header-${key}`, name: group.name, isFirstGroup: groupIndex === 0 });
+            group.versions.forEach((version, index) => {
+                result.push({
+                    type: 'version',
+                    id: `${version.repositoryId}-${version.imageTag}`,
+                    version,
+                    isFirstOfGroup: index === 0,
+                    isLastOfGroup: index === group.versions.length - 1,
+                });
+            });
+            groupIndex++;
+        }
+
+        return result;
+    }, [versions, tBuilds]);
+
+    const listRef = useRef<HTMLDivElement>(null);
+    const { scrollElement, scrollMargin } = useScrollAreaViewport(listRef);
+
+    const virtualizer = useVirtualizer({
+        count: rows.length,
+        getScrollElement: () => scrollElement,
+        estimateSize: useCallback(
+            (index: number) => (rows[index]?.type === 'header' ? ESTIMATED_HEADER_HEIGHT : ESTIMATED_VERSION_HEIGHT),
+            [rows],
+        ),
+        getItemKey: useCallback((index: number) => rows[index]?.id ?? index, [rows]),
+        overscan: OVERSCAN,
+        scrollMargin,
+    });
+
+    const renderVersion = (version: Version, isFirstOfGroup: boolean, isLastOfGroup: boolean) => {
         const isCurrent = isCurrentVersion(version);
         const containerName = containerNameByBuildId.get(version.imageTag);
         return (
             <div
-                key={`${version.repositoryId}-${version.imageTag}`}
-                className="flex items-center justify-between gap-4 bg-card p-3"
+                className={cn(
+                    'flex items-center justify-between gap-4 border-x border-b bg-card p-3',
+                    isFirstOfGroup && 'rounded-t-md border-t',
+                    isLastOfGroup && 'rounded-b-md',
+                )}
             >
                 <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="flex items-center gap-2">
@@ -138,15 +188,34 @@ export function RepositoryVersions({ repositoryId, versions: initialVersions }: 
             {versions.length === 0 ? (
                 <div className="rounded-md border p-8 text-center text-muted-foreground text-sm">{t('noVersions')}</div>
             ) : (
-                <div className="flex flex-col gap-4">
-                    {Array.from(groups.entries()).map(([key, group]) => (
-                        <div key={key} className="flex flex-col gap-1">
-                            <h3 className="px-1 font-medium text-muted-foreground text-sm">{group.name}</h3>
-                            <div className="divide-y overflow-hidden rounded-md border">
-                                {group.versions.map(renderVersion)}
+                <div ref={listRef} className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
+                    {virtualizer.getVirtualItems().map((virtualItem) => {
+                        const row = rows[virtualItem.index];
+                        if (!row) return null;
+
+                        return (
+                            <div
+                                key={virtualItem.key}
+                                data-index={virtualItem.index}
+                                ref={virtualizer.measureElement}
+                                className="absolute top-0 left-0 w-full"
+                                style={{ transform: `translateY(${virtualItem.start - scrollMargin}px)` }}
+                            >
+                                {row.type === 'header' ? (
+                                    <h3
+                                        className={cn(
+                                            'px-1 pb-1 font-medium text-muted-foreground text-sm',
+                                            !row.isFirstGroup && 'pt-4',
+                                        )}
+                                    >
+                                        {row.name}
+                                    </h3>
+                                ) : (
+                                    renderVersion(row.version, row.isFirstOfGroup, row.isLastOfGroup)
+                                )}
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>

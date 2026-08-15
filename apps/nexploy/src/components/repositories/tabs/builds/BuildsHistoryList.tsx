@@ -1,11 +1,17 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Build } from 'generated/client';
 import { Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { cn } from '@workspace/ui/lib/utils';
 import { useBuildsInfinite } from '@/hooks/useBuildsInfinite';
+import { useScrollAreaViewport } from '@/hooks/useScrollAreaViewport';
 import { RepositoryBuild } from '@/components/repositories/tabs/builds/RepositoryBuild';
+
+const ESTIMATED_BUILD_HEIGHT = 73;
+const OVERSCAN = 6;
 
 interface BuildsHistoryListProps {
     repositoryId: string;
@@ -16,30 +22,33 @@ interface BuildsHistoryListProps {
 
 export function BuildsHistoryList({ repositoryId, stageId, initialBuilds, initialHasMore }: BuildsHistoryListProps) {
     const t = useTranslations('repository.builds');
-    const sentinelRef = useRef<HTMLDivElement>(null);
+    const listRef = useRef<HTMLDivElement>(null);
 
-    const { builds, hasMore, isLoadingMore, isValidating, setSize } = useBuildsInfinite(
+    const { builds, hasMore, isLoadingMore, loadMore } = useBuildsInfinite(
         repositoryId,
         stageId,
         initialBuilds,
         initialHasMore,
     );
 
-    useEffect(() => {
-        const sentinel = sentinelRef.current;
-        if (!sentinel || !hasMore) return;
+    const { scrollElement, scrollMargin } = useScrollAreaViewport(listRef);
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0]?.isIntersecting && !isValidating) {
-                    setSize((s) => s + 1);
-                }
-            },
-            { rootMargin: '100px' },
-        );
-        observer.observe(sentinel);
-        return () => observer.disconnect();
-    }, [hasMore, isValidating, setSize]);
+    const virtualizer = useVirtualizer({
+        count: builds.length,
+        getScrollElement: () => scrollElement,
+        estimateSize: () => ESTIMATED_BUILD_HEIGHT,
+        getItemKey: useCallback((index: number) => builds[index]?.id ?? index, [builds]),
+        overscan: OVERSCAN,
+        scrollMargin,
+    });
+
+    const virtualItems = virtualizer.getVirtualItems();
+    const lastVisibleIndex = virtualItems[virtualItems.length - 1]?.index ?? -1;
+
+    useEffect(() => {
+        if (!hasMore || isLoadingMore) return;
+        if (lastVisibleIndex >= builds.length - 1) loadMore();
+    }, [lastVisibleIndex, builds.length, hasMore, isLoadingMore, loadMore]);
 
     if (builds.length === 0) {
         return (
@@ -50,11 +59,33 @@ export function BuildsHistoryList({ repositoryId, stageId, initialBuilds, initia
     }
 
     return (
-        <div className="flex flex-col divide-y overflow-hidden rounded-md border">
-            {builds.map((build) => (
-                <RepositoryBuild key={build.id} repositoryId={repositoryId} build={build} />
-            ))}
-            {hasMore && <div ref={sentinelRef} />}
+        <div className="flex flex-col">
+            <div ref={listRef} className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
+                {virtualItems.map((virtualItem) => {
+                    const build = builds[virtualItem.index];
+                    if (!build) return null;
+
+                    return (
+                        <div
+                            key={virtualItem.key}
+                            data-index={virtualItem.index}
+                            ref={virtualizer.measureElement}
+                            className="absolute top-0 left-0 w-full"
+                            style={{ transform: `translateY(${virtualItem.start - scrollMargin}px)` }}
+                        >
+                            <div
+                                className={cn(
+                                    'overflow-hidden border-x border-b',
+                                    virtualItem.index === 0 && 'rounded-t-md border-t',
+                                    virtualItem.index === builds.length - 1 && 'rounded-b-md',
+                                )}
+                            >
+                                <RepositoryBuild repositoryId={repositoryId} build={build} />
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
             {isLoadingMore && (
                 <div className="flex justify-center p-3">
                     <Loader2 className="size-4 animate-spin text-muted-foreground" />
