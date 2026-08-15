@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,10 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { updateCleanupSettingsSchema } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
 import { updateCleanupSettingsAction } from '@/actions/admin/cleanup/updateCleanupSettings.action';
-import dayjs from 'dayjs';
-import localizedFormat from 'dayjs/plugin/localizedFormat';
-
-dayjs.extend(localizedFormat);
+import dayjs from '@/lib/dayjs';
+import { useDayjsLocale } from '@/hooks/useDayjsLocale';
 
 interface CleanupSettings {
     enabled: boolean;
@@ -35,11 +32,7 @@ const TARGETS = ['cleanContainers', 'cleanImages', 'cleanVolumes', 'cleanBuild']
 
 export function CleanupScheduleCard({ settings }: { settings: CleanupSettings }) {
     const t = useTranslations('admin.settings');
-    const locale = useLocale();
-
-    useEffect(() => {
-        import(`dayjs/locale/${locale}`);
-    }, [locale]);
+    const locale = useDayjsLocale();
 
     const formatHour = (hour: number) => dayjs().hour(hour).minute(0).locale(locale).format('LT');
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import dayjs from 'dayjs';
+import dayjs from '@/lib/dayjs';
 import { buttonVariants } from '@workspace/ui/components/button';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
@@ -23,12 +23,14 @@ export const BuildsPanelItem = memo(function BuildsPanelItem({ build, isSelected
     const duration = getBuildDuration(build);
 
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
+    const toggleActiveBuild = () => setActiveBuildId(isSelected ? null : build.id);
 
     return (
         <div
             role="button"
-            onClick={() => setActiveBuildId(isSelected ? null : build.id)}
-            onKeyDown={(e) => e.key === 'Enter' && setActiveBuildId(isSelected ? null : build.id)}
+            tabIndex={0}
+            onClick={toggleActiveBuild}
+            onKeyDown={(e) => e.key === 'Enter' && toggleActiveBuild()}
             className={cn(
                 buttonVariants({ variant: isSelected ? 'default' : 'ghost', size: 'sm' }),
                 'relative h-auto cursor-pointer flex-col items-start gap-0.5 border px-2.5 py-1.5 backdrop-blur-md duration-0',
