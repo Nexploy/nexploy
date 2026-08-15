@@ -26,13 +26,13 @@ export function ServiceDetailConfig() {
                 </CardHeaderWithIcon>
                 <CardContent>
                     {service?.ports.length === 0 ? (
-                        <p className="text-muted-foreground py-9 text-center text-sm">{t('detail.noPorts')}</p>
+                        <p className="py-9 text-center text-muted-foreground text-sm">{t('detail.noPorts')}</p>
                     ) : (
                         <div className="space-y-2">
                             {service?.ports.map((port, i) => (
                                 <div
                                     key={i}
-                                    className="bg-muted/60 flex items-center justify-between rounded-md px-3 py-2 text-sm"
+                                    className="flex items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-sm"
                                 >
                                     <span className="font-mono">
                                         {port.publishedPort} → {port.targetPort}
@@ -59,7 +59,7 @@ export function ServiceDetailConfig() {
                 </CardHeaderWithIcon>
                 <CardContent>
                     {service?.networks.length === 0 ? (
-                        <p className="text-muted-foreground py-9 text-center text-sm">{t('detail.noNetworks')}</p>
+                        <p className="py-9 text-center text-muted-foreground text-sm">{t('detail.noNetworks')}</p>
                     ) : (
                         <div className="flex flex-wrap gap-2">
                             {service?.networks.map((net, i) => (
@@ -77,7 +77,7 @@ export function ServiceDetailConfig() {
                 </CardHeaderWithIcon>
                 <CardContent>
                     {service?.env.length === 0 ? (
-                        <p className="text-muted-foreground py-9 text-center text-sm">{t('detail.noEnv')}</p>
+                        <p className="py-9 text-center text-muted-foreground text-sm">{t('detail.noEnv')}</p>
                     ) : (
                         <div className="space-y-1.5">
                             {service?.env.map((entry, i) => {
@@ -85,9 +85,9 @@ export function ServiceDetailConfig() {
                                 return (
                                     <div
                                         key={i}
-                                        className="bg-muted/60 flex items-center gap-2 rounded-md px-3 py-1.5 font-mono text-xs"
+                                        className="flex items-center gap-2 rounded-md bg-muted/60 px-3 py-1.5 font-mono text-xs"
                                     >
-                                        <span className="text-primary font-semibold">{key}</span>
+                                        <span className="font-semibold text-primary">{key}</span>
                                         <span className="text-muted-foreground">=</span>
                                         <span className="truncate">{rest.join('=') || ''}</span>
                                     </div>
@@ -105,11 +105,11 @@ export function ServiceDetailConfig() {
                 </CardHeaderWithIcon>
                 <CardContent>
                     {service?.constraints.length === 0 ? (
-                        <p className="text-muted-foreground py-9 text-center text-sm">{t('detail.noConstraints')}</p>
+                        <p className="py-9 text-center text-muted-foreground text-sm">{t('detail.noConstraints')}</p>
                     ) : (
                         <div className="space-y-1.5">
                             {service?.constraints.map((c, i) => (
-                                <div key={i} className="bg-muted/60 rounded-md px-3 py-1.5 font-mono text-xs">
+                                <div key={i} className="rounded-md bg-muted/60 px-3 py-1.5 font-mono text-xs">
                                     {c}
                                 </div>
                             ))}

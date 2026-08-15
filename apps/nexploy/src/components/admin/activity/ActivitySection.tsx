@@ -32,7 +32,7 @@ export function ActivitySection() {
     return (
         <div className="flex flex-col gap-4">
             <div className="relative w-full max-w-96">
-                <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
+                <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}

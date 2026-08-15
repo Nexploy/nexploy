@@ -85,7 +85,7 @@ export function CardEnv() {
             </CardHeader>
             <CardContent className="px-0">
                 {!hasEnvVars ? (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 font-semibold text-muted-foreground text-sm">
                         {t('noVariables')}
                     </div>
                 ) : (

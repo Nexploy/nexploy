@@ -117,5 +117,5 @@ export function TableShell<TData>({
 
     if (bare) return content;
 
-    return <div className={cn('bg-card overflow-hidden rounded-md border shadow-sm', className)}>{content}</div>;
+    return <div className={cn('overflow-hidden rounded-md border bg-card shadow-sm', className)}>{content}</div>;
 }

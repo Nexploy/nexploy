@@ -124,7 +124,7 @@ export function ServiceUpdatePolicy() {
 
                 <div className={'flex flex-col gap-3'}>
                     <div className={'flex flex-col'}>
-                        <p className="text-sm font-medium">{t('restartPolicy')}</p>
+                        <p className="font-medium text-sm">{t('restartPolicy')}</p>
                         <p className="text-muted-foreground text-xs">{t('restartPolicyDescription')}</p>
                     </div>
                     <div className="grid gap-4 md:grid-cols-2">

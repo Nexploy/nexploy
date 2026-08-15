@@ -33,18 +33,18 @@ export function MetricCard({
     return (
         <Card className={cn('gap-3 py-5', className)}>
             <CardHeader className="flex flex-row items-start justify-between gap-2 space-y-0 px-5">
-                <CardTitle className="text-muted-foreground truncate text-sm font-medium">{title}</CardTitle>
-                <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                    <Icon className="text-primary size-4" />
+                <CardTitle className="truncate font-medium text-muted-foreground text-sm">{title}</CardTitle>
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <Icon className="size-4 text-primary" />
                 </div>
             </CardHeader>
             <CardContent className="space-y-2 px-5">
-                <div className={cn('text-2xl font-semibold tabular-nums', valueClassName)}>{value}</div>
-                {description ? <p className="text-muted-foreground truncate text-xs">{description}</p> : null}
+                <div className={cn('font-semibold text-2xl tabular-nums', valueClassName)}>{value}</div>
+                {description ? <p className="truncate text-muted-foreground text-xs">{description}</p> : null}
                 {boundedPercent !== undefined ? (
-                    <div className="bg-primary/15 h-1.5 w-full overflow-hidden rounded-full">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-primary/15">
                         <div
-                            className="bg-primary h-full rounded-full transition-all"
+                            className="h-full rounded-full bg-primary transition-all"
                             style={{ width: `${boundedPercent}%` }}
                         />
                     </div>

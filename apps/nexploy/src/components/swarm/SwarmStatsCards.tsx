@@ -43,13 +43,13 @@ export function SwarmStatsCards() {
             {stats.map((stat) => (
                 <Card key={stat.title} className="flex flex-col justify-between gap-0 py-6">
                     <CardHeader className="flex flex-row justify-between space-y-0">
-                        <CardTitle className="flex h-14 text-sm font-medium">{stat.title}</CardTitle>
-                        <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                            <stat.icon className="text-primary size-4" />
+                        <CardTitle className="flex h-14 font-medium text-sm">{stat.title}</CardTitle>
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                            <stat.icon className="size-4 text-primary" />
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-semibold">{stat.value}</div>
+                        <div className="font-semibold text-2xl">{stat.value}</div>
                         <p className="text-muted-foreground text-xs">{stat.description}</p>
                     </CardContent>
                 </Card>

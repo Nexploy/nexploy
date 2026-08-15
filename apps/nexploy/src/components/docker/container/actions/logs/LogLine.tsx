@@ -19,7 +19,7 @@ export const LogLine = memo(
         };
 
         return (
-            <div className="py-0.5 break-all whitespace-pre-wrap transition-colors duration-75 hover:bg-neutral-900">
+            <div className="whitespace-pre-wrap break-all py-0.5 transition-colors duration-75 hover:bg-neutral-900">
                 {showTimestamp && (
                     <>
                         <span className="text-neutral-500">[{formatTimestamp(log.timestamp)}]</span>

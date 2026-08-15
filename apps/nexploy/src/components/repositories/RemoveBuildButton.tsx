@@ -49,7 +49,7 @@ export function RemoveBuildButton({ buildId, mode = 'button', onSuccess, ...prop
                     e.stopPropagation();
                     handleRemove();
                 }}
-                className="text-destructive hover:[&_svg:not([class*='text-'])]:text-destructive [&_svg:not([class*='text-'])]:text-destructive focus:text-destructive"
+                className="text-destructive focus:text-destructive [&_svg:not([class*='text-'])]:text-destructive hover:[&_svg:not([class*='text-'])]:text-destructive"
             >
                 <Trash2 />
                 {t('remove')}

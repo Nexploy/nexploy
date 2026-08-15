@@ -46,8 +46,8 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
         <BreadcrumbProvider segments={{ serviceId: serviceName }}>
             <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex gap-3 px-5">
-                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Layers className="text-primary size-7" />
+                    <div className="mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                        <Layers className="size-7 text-primary" />
                     </div>
                     <div className="mt-3.5 flex flex-1 flex-col">
                         {isConnecting ? (
@@ -57,7 +57,7 @@ export function ServiceDetailPage({ serviceId }: ServiceDetailPageProps) {
                             </>
                         ) : (
                             <div className="flex flex-col">
-                                <h1 className="text-3xl font-semibold tracking-tight">{service?.name}</h1>
+                                <h1 className="font-semibold text-3xl tracking-tight">{service?.name}</h1>
                                 {service && (
                                     <div className="mt-0.5 flex gap-1.5">
                                         <Badge variant="outline" className="py-0 capitalize">

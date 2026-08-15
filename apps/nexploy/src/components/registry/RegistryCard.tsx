@@ -54,7 +54,7 @@ export function RegistryCard({ registry }: RegistryCardProps) {
     };
 
     return (
-        <div className="bg-card rounded-xl border">
+        <div className="rounded-xl border bg-card">
             <div className="flex items-center justify-between p-4">
                 <div className="flex flex-col gap-0.5">
                     <span className="font-medium">{registry.name}</span>

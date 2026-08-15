@@ -104,14 +104,14 @@ function DragAndDrop({
                     className="flex cursor-pointer flex-col items-center gap-2 p-4"
                     onClick={() => fileInputRef.current?.click()}
                 >
-                    <Upload className="text-muted-foreground h-6 w-6" />
-                    <p className="text-muted-foreground text-center text-xs">{dropText}</p>
-                    {formatsText && <p className="text-muted-foreground/60 text-center text-xs">{formatsText}</p>}
+                    <Upload className="h-6 w-6 text-muted-foreground" />
+                    <p className="text-center text-muted-foreground text-xs">{dropText}</p>
+                    {formatsText && <p className="text-center text-muted-foreground/60 text-xs">{formatsText}</p>}
                 </div>
             ) : (
                 <div className="flex items-center gap-2 p-3">
-                    <FileIcon className="text-muted-foreground h-4 w-4 shrink-0" />
-                    <span className="text-muted-foreground flex-1 truncate text-xs">{fileName}</span>
+                    <FileIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <span className="flex-1 truncate text-muted-foreground text-xs">{fileName}</span>
                     <Button
                         type="button"
                         variant="ghost"

@@ -40,7 +40,7 @@ export function SwarmNotActive() {
     if (isPending) {
         return (
             <div className="flex flex-1 flex-col items-center justify-center p-8 pb-32">
-                <h2 className="text-2xl font-semibold">{t('connectingToSwarm')}</h2>
+                <h2 className="font-semibold text-2xl">{t('connectingToSwarm')}</h2>
                 <p className="text-muted-foreground">{t('pleaseWaitSwarmLoading')}</p>
             </div>
         );
@@ -48,12 +48,12 @@ export function SwarmNotActive() {
 
     return (
         <div className="flex flex-1 flex-col items-center justify-center p-8 pb-32 text-center">
-            <h2 className="mb-2 text-2xl font-semibold">{t('notInSwarmModeTitle')}</h2>
-            <p className="text-muted-foreground mb-8 max-w-md">{t('notInSwarmModeDescription')}</p>
+            <h2 className="mb-2 font-semibold text-2xl">{t('notInSwarmModeTitle')}</h2>
+            <p className="mb-8 max-w-md text-muted-foreground">{t('notInSwarmModeDescription')}</p>
             <Can
                 resource="swarm"
                 action="manage"
-                fallback={<p className="text-muted-foreground max-w-md text-sm">{t('activationRequiresAdmin')}</p>}
+                fallback={<p className="max-w-md text-muted-foreground text-sm">{t('activationRequiresAdmin')}</p>}
             >
                 <div className="flex justify-center gap-4">
                     <Button onClick={handleInitSwarm}>

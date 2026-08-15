@@ -69,18 +69,18 @@ export function RepositoryVersions({ repositoryId, versions: initialVersions }: 
         return (
             <div
                 key={`${version.repositoryId}-${version.imageTag}`}
-                className="bg-card flex items-center justify-between gap-4 p-3"
+                className="flex items-center justify-between gap-4 bg-card p-3"
             >
                 <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="flex items-center gap-2">
                         <Badge variant={isCurrent ? 'default' : 'secondary'} className="shrink-0 font-mono text-xs">
                             v{version.versionNumber}
                         </Badge>
-                        <span className="line-clamp-1 truncate text-sm font-medium">
+                        <span className="line-clamp-1 truncate font-medium text-sm">
                             {version.commitMessage ?? `Build #${version.imageTag}`}
                         </span>
                     </div>
-                    <div className="text-muted-foreground flex min-w-0 items-center gap-2 text-xs">
+                    <div className="flex min-w-0 items-center gap-2 text-muted-foreground text-xs">
                         <span className="flex shrink-0 items-center gap-1">
                             <Clock className="size-3 shrink-0" />
                             {dayjs(version.createdAt).format('DD/MM/YYYY HH:mm:ss')}
@@ -134,14 +134,14 @@ export function RepositoryVersions({ repositoryId, versions: initialVersions }: 
 
     return (
         <div className="flex flex-col gap-2 px-5">
-            <h2 className="text-xl font-semibold">{t('title')}</h2>
+            <h2 className="font-semibold text-xl">{t('title')}</h2>
             {versions.length === 0 ? (
-                <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">{t('noVersions')}</div>
+                <div className="rounded-md border p-8 text-center text-muted-foreground text-sm">{t('noVersions')}</div>
             ) : (
                 <div className="flex flex-col gap-4">
                     {Array.from(groups.entries()).map(([key, group]) => (
                         <div key={key} className="flex flex-col gap-1">
-                            <h3 className="text-muted-foreground px-1 text-sm font-medium">{group.name}</h3>
+                            <h3 className="px-1 font-medium text-muted-foreground text-sm">{group.name}</h3>
                             <div className="divide-y overflow-hidden rounded-md border">
                                 {group.versions.map(renderVersion)}
                             </div>

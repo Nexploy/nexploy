@@ -58,7 +58,7 @@ export function NodeDetailTasks() {
                 id: 'serviceName',
                 accessorKey: 'serviceName',
                 header: () => t('service'),
-                cell: ({ getValue }) => <span className="text-sm font-medium">{getValue<string>()}</span>,
+                cell: ({ getValue }) => <span className="font-medium text-sm">{getValue<string>()}</span>,
             },
             {
                 id: 'state',
@@ -98,7 +98,7 @@ export function NodeDetailTasks() {
                 accessorKey: 'error',
                 header: () => t('detail.taskError'),
                 cell: ({ getValue }) => (
-                    <span className="max-w-[200px] truncate text-xs text-red-500">
+                    <span className="max-w-[200px] truncate text-red-500 text-xs">
                         {getValue<string | undefined>() ?? '—'}
                     </span>
                 ),
@@ -130,7 +130,7 @@ export function NodeDetailTasks() {
             <CardHeaderWithIcon icon={Activity} title={t('node.tasksTitle')} />
             <CardContent className={'p-0'}>
                 {table.getRowModel().rows.length === 0 ? (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 font-semibold text-muted-foreground text-sm">
                         {t('node.noTasks')}
                     </div>
                 ) : (

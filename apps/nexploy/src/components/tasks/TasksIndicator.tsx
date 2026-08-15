@@ -45,14 +45,14 @@ export function TasksIndicator() {
                     <DropdownMenuTrigger asChild>
                         <Button
                             variant="outline"
-                            className="text-muted-foreground hover:text-foreground h-8 gap-1.5 px-2.5 shadow-none"
+                            className="h-8 gap-1.5 px-2.5 text-muted-foreground shadow-none hover:text-foreground"
                         >
                             {runningCount > 0 ? (
-                                <Loader2 className="text-primary size-4 animate-spin" />
+                                <Loader2 className="size-4 animate-spin text-primary" />
                             ) : (
                                 <Activity className="size-4" />
                             )}
-                            <span className={cn('text-xs font-medium', runningCount > 0 && 'text-foreground')}>
+                            <span className={cn('font-medium text-xs', runningCount > 0 && 'text-foreground')}>
                                 {runningCount > 0 ? runningCount : visibleTasks.length}
                             </span>
                         </Button>
@@ -63,9 +63,9 @@ export function TasksIndicator() {
                 </TooltipContent>
             </Tooltip>
 
-            <DropdownMenuContent align="start" className="w-96  p-0 mx-2">
+            <DropdownMenuContent align="start" className="mx-2 w-96 p-0">
                 <div className="flex items-center justify-between px-3 py-2">
-                    <p className="text-sm font-medium">{t('title')}</p>
+                    <p className="font-medium text-sm">{t('title')}</p>
                     {finishedTaskIds.length > 0 && (
                         <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={handleClear}>
                             {t('clearFinished')}

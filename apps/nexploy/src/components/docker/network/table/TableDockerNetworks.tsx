@@ -103,11 +103,11 @@ export function TableDockerNetworks() {
                     <label
                         htmlFor={'force-delete'}
                         className={
-                            'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
+                            'flex cursor-pointer items-center justify-between rounded-lg border border-destructive bg-muted/50 p-3'
                         }
                     >
                         <div className={'space-y-0.5'}>
-                            <p className={'text-destructive text-sm font-medium'}>{tDocker('errors.forceDelete')}</p>
+                            <p className={'font-medium text-destructive text-sm'}>{tDocker('errors.forceDelete')}</p>
                             <p className={'text-xs'}>{tDocker('errors.forceDeleteDescription')}</p>
                         </div>
                         <Switch

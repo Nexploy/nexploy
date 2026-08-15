@@ -18,14 +18,14 @@ export function TraefikEditorToolbar() {
     const isYaml = !!selectedFile && selectedFile.endsWith('.yml');
 
     return (
-        <div className="border-border flex h-9 items-center justify-between gap-2 border-b px-3">
+        <div className="flex h-9 items-center justify-between gap-2 border-border border-b px-3">
             <div className="flex min-w-0 items-center gap-2">
-                <FileCode2 className="text-muted-foreground size-4 shrink-0" />
-                <span className="min-w-0 truncate text-sm font-medium">{selectedFile}</span>
+                <FileCode2 className="size-4 shrink-0 text-muted-foreground" />
+                <span className="min-w-0 truncate font-medium text-sm">{selectedFile}</span>
                 <Separator orientation={'vertical'} className={'h-3! w-1'} />
                 <div
                     className={cn(
-                        'text-muted-foreground flex items-center gap-1.5 text-xs transition-opacity duration-300',
+                        'flex items-center gap-1.5 text-muted-foreground text-xs transition-opacity duration-300',
                         isSaving ? 'opacity-100' : 'opacity-40',
                     )}
                 >
@@ -84,7 +84,7 @@ export function TraefikEditorToolbar() {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="text-destructive hover:text-destructive hover:bg-destructive/10 size-7"
+                            className="size-7 text-destructive hover:bg-destructive/10 hover:text-destructive"
                             onClick={() => deleteFile(t)}
                         >
                             <Trash2 className="size-3.5" />

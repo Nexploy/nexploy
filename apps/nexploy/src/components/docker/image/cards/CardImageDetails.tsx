@@ -27,7 +27,7 @@ export function CardImageDetails() {
                 <Table>
                     <TableBody>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">{t('id')}</TableCell>
+                            <TableCell className="w-32 font-medium text-muted-foreground">{t('id')}</TableCell>
                             <TableCell className="max-w-0">
                                 <div className="flex items-center gap-2">
                                     <code className="block truncate text-xs">{image.id}</code>
@@ -36,17 +36,17 @@ export function CardImageDetails() {
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">{t('size')}daz</TableCell>
+                            <TableCell className="w-32 font-medium text-muted-foreground">{t('size')}daz</TableCell>
                             <TableCell className="max-w-0 truncate">{formatBytes(image.size)}</TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">{t('created')}</TableCell>
+                            <TableCell className="w-32 font-medium text-muted-foreground">{t('created')}</TableCell>
                             <TableCell className={'max-w-0 truncate'}>
                                 {dayjs(image.created).format('YYYY-MM-DD HH:mm:ss')}
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 font-medium">{t('build')}</TableCell>
+                            <TableCell className="w-32 font-medium text-muted-foreground">{t('build')}</TableCell>
                             <TableCell className={'max-w-0 truncate'}>
                                 {t('buildValue', {
                                     os: image.os || 'unknown',
@@ -55,7 +55,7 @@ export function CardImageDetails() {
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell className="text-muted-foreground w-32 align-top font-medium">
+                            <TableCell className="w-32 align-top font-medium text-muted-foreground">
                                 {t('labels')}
                             </TableCell>
                             <TableCell className={'max-w-0'}>

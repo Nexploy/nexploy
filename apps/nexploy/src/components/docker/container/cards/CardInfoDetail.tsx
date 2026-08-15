@@ -69,11 +69,11 @@ export function CardInfoDetail() {
                                 key={index}
                                 className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < fields.length - 1 ? 'border-b pb-2' : ''}`}
                             >
-                                <span className="text-muted-foreground text-sm whitespace-nowrap">{field.label}</span>
+                                <span className="whitespace-nowrap text-muted-foreground text-sm">{field.label}</span>
                                 <div className="flex min-w-0 items-center gap-1">
                                     <div className="flex min-w-0 flex-1 justify-end overflow-hidden">
                                         {field.href ? (
-                                            <Link href={field.href} className="max-w-full min-w-0 overflow-hidden">
+                                            <Link href={field.href} className="min-w-0 max-w-full overflow-hidden">
                                                 <Badge
                                                     variant="secondary"
                                                     className="w-auto max-w-full shrink hover:underline"

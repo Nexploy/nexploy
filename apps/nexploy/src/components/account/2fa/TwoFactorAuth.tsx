@@ -54,7 +54,7 @@ export function TwoFactorAuth({ user }: TwoFactorAuthProps) {
                                     <div className="rounded-lg border bg-white p-4 shadow-sm">
                                         <QRCode value={totpURI} size={200} level="H" />
                                     </div>
-                                    <p className="text-muted-foreground text-center text-xs">{t('cantScan')}</p>
+                                    <p className="text-center text-muted-foreground text-xs">{t('cantScan')}</p>
                                     <ButtonGroup className={'flex w-full'}>
                                         <Input
                                             value={secretKey}

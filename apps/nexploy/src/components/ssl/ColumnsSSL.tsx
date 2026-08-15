@@ -43,7 +43,7 @@ export const getColumnsSSL = (tSsl: TranslationFunction, options: ColumnsOptions
                 return (
                     <div className="flex flex-col">
                         <span className="font-medium">{cert.name}</span>
-                        <span className="text-muted-foreground font-mono text-xs">{cert.domain}</span>
+                        <span className="font-mono text-muted-foreground text-xs">{cert.domain}</span>
                     </div>
                 );
             },
@@ -90,9 +90,9 @@ export const getColumnsSSL = (tSsl: TranslationFunction, options: ColumnsOptions
                     <span
                         className={
                             isExpired
-                                ? 'text-destructive text-sm font-medium'
+                                ? 'font-medium text-destructive text-sm'
                                 : isExpiringSoon
-                                  ? 'text-sm font-medium text-orange-500'
+                                  ? 'font-medium text-orange-500 text-sm'
                                   : 'text-muted-foreground text-sm'
                         }
                     >

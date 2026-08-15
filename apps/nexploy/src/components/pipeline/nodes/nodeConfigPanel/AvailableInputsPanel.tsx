@@ -37,7 +37,7 @@ function InputChip({ nodeId, nodeType, field }: InputChipProps) {
             className={cn(
                 'group relative flex cursor-grab items-center gap-2 rounded-lg border px-2.5 py-2 text-xs',
                 'bg-background hover:border-amber-400/30 hover:bg-amber-400/10 active:cursor-grabbing',
-                'transition-all duration-150 select-none',
+                'select-none transition-all duration-150',
             )}
         >
             <Variable className="size-3 shrink-0 text-amber-400/60 group-hover:text-amber-400" />
@@ -72,9 +72,9 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
                     <div className="flex size-6 items-center justify-center rounded-md bg-amber-400/10">
                         <Variable className="size-3.5 text-amber-400" />
                     </div>
-                    <span className="text-foreground text-sm font-semibold">{t('availableInputs')}</span>
+                    <span className="font-semibold text-foreground text-sm">{t('availableInputs')}</span>
                 </div>
-                <p className="text-muted-foreground text-[11px]">{t('dragHint')}</p>
+                <p className="text-[11px] text-muted-foreground">{t('dragHint')}</p>
             </div>
 
             {!ancestors.length ? (
@@ -90,10 +90,10 @@ export function AvailableInputsPanel({ nodeId }: AvailableInputsPanelProps) {
                         {ancestors.map(({ nodeId, nodeType, inputFields }, index) => (
                             <div key={nodeId + index} className="space-y-1.5">
                                 <div className="flex items-center gap-1.5">
-                                    <span className="bg-muted text-muted-foreground flex size-4 shrink-0 items-center justify-center rounded text-[9px] font-bold">
+                                    <span className="flex size-4 shrink-0 items-center justify-center rounded bg-muted font-bold text-[9px] text-muted-foreground">
                                         {index + 1}
                                     </span>
-                                    <p className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
+                                    <p className="font-medium text-[10px] text-muted-foreground uppercase tracking-wide">
                                         {t(`nodes.${nodeType}.name`)}
                                     </p>
                                 </div>

@@ -48,11 +48,11 @@ export function DeleteRepositoryForm({ repositoryId, repositoryName, onCancel }:
                     name="confirmName"
                     render={({ field }) => (
                         <FormItem>
-                            <p className="flex items-center text-sm leading-none font-medium">
+                            <p className="flex items-center font-medium text-sm leading-none">
                                 {t.rich('confirmLabel', {
                                     name: repositoryName,
                                     highlight: (chunks) => (
-                                        <span className="bg-secondary rounded p-1 px-2 font-mono">{chunks}</span>
+                                        <span className="rounded bg-secondary p-1 px-2 font-mono">{chunks}</span>
                                     ),
                                 })}
                             </p>

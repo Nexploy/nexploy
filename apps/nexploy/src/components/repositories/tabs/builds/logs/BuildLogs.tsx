@@ -68,7 +68,7 @@ export function BuildLogs({ build }: BuildLogsProps) {
                                 href={commitUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group flex w-fit items-center gap-1 text-xl font-semibold hover:underline"
+                                className="group flex w-fit items-center gap-1 font-semibold text-xl hover:underline"
                             >
                                 {title}
                                 <ExternalLink
@@ -76,9 +76,9 @@ export function BuildLogs({ build }: BuildLogsProps) {
                                 />
                             </Link>
                         ) : (
-                            <span className="text-xl font-semibold">{title}</span>
+                            <span className="font-semibold text-xl">{title}</span>
                         )}
-                        <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                        <div className="flex items-center gap-2 text-muted-foreground text-xs">
                             {isLive && !branch ? (
                                 <Skeleton className="h-3 w-20" />
                             ) : (

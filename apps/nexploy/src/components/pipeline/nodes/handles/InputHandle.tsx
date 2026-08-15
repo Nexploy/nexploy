@@ -45,7 +45,7 @@ export function InputHandle({ handle, nodeId, handleColor, position, square, ind
             position={position}
             style={positionStyle}
             className={cn(
-                'bg-base-7! border-card! size-4.5! border-2! transition-all hover:size-6!',
+                'size-4.5! border-2! border-card! bg-base-7! transition-all hover:size-6!',
                 square ? 'rounded-xs!' : 'rounded-full!',
                 offsetClass,
                 active && handleColor,

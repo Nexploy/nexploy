@@ -56,14 +56,14 @@ export function VolumeItem({ mount, isNew }: VolumeItemProps) {
     ) : null;
 
     return (
-        <div className="bg-muted/60 relative space-y-2 rounded-lg p-3">
+        <div className="relative space-y-2 rounded-lg bg-muted/60 p-3">
             <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                    <span className="bg-primary/20 text-primary rounded px-2 py-1 text-xs font-medium">
+                    <span className="rounded bg-primary/20 px-2 py-1 font-medium text-primary text-xs">
                         {mount.type}
                     </span>
-                    <span className="bg-secondary rounded px-2 py-1 text-xs">{mount.rw ? 'RW' : 'RO'}</span>
-                    <code className="text-xs font-medium">{mount.name ?? mount.source}</code>
+                    <span className="rounded bg-secondary px-2 py-1 text-xs">{mount.rw ? 'RW' : 'RO'}</span>
+                    <code className="font-medium text-xs">{mount.name ?? mount.source}</code>
                     {statusIndicator}
                 </div>
                 {isDeleted ? (

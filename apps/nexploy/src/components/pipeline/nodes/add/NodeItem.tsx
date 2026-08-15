@@ -26,7 +26,7 @@ export function NodeItem({
             draggable
             onDragStart={(e) => onDragStart(e, def.id)}
             onClick={onClick}
-            className="border-border/60 bg-card hover:border-foreground/15 hover:bg-accent/40 group relative flex cursor-grab items-start gap-2.5 overflow-hidden rounded-lg border py-2 pl-2.5 pr-1.5 transition-colors active:cursor-grabbing active:opacity-60"
+            className="group relative flex cursor-grab items-start gap-2.5 overflow-hidden rounded-lg border border-border/60 bg-card py-2 pr-1.5 pl-2.5 transition-colors hover:border-foreground/15 hover:bg-accent/40 active:cursor-grabbing active:opacity-60"
         >
             <span
                 className={cn(
@@ -40,15 +40,15 @@ export function NodeItem({
             </div>
 
             <div className="min-w-0 flex-1 py-px">
-                <span className="text-foreground block truncate text-xs font-medium">{label}</span>
+                <span className="block truncate font-medium text-foreground text-xs">{label}</span>
                 {description && (
-                    <span className="text-muted-foreground mt-0.5 line-clamp-2 text-[11px] leading-snug">
+                    <span className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground leading-snug">
                         {description}
                     </span>
                 )}
             </div>
 
-            <div className="bg-muted text-muted-foreground group-hover:text-foreground mt-px flex size-5 shrink-0 items-center justify-center rounded-md opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="mt-px flex size-5 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground opacity-0 transition-opacity group-hover:text-foreground group-hover:opacity-100">
                 <Plus className="size-3" strokeWidth={2} />
             </div>
         </div>

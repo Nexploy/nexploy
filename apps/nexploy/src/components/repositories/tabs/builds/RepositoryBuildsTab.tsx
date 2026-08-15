@@ -16,7 +16,7 @@ export async function RepositoryBuildsTab({ repositoryId, stageId }: RepositoryB
 
     return (
         <div className="flex flex-col gap-2 px-5">
-            <h2 className="text-xl font-semibold">{t('history')}</h2>
+            <h2 className="font-semibold text-xl">{t('history')}</h2>
             <BuildsHistoryList
                 key={stageId}
                 repositoryId={repositoryId}

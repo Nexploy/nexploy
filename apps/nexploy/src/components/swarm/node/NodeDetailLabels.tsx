@@ -31,8 +31,8 @@ export function NodeDetailLabels() {
                     <ScrollAreaWithShadow bottomShadow className="h-50 overflow-hidden px-6">
                         <div className="space-y-2">
                             {entries.map(([key, value]) => (
-                                <div key={key} className="bg-muted/60 flex items-center gap-3 rounded-md px-3 py-2">
-                                    <span className="text-muted-foreground min-w-0 shrink-0 font-mono text-xs">
+                                <div key={key} className="flex items-center gap-3 rounded-md bg-muted/60 px-3 py-2">
+                                    <span className="min-w-0 shrink-0 font-mono text-muted-foreground text-xs">
                                         {key}
                                     </span>
                                     <span className="ml-auto truncate font-mono text-xs">{value || '—'}</span>
@@ -41,7 +41,7 @@ export function NodeDetailLabels() {
                         </div>
                     </ScrollAreaWithShadow>
                 ) : (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 font-semibold text-muted-foreground text-sm">
                         {t('node.noLabels')}
                     </div>
                 )}

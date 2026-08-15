@@ -105,7 +105,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                         connections={['logs']}
                         params={{ logs: { containerId: container?.id ?? '', tail: 50 } }}
                     >
-                        <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
+                        <DialogHeader className="flex flex-row items-center justify-between border-neutral-800 border-b p-2 pl-3">
                             <div className={'flex items-center gap-2'}>
                                 <DialogTitle className="flex items-center gap-2 text-sm text-white">
                                     <div className="flex size-4 items-center">
@@ -123,7 +123,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="flex items-center space-x-2">
-                                    <Label htmlFor="log-showTimestamp" className={'text-xs text-white'}>
+                                    <Label htmlFor="log-showTimestamp" className={'text-white text-xs'}>
                                         {t('showTimestamp')}
                                     </Label>
                                     <Switch
@@ -168,7 +168,7 @@ export function ContainerLogs({ children }: ContainerLogsProps) {
                         >
                             <div className={'mr-1 p-2 py-1'}>
                                 {isLoading && logs.length === 0 ? (
-                                    <div className="text-secondary-foreground flex items-center gap-2">
+                                    <div className="flex items-center gap-2 text-secondary-foreground">
                                         <Spinner />
                                         {t('loading')}
                                     </div>

@@ -45,11 +45,11 @@ export const getColumnsDomains = (t: TranslationFunction, options: ColumnsOption
                         ) : domain.https ? (
                             <Lock className="size-4 shrink-0 text-green-500" />
                         ) : (
-                            <Globe className="text-muted-foreground size-4 shrink-0" />
+                            <Globe className="size-4 shrink-0 text-muted-foreground" />
                         )}
                         <Link
                             href={url}
-                            className="truncate font-mono text-sm font-medium hover:underline"
+                            className="truncate font-medium font-mono text-sm hover:underline"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
@@ -84,7 +84,7 @@ export const getColumnsDomains = (t: TranslationFunction, options: ColumnsOption
             accessorKey: 'containerPort',
             header: t('table.port'),
             cell: ({ row }) => (
-                <span className="text-muted-foreground font-mono text-sm">:{row.original.containerPort}</span>
+                <span className="font-mono text-muted-foreground text-sm">:{row.original.containerPort}</span>
             ),
         },
         {

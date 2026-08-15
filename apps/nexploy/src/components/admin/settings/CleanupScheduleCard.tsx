@@ -127,7 +127,7 @@ export function CleanupScheduleCard({ settings }: { settings: CleanupSettings })
 
                         <div className="rounded-lg border p-4">
                             <p className="text-base">{t('cleanupTargets')}</p>
-                            <p className="text-muted-foreground mb-3 text-xs">{t('cleanupTargetsDescription')}</p>
+                            <p className="mb-3 text-muted-foreground text-xs">{t('cleanupTargetsDescription')}</p>
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 {TARGETS.map((name) => (
                                     <FormField

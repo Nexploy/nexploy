@@ -85,7 +85,7 @@ export function ModelProviderCard({ provider, label, color, icon, hasKey, keyUrl
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmitWithAction} className="bg-card rounded-xl border shadow-sm">
+            <form onSubmit={handleSubmitWithAction} className="rounded-xl border bg-card shadow-sm">
                 <div className="flex items-center justify-between gap-2 p-4">
                     <div className={'flex items-center gap-2'}>
                         <div className={cn('flex size-9 shrink-0 items-center justify-center rounded-lg', color)}>
@@ -109,7 +109,7 @@ export function ModelProviderCard({ provider, label, color, icon, hasKey, keyUrl
                     </Link>
                 </div>
                 <Separator />
-                <div className="bg-muted/40 flex flex-col gap-2 p-4">
+                <div className="flex flex-col gap-2 bg-muted/40 p-4">
                     <FormLabel>{t('apiKey')}</FormLabel>
                     <div className="flex flex-1 gap-2">
                         <FormField

@@ -255,7 +255,7 @@ export const TreeLines = () => {
 
                 return (
                     <div
-                        className="border-border/40 absolute top-0 bottom-0 border-l"
+                        className="absolute top-0 bottom-0 border-border/40 border-l"
                         key={index.toString()}
                         style={{
                             left: index * (indent ?? 0) + 12,
@@ -267,7 +267,7 @@ export const TreeLines = () => {
 
             {/* Horizontal connector line */}
             <div
-                className="border-border/40 absolute top-1/2 border-t"
+                className="absolute top-1/2 border-border/40 border-t"
                 style={{
                     left: (level - 1) * (indent ?? 0) + 12,
                     width: (indent ?? 0) - 4,
@@ -278,7 +278,7 @@ export const TreeLines = () => {
             {/* Vertical line to midpoint for last items */}
             {isLast && (
                 <div
-                    className="border-border/40 absolute top-0 border-l"
+                    className="absolute top-0 border-border/40 border-l"
                     style={{
                         left: (level - 1) * (indent ?? 0) + 12,
                         height: '50%',
@@ -355,7 +355,7 @@ export const TreeExpander = ({ hasChildren = false, className, onClick, ...props
             transition={{ duration: animateExpand ? 0.2 : 0, ease: 'easeInOut' }}
             {...props}
         >
-            <ChevronRight className="text-muted-foreground h-3 w-3" />
+            <ChevronRight className="h-3 w-3 text-muted-foreground" />
         </motion.div>
     );
 };
@@ -387,7 +387,7 @@ export const TreeIcon = ({ icon, hasChildren = false, className, ...props }: Tre
 
     return (
         <motion.div
-            className={cn('text-muted-foreground mr-2 flex h-4 w-4 items-center justify-center', className)}
+            className={cn('mr-2 flex h-4 w-4 items-center justify-center text-muted-foreground', className)}
             transition={{ duration: animateExpand ? 0.15 : 0 }}
             whileHover={animateExpand ? { scale: 1.1 } : undefined}
             {...props}

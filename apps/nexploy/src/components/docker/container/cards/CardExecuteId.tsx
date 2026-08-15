@@ -22,13 +22,13 @@ export function CardExecuteId() {
             <CardHeaderWithIcon icon={Cpu} title={t('title')} />
             <CardContent>
                 {!execIds.length ? (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 font-semibold text-muted-foreground text-sm">
                         {t('noExecIds')}
                     </div>
                 ) : (
                     <div className="space-y-2">
                         {execIds.map((execId, idx) => (
-                            <code key={idx} className="bg-muted/30 block truncate rounded-md p-2 text-xs">
+                            <code key={idx} className="block truncate rounded-md bg-muted/30 p-2 text-xs">
                                 {execId}
                             </code>
                         ))}

@@ -33,7 +33,7 @@ export function TwoFactorAuthBackupCodes({ backupCodes }: TwoFactorAuthBackupCod
                 {backupCodes.map((backupCode) => (
                     <div
                         key={backupCode}
-                        className={`bg-muted flex items-center justify-between rounded-lg border p-2`}
+                        className={`flex items-center justify-between rounded-lg border bg-muted p-2`}
                     >
                         <code className={`font-mono text-sm`}>{backupCode}</code>
                         <CopyButton text={backupCode} className="size-8 text-xs!" size={'icon'} variant={'ghost'} />

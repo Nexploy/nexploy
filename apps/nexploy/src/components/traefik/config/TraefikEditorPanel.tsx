@@ -34,18 +34,18 @@ export function TraefikEditorPanel() {
         <div className="flex h-full min-w-0 flex-col">
             <TraefikEditorToolbar />
             {yamlError && (
-                <div className="border-destructive/20 bg-destructive/10 flex items-center gap-2 border-b px-4 py-2">
-                    <AlertTriangle className="text-destructive size-3.5 shrink-0" />
+                <div className="flex items-center gap-2 border-destructive/20 border-b bg-destructive/10 px-4 py-2">
+                    <AlertTriangle className="size-3.5 shrink-0 text-destructive" />
                     <div className="min-w-0">
-                        <span className="text-destructive text-xs font-semibold">{t('yamlError')}: </span>
-                        <span className="text-destructive/80 text-xs break-all">{yamlError}</span>
+                        <span className="font-semibold text-destructive text-xs">{t('yamlError')}: </span>
+                        <span className="break-all text-destructive/80 text-xs">{yamlError}</span>
                     </div>
                 </div>
             )}
 
             {contentLoading || !resolvedTheme ? (
                 <div className="flex h-full items-center justify-center">
-                    <Loader2 className="text-muted-foreground size-5 animate-spin" />
+                    <Loader2 className="size-5 animate-spin text-muted-foreground" />
                 </div>
             ) : isDiffMode ? (
                 <div className="flex-1 overflow-hidden">

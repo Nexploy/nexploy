@@ -39,7 +39,7 @@ export function CreateMcpKeyForm() {
                         description: (
                             <div className="flex flex-col gap-3 pt-1">
                                 <div className="flex items-center gap-2 rounded-lg border p-3">
-                                    <Key className="text-muted-foreground size-4 shrink-0" />
+                                    <Key className="size-4 shrink-0 text-muted-foreground" />
                                     <code className="break-all text-xs">{data.key}</code>
                                     <CopyButton
                                         text={data.key}

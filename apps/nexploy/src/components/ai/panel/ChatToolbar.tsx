@@ -36,7 +36,7 @@ export function ChatToolbar() {
                 onClick={toggleFullscreen}
                 title={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
                 aria-label={isFullscreen ? t('exitFullscreen') : t('fullscreen')}
-                className={cn(tabClassName, 'text-muted-foreground hover:bg-muted px-2')}
+                className={cn(tabClassName, 'px-2 text-muted-foreground hover:bg-muted')}
             >
                 {isFullscreen ? <Minimize2 className="size-3 shrink-0" /> : <Maximize2 className="size-3 shrink-0" />}
             </Button>

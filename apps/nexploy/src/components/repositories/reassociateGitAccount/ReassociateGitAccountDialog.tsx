@@ -33,7 +33,7 @@ export function ReassociateGitAccountDialog({ repositoryId, repositoryName, open
                 </div>
                 <DialogHeader className="pt-0">
                     <DialogTitle className="flex items-center gap-2">
-                        <TriangleAlert className="text-destructive size-4 shrink-0" />
+                        <TriangleAlert className="size-4 shrink-0 text-destructive" />
                         {t('title')}
                     </DialogTitle>
                     <DialogDescription>{t('description')}</DialogDescription>

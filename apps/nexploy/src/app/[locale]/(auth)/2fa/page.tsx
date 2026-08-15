@@ -17,7 +17,7 @@ export default async function TwoFactoVerifCodePage() {
                     <TwoFactorVerifCodeForm />
                     <div className="text-center text-sm">
                         <span className="text-muted-foreground">{t('cantAccessAuthApp')} </span>
-                        <Link href="/2fa/backup-codes" className="text-primary font-medium hover:underline">
+                        <Link href="/2fa/backup-codes" className="font-medium text-primary hover:underline">
                             {t('useBackupCode')}
                         </Link>
                     </div>

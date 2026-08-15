@@ -41,7 +41,7 @@ export function BitbucketAppSetupForm() {
     return (
         <Form {...form}>
             <form onSubmit={handleSubmitWithAction} className="space-y-4">
-                <ol className="text-muted-foreground list-decimal space-y-1 pl-5 text-sm">
+                <ol className="list-decimal space-y-1 pl-5 text-muted-foreground text-sm">
                     <li>{t('guide.bitbucket.step1')}</li>
                     <li>{t('guide.bitbucket.step2', { url: appUrl })}</li>
                     <li>{t('guide.bitbucket.step3')}</li>

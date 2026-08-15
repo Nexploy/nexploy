@@ -80,7 +80,7 @@ export function useUpdate({ enabled = true, refreshInterval }: UseUpdateOptions 
                             href={patchNotesUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1.5 text-sm underline underline-offset-4 transition-colors"
+                            className="mb-4 inline-flex items-center gap-1.5 text-muted-foreground text-sm underline underline-offset-4 transition-colors hover:text-foreground"
                         >
                             <FileText className="size-3.5" />
                             {t('upgradePatchNotes', { version: targetVersion })}
@@ -88,9 +88,9 @@ export function useUpdate({ enabled = true, refreshInterval }: UseUpdateOptions 
                         </a>
                     )}
                     {builds.length > 0 && (
-                        <div className="border-destructive/30 bg-destructive/10 mb-4 rounded-lg border p-3 text-sm">
-                            <p className="text-destructive font-medium">{t('upgradeActiveBuildsWarning')}</p>
-                            <ul className="text-destructive/90 mt-1.5 list-disc pl-4">
+                        <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm">
+                            <p className="font-medium text-destructive">{t('upgradeActiveBuildsWarning')}</p>
+                            <ul className="mt-1.5 list-disc pl-4 text-destructive/90">
                                 {builds.map((build) => (
                                     <li key={build.id}>{build.repositoryName}</li>
                                 ))}

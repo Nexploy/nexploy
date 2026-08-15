@@ -73,10 +73,10 @@ export function useNodeActions({ node }: UseNodeActionsProps): DropdownActionToo
                             </p>
                             <Label
                                 htmlFor="force-remove-node"
-                                className="bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3"
+                                className="flex cursor-pointer items-center justify-between rounded-lg border border-destructive bg-muted/50 p-3"
                             >
                                 <div className="space-y-0.5">
-                                    <p className="text-destructive text-sm font-medium">{t('forceRemoveNode')}</p>
+                                    <p className="font-medium text-destructive text-sm">{t('forceRemoveNode')}</p>
                                     <p className="text-xs">{t('forceRemoveNodeDescription')}</p>
                                 </div>
                                 <Switch

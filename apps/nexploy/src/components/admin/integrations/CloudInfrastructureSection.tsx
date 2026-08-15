@@ -15,8 +15,8 @@ export async function CloudInfrastructureSection() {
     return (
         <section className="space-y-2">
             <div className="flex items-center gap-2">
-                <Cloud className="text-muted-foreground size-4" />
-                <h2 className="text-sm font-medium">{t('cloudInfrastructure')}</h2>
+                <Cloud className="size-4 text-muted-foreground" />
+                <h2 className="font-medium text-sm">{t('cloudInfrastructure')}</h2>
             </div>
             <div className={'flex flex-col gap-3'}>
                 <DnsAccordionSection accounts={dnsAccounts} />

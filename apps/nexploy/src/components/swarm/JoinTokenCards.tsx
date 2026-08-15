@@ -33,7 +33,7 @@ export function JoinTokenCards() {
         <div className="grid gap-4 px-5 md:grid-cols-2">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                    <CardTitle className="flex items-center gap-2 font-medium text-sm">
                         <Users className="size-4" />
                         {t('workerJoinToken')}
                     </CardTitle>
@@ -54,16 +54,16 @@ export function JoinTokenCards() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <code className="bg-muted block rounded p-2 text-xs break-all">
+                    <code className="block break-all rounded bg-muted p-2 text-xs">
                         {formatToken(swarmInfo.joinTokens.worker, showWorkerToken)}
                     </code>
-                    <p className="text-muted-foreground mt-2 text-xs">{t('useTokenToJoinWorker')}</p>
+                    <p className="mt-2 text-muted-foreground text-xs">{t('useTokenToJoinWorker')}</p>
                 </CardContent>
             </Card>
 
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                    <CardTitle className="flex items-center gap-2 font-medium text-sm">
                         <Crown className="size-4" />
                         {t('managerJoinToken')}
                     </CardTitle>
@@ -84,10 +84,10 @@ export function JoinTokenCards() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <code className="bg-muted block rounded p-2 text-xs break-all">
+                    <code className="block break-all rounded bg-muted p-2 text-xs">
                         {formatToken(swarmInfo.joinTokens.manager, showManagerToken)}
                     </code>
-                    <p className="text-muted-foreground mt-2 text-xs">{t('useTokenToJoinManager')}</p>
+                    <p className="mt-2 text-muted-foreground text-xs">{t('useTokenToJoinManager')}</p>
                 </CardContent>
             </Card>
         </div>

@@ -15,10 +15,10 @@ export function PanelHeader({ hasMessages, onNewChat, onClose }: PanelHeaderProp
     return (
         <div className="flex items-center justify-between gap-2 px-3 py-2.5">
             <div className="flex items-center gap-2">
-                <div className="bg-primary/10 flex h-6 w-6 items-center justify-center rounded-sm">
-                    <Bot className="text-primary h-3.5 w-3.5" />
+                <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-primary/10">
+                    <Bot className="h-3.5 w-3.5 text-primary" />
                 </div>
-                <span className="text-sm font-semibold">{t('panelTitle')}</span>
+                <span className="font-semibold text-sm">{t('panelTitle')}</span>
             </div>
             {hasMessages && (
                 <Button size={'sm'} className={'h-7 text-xs'} onClick={onNewChat} title={t('newChat')}>

@@ -106,7 +106,7 @@ export function DiskUsageCard() {
             <CardContent className="flex flex-col gap-4">
                 {isLoading ? (
                     <>
-                        <div className="bg-muted/40 flex items-center justify-between rounded-lg border p-4">
+                        <div className="flex items-center justify-between rounded-lg border bg-muted/40 p-4">
                             <div className="flex flex-col gap-2">
                                 <Skeleton className="h-3 w-24" />
                                 <Skeleton className="h-7 w-32" />
@@ -136,13 +136,13 @@ export function DiskUsageCard() {
                         </div>
                     </>
                 ) : !usage ? (
-                    <p className="text-muted-foreground py-6 text-center text-sm">{t('unavailable')}</p>
+                    <p className="py-6 text-center text-muted-foreground text-sm">{t('unavailable')}</p>
                 ) : (
                     <>
-                        <div className="bg-muted/40 flex items-center justify-between rounded-lg border p-4">
+                        <div className="flex items-center justify-between rounded-lg border bg-muted/40 p-4">
                             <div className="flex flex-col">
                                 <span className="text-muted-foreground text-xs">{t('totalReclaimable')}</span>
-                                <span className="text-2xl font-semibold">{formatBytes(usage.totalReclaimable)}</span>
+                                <span className="font-semibold text-2xl">{formatBytes(usage.totalReclaimable)}</span>
                                 <span className="text-muted-foreground text-xs">
                                     {t('ofTotal', { total: formatBytes(usage.totalSize) })}
                                 </span>
@@ -171,11 +171,11 @@ export function DiskUsageCard() {
                                         }`}
                                     >
                                         <div className="flex min-w-0 items-center gap-3">
-                                            <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-md">
-                                                <Icon className="text-primary size-4" />
+                                            <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10">
+                                                <Icon className="size-4 text-primary" />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-medium">{t(`target.${row.key}`)}</span>
+                                                <span className="font-medium text-sm">{t(`target.${row.key}`)}</span>
                                                 <span className="text-muted-foreground text-xs">
                                                     {t('reclaimableOf', {
                                                         reclaimable: formatBytes(row.reclaimable),

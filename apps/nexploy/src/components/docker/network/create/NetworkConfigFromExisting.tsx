@@ -45,7 +45,7 @@ export function NetworkConfigFromExisting() {
                                 </FormControl>
                                 <SelectContent align="start">
                                     {configOnlyNetworks.length === 0 ? (
-                                        <p className="text-muted-foreground text-center text-sm">
+                                        <p className="text-center text-muted-foreground text-sm">
                                             {t('sourceNetworkEmpty')}
                                         </p>
                                     ) : (

@@ -183,7 +183,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                             {connectionType === 'TCP_TLS' && (
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
-                                                        <Info className="text-muted-foreground h-3.5 w-3.5 cursor-help" />
+                                                        <Info className="h-3.5 w-3.5 cursor-help text-muted-foreground" />
                                                     </TooltipTrigger>
                                                     <TooltipContent side="top" className="max-w-56">
                                                         {t('hostCertWarning')}
@@ -230,7 +230,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                 {connectionType === 'TCP_TLS' && (
                     <div className="space-y-4 rounded-lg border p-4">
                         <div className="flex items-center justify-between">
-                            <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
+                            <h4 className="font-medium text-sm">{t('tlsCertificates')}</h4>
                             <DownloadCertScriptButton disabled={!host} host={host} />
                         </div>
                         <p className="text-muted-foreground text-xs">{t('tlsCertificatesDescription')}</p>

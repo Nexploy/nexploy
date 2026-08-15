@@ -82,7 +82,7 @@ export function BuildRunnerSection({ runners, serverUrl }: BuildRunnerSectionPro
     return (
         <div className="flex flex-col gap-3">
             {runners.length === 0 ? (
-                <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">{t('noRunners')}</div>
+                <div className="rounded-md border p-8 text-center text-muted-foreground text-sm">{t('noRunners')}</div>
             ) : (
                 runners.map((runner) => (
                     <BuildRunnerCard

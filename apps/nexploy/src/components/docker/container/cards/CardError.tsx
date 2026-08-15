@@ -13,12 +13,12 @@ export function CardError() {
         <Card className="border-destructive">
             <CardContent className={'flex flex-col gap-4'}>
                 <div className="flex items-center gap-3">
-                    <div className="bg-destructive/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                        <Activity className="text-destructive size-4" />
+                    <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-destructive/10">
+                        <Activity className="size-4 text-destructive" />
                     </div>
                     <CardTitle className="text-destructive">{t('title')}</CardTitle>
                 </div>
-                <code className="bg-destructive/10 block rounded-md p-3 text-sm">{container.error}</code>
+                <code className="block rounded-md bg-destructive/10 p-3 text-sm">{container.error}</code>
             </CardContent>
         </Card>
     );

@@ -108,8 +108,8 @@ export const InputAutoComplete = ({
                         sideOffset={8}
                         style={{ width: 'var(--radix-popper-anchor-width)' }}
                         className={cn(
-                            'bg-popover text-popover-foreground rounded-md border shadow-md outline-none',
-                            'data-[state=open]:animate-in data-[state=closed]:animate-out',
+                            'rounded-md border bg-popover text-popover-foreground shadow-md outline-none',
+                            'data-[state=closed]:animate-out data-[state=open]:animate-in',
                             'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
                             'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
                             'z-50',

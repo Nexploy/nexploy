@@ -25,7 +25,7 @@ export function CardHealthDetails() {
             <CardHeaderWithIcon icon={Activity} title={t('title')} />
             <CardContent className="px-0">
                 {!logs.length ? (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 font-semibold text-muted-foreground text-sm">
                         {t('noLogs')}
                     </div>
                 ) : (
@@ -33,11 +33,11 @@ export function CardHealthDetails() {
                         <div className="mb-3 flex gap-4 px-6">
                             <div className="flex items-center gap-2">
                                 <span className="text-muted-foreground text-sm">{t('status')}</span>
-                                <code className="bg-muted/50 rounded px-2 py-1 text-xs">
+                                <code className="rounded bg-muted/50 px-2 py-1 text-xs">
                                     {container?.health?.status}
                                 </code>
                             </div>
-                            <span className="text-muted-foreground text-sm whitespace-nowrap">
+                            <span className="whitespace-nowrap text-muted-foreground text-sm">
                                 {t('consecutiveFailures')}
                             </span>
                             <div className="flex justify-end">
@@ -47,7 +47,7 @@ export function CardHealthDetails() {
                         <ScrollAreaWithShadow bottomShadow className="h-60 overflow-hidden px-6">
                             <div className="space-y-2">
                                 {logs.map((log, idx) => (
-                                    <div key={idx} className="bg-muted/30 space-y-2 rounded-lg p-3">
+                                    <div key={idx} className="space-y-2 rounded-lg bg-muted/30 p-3">
                                         <div className="flex items-center justify-between gap-2">
                                             <span className="text-muted-foreground text-xs">
                                                 {dayjs(log.start).format('DD/MM/YYYY HH:mm:ss')}
@@ -57,7 +57,7 @@ export function CardHealthDetails() {
                                             </Badge>
                                         </div>
                                         {log.output && (
-                                            <code className="bg-background/50 block rounded p-2 text-xs break-all">
+                                            <code className="block break-all rounded bg-background/50 p-2 text-xs">
                                                 {log.output}
                                             </code>
                                         )}

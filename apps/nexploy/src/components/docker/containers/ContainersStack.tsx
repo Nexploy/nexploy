@@ -17,7 +17,7 @@ export function ContainersStack({ stacks, isSearching = false }: ContainersStack
     return (
         <div className="flex flex-col gap-2 px-5">
             <div className="flex items-center gap-2 px-1">
-                <span className="text-lg font-semibold">{t('stacks')}</span>
+                <span className="font-semibold text-lg">{t('stacks')}</span>
                 <Badge variant="secondary">{stacks.length}</Badge>
             </div>
 

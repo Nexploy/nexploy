@@ -95,7 +95,7 @@ export function NetworkForm() {
                     )}
                 />
 
-                <DialogFooter className="flex justify-between! pt-4">
+                <DialogFooter className="justify-between! flex pt-4">
                     <div className="flex flex-1 flex-row justify-end gap-2">
                         <DialogClose asChild>
                             <Button variant="outline">{t('cancel')}</Button>

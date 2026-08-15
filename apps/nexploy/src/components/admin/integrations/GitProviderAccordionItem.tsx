@@ -26,7 +26,7 @@ export async function GitProviderAccordionItem({
     const hasInstances = instances.length > 0;
 
     return (
-        <AccordionItem value={value} className="bg-card rounded-lg border border-b!">
+        <AccordionItem value={value} className="rounded-lg border border-b! bg-card">
             <AccordionTrigger
                 position="left"
                 showChevron={hasInstances}
@@ -39,7 +39,7 @@ export async function GitProviderAccordionItem({
                 }
             >
                 <div className="flex min-w-0 flex-1 items-center gap-3">
-                    <div className="bg-muted flex size-10 items-center justify-center rounded-lg">{icon}</div>
+                    <div className="flex size-10 items-center justify-center rounded-lg bg-muted">{icon}</div>
                     <div className="flex min-w-0 flex-col text-left">
                         <span className="flex items-center gap-2">
                             {t(titleKey)}
@@ -52,7 +52,7 @@ export async function GitProviderAccordionItem({
                 </div>
             </AccordionTrigger>
             {hasInstances && (
-                <AccordionContent className="bg-muted/40 border-t p-5">
+                <AccordionContent className="border-t bg-muted/40 p-5">
                     <div className="space-y-2">
                         {instances.map((instance) => (
                             <ProviderInstanceCard

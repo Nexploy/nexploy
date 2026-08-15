@@ -118,7 +118,7 @@ export function CardExposedPorts() {
                                         <div
                                             key={idx}
                                             className={cn(
-                                                'group bg-muted/60 relative flex h-9 items-center justify-between gap-2 rounded-md px-3 py-2',
+                                                'group relative flex h-9 items-center justify-between gap-2 rounded-md bg-muted/60 px-3 py-2',
                                             )}
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">
@@ -126,13 +126,13 @@ export function CardExposedPorts() {
                                                     <Link
                                                         href={getPortUrl(displayPort.publicPort!)}
                                                         target="_blank"
-                                                        className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
+                                                        className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
                                                     >
                                                         {displayPort.publicPort}
                                                         <ExternalLink className="h-3 w-3" />
                                                     </Link>
                                                 ) : (
-                                                    <span className="text-muted-foreground font-semibold">—</span>
+                                                    <span className="font-semibold text-muted-foreground">—</span>
                                                 )}
                                                 <span className="text-muted-foreground">→</span>
                                                 <span>{displayPort.privatePort}</span>
@@ -192,7 +192,7 @@ export function CardExposedPorts() {
                                     return (
                                         <div
                                             key={`new-${idx}`}
-                                            className="group bg-muted/60 relative flex items-center justify-between gap-2 rounded-md px-3 py-2"
+                                            className="group relative flex items-center justify-between gap-2 rounded-md bg-muted/60 px-3 py-2"
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">
                                                 {hasPublicPort ? (
@@ -200,13 +200,13 @@ export function CardExposedPorts() {
                                                         href={getPortUrl(change.publicPort!)}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
+                                                        className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
                                                     >
                                                         {change.publicPort}
                                                         <ExternalLink className="h-3 w-3" />
                                                     </a>
                                                 ) : (
-                                                    <span className="text-muted-foreground font-semibold">—</span>
+                                                    <span className="font-semibold text-muted-foreground">—</span>
                                                 )}
                                                 <span className="text-muted-foreground">→</span>
                                                 <span>{change.privatePort}</span>
@@ -240,7 +240,7 @@ export function CardExposedPorts() {
                             </div>
                         ) : (
                             <div className="mb-16 flex flex-1 items-center justify-center">
-                                <p className="text-muted-foreground text-center text-sm">{t('noPorts')}</p>
+                                <p className="text-center text-muted-foreground text-sm">{t('noPorts')}</p>
                             </div>
                         )}
                     </div>

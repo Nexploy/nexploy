@@ -31,10 +31,10 @@ export function NetworkResultsSearchGroup() {
                         runCommand(() => router.push(`/docker/networks/${net.id}`)),
                     )}
                 >
-                    <EthernetPort className="text-muted-foreground h-4 w-4 shrink-0" />
-                    <span className="min-w-0 flex-1 truncate text-sm font-medium">{net.name}</span>
-                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">{net.driver}</span>
-                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">{t('types.network')}</span>
+                    <EthernetPort className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <span className="min-w-0 flex-1 truncate font-medium text-sm">{net.name}</span>
+                    <span className="ml-3 shrink-0 text-muted-foreground text-xs">{net.driver}</span>
+                    <span className="ml-3 shrink-0 text-muted-foreground text-xs">{t('types.network')}</span>
                 </CommandItem>
             ))}
         </CommandGroup>

@@ -31,7 +31,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                 <CardHeader className="flex items-center">
                     <div className="flex flex-1 items-center gap-3 truncate">
                         <ResourceIcon kind="container" name={container.name} size="md" />
-                        <CardTitle className="truncate text-lg font-semibold">{container.name}</CardTitle>
+                        <CardTitle className="truncate font-semibold text-lg">{container.name}</CardTitle>
                     </div>
                     <Can resource="container" action="manage">
                         <DropdownMenu>
@@ -46,7 +46,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                 </CardHeader>
 
                 <Status
-                    className={'bg-card absolute -top-2 -right-2 truncate rounded-md'}
+                    className={'absolute -top-2 -right-2 truncate rounded-md bg-card'}
                     status={containerDisplayState[container.state] ?? 'offline'}
                     variant="outline"
                 >
@@ -57,7 +57,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                 <CardContent className="flex flex-col gap-4">
                     <div className="flex items-center justify-between gap-2 truncate">
                         <span className="font-medium">{t('image')}</span>
-                        <code className="bg-muted/50 truncate rounded-md px-3 py-1 text-sm">{container.image}</code>
+                        <code className="truncate rounded-md bg-muted/50 px-3 py-1 text-sm">{container.image}</code>
                     </div>
 
                     <div className={'flex flex-col gap-2'}>
@@ -74,7 +74,7 @@ export function ContainerCard({ container }: ContainerCardProps) {
                                 <CarouselContent>
                                     {container.ports.map((p, idx) => (
                                         <CarouselItem key={idx}>
-                                            <code className="bg-muted/50 flex shrink-0 gap-2 rounded-md px-3 py-2 text-start text-xs leading-none">
+                                            <code className="flex shrink-0 gap-2 rounded-md bg-muted/50 px-3 py-2 text-start text-xs leading-none">
                                                 {p.publicPort !== 0 ? p.publicPort : '—'} → {p.privatePort}
                                                 <span className="text-muted-foreground">({p.type})</span>
                                             </code>

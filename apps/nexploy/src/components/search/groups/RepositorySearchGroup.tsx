@@ -58,14 +58,14 @@ export function RepositorySearchGroup() {
                         runCommand(() => router.push(`/repositories/${repo.id}`)),
                     )}
                 >
-                    <FolderGit2 className="text-muted-foreground h-4 w-4 shrink-0" />
+                    <FolderGit2 className="h-4 w-4 shrink-0 text-muted-foreground" />
                     <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="truncate text-sm font-medium">{repo.name}</span>
-                        <span className="text-muted-foreground truncate text-xs">
+                        <span className="truncate font-medium text-sm">{repo.name}</span>
+                        <span className="truncate text-muted-foreground text-xs">
                             {repo.repositoryUrl.replace(/^https?:\/\//, '')}
                         </span>
                     </div>
-                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">{t('types.repository')}</span>
+                    <span className="ml-3 shrink-0 text-muted-foreground text-xs">{t('types.repository')}</span>
                 </CommandItem>
             ))}
         </CommandGroup>

@@ -177,21 +177,21 @@ export function ChatAIPanel() {
                     />
                     {!aiEnabled ? (
                         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-                            <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                                <BotOff className="text-primary size-5" />
+                            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                <BotOff className="size-5 text-primary" />
                             </div>
                             <div className="flex flex-col gap-1">
-                                <p className="text-sm font-medium">{t('disabled')}</p>
+                                <p className="font-medium text-sm">{t('disabled')}</p>
                                 <p className="text-muted-foreground text-xs">{t('disabledDescription')}</p>
                             </div>
                         </div>
                     ) : !providersLoading && !hasConfiguredProvider ? (
                         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-                            <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                                <Settings2 className="text-primary size-5" />
+                            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                <Settings2 className="size-5 text-primary" />
                             </div>
                             <div className="flex flex-col gap-1">
-                                <p className="text-sm font-medium">{t('noProvider')}</p>
+                                <p className="font-medium text-sm">{t('noProvider')}</p>
                                 <p className="text-muted-foreground text-xs">{t('noProviderDescription')}</p>
                             </div>
                         </div>

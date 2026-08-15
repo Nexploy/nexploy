@@ -32,13 +32,13 @@ export const BuildsPanelItem = memo(function BuildsPanelItem({ build, isSelected
             className={cn(
                 buttonVariants({ variant: isSelected ? 'default' : 'ghost', size: 'sm' }),
                 'relative h-auto cursor-pointer flex-col items-start gap-0.5 border px-2.5 py-1.5 backdrop-blur-md duration-0',
-                isSelected ? 'border-transparent' : 'bg-sidebar/85 border-border/70 hover:bg-sidebar',
+                isSelected ? 'border-transparent' : 'border-border/70 bg-sidebar/85 hover:bg-sidebar',
             )}
         >
             <div className="flex w-full items-center gap-1">
                 <StatusView status={build.status} displayType="dot" />
-                <span className="text-xs font-medium">#{build.number}</span>
-                <span className="text-xs font-medium">{build.branch}</span>
+                <span className="font-medium text-xs">#{build.number}</span>
+                <span className="font-medium text-xs">{build.branch}</span>
                 <span className="ml-auto pl-2 text-xs">{dayjs(build.createdAt).locale(locale).fromNow(true)}</span>
             </div>
             <div className={'flex w-[220px] items-center gap-1'}>

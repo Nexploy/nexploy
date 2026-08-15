@@ -27,22 +27,22 @@ export function UpdateBanner() {
     return (
         <SidebarMenu className="group-data-[state=collapsed]:hidden">
             <SidebarMenuItem>
-                <div className="animate-in fade-in slide-in-from-bottom-2 border relative rounded-lg p-[1.5px] duration-500">
-                    <div className="bg-sidebar relative overflow-hidden rounded-[calc(var(--radius)-1.5px)] p-2.5">
+                <div className="fade-in slide-in-from-bottom-2 relative animate-in rounded-lg border p-[1.5px] duration-500">
+                    <div className="relative overflow-hidden rounded-[calc(var(--radius)-1.5px)] bg-sidebar p-2.5">
                         <div className="relative flex items-center justify-between gap-1">
                             <div className="flex items-center gap-1.5">
-                                <ArrowUpCircle className="text-primary relative size-4" />
-                                <span className="text-sm font-medium">{t('updateAvailable')}</span>
+                                <ArrowUpCircle className="relative size-4 text-primary" />
+                                <span className="font-medium text-sm">{t('updateAvailable')}</span>
                             </div>
                             <button
                                 type="button"
                                 onClick={dismiss}
-                                className="text-muted-foreground hover:text-foreground transition-colors"
+                                className="text-muted-foreground transition-colors hover:text-foreground"
                             >
                                 <X className="size-3.5" />
                             </button>
                         </div>
-                        <p className="text-muted-foreground relative mt-1 text-xs">
+                        <p className="relative mt-1 text-muted-foreground text-xs">
                             {t('updateDescription', { version: version?.latest ?? '' })}
                         </p>
                         <Button

@@ -33,11 +33,11 @@ export function CardImageLayers() {
                             {history.map((entry, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="w-16">{index + 1}</TableCell>
-                                    <TableCell className="text-muted-foreground w-24">
+                                    <TableCell className="w-24 text-muted-foreground">
                                         {formatBytes(entry.size)}
                                     </TableCell>
                                     <TableCell className="max-w-0">
-                                        <code className="text-muted-foreground block truncate text-sm">
+                                        <code className="block truncate text-muted-foreground text-sm">
                                             {entry.createdBy || '—'}
                                         </code>
                                     </TableCell>
@@ -47,7 +47,7 @@ export function CardImageLayers() {
                     </Table>
                 ) : (
                     <div className="flex items-center justify-center py-8">
-                        <p className="text-muted-foreground text-center text-sm">{t('noLayers')}</p>
+                        <p className="text-center text-muted-foreground text-sm">{t('noLayers')}</p>
                     </div>
                 )}
             </CardContent>

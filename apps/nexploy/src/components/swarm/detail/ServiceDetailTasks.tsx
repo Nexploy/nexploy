@@ -96,7 +96,7 @@ export function ServiceDetailTasks() {
                 accessorKey: 'error',
                 header: () => t('detail.taskError'),
                 cell: ({ getValue }) => (
-                    <span className="max-w-[200px] truncate text-xs text-red-500">
+                    <span className="max-w-[200px] truncate text-red-500 text-xs">
                         {getValue<string | undefined>() ?? '—'}
                     </span>
                 ),
@@ -123,7 +123,7 @@ export function ServiceDetailTasks() {
             <CardHeaderWithIcon icon={Activity} title={t('detail.tasksTitle')} />
             <CardContent className="p-0">
                 {table.getRowModel().rows.length === 0 ? (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 font-semibold text-muted-foreground text-sm">
                         {t('detail.noTasks')}
                     </div>
                 ) : (

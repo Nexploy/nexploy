@@ -48,7 +48,7 @@ export function NodeConfigDialog() {
             <DialogContent
                 aria-describedby={undefined}
                 className={cn(
-                    'flex h-[80%]! max-w-[70%]! min-w-[700px]! flex-col gap-0 p-0!',
+                    'flex h-[80%]! min-w-[700px]! max-w-[70%]! flex-col gap-0 p-0!',
                     isViewing && 'max-w-[80%]!',
                 )}
                 onOpenAutoFocus={(e) => e.preventDefault()}
@@ -66,7 +66,7 @@ export function NodeConfigDialog() {
                                     <div className={'flex items-center gap-1'}>
                                         <span>{tPipeline(`nodes.${nodeType}.name`)}</span>
                                         {isViewing && (
-                                            <span className="text-muted-foreground text-xs font-normal">
+                                            <span className="font-normal text-muted-foreground text-xs">
                                                 ({tConfig('viewOnly')})
                                             </span>
                                         )}
@@ -99,7 +99,7 @@ export function NodeConfigDialog() {
                                                 nodeStartedAt={nodeStartTimes[node.id]}
                                             />
                                         </div>
-                                        <DialogFooter className="bg-muted/40 border-t p-4">
+                                        <DialogFooter className="border-t bg-muted/40 p-4">
                                             <Button variant="outline" size="sm" onClick={handleResetPanelNode}>
                                                 {tCommon('close')}
                                             </Button>

@@ -85,7 +85,7 @@ export function NodeConfigForm({ node }: NodeConfigFormProps) {
                 </ScrollAreaWithShadow>
 
                 {!isViewingBuild && canEdit && hasSchema && (
-                    <DialogFooter className={cn('bg-muted/40 border-t p-4')}>
+                    <DialogFooter className={cn('border-t bg-muted/40 p-4')}>
                         <Button type="button" variant="outline" size="sm" onClick={handleResetPanelNode}>
                             {tCommon('cancel')}
                         </Button>

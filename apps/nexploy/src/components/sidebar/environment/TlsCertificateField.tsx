@@ -62,9 +62,9 @@ export function TlsCertificateField({
 
                                 <TabsContent value="file">
                                     {showConfiguredBadge ? (
-                                        <div className="border-muted-foreground/25 flex items-center gap-2 rounded-lg border-2 border-dashed p-3">
-                                            <ShieldCheck className="text-muted-foreground h-4 w-4 shrink-0" />
-                                            <span className="text-muted-foreground flex-1 text-xs">
+                                        <div className="flex items-center gap-2 rounded-lg border-2 border-muted-foreground/25 border-dashed p-3">
+                                            <ShieldCheck className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                            <span className="flex-1 text-muted-foreground text-xs">
                                                 {t('certAlreadyConfigured')}
                                             </span>
                                             <Button

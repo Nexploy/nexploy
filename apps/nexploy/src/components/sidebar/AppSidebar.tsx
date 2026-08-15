@@ -30,7 +30,7 @@ export async function AppSidebar({ variant }: AppSidebarProps) {
                         width={28}
                         height={28}
                     />
-                    <div className="text-sx flex flex-1 flex-col text-sm leading-4 transition-opacity duration-200 ease-linear group-data-[state=collapsed]:opacity-0">
+                    <div className="flex flex-1 flex-col text-sm text-sx leading-4 transition-opacity duration-200 ease-linear group-data-[state=collapsed]:opacity-0">
                         <span className="truncate font-bold">Nexploy</span>
                         <AppVersion />
                     </div>

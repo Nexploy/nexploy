@@ -24,8 +24,8 @@ export function ServiceResources() {
             <CardHeaderWithIcon icon={Activity} title={t('resources')} description={t('resourcesDescription')} />
             <CardContent className="space-y-6">
                 <div>
-                    <p className="mb-3 text-sm font-medium">{t('limits')}</p>
-                    <p className="text-muted-foreground mb-4 text-xs">{t('limitsDescription')}</p>
+                    <p className="mb-3 font-medium text-sm">{t('limits')}</p>
+                    <p className="mb-4 text-muted-foreground text-xs">{t('limitsDescription')}</p>
                     <div className="grid items-start gap-4 md:grid-cols-2">
                         <FormField
                             control={form.control}
@@ -66,8 +66,8 @@ export function ServiceResources() {
                 </div>
 
                 <div>
-                    <p className="mb-3 text-sm font-medium">{t('reservations')}</p>
-                    <p className="text-muted-foreground mb-4 text-xs">{t('reservationsDescription')}</p>
+                    <p className="mb-3 font-medium text-sm">{t('reservations')}</p>
+                    <p className="mb-4 text-muted-foreground text-xs">{t('reservationsDescription')}</p>
                     <div className="grid gap-4 md:grid-cols-2">
                         <FormField
                             control={form.control}

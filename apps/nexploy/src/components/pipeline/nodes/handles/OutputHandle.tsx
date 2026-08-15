@@ -50,13 +50,13 @@ export function OutputHandle({ handle, nodeId, handleColor, position, index, tot
                     position={position}
                     style={positionStyle}
                     className={cn(
-                        'bg-base-7! border-card! size-4.5! rounded-full! border-2! transition-all hover:size-6!',
+                        'size-4.5! rounded-full! border-2! border-card! bg-base-7! transition-all hover:size-6!',
                         offsetClass,
                         active && handleColor,
                     )}
                 >
                     {displayLabel && (
-                        <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-[7px] font-bold">
+                        <span className="pointer-events-none absolute inset-0 flex items-center justify-center font-bold text-[7px]">
                             {displayLabel[0]!.toUpperCase()}
                         </span>
                     )}

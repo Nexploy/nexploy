@@ -55,15 +55,15 @@ export function NetworkIpamConfig() {
                 />
 
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-4 text-center text-sm">
+                    <p className="py-4 text-center text-muted-foreground text-sm">
                         {t('noIpConfigurationsConfigured')}
                     </p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
-                            <div key={field.id} className="bg-muted/40 space-y-3 rounded-lg border p-4">
+                            <div key={field.id} className="space-y-3 rounded-lg border bg-muted/40 p-4">
                                 <div className="flex justify-between">
-                                    <span className="text-sm font-semibold">
+                                    <span className="font-semibold text-sm">
                                         {t('configuration')} {index + 1}
                                     </span>
                                 </div>

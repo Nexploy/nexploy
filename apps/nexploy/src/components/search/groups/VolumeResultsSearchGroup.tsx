@@ -31,10 +31,10 @@ export function VolumeResultsSearchGroup() {
                         runCommand(() => router.push(`/docker/volumes/${encodeURIComponent(volume.name)}`)),
                     )}
                 >
-                    <HardDrive className="text-muted-foreground h-4 w-4 shrink-0" />
-                    <span className="min-w-0 flex-1 truncate text-sm font-medium">{volume.name}</span>
-                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">{volume.driver}</span>
-                    <span className="text-muted-foreground ml-3 shrink-0 text-xs">{t('types.volume')}</span>
+                    <HardDrive className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <span className="min-w-0 flex-1 truncate font-medium text-sm">{volume.name}</span>
+                    <span className="ml-3 shrink-0 text-muted-foreground text-xs">{volume.driver}</span>
+                    <span className="ml-3 shrink-0 text-muted-foreground text-xs">{t('types.volume')}</span>
                 </CommandItem>
             ))}
         </CommandGroup>

@@ -25,7 +25,7 @@ export function ContainersStandalone({
         return (
             <div className="flex flex-col gap-2 px-5">
                 <div className="flex items-center gap-2 px-1">
-                    <span className="text-lg font-semibold">{t('containers')}</span>
+                    <span className="font-semibold text-lg">{t('containers')}</span>
                     <Badge variant={'secondary'}>{containers.length}</Badge>
                 </div>
                 <div className={`grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6`}>

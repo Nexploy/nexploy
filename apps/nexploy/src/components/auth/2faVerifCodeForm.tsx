@@ -51,12 +51,12 @@ export function TwoFactorVerifCodeForm({ onSuccess }: TwoFactoVerifCodeFormProps
                                 <div className={'flex flex-1 justify-center'}>
                                     <InputOTP {...field} maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
                                         <InputOTPGroup>
-                                            <InputOTPSlot index={0} className="text-md size-10" />
-                                            <InputOTPSlot index={1} className="text-md size-10" />
-                                            <InputOTPSlot index={2} className="text-md size-10" />
-                                            <InputOTPSlot index={3} className="text-md size-10" />
-                                            <InputOTPSlot index={4} className="text-md size-10" />
-                                            <InputOTPSlot index={5} className="text-md size-10" />
+                                            <InputOTPSlot index={0} className="size-10 text-md" />
+                                            <InputOTPSlot index={1} className="size-10 text-md" />
+                                            <InputOTPSlot index={2} className="size-10 text-md" />
+                                            <InputOTPSlot index={3} className="size-10 text-md" />
+                                            <InputOTPSlot index={4} className="size-10 text-md" />
+                                            <InputOTPSlot index={5} className="size-10 text-md" />
                                         </InputOTPGroup>
                                     </InputOTP>
                                 </div>

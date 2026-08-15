@@ -62,7 +62,7 @@ export function ContainerAttach({ children }: ContainerAttachProps) {
                     aria-describedby={undefined}
                     className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
-                    <DialogHeader className="flex flex-row items-center justify-between border-b border-neutral-800 p-2 pl-3">
+                    <DialogHeader className="flex flex-row items-center justify-between border-neutral-800 border-b p-2 pl-3">
                         <div className="flex flex-row items-center gap-2">
                             <DialogTitle className="flex items-center gap-2 text-sm text-white">
                                 <div className="flex size-4 items-center">

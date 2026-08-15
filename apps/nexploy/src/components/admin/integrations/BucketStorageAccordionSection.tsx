@@ -20,7 +20,7 @@ export function BucketStorageAccordionSection({ bucketStorageAccounts }: BucketS
 
     return (
         <Accordion type="multiple" className="flex flex-col gap-3" defaultValue={['aws']}>
-            <AccordionItem value="aws" className="bg-card rounded-lg border border-b!">
+            <AccordionItem value="aws" className="rounded-lg border border-b! bg-card">
                 <AccordionTrigger
                     position="left"
                     showChevron={hasBucketStorageAccounts}
@@ -33,7 +33,7 @@ export function BucketStorageAccordionSection({ bucketStorageAccounts }: BucketS
                     }
                 >
                     <div className="flex min-w-0 flex-1 items-center gap-3">
-                        <div className="bg-muted flex size-10 items-center justify-center rounded-lg">
+                        <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
                             <AwsAmazonSimpleStorageService className="size-5" />
                         </div>
                         <div className="flex min-w-0 flex-col text-left">
@@ -41,7 +41,7 @@ export function BucketStorageAccordionSection({ bucketStorageAccounts }: BucketS
                                 <span>{t('bucketStorage.title')}</span>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <Info className="text-muted-foreground hover:text-foreground size-3.5 cursor-help transition-colors" />
+                                        <Info className="size-3.5 cursor-help text-muted-foreground transition-colors hover:text-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent className="max-w-64 text-center text-xs">
                                         {t('bucketStorage.tooltip')}
@@ -55,7 +55,7 @@ export function BucketStorageAccordionSection({ bucketStorageAccounts }: BucketS
                     </div>
                 </AccordionTrigger>
                 {hasBucketStorageAccounts && (
-                    <AccordionContent className="bg-muted/40 border-t p-5">
+                    <AccordionContent className="border-t bg-muted/40 p-5">
                         <div className="space-y-2">
                             {bucketStorageAccounts.map((account) => (
                                 <BucketStorageInstanceCard

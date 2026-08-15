@@ -16,5 +16,5 @@ async function getAppVersion(): Promise<string> {
 export async function AppVersion() {
     const version = await getAppVersion();
 
-    return <span className="text-muted-foreground truncate text-xs leading-3">{version}</span>;
+    return <span className="truncate text-muted-foreground text-xs leading-3">{version}</span>;
 }

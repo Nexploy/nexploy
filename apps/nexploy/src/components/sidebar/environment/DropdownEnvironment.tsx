@@ -144,7 +144,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
             <SidebarMenuItem>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton className="w-18 group-data-[state=collapsed]:bg-transparent! group-data-[state=collapsed]:p-0! flex h-10 cursor-pointer justify-between gap-1 group-data-[state=collapsed]:justify-start">
+                        <SidebarMenuButton className="flex h-10 w-18 cursor-pointer justify-between gap-1 group-data-[state=collapsed]:justify-start group-data-[state=collapsed]:bg-transparent! group-data-[state=collapsed]:p-0!">
                             <DicebearAvatar
                                 seed={currentEnvironment?.name}
                                 size={32}
@@ -178,9 +178,9 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                                     <div className={'flex flex-1 items-center gap-2'}>
                                         {environment.name}
                                         {environment.isDefault && (
-                                            <Star className="text-muted-foreground size-3 fill-current" />
+                                            <Star className="size-3 fill-current text-muted-foreground" />
                                         )}
-                                        {environment.isProtected && <Lock className="text-muted-foreground size-3" />}
+                                        {environment.isProtected && <Lock className="size-3 text-muted-foreground" />}
                                     </div>
                                     {selectedEnvironmentId === environment.id && <Check className="size-4" />}
                                 </DropdownMenuItem>
@@ -225,7 +225,7 @@ export function DropdownEnvironment({ environments }: DropdownEnvironmentProps) 
                         <Can resource="environment" action="create">
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="gap-2 p-2" onClick={handleEnvironmentAdd}>
-                                <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
+                                <div className="flex size-6 items-center justify-center rounded-md border border-dashed bg-background">
                                     <Plus size={14} />
                                 </div>
                                 <span>{t('addEnvironment')}</span>

@@ -22,14 +22,14 @@ export function ProviderFilterBar({ providers, labels, value, onChange }: Provid
 
     const chipClass = (active: boolean) =>
         cn(
-            'flex h-7 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium transition-colors',
+            'flex h-7 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-2.5 font-medium text-xs transition-colors',
             active
                 ? 'border-primary bg-primary/10 text-foreground'
                 : 'text-muted-foreground hover:bg-muted hover:text-foreground',
         );
 
     return (
-        <div className="bg-background/50 flex items-center gap-2 overflow-x-auto border-b px-3 py-2">
+        <div className="flex items-center gap-2 overflow-x-auto border-b bg-background/50 px-3 py-2">
             <button type="button" onClick={() => onChange('ALL')} className={chipClass(value === 'ALL')}>
                 <LayoutGrid className="size-3.5 shrink-0" />
                 <span>{t('allProviders')}</span>

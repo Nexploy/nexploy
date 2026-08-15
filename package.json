@@ -25,7 +25,7 @@
   },
   "lint-staged": {
     "*": [
-      "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off"
+      "biome check --write --unsafe --no-errors-on-unmatched --files-ignore-unknown=true --colors=off"
     ]
   },
   "dependencies": {

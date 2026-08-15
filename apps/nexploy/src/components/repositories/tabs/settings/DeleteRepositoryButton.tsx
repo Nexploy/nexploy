@@ -29,7 +29,7 @@ export function DeleteRepositoryButton({ repositoryId, repositoryName }: DeleteR
         <Can resource="repository" action="delete">
             <div className="flex items-center justify-between">
                 <div>
-                    <p className="text-sm font-medium">{t('deleteButton')}</p>
+                    <p className="font-medium text-sm">{t('deleteButton')}</p>
                     <p className="text-muted-foreground text-xs">{t('deleteButtonDescription')}</p>
                 </div>
                 <Button variant="destructive" size="sm" onClick={handleOpenDelete}>

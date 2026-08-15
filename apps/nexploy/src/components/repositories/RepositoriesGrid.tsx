@@ -71,7 +71,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
         <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <Input
-                    className="shadow-xs w-56"
+                    className="w-56 shadow-xs"
                     placeholder={tCommon('searchPlaceholder')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -169,17 +169,17 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
 
                         return (
                             <Link href={`/repositories/${repository.id}`} key={repository.id}>
-                                <Card className="border-muted-foreground/20 bg-background pb-0! group relative flex flex-col overflow-hidden p-4 px-0 pt-0 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl has-[button:hover]:scale-100 has-[button:hover]:shadow-none">
+                                <Card className="group relative flex flex-col overflow-hidden border-muted-foreground/20 bg-background p-4 px-0 pt-0 pb-0! transition-all duration-300 hover:scale-[1.03] hover:shadow-xl has-[button:hover]:scale-100 has-[button:hover]:shadow-none">
                                     <CardHeader className="flex flex-row items-start justify-between px-4">
                                         <div className="flex w-full items-center gap-3">
-                                            <div className="bg-secondary/50 text-secondary-foreground ring-border group-hover:bg-primary/10 group-hover:text-primary group-has-[button:hover]:bg-secondary/50 group-has-[button:hover]:text-secondary-foreground mt-4 flex size-10 items-center justify-center rounded-full ring-1 transition-colors">
+                                            <div className="mt-4 flex size-10 items-center justify-center rounded-full bg-secondary/50 text-secondary-foreground ring-1 ring-border transition-colors group-hover:bg-primary/10 group-hover:text-primary group-has-[button:hover]:bg-secondary/50 group-has-[button:hover]:text-secondary-foreground">
                                                 <ProviderIcon className="size-5 [&_path]:fill-current" />
                                             </div>
                                             <div className="mt-3 flex min-w-0 flex-1 flex-col">
-                                                <CardTitle className="truncate text-base font-semibold">
+                                                <CardTitle className="truncate font-semibold text-base">
                                                     {repository.name}
                                                 </CardTitle>
-                                                <CardDescription className="text-muted-foreground/80 flex items-center gap-2 truncate font-mono text-xs">
+                                                <CardDescription className="flex items-center gap-2 truncate font-mono text-muted-foreground/80 text-xs">
                                                     {capitalizeFirstLetter(repository.gitProvider)}
                                                     {hostname && (
                                                         <>
@@ -191,7 +191,7 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                                             </div>
                                         </div>
                                     </CardHeader>
-                                    <CardFooter className="bg-muted/40 text-muted-foreground p-3! flex h-14 justify-between border-t">
+                                    <CardFooter className="flex h-14 justify-between border-t bg-muted/40 p-3! text-muted-foreground">
                                         <StatusLive
                                             key={lastDeployment?.id}
                                             buildId={lastDeployment?.id ?? null}

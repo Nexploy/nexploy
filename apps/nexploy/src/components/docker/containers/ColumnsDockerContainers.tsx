@@ -92,8 +92,8 @@ export function getColumnsDockerContainers(
                                     )}
                                 />
                             </Button>
-                            <div className="bg-primary/10 flex size-7 shrink-0 items-center justify-center rounded-md">
-                                <Layers className="text-primary size-4" />
+                            <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10">
+                                <Layers className="size-4 text-primary" />
                             </div>
                             <span className="max-w-40 flex-1 truncate">{row.original.stackName}</span>
                             <Badge variant="secondary" className="shrink-0 text-xs">
@@ -165,13 +165,13 @@ export function getColumnsDockerContainers(
                 const imageId = row.original.imageId;
 
                 return imageId ? (
-                    <Link href={`/docker/images/${imageId}`} className="max-w-full min-w-0 overflow-hidden">
+                    <Link href={`/docker/images/${imageId}`} className="min-w-0 max-w-full overflow-hidden">
                         <Badge variant="secondary" className={'hover:underline'}>
                             {image.length > 20 ? image.slice(0, 20) + '…' : image}
                         </Badge>
                     </Link>
                 ) : (
-                    <span className="max-w-full min-w-0 overflow-hidden">
+                    <span className="min-w-0 max-w-full overflow-hidden">
                         <Badge variant="secondary">{image.length > 20 ? image.slice(0, 20) + '…' : image}</Badge>
                     </span>
                 );

@@ -29,7 +29,7 @@ export function ServiceEnvVars() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noEnvVarsConfigured')}</p>
+                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noEnvVarsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -50,7 +50,7 @@ export function ServiceEnvVars() {
                                         </FormItem>
                                     )}
                                 />
-                                <span className="text-muted-foreground pt-1">=</span>
+                                <span className="pt-1 text-muted-foreground">=</span>
                                 <FormField
                                     control={form.control}
                                     name={`envVars.${index}.value`}

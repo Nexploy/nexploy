@@ -199,7 +199,7 @@ export function HostMetricsPanel({ metrics, history, isLoading }: HostMetricsPan
                 <Card className="lg:col-span-2">
                     <CardHeaderWithIcon icon={Gauge} title={t('host.perCoreTitle')}>
                         {normalizedLoad !== undefined ? (
-                            <span className="text-muted-foreground ml-auto text-xs">
+                            <span className="ml-auto text-muted-foreground text-xs">
                                 {t('host.normalizedLoad', {
                                     value: formatPercent(normalizedLoad),
                                 })}
@@ -221,9 +221,9 @@ export function HostMetricsPanel({ metrics, history, isLoading }: HostMetricsPan
                                                 {formatPercent(corePercent, 0)}
                                             </span>
                                         </div>
-                                        <div className="bg-primary/15 h-1.5 w-full overflow-hidden rounded-full">
+                                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-primary/15">
                                             <div
-                                                className="bg-primary h-full rounded-full transition-all"
+                                                className="h-full rounded-full bg-primary transition-all"
                                                 style={{
                                                     width: `${Math.max(0, Math.min(100, corePercent))}%`,
                                                 }}
@@ -248,7 +248,7 @@ export function HostMetricsPanel({ metrics, history, isLoading }: HostMetricsPan
                                         index < hostDetails.length - 1 && 'border-b pb-2',
                                     )}
                                 >
-                                    <span className="text-muted-foreground whitespace-nowrap text-sm">
+                                    <span className="whitespace-nowrap text-muted-foreground text-sm">
                                         {detail.label}
                                     </span>
                                     <div className="flex min-w-0 justify-end overflow-hidden">
@@ -280,9 +280,9 @@ export function HostMetricsPanel({ metrics, history, isLoading }: HostMetricsPan
                             {formatBytes(metrics?.diskUsed ?? 0)} / {formatBytes(metrics?.diskTotal ?? 0)}
                         </Badge>
                     </div>
-                    <div className="bg-primary/15 h-2 w-full overflow-hidden rounded-full">
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-primary/15">
                         <div
-                            className="bg-primary h-full rounded-full transition-all"
+                            className="h-full rounded-full bg-primary transition-all"
                             style={{
                                 width: `${Math.max(0, Math.min(100, metrics?.diskPercent ?? 0))}%`,
                             }}

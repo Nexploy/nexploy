@@ -123,7 +123,7 @@ export function EnvironmentProtectionCard({ environment, canManage }: Environmen
                                         {t('statusProtected', { count: protectedActions.length })}
                                     </Badge>
                                 ) : (
-                                    <Badge variant="outline" className="text-muted-foreground gap-1">
+                                    <Badge variant="outline" className="gap-1 text-muted-foreground">
                                         <ShieldOff className="size-3" />
                                         {t('statusUnprotected')}
                                     </Badge>
@@ -244,7 +244,7 @@ export function EnvironmentProtectionCard({ environment, canManage }: Environmen
 
                                         return (
                                             <AccordionItem key={group} value={group}>
-                                                <AccordionTrigger className="text-sm cursor-pointer">
+                                                <AccordionTrigger className="cursor-pointer text-sm">
                                                     {t(`groups.${group}` as never)}
                                                 </AccordionTrigger>
                                                 <AccordionContent className="flex flex-col gap-2">

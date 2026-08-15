@@ -132,7 +132,7 @@ export function DockerHubSearchDialog({ trigger, onSelect, isSelected }: DockerH
 
                 <div className="flex flex-col gap-2 px-6 sm:flex-row">
                     <div className="relative flex-1">
-                        <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             autoFocus
                             value={search}
@@ -169,14 +169,14 @@ export function DockerHubSearchDialog({ trigger, onSelect, isSelected }: DockerH
 
                 <ScrollAreaWithShadow ref={setViewport} bottomShadow className="h-[70vh] overflow-hidden px-6">
                     {isLoading && (
-                        <div className="text-muted-foreground flex items-center justify-center gap-2 py-10 text-sm">
+                        <div className="flex items-center justify-center gap-2 py-10 text-muted-foreground text-sm">
                             <Spinner className="size-4" />
                             {t('searchingImages')}
                         </div>
                     )}
 
                     {!isLoading && filteredImages.length === 0 && (
-                        <div className="text-muted-foreground flex flex-col items-center justify-center gap-2 py-10 text-sm">
+                        <div className="flex flex-col items-center justify-center gap-2 py-10 text-muted-foreground text-sm">
                             <Search className="size-6 opacity-50" />
                             {debouncedSearch
                                 ? t('searchImagesNoResults', { query: debouncedSearch })
@@ -191,21 +191,21 @@ export function DockerHubSearchDialog({ trigger, onSelect, isSelected }: DockerH
                                 type="button"
                                 onClick={() => handleSelect(image)}
                                 className={cn(
-                                    'hover:border-primary hover:bg-accent/30 flex h-full cursor-pointer flex-col gap-2 rounded-lg border p-3 text-left transition-all',
+                                    'flex h-full cursor-pointer flex-col gap-2 rounded-lg border p-3 text-left transition-all hover:border-primary hover:bg-accent/30',
                                     isSelected?.(image) && 'border-primary/70 bg-accent/50',
                                 )}
                             >
                                 <div className="flex items-start gap-3">
                                     <ImageLogo image={image} />
                                     <div className="flex min-w-0 flex-1 items-center gap-2">
-                                        <span className="truncate text-sm font-semibold">{image.name}</span>
-                                        {image.isOfficial && <BadgeCheck className="text-primary size-4 shrink-0" />}
+                                        <span className="truncate font-semibold text-sm">{image.name}</span>
+                                        {image.isOfficial && <BadgeCheck className="size-4 shrink-0 text-primary" />}
                                     </div>
                                 </div>
-                                <p className="text-muted-foreground line-clamp-2 min-h-8 text-xs">
+                                <p className="line-clamp-2 min-h-8 text-muted-foreground text-xs">
                                     {image.description}
                                 </p>
-                                <div className="text-muted-foreground mt-auto flex items-center gap-3 text-xs">
+                                <div className="mt-auto flex items-center gap-3 text-muted-foreground text-xs">
                                     <span className="flex items-center gap-1">
                                         <Star className="size-3" />
                                         {image.starCount.toLocaleString()}

@@ -64,7 +64,7 @@ export function MetricAreaChart({
 
     return (
         <Card className={cn('gap-0 py-4', className)}>
-            <CardHeader className="pb-4! border-b px-4">
+            <CardHeader className="border-b px-4 pb-4!">
                 <CardTitle className="text-base">{title}</CardTitle>
                 {description ? <CardDescription>{description}</CardDescription> : null}
             </CardHeader>
@@ -133,7 +133,7 @@ export function MetricAreaChart({
                         </AreaChart>
                     </ChartContainer>
                 ) : (
-                    <div className="text-muted-foreground flex h-[220px] items-center justify-center text-sm">
+                    <div className="flex h-[220px] items-center justify-center text-muted-foreground text-sm">
                         {emptyLabel}
                     </div>
                 )}

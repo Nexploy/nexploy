@@ -27,19 +27,19 @@ export function ToolCallsSection({ tools }: ToolCallsSectionProps) {
     if (tools.length === 0) return null;
 
     return (
-        <div className="border-border/30 bg-background/30 mb-2 overflow-hidden rounded-lg border">
+        <div className="mb-2 overflow-hidden rounded-lg border border-border/30 bg-background/30">
             <button
                 onClick={() => setIsOpen((o) => !o)}
-                className="hover:bg-muted/30 flex w-full items-center gap-2 px-2.5 py-1.5 text-left transition-colors"
+                className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left transition-colors hover:bg-muted/30"
             >
-                <Wrench className="text-muted-foreground h-3 w-3 shrink-0" />
-                <span className="text-foreground/60 text-[11px] font-medium">
+                <Wrench className="h-3 w-3 shrink-0 text-muted-foreground" />
+                <span className="font-medium text-[11px] text-foreground/60">
                     {t('toolsCount', { count: tools.length })}
                 </span>
-                <span className="text-muted-foreground/40 text-[11px]">·</span>
+                <span className="text-[11px] text-muted-foreground/40">·</span>
                 <div
                     className={cn(
-                        'flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium',
+                        'flex items-center gap-1 rounded-full px-1.5 py-0.5 font-medium text-[10px]',
                         lastIsRunning && 'bg-primary/10 text-primary',
                         lastIsDone && lastSuccess && 'bg-green-500/10 text-green-600',
                         lastIsDone && !lastSuccess && 'bg-red-500/10 text-red-500',
@@ -67,7 +67,7 @@ export function ToolCallsSection({ tools }: ToolCallsSectionProps) {
                 </div>
                 <ChevronDown
                     className={cn(
-                        'text-muted-foreground ml-auto h-3 w-3 shrink-0 transition-transform duration-200',
+                        'ml-auto h-3 w-3 shrink-0 text-muted-foreground transition-transform duration-200',
                         isOpen && 'rotate-180',
                     )}
                 />

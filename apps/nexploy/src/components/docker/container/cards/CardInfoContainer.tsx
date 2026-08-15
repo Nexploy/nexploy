@@ -36,7 +36,7 @@ export function CardInfoContainer() {
                         variant="outline"
                     >
                         <StatusIndicator />
-                        <div className="truncate text-2xl font-semibold">{container.state}</div>
+                        <div className="truncate font-semibold text-2xl">{container.state}</div>
                     </Status>
                 ),
         },
@@ -46,8 +46,8 @@ export function CardInfoContainer() {
             description: `${t('version')} ${container?.image.split(':')[1] || 'latest'}`,
             render: () => (
                 <Link href={`/docker/images/${container?.imageId}`} className="group">
-                    <div className="truncate text-2xl font-semibold group-hover:underline">{container?.image}</div>
-                    <p className="text-muted-foreground truncate text-xs">
+                    <div className="truncate font-semibold text-2xl group-hover:underline">{container?.image}</div>
+                    <p className="truncate text-muted-foreground text-xs">
                         {`${t('version')} ${container?.image.split(':')[1] || 'latest'}`}
                     </p>
                 </Link>
@@ -72,9 +72,9 @@ export function CardInfoContainer() {
             {containerInfoCards.map((info, index) => (
                 <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                     <CardHeader className="flex flex-row justify-between space-y-0">
-                        <CardTitle className="h-14 truncate text-sm font-medium">{info.title}</CardTitle>
-                        <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                            <info.icon className="text-primary size-4" />
+                        <CardTitle className="h-14 truncate font-medium text-sm">{info.title}</CardTitle>
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                            <info.icon className="size-4 text-primary" />
                         </div>
                     </CardHeader>
                     <CardContent>
@@ -82,8 +82,8 @@ export function CardInfoContainer() {
                             info.render()
                         ) : (
                             <>
-                                <div className="truncate text-2xl font-semibold">{info.content}</div>
-                                <p className="text-muted-foreground truncate text-xs">{info.description}</p>
+                                <div className="truncate font-semibold text-2xl">{info.content}</div>
+                                <p className="truncate text-muted-foreground text-xs">{info.description}</p>
                             </>
                         )}
                     </CardContent>

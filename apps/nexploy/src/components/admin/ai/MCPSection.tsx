@@ -40,25 +40,25 @@ export function MCPSection({ mcpUrl, keys }: MCPSectionProps) {
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="bg-card rounded-xl border shadow-sm">
+            <div className="rounded-xl border bg-card shadow-sm">
                 <div className="flex flex-col gap-1 p-4">
-                    <span className="text-sm font-medium">{t('endpoint')}</span>
+                    <span className="font-medium text-sm">{t('endpoint')}</span>
                     <span className="text-muted-foreground text-xs">{t('endpointDescription')}</span>
                 </div>
                 <Separator />
-                <div className="bg-muted/40 flex gap-2 p-4">
+                <div className="flex gap-2 bg-muted/40 p-4">
                     <Input readOnly value={mcpUrl} className="font-mono" />
                     <CopyButton variant="outline" size="icon" text={mcpUrl} />
                 </div>
             </div>
 
             <div className="flex flex-col gap-3">
-                <span className="text-muted-foreground flex items-end justify-between px-1 text-sm font-medium">
+                <span className="flex items-end justify-between px-1 font-medium text-muted-foreground text-sm">
                     {t('keyName')}
                     <GenerateMcpKeyButton />
                 </span>
                 {keys.length === 0 ? (
-                    <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">{t('noKeys')}</div>
+                    <div className="rounded-md border p-8 text-center text-muted-foreground text-sm">{t('noKeys')}</div>
                 ) : (
                     keys.map((k) => <MCPKeyCard key={k.id} k={k} onRevoke={handleRevoke} />)
                 )}

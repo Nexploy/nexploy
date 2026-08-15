@@ -60,8 +60,8 @@ export function SearchNavigationList() {
         const itemProps = getItemProps(label, () => runCommand(() => router.push(href)));
         return (
             <CommandItem key={index} {...itemProps} className={cn(itemProps.className, 'rounded')}>
-                <Icon className="text-muted-foreground shrink-0" />
-                <span className="truncate text-sm font-medium">{label}</span>
+                <Icon className="shrink-0 text-muted-foreground" />
+                <span className="truncate font-medium text-sm">{label}</span>
             </CommandItem>
         );
     };
@@ -75,8 +75,8 @@ export function SearchNavigationList() {
             {showAccount && (
                 <CommandGroup heading={t('system')}>
                     <CommandItem {...getItemProps(t('account'), () => runCommand(() => router.push('/account')))}>
-                        <User className="text-muted-foreground shrink-0" />
-                        <span className="text-sm font-medium">{t('account')}</span>
+                        <User className="shrink-0 text-muted-foreground" />
+                        <span className="font-medium text-sm">{t('account')}</span>
                     </CommandItem>
                 </CommandGroup>
             )}

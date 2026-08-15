@@ -27,7 +27,7 @@ export function DockerEnvironmentGuard({ children }: { children: ReactNode }) {
         <Empty className="h-full flex-1">
             <EmptyHeader>
                 <EmptyMedia
-                    className={'bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg'}
+                    className={'mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10'}
                 >
                     <ServerOff className={'text-primary'} />
                 </EmptyMedia>

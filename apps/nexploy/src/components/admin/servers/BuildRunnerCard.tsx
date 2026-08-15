@@ -22,19 +22,19 @@ export function BuildRunnerCard({ runner, onEdit, onRegenerate, onDelete }: Buil
         runner.status === 'ONLINE' ? 'default' : runner.status === 'DRAINING' ? 'outline' : 'secondary';
 
     return (
-        <div className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-sm">
+        <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm">
             <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
-                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                        <Server className="text-primary size-4" />
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                        <Server className="size-4 text-primary" />
                     </div>
                     <div className="flex min-w-0 flex-col">
                         <div className="flex flex-wrap items-center gap-2">
-                            <span className="truncate text-sm font-medium">{runner.name}</span>
+                            <span className="truncate font-medium text-sm">{runner.name}</span>
                             <Badge variant={statusVariant}>{t(`status.${runner.status}`)}</Badge>
                             {!runner.enabled && <Badge variant="destructive">{t('disabled')}</Badge>}
                         </div>
-                        <span className="text-muted-foreground truncate text-xs">
+                        <span className="truncate text-muted-foreground text-xs">
                             {runner.description || t('noDescription')}
                         </span>
                     </div>
@@ -69,7 +69,7 @@ export function BuildRunnerCard({ runner, onEdit, onRegenerate, onDelete }: Buil
                 </div>
             </div>
 
-            <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground text-xs">
                 <span className="font-mono">{runner.tokenPrefix}…</span>
                 <span>{t('concurrencyValue', { active: runner.activeJobs, max: runner.maxConcurrency })}</span>
                 <span>

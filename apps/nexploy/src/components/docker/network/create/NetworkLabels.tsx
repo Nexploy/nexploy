@@ -30,7 +30,7 @@ export function NetworkLabels() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noLabelsConfigured')}</p>
+                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noLabelsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -47,7 +47,7 @@ export function NetworkLabels() {
                                         </FormItem>
                                     )}
                                 />
-                                <span className="text-muted-foreground pt-1">=</span>
+                                <span className="pt-1 text-muted-foreground">=</span>
                                 <FormField
                                     control={form.control}
                                     name={`labels.${index}.value`}

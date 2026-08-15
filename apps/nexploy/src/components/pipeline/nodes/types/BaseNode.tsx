@@ -31,7 +31,7 @@ export const BaseNode = memo(({ id, data, selected }: BaseNodeProps) => {
                 {showBody && (
                     <span
                         className={cn(
-                            'min-w-0 truncate text-sm font-medium',
+                            'min-w-0 truncate font-medium text-sm',
                             selected ? 'text-foreground' : 'text-foreground/90',
                         )}
                     >
@@ -42,7 +42,7 @@ export const BaseNode = memo(({ id, data, selected }: BaseNodeProps) => {
             {!showBody && (
                 <span
                     className={cn(
-                        'absolute top-full left-1/2 mt-2 w-[120px] -translate-x-1/2 text-center text-xs font-medium transition-colors',
+                        'absolute top-full left-1/2 mt-2 w-[120px] -translate-x-1/2 text-center font-medium text-xs transition-colors',
                         selected ? 'text-foreground' : 'text-muted-foreground',
                     )}
                 >

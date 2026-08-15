@@ -66,7 +66,7 @@ export function NetworkDetailPage({ networkId }: NetworkDetailPageProps) {
                         {isConnecting ? (
                             <Skeleton className="h-9 w-40" />
                         ) : (
-                            <h1 className="text-3xl font-semibold tracking-tight break-all">{networkName}</h1>
+                            <h1 className="break-all font-semibold text-3xl tracking-tight">{networkName}</h1>
                         )}
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>

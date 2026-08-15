@@ -165,7 +165,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                 </FormControl>
                                 <SelectContent align="start">
                                     {containers.length === 0 ? (
-                                        <div className="text-muted-foreground px-2 py-4 text-center text-sm">
+                                        <div className="px-2 py-4 text-center text-muted-foreground text-sm">
                                             {t('noContainers')}
                                         </div>
                                     ) : (
@@ -212,7 +212,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                 </FormControl>
                                 <SelectContent align="start">
                                     {!portOptions?.length ? (
-                                        <div className="text-muted-foreground px-2 py-4 text-center text-sm">
+                                        <div className="px-2 py-4 text-center text-muted-foreground text-sm">
                                             {t('noPorts')}
                                         </div>
                                     ) : (
@@ -290,7 +290,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                 </FormControl>
                                 <SelectContent align="start">
                                     {certificates.length === 0 ? (
-                                        <div className="text-muted-foreground px-2 py-4 text-center text-sm">
+                                        <div className="px-2 py-4 text-center text-muted-foreground text-sm">
                                             {t('noCertificates')}
                                         </div>
                                     ) : (
@@ -299,7 +299,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                                 <span className="flex items-center gap-2">
                                                     <ShieldCheck className="text-primary" />
                                                     <span>{cert.name}</span>
-                                                    <span className="text-muted-foreground font-mono text-xs">
+                                                    <span className="font-mono text-muted-foreground text-xs">
                                                         {cert.domain}
                                                     </span>
                                                 </span>
@@ -309,7 +309,7 @@ export function DomainFields({ form }: DomainFieldsProps) {
                                 </SelectContent>
                             </Select>
                             {fieldState.error ? (
-                                <p className="text-destructive text-sm font-medium">
+                                <p className="font-medium text-destructive text-sm">
                                     {t(fieldState.error.message as string)}
                                 </p>
                             ) : (

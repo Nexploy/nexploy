@@ -18,16 +18,16 @@ export function OnboardingTooltip({
     tooltipProps,
 }: TooltipRenderProps) {
     return (
-        <div {...tooltipProps} className="bg-popover text-popover-foreground max-w-[400px] rounded-xl border shadow-lg">
+        <div {...tooltipProps} className="max-w-[400px] rounded-xl border bg-popover text-popover-foreground shadow-lg">
             <button
                 {...closeProps}
-                className="text-muted-foreground hover:bg-accent hover:text-foreground absolute end-3 top-3 flex size-7 items-center justify-center rounded-md transition-colors"
+                className="absolute end-3 top-3 flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
                 <X className="size-4" />
             </button>
 
             <div className="flex flex-col gap-2 p-5 pe-10">
-                {step.title && <h3 className="text-base leading-none font-semibold tracking-tight">{step.title}</h3>}
+                {step.title && <h3 className="font-semibold text-base leading-none tracking-tight">{step.title}</h3>}
                 <div className="text-muted-foreground text-sm leading-relaxed">{step.content}</div>
             </div>
 

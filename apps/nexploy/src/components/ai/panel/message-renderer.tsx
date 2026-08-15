@@ -34,13 +34,13 @@ function makeComponents(blur: Blur): Components {
         strong: ({ children }) => <strong className="font-semibold">{blur(children)}</strong>,
         em: ({ children }) => <em className="italic">{blur(children)}</em>,
         h1: ({ children }) => (
-            <h1 className="wrap-break-word mb-1 mt-2 text-sm font-bold first:mt-0">{blur(children)}</h1>
+            <h1 className="wrap-break-word mt-2 mb-1 font-bold text-sm first:mt-0">{blur(children)}</h1>
         ),
         h2: ({ children }) => (
-            <h2 className="wrap-break-word mb-1 mt-2 text-xs font-bold first:mt-0">{blur(children)}</h2>
+            <h2 className="wrap-break-word mt-2 mb-1 font-bold text-xs first:mt-0">{blur(children)}</h2>
         ),
         h3: ({ children }) => (
-            <h3 className="wrap-break-word mb-1 mt-1.5 text-xs font-semibold first:mt-0">{blur(children)}</h3>
+            <h3 className="wrap-break-word mt-1.5 mb-1 font-semibold text-xs first:mt-0">{blur(children)}</h3>
         ),
         ul: ({ children }) => <ul className="mb-1.5 ml-3 list-disc space-y-0.5">{children}</ul>,
         ol: ({ children }) => <ol className="mb-1.5 ml-3 list-decimal space-y-0.5">{children}</ol>,
@@ -52,13 +52,13 @@ function makeComponents(blur: Blur): Components {
                     {children}
                 </code>
             ) : (
-                <code className="bg-background/80 text-foreground break-all rounded px-1.5 py-0.5 font-mono" {...props}>
+                <code className="break-all rounded bg-background/80 px-1.5 py-0.5 font-mono text-foreground" {...props}>
                     {children}
                 </code>
             );
         },
         pre: ({ children }) => (
-            <pre className="bg-background/80 text-foreground my-2 overflow-x-hidden whitespace-pre-wrap break-all rounded border p-2.5 font-mono text-xs leading-relaxed">
+            <pre className="my-2 overflow-x-hidden whitespace-pre-wrap break-all rounded border bg-background/80 p-2.5 font-mono text-foreground text-xs leading-relaxed">
                 {children}
             </pre>
         ),
@@ -68,9 +68,9 @@ function makeComponents(blur: Blur): Components {
         tr: ({ children }) => <tr className="border-border/30 border-b last:border-0">{children}</tr>,
         th: ({ children }) => <th className="px-2 py-1 text-left font-semibold">{children}</th>,
         td: ({ children }) => <td className="wrap-break-word px-2 py-1">{blur(children)}</td>,
-        hr: () => <hr className="border-border/40 my-2" />,
+        hr: () => <hr className="my-2 border-border/40" />,
         blockquote: ({ children }) => (
-            <blockquote className="border-border text-muted-foreground my-1.5 break-all border-l-2 pl-2.5">
+            <blockquote className="my-1.5 break-all border-border border-l-2 pl-2.5 text-muted-foreground">
                 {blur(children)}
             </blockquote>
         ),

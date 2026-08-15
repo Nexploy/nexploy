@@ -37,10 +37,10 @@ export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProp
     ) : null;
 
     return (
-        <div className="bg-muted/30 space-y-3 rounded-lg p-4">
+        <div className="space-y-3 rounded-lg bg-muted/30 p-4">
             <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                    <span className="bg-primary/10 text-primary rounded px-2 py-1 text-sm font-semibold">
+                    <span className="rounded bg-primary/10 px-2 py-1 font-semibold text-primary text-sm">
                         {networkName}
                     </span>
                     {statusIndicator}
@@ -70,21 +70,21 @@ export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProp
                 <div className="grid grid-cols-2 gap-3 text-xs">
                     <div className="space-y-1">
                         <span className="text-muted-foreground">{t('ipAddress')}</span>
-                        <code className="bg-background/50 block rounded px-2 py-1">{networkInfo.ipAddress || '—'}</code>
+                        <code className="block rounded bg-background/50 px-2 py-1">{networkInfo.ipAddress || '—'}</code>
                     </div>
                     <div className="space-y-1">
                         <span className="text-muted-foreground">{t('gateway')}</span>
-                        <code className="bg-background/50 block rounded px-2 py-1">{networkInfo.gateway || '—'}</code>
+                        <code className="block rounded bg-background/50 px-2 py-1">{networkInfo.gateway || '—'}</code>
                     </div>
                     <div className="space-y-1">
                         <span className="text-muted-foreground">{t('macAddress')}</span>
-                        <code className="bg-background/50 block rounded px-2 py-1">
+                        <code className="block rounded bg-background/50 px-2 py-1">
                             {networkInfo.macAddress || '—'}
                         </code>
                     </div>
                     <div className="space-y-1">
                         <span className="text-muted-foreground">{t('ipPrefix')}</span>
-                        <code className="bg-background/50 block rounded px-2 py-1">
+                        <code className="block rounded bg-background/50 px-2 py-1">
                             /{networkInfo.ipPrefixLen || 0}
                         </code>
                     </div>
@@ -92,13 +92,13 @@ export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProp
                         <>
                             <div className="col-span-2 space-y-1">
                                 <span className="text-muted-foreground">{t('ipv6')}</span>
-                                <code className="bg-background/50 block rounded px-2 py-1 break-all">
+                                <code className="block break-all rounded bg-background/50 px-2 py-1">
                                     {networkInfo.globalIPv6Address}
                                 </code>
                             </div>
                             <div className="space-y-1">
                                 <span className="text-muted-foreground">{t('gatewayIpv6')}</span>
-                                <code className="bg-background/50 block rounded px-2 py-1">
+                                <code className="block rounded bg-background/50 px-2 py-1">
                                     {networkInfo.ipv6Gateway || '—'}
                                 </code>
                             </div>
@@ -106,7 +106,7 @@ export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProp
                     )}
                     <div className="col-span-2 space-y-1">
                         <span className="text-muted-foreground">{t('endpointId')}</span>
-                        <code className="bg-background/50 block truncate rounded px-2 py-1">
+                        <code className="block truncate rounded bg-background/50 px-2 py-1">
                             {networkInfo.endpointId || '—'}
                         </code>
                     </div>

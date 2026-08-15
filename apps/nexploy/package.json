@@ -54,6 +54,7 @@
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.14.9",
     "@thesvg/react": "^3.0.10",
     "@types/ws": "^8.18.1",
     "@workspace/i18n": "workspace:*",

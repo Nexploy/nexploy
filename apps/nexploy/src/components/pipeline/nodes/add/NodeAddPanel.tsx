@@ -113,19 +113,19 @@ export function NodeAddPanel() {
 
     return (
         <div className="flex h-full w-full flex-col overflow-hidden">
-            <div className="border-border/70 flex h-11 shrink-0 items-center gap-2 border-b px-2.5">
-                <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-sm">
+            <div className="flex h-11 shrink-0 items-center gap-2 border-border/70 border-b px-2.5">
+                <div className="flex size-6 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary">
                     <Boxes className="size-3.5" />
                 </div>
-                <span className="text-foreground flex-1 truncate text-xs">{t('palette')}</span>
-                <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+                <span className="flex-1 truncate text-foreground text-xs">{t('palette')}</span>
+                <span className="shrink-0 text-[10px] text-muted-foreground tabular-nums">
                     {t('nodeCount', { count: definitions.length })}
                 </span>
                 <button
                     onClick={closePanel}
                     aria-label={t('canvas.closePanel')}
                     title={t('canvas.closePanel')}
-                    className="text-muted-foreground hover:text-foreground hover:bg-muted flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md transition-colors"
+                    className="flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
                     <X className="size-3.5" />
                 </button>
@@ -152,14 +152,14 @@ export function NodeAddPanel() {
                 </div>
 
                 {activeCategory && !isSearching && (
-                    <div className={'mb-2 mx-2 flex items-center gap-2'}>
+                    <div className={'mx-2 mb-2 flex items-center gap-2'}>
                         <button
                             type="button"
                             onClick={() => setActiveCategory(null)}
                             aria-label={t('palette')}
-                            className="hover:bg-muted flex flex-1 shrink-0 items-center gap-2 rounded-md p-1 pl-2 transition-colors"
+                            className="flex flex-1 shrink-0 items-center gap-2 rounded-md p-1 pl-2 transition-colors hover:bg-muted"
                         >
-                            <ArrowLeft className="text-muted-foreground size-3.5 shrink-0" />
+                            <ArrowLeft className="size-3.5 shrink-0 text-muted-foreground" />
                             <div className={'flex flex-1 items-center gap-2'}>
                                 <div
                                     className={cn(
@@ -171,12 +171,12 @@ export function NodeAddPanel() {
                                     <CategoryIcon className="size-3" strokeWidth={1.7} />
                                 </div>
 
-                                <span className="text-foreground min-w-0 flex-1 truncate text-left text-xs font-medium">
+                                <span className="min-w-0 flex-1 truncate text-left font-medium text-foreground text-xs">
                                     {t(`categories.${activeCategory}`)}
                                 </span>
                             </div>
                         </button>
-                        <span className="text-muted-foreground shrink-0 text-[10px]">
+                        <span className="shrink-0 text-[10px] text-muted-foreground">
                             {t('nodeCount', { count: categoryNodes.length })}
                         </span>
                     </div>
@@ -192,7 +192,7 @@ export function NodeAddPanel() {
                             <>
                                 {searchResults.length === 0 ? (
                                     <div className="flex flex-col items-center gap-2.5 py-12 text-center">
-                                        <div className="bg-muted text-muted-foreground flex size-10 items-center justify-center rounded-xl">
+                                        <div className="flex size-10 items-center justify-center rounded-xl bg-muted text-muted-foreground">
                                             <SearchX className="size-4" />
                                         </div>
                                         <p className="text-muted-foreground text-xs">{t('searchNoResults')}</p>
@@ -218,14 +218,14 @@ export function NodeAddPanel() {
                             </>
                         )}
                         {!isSearching && !activeCategory && (
-                            <div className="@[420px]:grid-cols-2 grid grid-cols-1 gap-1.5">
+                            <div className="grid @[420px]:grid-cols-2 grid-cols-1 gap-1.5">
                                 {orderedCategories.map(([category, defs]) => {
                                     const Icon = CATEGORY_ICONS[category] ?? Wrench;
                                     return (
                                         <button
                                             key={category}
                                             onClick={() => openCategory(category)}
-                                            className="border-border/60 bg-card hover:border-foreground/15 hover:bg-accent/40 group relative flex cursor-pointer items-center gap-2.5 overflow-hidden rounded-lg border p-2 pl-2.5 text-left transition-colors"
+                                            className="group relative flex cursor-pointer items-center gap-2.5 overflow-hidden rounded-lg border border-border/60 bg-card p-2 pl-2.5 text-left transition-colors hover:border-foreground/15 hover:bg-accent/40"
                                         >
                                             <span
                                                 className={cn(
@@ -243,21 +243,21 @@ export function NodeAddPanel() {
                                                 <Icon className="size-3.5" strokeWidth={1.6} />
                                             </div>
                                             <div className="min-w-0 flex-1">
-                                                <span className="text-foreground block truncate text-xs font-medium">
+                                                <span className="block truncate font-medium text-foreground text-xs">
                                                     {t(`categories.${category}`)}
                                                 </span>
-                                                <span className="text-muted-foreground block text-[10px] tabular-nums">
+                                                <span className="block text-[10px] text-muted-foreground tabular-nums">
                                                     {t('nodeCount', { count: defs.length })}
                                                 </span>
                                             </div>
-                                            <ChevronRight className="text-muted-foreground/50 group-hover:text-foreground size-3.5 shrink-0 transition-all group-hover:translate-x-0.5" />
+                                            <ChevronRight className="size-3.5 shrink-0 text-muted-foreground/50 transition-all group-hover:translate-x-0.5 group-hover:text-foreground" />
                                         </button>
                                     );
                                 })}
                             </div>
                         )}
                         {!isSearching && activeCategory && (
-                            <div className="@[420px]:grid-cols-2 grid grid-cols-1 gap-1.5">
+                            <div className="grid @[420px]:grid-cols-2 grid-cols-1 gap-1.5">
                                 {categoryNodes.map((def) => (
                                     <NodeItem
                                         key={def.id}
@@ -274,7 +274,7 @@ export function NodeAddPanel() {
                 </ScrollAreaWithShadow>
 
                 {(searchResults.length > 0 || (!isSearching && activeCategory)) && (
-                    <div className="text-muted-foreground flex h-8 shrink-0 items-center gap-1.5 border-t px-3">
+                    <div className="flex h-8 shrink-0 items-center gap-1.5 border-t px-3 text-muted-foreground">
                         <MousePointerClick className="size-3 shrink-0" />
                         <span className="truncate text-[10px]">{t('addNodeHint')}</span>
                     </div>

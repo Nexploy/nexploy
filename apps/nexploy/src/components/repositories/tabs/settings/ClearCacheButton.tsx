@@ -34,7 +34,7 @@ export function ClearCacheButton({ repositoryId, cacheSize }: ClearCacheButtonPr
     return (
         <div className="flex items-center justify-between">
             <div>
-                <p className="text-sm font-medium">{t('clearCacheButton')}</p>
+                <p className="font-medium text-sm">{t('clearCacheButton')}</p>
                 <p className="text-muted-foreground text-xs">
                     {t('cacheSize')}: {cacheSizeLabel}
                 </p>

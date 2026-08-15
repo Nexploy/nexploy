@@ -104,7 +104,7 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
         <div className="flex flex-col gap-2 px-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-semibold">{t('title')}</h2>
+                    <h2 className="font-semibold text-xl">{t('title')}</h2>
                     {envVariables.length > 0 && (
                         <Badge variant="secondary" className="font-mono">
                             {envVariables.length}
@@ -139,11 +139,11 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
 
             {envVariables.length === 0 ? (
                 <div className="flex flex-col items-center gap-3 rounded-md border p-8 text-center">
-                    <div className="bg-primary/10 flex size-9 items-center justify-center rounded-lg">
-                        <Key className="text-primary size-5" />
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
+                        <Key className="size-5 text-primary" />
                     </div>
                     <div className="flex flex-col gap-1">
-                        <span className="text-sm font-medium">{t('noVariables')}</span>
+                        <span className="font-medium text-sm">{t('noVariables')}</span>
                         <span className="text-muted-foreground text-sm">{t('description')}</span>
                     </div>
                     {canEdit && (
@@ -160,12 +160,12 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                         return (
                             <div
                                 key={rowId}
-                                className="bg-card hover:bg-muted/70 group flex items-center gap-3 p-3 transition-colors"
+                                className="group flex items-center gap-3 bg-card p-3 transition-colors hover:bg-muted/70"
                             >
-                                <code className="w-1/3 min-w-0 shrink-0 break-all font-mono text-sm font-medium">
+                                <code className="w-1/3 min-w-0 shrink-0 break-all font-medium font-mono text-sm">
                                     {variable.key}
                                 </code>
-                                <code className="text-muted-foreground min-w-0 flex-1 break-all font-mono text-sm">
+                                <code className="min-w-0 flex-1 break-all font-mono text-muted-foreground text-sm">
                                     {isVisible ? (
                                         variable.value || <span className="italic">{t('emptyValue')}</span>
                                     ) : (

@@ -62,7 +62,7 @@ export function ReassociateGitAccountForm({
             <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4 px-6 pb-6">
                 <GitAccountFormField
                     noAccountsContent={
-                        <div className="text-muted-foreground flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-6 text-center text-sm">
+                        <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-6 text-center text-muted-foreground text-sm">
                             <span>{tSource('noAccounts')}</span>
                             <Button asChild size="sm" onClick={onClose}>
                                 <Link href="/account#integrations">{tSource('connectAccount')}</Link>
@@ -76,9 +76,9 @@ export function ReassociateGitAccountForm({
                 </Button>
 
                 <div className="flex items-center gap-3">
-                    <div className="bg-border h-px flex-1" />
+                    <div className="h-px flex-1 bg-border" />
                     <span className="text-muted-foreground text-xs">{t('orDelete')}</span>
-                    <div className="bg-border h-px flex-1" />
+                    <div className="h-px flex-1 bg-border" />
                 </div>
 
                 <Button type="button" variant="destructive" icon={Trash2} onClick={handleOpenDelete}>

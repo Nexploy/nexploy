@@ -44,7 +44,7 @@ export function TaskRow({ task }: { task: SwarmTask }) {
             <TableCell className="font-mono text-xs">
                 {task.containerStatus?.containerId ? task.containerStatus.containerId.slice(0, 12) : '—'}
             </TableCell>
-            <TableCell className="max-w-[200px] truncate text-xs text-red-500">{task.error ?? '—'}</TableCell>
+            <TableCell className="max-w-[200px] truncate text-red-500 text-xs">{task.error ?? '—'}</TableCell>
         </TableRow>
     );
 }

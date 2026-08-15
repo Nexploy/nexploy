@@ -30,7 +30,7 @@ export function CardNetworkDetails() {
                 key: 'id',
                 render: (n) => (
                     <TableRow key="id">
-                        <TableCell className="text-muted-foreground w-32 font-medium">{t('id')}</TableCell>
+                        <TableCell className="w-32 font-medium text-muted-foreground">{t('id')}</TableCell>
                         <TableCell className="max-w-0">
                             <div className="flex items-center gap-2">
                                 <code className="block truncate text-xs">{n.id}</code>
@@ -44,7 +44,7 @@ export function CardNetworkDetails() {
                 key: 'name',
                 render: (n) => (
                     <TableRow key="name">
-                        <TableCell className="text-muted-foreground w-32 font-medium">{t('name')}</TableCell>
+                        <TableCell className="w-32 font-medium text-muted-foreground">{t('name')}</TableCell>
                         <TableCell className="max-w-0 truncate">
                             <code className="text-sm">{n.name}</code>
                         </TableCell>
@@ -55,7 +55,7 @@ export function CardNetworkDetails() {
                 key: 'driver',
                 render: (n) => (
                     <TableRow key="driver">
-                        <TableCell className="text-muted-foreground w-32 font-medium">{t('driver')}</TableCell>
+                        <TableCell className="w-32 font-medium text-muted-foreground">{t('driver')}</TableCell>
                         <TableCell>
                             <Badge variant="secondary" className="font-mono">
                                 {n.driver}
@@ -68,7 +68,7 @@ export function CardNetworkDetails() {
                 key: 'scope',
                 render: (n) => (
                     <TableRow key="scope">
-                        <TableCell className="text-muted-foreground w-32 font-medium">{t('scope')}</TableCell>
+                        <TableCell className="w-32 font-medium text-muted-foreground">{t('scope')}</TableCell>
                         <TableCell>
                             <Badge variant="outline">{n.scope}</Badge>
                         </TableCell>
@@ -79,7 +79,7 @@ export function CardNetworkDetails() {
                 key: field,
                 render: (n: Network) => (
                     <TableRow key={field}>
-                        <TableCell className="text-muted-foreground w-32 font-medium">{t(field)}</TableCell>
+                        <TableCell className="w-32 font-medium text-muted-foreground">{t(field)}</TableCell>
                         <TableCell>
                             <Badge variant={n[field] ? 'default' : 'secondary'}>{n[field] ? t('yes') : t('no')}</Badge>
                         </TableCell>
@@ -90,7 +90,7 @@ export function CardNetworkDetails() {
                 key: 'created',
                 render: (n) => (
                     <TableRow key="created">
-                        <TableCell className="text-muted-foreground w-32 font-medium">{t('created')}</TableCell>
+                        <TableCell className="w-32 font-medium text-muted-foreground">{t('created')}</TableCell>
                         <TableCell className="max-w-0 truncate">
                             {dayjs.unix(n.created).format('YYYY-MM-DD HH:mm:ss')}
                         </TableCell>
@@ -101,7 +101,7 @@ export function CardNetworkDetails() {
                 key: 'containers',
                 render: (n) => (
                     <TableRow key="containers">
-                        <TableCell className="text-muted-foreground w-32 font-medium">{t('containers')}</TableCell>
+                        <TableCell className="w-32 font-medium text-muted-foreground">{t('containers')}</TableCell>
                         <TableCell>
                             <Badge variant={n.containers?.length > 0 ? 'default' : 'secondary'}>
                                 {n.containers?.length || 0}
@@ -115,13 +115,13 @@ export function CardNetworkDetails() {
                 condition: (n) => (n.ipam?.Config?.length ?? 0) > 0,
                 render: (n) => (
                     <TableRow key="ipam">
-                        <TableCell className="text-muted-foreground w-32 align-top font-medium">{t('ipam')}</TableCell>
+                        <TableCell className="w-32 align-top font-medium text-muted-foreground">{t('ipam')}</TableCell>
                         <TableCell className="max-w-0">
                             <div className="space-y-2">
                                 {n.ipam!.Config!.map((config) => (
                                     <div
                                         key={`${config.Subnet}-${config.Gateway}`}
-                                        className="bg-muted/50 space-y-1 rounded-md p-2"
+                                        className="space-y-1 rounded-md bg-muted/50 p-2"
                                     >
                                         {config.Subnet && (
                                             <div className="flex items-center gap-2 text-sm">
@@ -154,7 +154,7 @@ export function CardNetworkDetails() {
                     const entries = Object.entries(n.options || {});
                     return (
                         <TableRow key="options">
-                            <TableCell className="text-muted-foreground w-32 align-top font-medium">
+                            <TableCell className="w-32 align-top font-medium text-muted-foreground">
                                 {t('options')}
                             </TableCell>
                             <TableCell className="max-w-0">
@@ -181,7 +181,7 @@ export function CardNetworkDetails() {
                     const entries = Object.entries(n.labels || {});
                     return (
                         <TableRow key="labels">
-                            <TableCell className="text-muted-foreground w-32 align-top font-medium">
+                            <TableCell className="w-32 align-top font-medium text-muted-foreground">
                                 {t('labels')}
                             </TableCell>
                             <TableCell className="max-w-0">

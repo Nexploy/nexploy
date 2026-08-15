@@ -62,7 +62,7 @@ export function StageCard({ stage, stages, repositoryId }: StageCardProps) {
     };
 
     return (
-        <div className="bg-card rounded-lg border">
+        <div className="rounded-lg border bg-card">
             <div className="flex items-center justify-between p-4">
                 <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">

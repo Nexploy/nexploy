@@ -75,7 +75,7 @@ export function getColumnsDockerEvents(t: TranslationFunction): ColumnDef<Docker
             accessorFn: getEventTimestamp,
             header: sortableHeader(t('timestamp')),
             cell: ({ row }) => (
-                <span className="text-muted-foreground font-mono text-sm">
+                <span className="font-mono text-muted-foreground text-sm">
                     {dayjs(getEventTimestamp(row.original)).format('DD/MM/YYYY HH:mm:ss')}
                 </span>
             ),
@@ -101,7 +101,7 @@ export function getColumnsDockerEvents(t: TranslationFunction): ColumnDef<Docker
             accessorFn: getEventDisplayName,
             header: sortableHeader(t('nameId')),
             cell: ({ row }) => (
-                <span className="block max-w-60 truncate font-mono text-sm font-medium">
+                <span className="block max-w-60 truncate font-medium font-mono text-sm">
                     {getEventDisplayName(row.original)}
                 </span>
             ),

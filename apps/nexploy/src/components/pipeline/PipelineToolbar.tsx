@@ -75,7 +75,7 @@ export function PipelineToolbar() {
                     <span className="text-muted-foreground text-xs">{t('nodeCount', { count: nodes.length })}</span>
                     {disabledCount > 0 && (
                         <>
-                            <span className={'text-muted-foreground text-base'}>·</span>
+                            <span className={'text-base text-muted-foreground'}>·</span>
                             <span className="text-muted-foreground/60 text-xs">
                                 {t('disabledCount', { count: disabledCount })}
                             </span>
@@ -176,7 +176,7 @@ export function PipelineToolbar() {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="hover:text-destructive size-6"
+                                    className="size-6 hover:text-destructive"
                                     onClick={handleDeleteSelection}
                                     disabled={!hasSelection || isViewingBuild || !canEdit}
                                 >
@@ -223,7 +223,7 @@ export function PipelineToolbar() {
             <div className="flex items-center gap-2">
                 <div
                     className={cn(
-                        'text-muted-foreground flex items-center gap-1.5 text-xs transition-opacity duration-300',
+                        'flex items-center gap-1.5 text-muted-foreground text-xs transition-opacity duration-300',
                         isSaving ? 'opacity-100' : 'opacity-40',
                     )}
                 >

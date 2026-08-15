@@ -122,7 +122,7 @@ function TraefikTreeRow({
                         className={cn(
                             'px-2 py-1',
                             isDragging && 'opacity-50',
-                            isDropTarget && 'bg-primary/10 ring-primary/40 ring-1 ring-inset',
+                            isDropTarget && 'bg-primary/10 ring-1 ring-primary/40 ring-inset',
                         )}
                     >
                         <TreeExpander hasChildren={hasChildren} />
@@ -145,7 +145,7 @@ function TraefikTreeRow({
                                     e.stopPropagation();
                                     handleNewFileInFolder(node.path);
                                 }}
-                                className="text-muted-foreground hover:text-primary size-5 shrink-0 rounded-sm opacity-0 transition-opacity group-hover:opacity-100"
+                                className="size-5 shrink-0 rounded-sm text-muted-foreground opacity-0 transition-opacity hover:text-primary group-hover:opacity-100"
                                 title={t('newFile')}
                             >
                                 <FilePlus2 className="size-3" />
@@ -154,7 +154,7 @@ function TraefikTreeRow({
                         {node.type === 'file' && (
                             <>
                                 {selectedFile === node.path && isDirty() && (
-                                    <span className="bg-primary size-1.5 shrink-0 rounded-full" />
+                                    <span className="size-1.5 shrink-0 rounded-full bg-primary" />
                                 )}
                                 <Button
                                     size={'icon'}
@@ -163,7 +163,7 @@ function TraefikTreeRow({
                                         e.stopPropagation();
                                         deleteFile(t, node.path);
                                     }}
-                                    className="text-muted-foreground hover:text-destructive size-5 shrink-0 rounded-sm opacity-0 transition-opacity group-hover:opacity-100"
+                                    className="size-5 shrink-0 rounded-sm text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
                                     title={t('delete')}
                                 >
                                     <Trash2 className="size-3" />

@@ -81,8 +81,8 @@ export function Autocomplete({
                         <div
                             data-slot="autocomplete-input-wrapper"
                             className={cn(
-                                'border-input dark:bg-input/30 flex h-9 w-full items-center gap-2 rounded-md border bg-transparent px-3 py-1 shadow-xs transition-[color,box-shadow]',
-                                'focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]',
+                                'flex h-9 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 py-1 shadow-xs transition-[color,box-shadow] dark:bg-input/30',
+                                'focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50',
                                 disabled && 'cursor-not-allowed opacity-50',
                             )}
                         >
@@ -102,11 +102,11 @@ export function Autocomplete({
                                 disabled={disabled}
                                 autoFocus={autoFocus}
                                 className={cn(
-                                    'placeholder:text-muted-foreground w-full bg-transparent text-sm outline-hidden disabled:cursor-not-allowed',
+                                    'w-full bg-transparent text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed',
                                     inputClassName,
                                 )}
                             />
-                            {isLoading && <Spinner className="text-muted-foreground size-4 shrink-0" />}
+                            {isLoading && <Spinner className="size-4 shrink-0 text-muted-foreground" />}
                         </div>
                     </PopoverAnchor>
 
@@ -133,7 +133,7 @@ export function Autocomplete({
                                     ))}
                                 </div>
                             ) : (
-                                <CommandEmpty className="text-muted-foreground py-6 text-center text-sm">
+                                <CommandEmpty className="py-6 text-center text-muted-foreground text-sm">
                                     {emptyMessage}
                                 </CommandEmpty>
                             )}
@@ -151,7 +151,7 @@ export function Autocomplete({
                                         <div className="flex min-w-0 flex-col">
                                             <span className="truncate text-sm">{option.label}</span>
                                             {option.description && (
-                                                <span className="text-muted-foreground truncate text-xs">
+                                                <span className="truncate text-muted-foreground text-xs">
                                                     {option.description}
                                                 </span>
                                             )}

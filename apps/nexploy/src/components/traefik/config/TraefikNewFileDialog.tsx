@@ -58,7 +58,7 @@ export function TraefikNewFileDialog({ baseDir }: { baseDir?: string }) {
             <div className="flex flex-col gap-2">
                 <Label htmlFor="traefik-filename">{t('filename')}</Label>
                 <div className="flex items-center gap-2">
-                    {baseDir && <span className="text-muted-foreground shrink-0 text-sm">{baseDir}/</span>}
+                    {baseDir && <span className="shrink-0 text-muted-foreground text-sm">{baseDir}/</span>}
                     <Input
                         id="traefik-filename"
                         placeholder={baseDir ? 'my-config' : 'apps/my-config'}
@@ -67,11 +67,11 @@ export function TraefikNewFileDialog({ baseDir }: { baseDir?: string }) {
                         onKeyDown={(e) => e.key === 'Enter' && !creating && handleCreate()}
                         autoFocus
                     />
-                    <span className="text-muted-foreground shrink-0 text-sm">.yml</span>
+                    <span className="shrink-0 text-muted-foreground text-sm">.yml</span>
                 </div>
                 {isInvalid && (
                     <div className="flex items-center gap-1.5">
-                        <AlertTriangle className="text-destructive size-3.5" />
+                        <AlertTriangle className="size-3.5 text-destructive" />
                         <span className="text-destructive text-xs">{t('invalidFilenameHint')}</span>
                     </div>
                 )}

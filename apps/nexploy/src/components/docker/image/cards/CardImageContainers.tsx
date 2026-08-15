@@ -40,7 +40,7 @@ export function CardImageContainers() {
                                 href={`/docker/containers/${container.id}`}
                                 className="flex items-center gap-2 truncate border-b pb-2 last:border-b-0"
                             >
-                                <span className="text-primary truncate text-sm hover:underline">{container.name}</span>
+                                <span className="truncate text-primary text-sm hover:underline">{container.name}</span>
                                 <Status status={container.state === 'running' ? 'online' : 'offline'}>
                                     <StatusIndicator />
                                     <StatusLabel>{container.state}</StatusLabel>

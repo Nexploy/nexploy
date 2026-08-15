@@ -82,15 +82,15 @@ export function NodeRunBody({ data }: NodeRunBodyProps) {
             )}
             {isRunning && (
                 <>
-                    <span className="text-muted-foreground truncate text-sm">
+                    <span className="truncate text-muted-foreground text-sm">
                         {stepLabel ?? t('nodeRun.waiting')}
-                        {progress?.detail && <span className="text-foreground ml-2">{progress.detail}</span>}
+                        {progress?.detail && <span className="ml-2 text-foreground">{progress.detail}</span>}
                     </span>
-                    <div className="bg-border/60 relative h-[3px] w-full overflow-hidden rounded-full">
+                    <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-border/60">
                         <div
                             className={cn(
                                 'h-full rounded-full transition-[width] duration-500 ease-out',
-                                !progress && 'animate-node-progress-indeterminate w-1/3',
+                                !progress && 'w-1/3 animate-node-progress-indeterminate',
                             )}
                             style={{
                                 width: progress ? `${ratio * 100}%` : undefined,
@@ -101,7 +101,7 @@ export function NodeRunBody({ data }: NodeRunBodyProps) {
                 </>
             )}
             {metrics.length > 0 && (
-                <span className="text-muted-foreground truncate text-xs tabular-nums">{metrics.join(' · ')}</span>
+                <span className="truncate text-muted-foreground text-xs tabular-nums">{metrics.join(' · ')}</span>
             )}
         </div>
     );

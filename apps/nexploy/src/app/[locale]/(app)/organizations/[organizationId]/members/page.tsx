@@ -27,11 +27,11 @@ export default async function OrganizationMembersPage({ params }: { params: Prom
                 <div className="flex flex-col gap-5">
                     <div className="flex justify-between gap-2 px-5">
                         <div className="flex gap-3">
-                            <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                                <Users className="text-primary size-7" />
+                            <div className="mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                <Users className="size-7 text-primary" />
                             </div>
                             <div className="mt-3.5 flex flex-col">
-                                <h1 className="break-all text-3xl font-semibold tracking-tight">
+                                <h1 className="break-all font-semibold text-3xl tracking-tight">
                                     {detail.organization.name}
                                 </h1>
                                 <p className="text-muted-foreground text-sm">{t('members.title')}</p>

@@ -53,7 +53,7 @@ export function RenameOrganizationForm({ organizationId, name }: RenameOrganizat
                 />
 
                 {form.formState.errors.root?.message && (
-                    <span className={'text-destructive mb-4 flex text-sm'}>{form.formState.errors.root?.message}</span>
+                    <span className={'mb-4 flex text-destructive text-sm'}>{form.formState.errors.root?.message}</span>
                 )}
 
                 <div className="flex justify-end gap-2 pt-4">

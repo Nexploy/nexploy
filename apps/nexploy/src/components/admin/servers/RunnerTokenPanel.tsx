@@ -31,17 +31,17 @@ export function RunnerTokenPanel({ token, runnerName, serverUrl }: RunnerTokenPa
     return (
         <div className="flex min-w-0 flex-col gap-3 pt-1">
             <div className="flex min-w-0 items-center gap-2 rounded-lg border p-3">
-                <Key className="text-muted-foreground size-4 shrink-0" />
+                <Key className="size-4 shrink-0 text-muted-foreground" />
                 <code className="min-w-0 flex-1 break-all text-xs">{token}</code>
                 <CopyButton text={token} className="size-8 shrink-0" size="icon" variant="ghost" />
             </div>
             <p className="text-muted-foreground text-xs">{t('tokenWarning')}</p>
             <div className="flex min-w-0 flex-col gap-2">
                 <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium">{t('installTitle')}</span>
+                    <span className="font-medium text-sm">{t('installTitle')}</span>
                     <CopyButton text={command} className="size-8 shrink-0" size="icon" variant="ghost" />
                 </div>
-                <pre className="bg-muted/40 w-full max-w-full overflow-x-auto rounded-lg border p-3 text-left text-xs">
+                <pre className="w-full max-w-full overflow-x-auto rounded-lg border bg-muted/40 p-3 text-left text-xs">
                     <code className="whitespace-pre">{command}</code>
                 </pre>
                 <p className="text-muted-foreground text-xs">{t('installHint')}</p>

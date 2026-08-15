@@ -39,7 +39,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
 
     return (
         <Accordion type="single" collapsible defaultValue={stackName}>
-            <AccordionItem value={stackName} className="bg-card rounded-lg border border-b!">
+            <AccordionItem value={stackName} className="rounded-lg border border-b! bg-card">
                 <AccordionTrigger
                     position={'left'}
                     classNameChevron={'size-5'}
@@ -105,19 +105,19 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                     className="cursor-pointer px-4 hover:no-underline"
                 >
                     <div className="flex flex-1 gap-3">
-                        <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
-                            <Layers className="text-primary h-5 w-5" />
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                            <Layers className="h-5 w-5 text-primary" />
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="line-clamp-1 text-base leading-snug font-semibold break-all">{stackName}</h1>
-                            <div className="text-muted-foreground flex items-center gap-1 text-xs">
+                            <h1 className="line-clamp-1 break-all font-semibold text-base leading-snug">{stackName}</h1>
+                            <div className="flex items-center gap-1 text-muted-foreground text-xs">
                                 <span>
                                     {containers.length} {t('container')}
                                 </span>
                                 {runningCount > 0 && (
                                     <>
                                         <span>•</span>
-                                        <span className="text-online font-medium">
+                                        <span className="font-medium text-online">
                                             {runningCount} {t('active')}
                                         </span>
                                     </>
@@ -135,7 +135,7 @@ export function StackGroup({ stackName, containers }: StackGroupProps) {
                     </div>
                 </AccordionTrigger>
 
-                <AccordionContent className="bg-muted/40 border-t p-5">
+                <AccordionContent className="border-t bg-muted/40 p-5">
                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
                         {containers.map((container) => (
                             <ContainerCard key={container.id} container={container} />

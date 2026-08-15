@@ -83,7 +83,7 @@ export function TableRequests() {
         <div className="mx-5 space-y-3">
             <div className="flex flex-wrap justify-between gap-3">
                 <Input
-                    className="shadow-xs w-56"
+                    className="w-56 shadow-xs"
                     placeholder={t('searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}

@@ -47,17 +47,17 @@ export async function SchedulesAccordion({ volumeSchedules }: SchedulesAccordion
     if (volumesWithSchedules.length === 0) return null;
 
     return (
-        <div className="bg-card overflow-hidden rounded-md border shadow-sm">
+        <div className="overflow-hidden rounded-md border bg-card shadow-sm">
             <div className="flex items-center gap-2 border-b px-4 py-3">
-                <CalendarClock className="text-primary size-4" />
-                <span className="text-sm font-medium">{t('activeSchedules')}</span>
+                <CalendarClock className="size-4 text-primary" />
+                <span className="font-medium text-sm">{t('activeSchedules')}</span>
             </div>
             <Accordion type="multiple" className="divide-y">
                 {volumesWithSchedules.map(({ volumeName, schedules }) => (
                     <AccordionItem key={volumeName} value={volumeName}>
                         <AccordionTrigger className="group flex cursor-pointer items-center px-4 py-3 hover:no-underline">
                             <div className="flex flex-1 items-center gap-2">
-                                <span className="text-sm font-medium">{volumeName}</span>
+                                <span className="font-medium text-sm">{volumeName}</span>
                                 <Badge className="h-5">{schedules.length}</Badge>
                             </div>
                             <Badge variant={'outline'} className="text-xs">
@@ -69,10 +69,10 @@ export async function SchedulesAccordion({ volumeSchedules }: SchedulesAccordion
                                 {schedules.map((schedule) => (
                                     <div
                                         key={schedule.id}
-                                        className="bg-muted/50 flex items-center justify-between rounded-md border px-3 py-2"
+                                        className="flex items-center justify-between rounded-md border bg-muted/50 px-3 py-2"
                                     >
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-medium">{schedule.bucket}</span>
+                                            <span className="font-medium text-sm">{schedule.bucket}</span>
                                             <span className="text-muted-foreground text-xs">
                                                 {t(frequencyKeys[schedule.frequency])} —{' '}
                                                 {formatScheduleDetail(schedule, t)}

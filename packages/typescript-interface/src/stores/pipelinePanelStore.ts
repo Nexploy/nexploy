@@ -1,4 +1,4 @@
-export type PipelinePanel = 'palette' | 'template' | 'test';
+export type PipelinePanel = 'palette' | 'template';
 
 export interface PipelinePanelStore {
     activePanel: PipelinePanel | null;

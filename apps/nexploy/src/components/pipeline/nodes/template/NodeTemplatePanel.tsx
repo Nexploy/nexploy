@@ -69,19 +69,19 @@ export function NodeTemplatePanel() {
 
     return (
         <div className="flex h-full w-full flex-col overflow-hidden">
-            <div className="border-border/70 flex h-11 shrink-0 items-center gap-2 border-b px-2.5">
-                <div className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-sm">
+            <div className="flex h-11 shrink-0 items-center gap-2 border-border/70 border-b px-2.5">
+                <div className="flex size-6 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary">
                     <LayoutTemplate className="size-3.5" strokeWidth={1.7} />
                 </div>
-                <span className="text-foreground flex-1 truncate text-xs">{t('templates.title')}</span>
-                <span className="text-muted-foreground shrink-0 text-[10px] tabular-nums">
+                <span className="flex-1 truncate text-foreground text-xs">{t('templates.title')}</span>
+                <span className="shrink-0 text-[10px] text-muted-foreground tabular-nums">
                     {PIPELINE_TEMPLATES.length}
                 </span>
                 <button
                     onClick={closePanel}
                     aria-label={t('canvas.closePanel')}
                     title={t('canvas.closePanel')}
-                    className="text-muted-foreground hover:text-foreground hover:bg-muted flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md transition-colors"
+                    className="flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
                     <X className="size-3.5" />
                 </button>
@@ -100,7 +100,7 @@ export function NodeTemplatePanel() {
                 </div>
             </ScrollAreaWithShadow>
 
-            <div className="text-muted-foreground border-border/70 flex h-8 shrink-0 items-center gap-1.5 border-t px-3">
+            <div className="flex h-8 shrink-0 items-center gap-1.5 border-border/70 border-t px-3 text-muted-foreground">
                 <MousePointerClick className="size-3 shrink-0" />
                 <span className="truncate text-[10px]">{t('addNodeHint')}</span>
             </div>

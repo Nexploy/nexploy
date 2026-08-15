@@ -102,7 +102,7 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                                             className="mt-0.5"
                                                         />
                                                         <div className="space-y-0.5">
-                                                            <p className="text-sm leading-none font-medium">
+                                                            <p className="font-medium text-sm leading-none">
                                                                 {t(MODE_LABEL_KEYS[tlsMode].title)}
                                                             </p>
                                                             <p className="text-muted-foreground text-xs">
@@ -155,7 +155,7 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                                 </FormControl>
                                                 <SelectContent align="start">
                                                     {customCertificates.length === 0 ? (
-                                                        <div className="text-muted-foreground px-2 py-4 text-center text-sm">
+                                                        <div className="px-2 py-4 text-center text-muted-foreground text-sm">
                                                             {t('noCustomCertificates')}
                                                         </div>
                                                     ) : (
@@ -164,7 +164,7 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                                                 <span className="flex items-center gap-2">
                                                                     <ShieldCheck className="text-primary" />
                                                                     <span>{certificate.name}</span>
-                                                                    <span className="text-muted-foreground font-mono text-xs">
+                                                                    <span className="font-mono text-muted-foreground text-xs">
                                                                         {certificate.domain}
                                                                     </span>
                                                                 </span>

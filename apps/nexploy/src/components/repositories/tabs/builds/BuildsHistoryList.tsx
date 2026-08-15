@@ -44,7 +44,7 @@ export function BuildsHistoryList({ repositoryId, stageId, initialBuilds, initia
     if (builds.length === 0) {
         return (
             <div className="rounded-md border">
-                <div className="text-muted-foreground p-8 text-center text-sm">{t('noBuilds')}</div>
+                <div className="p-8 text-center text-muted-foreground text-sm">{t('noBuilds')}</div>
             </div>
         );
     }
@@ -57,7 +57,7 @@ export function BuildsHistoryList({ repositoryId, stageId, initialBuilds, initia
             {hasMore && <div ref={sentinelRef} />}
             {isLoadingMore && (
                 <div className="flex justify-center p-3">
-                    <Loader2 className="text-muted-foreground size-4 animate-spin" />
+                    <Loader2 className="size-4 animate-spin text-muted-foreground" />
                 </div>
             )}
         </div>

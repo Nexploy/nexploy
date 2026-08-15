@@ -106,7 +106,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                     aria-describedby={undefined}
                     className="gap-0 overflow-hidden border border-neutral-800 bg-black p-0 sm:max-w-5/6"
                 >
-                    <DialogHeader className="flex flex-row items-center justify-between overflow-hidden border-b border-neutral-800 p-2 pl-3">
+                    <DialogHeader className="flex flex-row items-center justify-between overflow-hidden border-neutral-800 border-b p-2 pl-3">
                         <div className="flex items-center gap-2 overflow-hidden">
                             <DialogTitle className="flex items-center gap-2 overflow-hidden text-sm text-white">
                                 <div className="flex size-4 shrink-0 items-center">
@@ -132,7 +132,7 @@ export function ContainerTerminal({ children }: ContainerTerminalProps) {
                                         onKeyDown={onUserKeyDown}
                                         onBlur={onUserBlur}
                                         placeholder={t('userPlaceholder')}
-                                        className="h-7! w-36 bg-white/10 text-xs text-white/90 placeholder:text-white/40"
+                                        className="h-7! w-36 bg-white/10 text-white/90 text-xs placeholder:text-white/40"
                                     />
                                 </TooltipTrigger>
                                 <TooltipContent>{t('userPlaceholder')}</TooltipContent>

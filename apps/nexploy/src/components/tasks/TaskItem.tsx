@@ -87,10 +87,10 @@ export function TaskItem({ task, onNavigate }: TaskItemProps) {
                     className={cn('mt-0.5 size-4 shrink-0', STATUS_COLORS[task.status], isRunning && 'animate-spin')}
                 />
                 <div className="min-w-0 flex-1">
-                    <p className="break-all text-sm font-medium">
+                    <p className="break-all font-medium text-sm">
                         {t(`kinds.${task.kind}`, { name: task.subjectName })}
                     </p>
-                    <p className="text-muted-foreground break-all text-xs">
+                    <p className="break-all text-muted-foreground text-xs">
                         {isRunning && runningLabel ? runningLabel : t(`status.${task.status}`)}
                         {' · '}
                         {elapsed}
@@ -130,7 +130,7 @@ export function TaskItem({ task, onNavigate }: TaskItemProps) {
             )}
 
             {task.warnings.length > 0 && (
-                <ul className="text-muted-foreground space-y-0.5 text-xs">
+                <ul className="space-y-0.5 text-muted-foreground text-xs">
                     {task.warnings.map((warning, index) => (
                         <li key={index} style={{ wordBreak: 'break-word' }}>
                             {warning}
@@ -143,7 +143,7 @@ export function TaskItem({ task, onNavigate }: TaskItemProps) {
                 <Link
                     href={task.resultHref}
                     onClick={handleOpenResult}
-                    className="text-primary text-xs font-medium hover:underline"
+                    className="font-medium text-primary text-xs hover:underline"
                 >
                     {needsEnvironmentSwitch && resultEnvironmentName
                         ? t(`openResultIn.${resultResource}`, { environment: resultEnvironmentName })

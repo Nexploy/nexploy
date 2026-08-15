@@ -59,11 +59,11 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                     <Label
                         htmlFor={'force-delete-image-detail'}
                         className={
-                            'bg-muted/50 border-destructive flex cursor-pointer items-center justify-between rounded-lg border p-3'
+                            'flex cursor-pointer items-center justify-between rounded-lg border border-destructive bg-muted/50 p-3'
                         }
                     >
                         <div className={'space-y-0.5'}>
-                            <p className={'text-destructive text-sm font-medium'}>{tActions('image.forceDelete')}</p>
+                            <p className={'font-medium text-destructive text-sm'}>{tActions('image.forceDelete')}</p>
                             <p className={'text-xs'}>{tActions('image.forceDeleteDescription')}</p>
                         </div>
                         <Switch
@@ -108,7 +108,7 @@ export function ImageDetailPage({ imageId }: ImageDetailPageProps) {
                         {!image ? (
                             <Skeleton className="h-9 w-40" />
                         ) : (
-                            <h1 className="text-3xl font-semibold tracking-tight break-all">{imageName}</h1>
+                            <h1 className="break-all font-semibold text-3xl tracking-tight">{imageName}</h1>
                         )}
                         <p className="text-muted-foreground text-sm">{t('description')}</p>
                     </div>

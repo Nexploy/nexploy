@@ -98,14 +98,14 @@ export function ContainerDetailPage() {
                         {isConnecting ? (
                             <Skeleton className="h-9 w-40" />
                         ) : isSwarmContainer ? (
-                            <h1 className="text-3xl font-semibold tracking-tight break-all">{container?.name}</h1>
+                            <h1 className="break-all font-semibold text-3xl tracking-tight">{container?.name}</h1>
                         ) : (
                             <button
                                 type="button"
                                 onClick={handleRename}
                                 className={'group flex cursor-pointer items-center gap-2 self-start'}
                             >
-                                <h1 className="text-3xl font-semibold tracking-tight break-all group-hover:underline">
+                                <h1 className="break-all font-semibold text-3xl tracking-tight group-hover:underline">
                                     {container?.name}
                                 </h1>
                                 <PencilLine className={'size-4'} />

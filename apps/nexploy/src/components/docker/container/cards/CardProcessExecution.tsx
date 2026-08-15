@@ -40,7 +40,7 @@ export function CardProcessExecution() {
             <CardHeaderWithIcon icon={Settings} title={t('title')} />
             <CardContent className={'px-0'}>
                 {!container?.path ? (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 font-semibold text-muted-foreground text-sm">
                         {t('noData')}
                     </div>
                 ) : (
@@ -51,7 +51,7 @@ export function CardProcessExecution() {
                                     key={label}
                                     className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < fields.length - 1 ? 'border-b pb-2' : ''}`}
                                 >
-                                    <span className="text-muted-foreground text-sm whitespace-nowrap">{label}</span>
+                                    <span className="whitespace-nowrap text-muted-foreground text-sm">{label}</span>
                                     <div className="flex min-w-0 items-center justify-end overflow-hidden">
                                         <Badge variant="secondary" className="w-auto max-w-full shrink">
                                             <span className="block truncate">{value}</span>

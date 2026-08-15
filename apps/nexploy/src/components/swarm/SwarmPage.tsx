@@ -28,11 +28,11 @@ export function SwarmPage() {
         <div className="flex h-full flex-1 flex-col gap-5">
             <div className="flex justify-between gap-2 px-5">
                 <div className="flex gap-3">
-                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Network className="text-primary size-7" />
+                    <div className="mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                        <Network className="size-7 text-primary" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
+                        <h1 className="font-semibold text-3xl tracking-tight">{t('title')}</h1>
                         <p className="text-muted-foreground text-sm">
                             {isSwarmActive
                                 ? t('clusterWithNodes', { count: swarmInfo?.totalNodes || 0 })

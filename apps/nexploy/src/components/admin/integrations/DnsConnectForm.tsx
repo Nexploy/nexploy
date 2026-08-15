@@ -56,13 +56,13 @@ export function DnsConnectForm() {
     return (
         <Form {...form}>
             <form onSubmit={handleSubmitWithAction} className="space-y-4">
-                <ul className="text-muted-foreground list-disc pl-5 text-sm">
+                <ul className="list-disc pl-5 text-muted-foreground text-sm">
                     <li>{t(`providers.${provider}.requirementZone`)}</li>
                     <li>{t(`providers.${provider}.requirementRecord`)}</li>
                 </ul>
 
                 {descriptor.experimental && (
-                    <div className="bg-degraded/10 text-degraded flex items-start gap-2 rounded-md border border-current/20 p-3 text-xs">
+                    <div className="flex items-start gap-2 rounded-md border border-current/20 bg-degraded/10 p-3 text-degraded text-xs">
                         <TriangleAlert className="mt-0.5 size-4 shrink-0" />
                         <span>{t('experimentalWarning')}</span>
                     </div>

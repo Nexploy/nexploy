@@ -35,7 +35,7 @@ export function ContainerNetworks() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noNetworksConfigured')}</p>
+                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noNetworksConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

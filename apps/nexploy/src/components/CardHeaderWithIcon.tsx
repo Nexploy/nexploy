@@ -27,8 +27,8 @@ export function CardHeaderWithIcon({
 
     if (isDestructive)
         return (
-            <Wrapper className={cn('text-destructive flex gap-2', className)}>
-                <div className="bg-destructive/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
+            <Wrapper className={cn('flex gap-2 text-destructive', className)}>
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10">
                     <Icon className="size-5" />
                 </div>
                 <div className="flex flex-col">
@@ -42,8 +42,8 @@ export function CardHeaderWithIcon({
     return (
         <Wrapper className={cn('flex items-center gap-2', className)}>
             <div className={'flex items-center gap-2'}>
-                <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                    <Icon className="text-primary size-5" />
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <Icon className="size-5 text-primary" />
                 </div>
                 <div className="flex flex-col">
                     {title && <CardTitle>{title}</CardTitle>}

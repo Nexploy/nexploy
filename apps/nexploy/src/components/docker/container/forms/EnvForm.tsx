@@ -90,7 +90,7 @@ export function EnvForm({ mode, defaultEnvVar, originalEnvVar }: EnvFormProps) {
                     )}
                 />
 
-                <DialogFooter className={'flex justify-between! pt-4'}>
+                <DialogFooter className={'justify-between! flex pt-4'}>
                     {mode === 'edit' && (
                         <Button
                             size={'icon'}

@@ -69,12 +69,12 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
 
     return (
         <Sheet open={Boolean(container)} onOpenChange={onOpenChange}>
-            <SheetContent side="right" className="sm:max-w-3/5 w-full gap-0">
+            <SheetContent side="right" className="w-full gap-0 sm:max-w-3/5">
                 {container ? (
                     <>
                         <SheetHeader className="flex flex-row items-start gap-3 border-b pr-12">
-                            <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-lg">
-                                <Container className="text-primary size-5" />
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                <Container className="size-5 text-primary" />
                             </div>
                             <div className="flex min-w-0 flex-1 flex-col">
                                 <SheetTitle className="flex flex-wrap items-center gap-2">
@@ -105,17 +105,17 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
 
                         <ScrollAreaWithShadow bottomShadow className="h-full overflow-hidden">
                             <div className="bg-background pr-1">
-                                <div className="bg-border grid grid-cols-2 gap-px border-b">
+                                <div className="grid grid-cols-2 gap-px border-b bg-border">
                                     {details.map((detail) =>
                                         detail.href ? (
                                             <Link
                                                 key={detail.label}
                                                 href={detail.href}
-                                                className="bg-background hover:bg-muted/40 block px-4 py-2 transition-colors"
+                                                className="block bg-background px-4 py-2 transition-colors hover:bg-muted/40"
                                             >
                                                 <p className="text-muted-foreground text-xs">{detail.label}</p>
                                                 <p
-                                                    className="truncate text-sm font-medium tabular-nums underline-offset-2 hover:underline"
+                                                    className="truncate font-medium text-sm tabular-nums underline-offset-2 hover:underline"
                                                     title={detail.value}
                                                 >
                                                     {detail.value}
@@ -125,7 +125,7 @@ export function ContainerMetricsSheet({ container, history, onOpenChange }: Cont
                                             <div key={detail.label} className="bg-background px-4 py-2">
                                                 <p className="text-muted-foreground text-xs">{detail.label}</p>
                                                 <p
-                                                    className="truncate text-sm font-medium tabular-nums"
+                                                    className="truncate font-medium text-sm tabular-nums"
                                                     title={detail.value}
                                                 >
                                                     {detail.value}

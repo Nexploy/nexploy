@@ -34,7 +34,7 @@ export function CardNetworkConfig() {
             <CardHeaderWithIcon icon={Network} title={t('title')} />
             <CardContent className={'px-0'}>
                 {!visibleFields.length ? (
-                    <div className="text-muted-foreground flex h-32 items-center justify-center pb-12 text-sm font-semibold">
+                    <div className="flex h-32 items-center justify-center pb-12 font-semibold text-muted-foreground text-sm">
                         {t('noData')}
                     </div>
                 ) : (
@@ -45,7 +45,7 @@ export function CardNetworkConfig() {
                                     key={key}
                                     className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < visibleFields.length - 1 ? 'border-b pb-2' : ''}`}
                                 >
-                                    <span className="text-muted-foreground text-sm whitespace-nowrap">{t(label)}</span>
+                                    <span className="whitespace-nowrap text-muted-foreground text-sm">{t(label)}</span>
                                     <div className="flex min-w-0 items-center justify-end overflow-hidden">
                                         <Badge variant="secondary" className="w-auto max-w-full shrink">
                                             <span className="block truncate">{container?.network?.[key]}</span>

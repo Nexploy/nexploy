@@ -41,7 +41,7 @@ export function SearchCommand() {
             <Button
                 variant="outline"
                 onClick={openDialog}
-                className="hover:bg-muted hover:text-foreground text-muted-foreground flex h-8 flex-1 justify-between px-2.5 text-sm font-normal shadow-none md:flex-none"
+                className="flex h-8 flex-1 justify-between px-2.5 font-normal text-muted-foreground text-sm shadow-none hover:bg-muted hover:text-foreground md:flex-none"
             >
                 <span className="truncate">{t('searchPlaceholder')}</span>
             </Button>
@@ -50,7 +50,7 @@ export function SearchCommand() {
                 title={t('searchPlaceholder')}
                 open={open}
                 onOpenChange={(v) => (v ? openDialog() : closeDialog())}
-                className="bg-card rounded-2xl shadow-xl sm:max-w-[620px]"
+                className="rounded-2xl bg-card shadow-xl sm:max-w-[620px]"
                 showCloseButton={false}
                 commandProps={{
                     className: 'bg-card',
@@ -61,12 +61,12 @@ export function SearchCommand() {
                 }}
             >
                 <CommandInput
-                    className={'bg-background/50 border-b px-3'}
+                    className={'border-b bg-background/50 px-3'}
                     placeholder={t('searchPlaceholder')}
                     value={inputValue}
                     onValueChange={setInputValue}
                 />
-                <CommandList className="bg-card max-h-none overflow-hidden">
+                <CommandList className="max-h-none overflow-hidden bg-card">
                     <ScrollAreaWithShadow viewportClassName="max-h-[60vh] [&>div]:!block" bottomShadow>
                         <AskAiGroup />
                         <RepositorySearchGroup />

@@ -183,7 +183,7 @@ export function MoveStackForm({ stackName, containerCount }: MoveStackFormProps)
                     name="migrateVolumeData"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="flex items-center justify-between rounded-lg cursor-pointer border p-3">
+                            <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-3">
                                 <div className={'flex flex-col'}>
                                     <span>{t('volumeDataLabel')}</span>
                                     <FormDescription>{t('volumeDataDescription')}</FormDescription>
@@ -206,7 +206,7 @@ export function MoveStackForm({ stackName, containerCount }: MoveStackFormProps)
                     name="startAfterMigration"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="flex items-center justify-between rounded-lg cursor-pointer border p-3">
+                            <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-3">
                                 <div className={'flex flex-col'}>
                                     <span>{t('startLabel')}</span>
                                     <FormDescription>{t('startDescription')}</FormDescription>
@@ -248,7 +248,7 @@ export function MoveStackForm({ stackName, containerCount }: MoveStackFormProps)
                                                 className="mt-0.5"
                                             />
                                             <div className="space-y-0.5">
-                                                <p className="text-sm leading-none font-medium">
+                                                <p className="font-medium text-sm leading-none">
                                                     {t(`sourceAction.${sourceAction}.label`)}
                                                 </p>
                                                 <p className="text-muted-foreground text-xs">

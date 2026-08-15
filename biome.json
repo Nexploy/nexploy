@@ -59,6 +59,15 @@
         "noChildrenProp": "error",
         "useJsxKeyInIterable": "error"
       },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "options": {
+            "attributes": ["className", "classNames"],
+            "functions": ["cn", "cva", "clsx", "twMerge", "tw"]
+          }
+        }
+      },
       "suspicious": {
         "noDoubleEquals": "error",
         "noDuplicateCase": "error",

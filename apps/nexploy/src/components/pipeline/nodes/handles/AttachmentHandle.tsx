@@ -28,14 +28,14 @@ export function AttachmentHandle({ attach, handleColor, position }: AttachmentHa
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 className={cn(
-                    'bg-base-7! border-card! size-4.5! -translate-x-16 rounded-[2px]! border-2! transition-all hover:size-6!',
+                    'size-4.5! -translate-x-16 rounded-[2px]! border-2! border-card! bg-base-7! transition-all hover:size-6!',
                     active && handleColor,
                 )}
             />
             {connections.length === 0 && (
                 <span
                     className={cn(
-                        'absolute -bottom-6 left-[calc(50%-4rem)] -translate-x-1/2 text-center text-[10px] whitespace-nowrap',
+                        'absolute -bottom-6 left-[calc(50%-4rem)] -translate-x-1/2 whitespace-nowrap text-center text-[10px]',
                         'text-muted-foreground/60',
                     )}
                 >

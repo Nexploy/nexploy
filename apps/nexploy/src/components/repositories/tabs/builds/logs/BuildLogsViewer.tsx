@@ -71,11 +71,11 @@ export function BuildLogsViewer({
                 />
             </div>
             {logs.length === 0 ? (
-                <div className="bg-muted/30 text-muted-foreground flex flex-1 items-center justify-center pb-12 font-mono text-sm">
+                <div className="flex flex-1 items-center justify-center bg-muted/30 pb-12 font-mono text-muted-foreground text-sm">
                     <span>{t('noLogs')}</span>
                 </div>
             ) : (
-                <ScrollAreaWithShadow ref={logsContainerRef} className="bg-muted/30 flex h-full font-mono text-sm">
+                <ScrollAreaWithShadow ref={logsContainerRef} className="flex h-full bg-muted/30 font-mono text-sm">
                     <div className="space-y-0.5 pt-1 pr-2 pl-0">
                         {logs.map((log, logIndex) => (
                             <div
@@ -87,11 +87,11 @@ export function BuildLogsViewer({
                                 )}
                             >
                                 {showTimestamp && (
-                                    <span className="text-muted-foreground shrink-0 select-none">
+                                    <span className="shrink-0 select-none text-muted-foreground">
                                         [{dayjs(log.createdAt).format('DD/MM/YYYY HH:mm:ss')}]
                                     </span>
                                 )}
-                                <div className="min-w-0 break-all whitespace-pre-wrap">
+                                <div className="min-w-0 whitespace-pre-wrap break-all">
                                     {parseAnsiColors(log.message).map((part, partIndex) => (
                                         <span key={partIndex} className={part.color} style={part.style}>
                                             {part.text}

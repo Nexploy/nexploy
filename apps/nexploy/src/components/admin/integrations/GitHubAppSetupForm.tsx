@@ -122,7 +122,7 @@ export function GitHubAppSetupForm() {
                 )}
 
                 <div className="space-y-1.5 rounded-md border p-3">
-                    <p className="text-muted-foreground text-xs font-medium">{t('permissionsTitle')}</p>
+                    <p className="font-medium text-muted-foreground text-xs">{t('permissionsTitle')}</p>
                     {(['permContents', 'permMetadata', 'permAdministration', 'permStatuses'] as const).map((key) => (
                         <div key={key} className="flex items-center gap-2 text-xs">
                             <CheckIcon className="size-3 shrink-0 text-green-500" />

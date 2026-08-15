@@ -49,7 +49,7 @@ export function IntegrationCard({
     return (
         <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="flex items-center gap-3">
-                <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-lg">{icon}</div>
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">{icon}</div>
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
                         <span>{name}</span>

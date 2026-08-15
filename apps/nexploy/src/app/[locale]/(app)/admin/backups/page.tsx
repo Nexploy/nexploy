@@ -24,24 +24,24 @@ export default async function BackupsPage() {
         <div className="flex h-full flex-1 flex-col">
             <div className="flex h-full flex-col gap-4">
                 <div className="flex gap-3 px-5">
-                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Database className="text-primary size-7" />
+                    <div className="mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                        <Database className="size-7 text-primary" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight break-all">{t('backups')}</h1>
+                        <h1 className="break-all font-semibold text-3xl tracking-tight">{t('backups')}</h1>
                         <p className="text-muted-foreground text-sm">{t('manageBackupsDescription')}</p>
                     </div>
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-4 px-5 pb-5">
                         {volumes.length === 0 ? (
-                            <div className="text-muted-foreground rounded-md border p-8 text-center text-sm">
+                            <div className="rounded-md border p-8 text-center text-muted-foreground text-sm">
                                 {t('noVolumesAvailable')}
                             </div>
                         ) : (
                             <>
                                 <SchedulesAccordion volumeSchedules={volumeSchedules} />
-                                <div className="bg-card overflow-hidden rounded-md border shadow-sm">
+                                <div className="overflow-hidden rounded-md border bg-card shadow-sm">
                                     {volumes.map((volume, index) => (
                                         <div
                                             key={volume.name}
@@ -50,11 +50,11 @@ export default async function BackupsPage() {
                                             }`}
                                         >
                                             <div className="flex min-w-0 flex-1 items-center gap-3">
-                                                <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-md">
-                                                    <HardDrive className="text-primary size-4" />
+                                                <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10">
+                                                    <HardDrive className="size-4 text-primary" />
                                                 </div>
                                                 <div className="flex min-w-0 flex-1 flex-col break-all">
-                                                    <span className="text-sm font-medium">{volume.name}</span>
+                                                    <span className="font-medium text-sm">{volume.name}</span>
                                                     <span className="text-muted-foreground text-xs">
                                                         {volume.driver}
                                                         {volume.usageData?.Size != null &&

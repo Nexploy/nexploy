@@ -49,7 +49,7 @@ export function BucketStorageInstanceCard({
     };
 
     return (
-        <div className="bg-card flex items-center justify-between rounded-lg border p-4">
+        <div className="flex items-center justify-between rounded-lg border bg-card p-4">
             <div className="flex flex-col">
                 <div className="flex items-center gap-2">
                     <span className="font-medium">{displayName}</span>

@@ -15,7 +15,7 @@ export default function AuthLayout({
                     width={28}
                     height={28}
                 />
-                <h1 className={'text-2xl font-extrabold'}>Nexploy</h1>
+                <h1 className={'font-extrabold text-2xl'}>Nexploy</h1>
             </div>
             {children}
         </div>

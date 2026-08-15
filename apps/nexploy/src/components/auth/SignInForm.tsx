@@ -71,7 +71,7 @@ export function SignInForm() {
                                 )}
                             />
                             {form.formState.errors.root?.message && (
-                                <span className={'text-destructive mb-4 flex text-sm'}>
+                                <span className={'mb-4 flex text-destructive text-sm'}>
                                     {form.formState.errors.root?.message}
                                 </span>
                             )}

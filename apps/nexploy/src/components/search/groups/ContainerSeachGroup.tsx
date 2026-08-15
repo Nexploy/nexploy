@@ -36,10 +36,10 @@ export function ContainerSeachGroup() {
                         runCommand(() => router.push(`/docker/containers/${container.id}`)),
                     )}
                 >
-                    <Container className="text-muted-foreground h-4 w-4 shrink-0" />
+                    <Container className="h-4 w-4 shrink-0 text-muted-foreground" />
                     <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="truncate text-sm font-medium">{container.name}</span>
-                        <span className="text-muted-foreground truncate text-xs">{container.image}</span>
+                        <span className="truncate font-medium text-sm">{container.name}</span>
+                        <span className="truncate text-muted-foreground text-xs">{container.image}</span>
                     </div>
                     <Status className="border-0" status={containerDisplayState[container.state]} variant="outline">
                         <StatusIndicator />

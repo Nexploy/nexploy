@@ -97,10 +97,10 @@ export function DnsDomainSelector<T extends FieldValues>({ form, basePath }: Dns
     }
 
     return (
-        <div className="bg-muted/30 space-y-4 rounded-lg border p-4">
+        <div className="space-y-4 rounded-lg border bg-muted/30 p-4">
             <div className="flex items-center gap-2">
                 <Globe className="size-4 text-orange-500" />
-                <span className="text-sm font-medium">{t('title')}</span>
+                <span className="font-medium text-sm">{t('title')}</span>
                 <Badge variant="secondary" className="text-xs">
                     {t('automaticDns')}
                 </Badge>
@@ -138,7 +138,7 @@ export function DnsDomainSelector<T extends FieldValues>({ form, basePath }: Dns
             {selectedCredentialId &&
                 (isLoadingZones ? (
                     <div className="flex items-center gap-2">
-                        <Loader2 className="text-muted-foreground size-4 animate-spin" />
+                        <Loader2 className="size-4 animate-spin text-muted-foreground" />
                         <span className="text-muted-foreground text-sm">{t('loading')}</span>
                     </div>
                 ) : (
@@ -186,7 +186,7 @@ export function DnsDomainSelector<T extends FieldValues>({ form, basePath }: Dns
                                         value={subdomain}
                                         onChange={(e) => handleSubdomainChange(e.target.value)}
                                     />
-                                    <span className="text-muted-foreground text-sm whitespace-nowrap">
+                                    <span className="whitespace-nowrap text-muted-foreground text-sm">
                                         .{displayZoneName}
                                     </span>
                                 </div>

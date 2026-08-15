@@ -116,7 +116,7 @@ export function CreateUserForm() {
                                 <FormLabel>{t('role')}</FormLabel>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <Info className="text-muted-foreground size-3.5 cursor-help" />
+                                        <Info className="size-3.5 cursor-help text-muted-foreground" />
                                     </TooltipTrigger>
                                     <TooltipContent side="right" className="max-w-64 space-y-2 p-3">
                                         <div>
@@ -161,7 +161,7 @@ export function CreateUserForm() {
                 />
 
                 {form.formState.errors.root?.message && (
-                    <span className={'text-destructive mb-4 flex text-sm'}>{form.formState.errors.root?.message}</span>
+                    <span className={'mb-4 flex text-destructive text-sm'}>{form.formState.errors.root?.message}</span>
                 )}
 
                 <div className="flex justify-end gap-2 pt-4">

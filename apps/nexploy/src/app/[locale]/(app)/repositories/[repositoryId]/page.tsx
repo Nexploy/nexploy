@@ -51,8 +51,8 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
                 <div className="flex flex-1 flex-col gap-4 overflow-hidden">
                     <div className="flex items-start justify-between gap-2 px-5">
                         <div className="flex gap-3">
-                            <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                                <ProviderIcon className="[&_path]:fill-primary size-7" />
+                            <div className="mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                <ProviderIcon className="size-7 [&_path]:fill-primary" />
                             </div>
                             <div className="mt-3.5 flex flex-col">
                                 <Link
@@ -60,14 +60,14 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
                                     className={'group flex items-center gap-1'}
                                     target="_blank"
                                 >
-                                    <h1 className="line-clamp-1 text-3xl font-semibold tracking-tight break-all group-hover:underline">
+                                    <h1 className="line-clamp-1 break-all font-semibold text-3xl tracking-tight group-hover:underline">
                                         {repository.name}
                                     </h1>
                                     <ExternalLink
                                         className={'size-4 opacity-0 transition-opacity group-hover:opacity-100'}
                                     />
                                 </Link>
-                                <div className={'text-muted-foreground flex items-center gap-2 text-sm'}>
+                                <div className={'flex items-center gap-2 text-muted-foreground text-sm'}>
                                     <span>{capitalizeFirstLetter(repository.gitProvider)}</span>
                                     {hostname && (
                                         <>

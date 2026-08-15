@@ -53,11 +53,11 @@ export function ModelSelectorModal() {
             title={t('title')}
             open={modelSelectorOpen}
             onOpenChange={(open) => !open && closeModelSelector()}
-            className="bg-card rounded-2xl shadow-xl sm:max-w-[620px]"
+            className="rounded-2xl bg-card shadow-xl sm:max-w-[620px]"
             showCloseButton={false}
             commandProps={{ className: 'bg-card' }}
         >
-            <CommandInput className="bg-background/50 border-b px-3" placeholder={t('search')} />
+            <CommandInput className="border-b bg-background/50 px-3" placeholder={t('search')} />
             {!isLoading && (
                 <ProviderFilterBar
                     providers={providers}
@@ -66,7 +66,7 @@ export function ModelSelectorModal() {
                     onChange={setActiveProvider}
                 />
             )}
-            <CommandList className="bg-card max-h-none overflow-hidden">
+            <CommandList className="max-h-none overflow-hidden bg-card">
                 <ScrollAreaWithShadow viewportClassName="max-h-[60vh] [&>div]:!block" bottomShadow>
                     {isLoading ? (
                         Array.from({ length: 2 }).map((_, i) => (

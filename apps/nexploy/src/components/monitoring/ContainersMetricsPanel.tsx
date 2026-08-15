@@ -188,10 +188,10 @@ export function ContainersMetricsPanel({
             </div>
 
             <div className="flex items-center gap-2">
-                <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                    <HardDrive className="text-primary size-5" />
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <HardDrive className="size-5 text-primary" />
                 </div>
-                <h2 className="text-lg font-semibold tracking-tight">{t('containers.tableTitle')}</h2>
+                <h2 className="font-semibold text-lg tracking-tight">{t('containers.tableTitle')}</h2>
             </div>
 
             <ContainersMetricsTable

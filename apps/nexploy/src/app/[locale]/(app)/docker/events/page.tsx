@@ -44,21 +44,21 @@ export default function EventsPage() {
     return (
         <div className="flex h-full flex-1 flex-col gap-5">
             <div className={'flex gap-3 px-5'}>
-                <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                    <Bug className="text-primary size-7" />
+                <div className="mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <Bug className="size-7 text-primary" />
                 </div>
                 <div className="mt-3.5 flex flex-col">
-                    <h1 className="text-3xl font-semibold tracking-tight">Docker {t('eventsTitle')}</h1>
+                    <h1 className="font-semibold text-3xl tracking-tight">Docker {t('eventsTitle')}</h1>
                     <p className="text-muted-foreground text-sm">
                         {eventsReceived > 0 ? t('eventsReceived', { count: eventsReceived }) : t('waitingForEvents')}
                     </p>
                 </div>
             </div>
             <ScrollAreaWithShadow className="h-full overflow-hidden">
-                <div className={'space-y-3 pb-5 pt-1'}>
+                <div className={'space-y-3 pt-1 pb-5'}>
                     <div className={'mx-5 flex flex-wrap justify-between gap-3'}>
                         <Input
-                            className={'shadow-xs w-56'}
+                            className={'w-56 shadow-xs'}
                             placeholder={t('searchByNameAction')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}

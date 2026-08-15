@@ -50,9 +50,9 @@ export function NodeDetailStats() {
                 <>
                     <Status className="border-0" status={nodeStateToStatus(node.state)} variant="outline">
                         <StatusIndicator />
-                        <div className="truncate text-2xl font-semibold capitalize">{node.state}</div>
+                        <div className="truncate font-semibold text-2xl capitalize">{node.state}</div>
                     </Status>
-                    <p className="text-muted-foreground truncate text-xs capitalize">{node.availability}</p>
+                    <p className="truncate text-muted-foreground text-xs capitalize">{node.availability}</p>
                 </>
             ),
         },
@@ -61,8 +61,8 @@ export function NodeDetailStats() {
             icon: Cpu,
             render: () => (
                 <>
-                    <div className="text-2xl font-bold">{cpuCores}</div>
-                    <p className="text-muted-foreground truncate text-xs">{t('node.availableCores')}</p>
+                    <div className="font-bold text-2xl">{cpuCores}</div>
+                    <p className="truncate text-muted-foreground text-xs">{t('node.availableCores')}</p>
                 </>
             ),
         },
@@ -71,8 +71,8 @@ export function NodeDetailStats() {
             icon: MemoryStick,
             render: () => (
                 <>
-                    <div className="text-2xl font-bold">{formatBytes(node.resources.memoryBytes)}</div>
-                    <p className="text-muted-foreground truncate text-xs">{t('node.totalMemory')}</p>
+                    <div className="font-bold text-2xl">{formatBytes(node.resources.memoryBytes)}</div>
+                    <p className="truncate text-muted-foreground text-xs">{t('node.totalMemory')}</p>
                 </>
             ),
         },
@@ -81,10 +81,10 @@ export function NodeDetailStats() {
             icon: Activity,
             render: () => (
                 <>
-                    <div className="text-2xl font-bold">
+                    <div className="font-bold text-2xl">
                         {runningTasks}/{tasks.length}
                     </div>
-                    <p className="text-muted-foreground truncate text-xs">{t('node.tasksRunning')}</p>
+                    <p className="truncate text-muted-foreground text-xs">{t('node.tasksRunning')}</p>
                 </>
             ),
         },
@@ -95,9 +95,9 @@ export function NodeDetailStats() {
             {cards.map((card, index) => (
                 <Card key={index} className="flex flex-col justify-between gap-0 py-6">
                     <CardHeader className="flex flex-row justify-between space-y-0">
-                        <CardTitle className="flex h-14 text-sm font-medium">{card.title}</CardTitle>
-                        <div className="bg-primary/10 flex size-8 shrink-0 items-center justify-center rounded-lg">
-                            <card.icon className="text-primary size-4" />
+                        <CardTitle className="flex h-14 font-medium text-sm">{card.title}</CardTitle>
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                            <card.icon className="size-4 text-primary" />
                         </div>
                     </CardHeader>
                     <CardContent>{card.render()}</CardContent>

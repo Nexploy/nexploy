@@ -34,7 +34,7 @@ export function getColumnsActivity(t: TranslationFunction): ColumnDef<ActivityLo
             accessorFn: (entry) => dayjs(entry.createdAt).valueOf(),
             header: sortableHeader(t('columns.date')),
             cell: ({ row }) => (
-                <span className="text-muted-foreground font-mono text-sm whitespace-nowrap">
+                <span className="whitespace-nowrap font-mono text-muted-foreground text-sm">
                     {dayjs(row.original.createdAt).format('DD/MM/YYYY HH:mm:ss')}
                 </span>
             ),
@@ -43,14 +43,14 @@ export function getColumnsActivity(t: TranslationFunction): ColumnDef<ActivityLo
             id: 'name',
             accessorFn: (entry) => entry.name,
             header: sortableHeader(t('columns.action')),
-            cell: ({ row }) => <span className="block max-w-60 truncate text-sm font-medium">{row.original.name}</span>,
+            cell: ({ row }) => <span className="block max-w-60 truncate font-medium text-sm">{row.original.name}</span>,
         },
         {
             id: 'actor',
             accessorFn: (entry) => getActivityActorLabel(entry, t),
             header: sortableHeader(t('columns.actor')),
             cell: ({ row }) => (
-                <span className="text-muted-foreground block max-w-48 truncate text-sm">
+                <span className="block max-w-48 truncate text-muted-foreground text-sm">
                     {getActivityActorLabel(row.original, t)}
                 </span>
             ),

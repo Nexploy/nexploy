@@ -81,15 +81,15 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus, nodeDurationMs, nod
             </div>
             <ScrollAreaWithShadow ref={logsContainerRef} bottomShadow className="h-full font-mono text-xs">
                 {isLoading ? (
-                    <div className="text-muted-foreground flex flex-1 items-center justify-center py-4">
+                    <div className="flex flex-1 items-center justify-center py-4 text-muted-foreground">
                         {t('loading')}
                     </div>
                 ) : logs.length === 0 && isLive ? (
-                    <div className="text-muted-foreground flex flex-1 items-center justify-center py-4">
+                    <div className="flex flex-1 items-center justify-center py-4 text-muted-foreground">
                         {t('waitingForLogs')}
                     </div>
                 ) : logs.length === 0 ? (
-                    <div className="text-muted-foreground flex flex-1 items-center justify-center py-4">
+                    <div className="flex flex-1 items-center justify-center py-4 text-muted-foreground">
                         {t('noLogs')}
                     </div>
                 ) : (
@@ -104,11 +104,11 @@ export function NodeLogsPanel({ buildId, nodeId, nodeStatus, nodeDurationMs, nod
                                 )}
                             >
                                 {showTimestamp && (
-                                    <span className="text-muted-foreground shrink-0 select-none">
+                                    <span className="shrink-0 select-none text-muted-foreground">
                                         [{dayjs(log.createdAt).format('DD/MM/YYYY HH:mm:ss')}]
                                     </span>
                                 )}
-                                <div className="min-w-0 break-all whitespace-pre-wrap">
+                                <div className="min-w-0 whitespace-pre-wrap break-all">
                                     {parseAnsiColors(log.message).map((part, j) => (
                                         <span key={j} className={part.color} style={part.style}>
                                             {part.text}

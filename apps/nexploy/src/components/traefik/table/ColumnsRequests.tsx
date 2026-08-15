@@ -100,7 +100,7 @@ export const getColumnsTableRequests = (t: TranslationFunction): ColumnDef<Traef
             </Button>
         ),
         cell: ({ row }) => (
-            <div className="text-muted-foreground font-mono text-sm">{formatDuration(row.original.duration)}</div>
+            <div className="font-mono text-muted-foreground text-sm">{formatDuration(row.original.duration)}</div>
         ),
     },
     {
@@ -112,14 +112,14 @@ export const getColumnsTableRequests = (t: TranslationFunction): ColumnDef<Traef
             </Button>
         ),
         cell: ({ row }) => (
-            <div className="text-muted-foreground font-mono text-sm">{formatBytes(row.original.size)}</div>
+            <div className="font-mono text-muted-foreground text-sm">{formatBytes(row.original.size)}</div>
         ),
     },
     {
         accessorKey: 'serviceName',
         header: t('table.service'),
         cell: ({ row }) => (
-            <div className="text-muted-foreground max-w-40 truncate text-sm">{row.original.serviceName || '-'}</div>
+            <div className="max-w-40 truncate text-muted-foreground text-sm">{row.original.serviceName || '-'}</div>
         ),
     },
 ];

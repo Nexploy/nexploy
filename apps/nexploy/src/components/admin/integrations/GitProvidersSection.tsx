@@ -11,8 +11,8 @@ export async function GitProvidersSection() {
     return (
         <section className="space-y-2" data-tour="git-providers">
             <div className="flex items-center gap-2">
-                <GitBranch className="text-muted-foreground size-4" />
-                <h2 className="text-sm font-medium">{t('gitProviders')}</h2>
+                <GitBranch className="size-4 text-muted-foreground" />
+                <h2 className="font-medium text-sm">{t('gitProviders')}</h2>
             </div>
             <Accordion
                 type="multiple"

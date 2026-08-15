@@ -142,11 +142,11 @@ export function DropdownOrganization({ organizations, activeOrganizationId }: Dr
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             disabled={isPending}
-                            className="border-sidebar-border bg-sidebar-accent/40 h-9 cursor-pointer gap-2 rounded-md border text-sm font-medium"
+                            className="h-9 cursor-pointer gap-2 rounded-md border border-sidebar-border bg-sidebar-accent/40 font-medium text-sm"
                         >
                             <DicebearAvatar seed={current?.name} size={24} style={'glass'} alt="Organization Icon" />
                             <span className="flex-1 truncate">{current?.name}</span>
-                            <ChevronsUpDown className="text-muted-foreground size-3.5" />
+                            <ChevronsUpDown className="size-3.5 text-muted-foreground" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" side={isSidebarExpanded ? 'bottom' : 'right'} sideOffset={4}>
@@ -229,7 +229,7 @@ export function DropdownOrganization({ organizations, activeOrganizationId }: Dr
                         })}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="gap-2" onClick={handleCreate}>
-                            <div className="bg-background flex size-6 items-center justify-center rounded-md border border-dashed">
+                            <div className="flex size-6 items-center justify-center rounded-md border border-dashed bg-background">
                                 <Plus size={14} />
                             </div>
                             <span>{t('createOrganization')}</span>

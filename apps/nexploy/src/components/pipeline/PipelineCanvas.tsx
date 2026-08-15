@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
     Background,
     BackgroundVariant,
@@ -24,7 +24,7 @@ import { GradientEdge } from '@/components/pipeline/edges/GradientEdge';
 import { useDragAndDropFlow } from '@/hooks/useDragAndDropFlow';
 import { useAutoLayout } from '@/hooks/useAutoLayout';
 import { useBuildViewLayout } from '@/hooks/useBuildViewLayout';
-import { NODE_TWEEN_MS, useAnimatedNodePositions } from '@/hooks/useAnimatedNodePositions';
+import { useAnimatedNodePositions } from '@/hooks/useAnimatedNodePositions';
 import { usePipelineActions, usePipelineDisplay } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ButtonPanel } from '@/components/pipeline/nodes/ButtonPanel';
@@ -34,9 +34,7 @@ import { BuildsPanel } from '@/components/pipeline/buildsPanel/BuildsPanel';
 import { LargeNode } from '@/components/pipeline/nodes/types/LargeNode';
 import { BaseNode } from '@/components/pipeline/nodes/types/BaseNode';
 import { AttachNode } from '@/components/pipeline/nodes/types/AttachNode';
-import { useFitRenderedContent, useFitViewOptions } from '@/components/pipeline/utils/fitView';
-import { PipelineSidePanel } from '@/components/pipeline/PipelineSidePanel.tsx';
-import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
+import { FIT_VIEW_DURATION_MS, FIT_VIEW_OPTIONS } from '@/components/pipeline/utils/fitViewOptions';
 
 const nodeTypes = {
     'base-node': BaseNode,
@@ -48,12 +46,11 @@ const edgeTypes = { 'gradient-edge': GradientEdge };
 const canvasControlButtonClassName = 'bg-sidebar/85 border-border/70 hover:bg-sidebar size-8 border  backdrop-blur-md';
 
 const FIT_SETTLE_MS = 120;
-const FIT_DURATION_MS = 400;
 
 export function PipelineCanvas() {
     const t = useTranslations('repository.pipeline');
     const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
-    const { zoomIn, zoomOut, getNodes } = useReactFlow();
+    const { zoomIn, zoomOut, getNodes, fitView } = useReactFlow();
 
     const addSelectedNodes = useStore((s) => s.addSelectedNodes);
     const [isSpaceHeld, setIsSpaceHeld] = useState(false);
@@ -92,13 +89,10 @@ export function PipelineCanvas() {
     );
 
     const handleAutoLayout = useAutoLayout();
-    const fitViewOptions = useFitViewOptions();
-    const fitRenderedContent = useFitRenderedContent();
 
     const { nodes, displayNodes, displayEdges, isViewingBuild } = usePipelineDisplay();
-    const { nodes: laidOutNodes, layoutKey } = useBuildViewLayout(displayNodes, displayEdges, isViewingBuild);
+    const { nodes: laidOutNodes } = useBuildViewLayout(displayNodes, displayEdges, isViewingBuild);
     const animatedNodes = useAnimatedNodePositions(laidOutNodes, isViewingBuild);
-    const isSidePanelOpen = usePipelinePanelStore((s) => s.activePanel !== null);
     const {
         onNodesChange,
         onEdgesChange,
@@ -197,37 +191,6 @@ export function PipelineCanvas() {
 
     const { onDragOver, onDragLeave, onDrop } = useDragAndDropFlow(rfInstance);
 
-    const userMovedRef = useRef(false);
-    const autoFittingRef = useRef(false);
-    const autoFitTokenRef = useRef(0);
-    const fittedBuildIdRef = useRef<string | null>(null);
-
-    useEffect(() => {
-        userMovedRef.current = false;
-        fittedBuildIdRef.current = null;
-    }, [activeBuildId]);
-
-    useEffect(() => {
-        if (!isViewingBuild || layoutKey === '') return;
-
-        const isFirstFitForBuild = fittedBuildIdRef.current !== activeBuildId;
-        if (!isFirstFitForBuild && userMovedRef.current) return;
-
-        const timer = window.setTimeout(() => {
-            fittedBuildIdRef.current = activeBuildId;
-            autoFittingRef.current = true;
-            autoFitTokenRef.current += 1;
-            const token = autoFitTokenRef.current;
-            void fitRenderedContent(FIT_DURATION_MS).finally(() => {
-                window.setTimeout(() => {
-                    if (autoFitTokenRef.current === token) autoFittingRef.current = false;
-                }, 0);
-            });
-        }, NODE_TWEEN_MS + FIT_SETTLE_MS);
-
-        return () => window.clearTimeout(timer);
-    }, [isViewingBuild, layoutKey, activeBuildId, fitRenderedContent, isSidePanelOpen]);
-
     return (
         <div
             ref={wrapperRef}
@@ -250,9 +213,6 @@ export function PipelineCanvas() {
                 onConnect={isViewingBuild ? undefined : onConnect}
                 isValidConnection={isViewingBuild ? undefined : isValidConnection}
                 onInit={setRfInstance}
-                onMoveStart={(event) => {
-                    if (event && !autoFittingRef.current) userMovedRef.current = true;
-                }}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 onNodeDragStop={isViewingBuild ? undefined : triggerAutoSave}
@@ -276,14 +236,13 @@ export function PipelineCanvas() {
                 onSelectionChange={isViewingBuild ? undefined : handleSelectionChange}
                 deleteKeyCode={undefined}
                 fitView
-                fitViewOptions={fitViewOptions}
+                fitViewOptions={FIT_VIEW_OPTIONS}
                 defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
                 proOptions={{ hideAttribution: true }}
             >
                 <Background variant={BackgroundVariant.Dots} gap={20} size={1.5} color="var(--base-7)" />
                 <BuildsPanel />
                 <ButtonPanel />
-                <PipelineSidePanel />
                 {displayNodes.length > 0 && (
                     <Panel className={'m-2!'} position="bottom-left">
                         <div className="flex gap-1.5">
@@ -300,7 +259,7 @@ export function PipelineCanvas() {
                                 variant="ghost"
                                 size="icon"
                                 className={canvasControlButtonClassName}
-                                onClick={() => fitRenderedContent(FIT_DURATION_MS)}
+                                onClick={() => fitView({ ...FIT_VIEW_OPTIONS, duration: FIT_VIEW_DURATION_MS })}
                                 title={t('canvas.fitView')}
                             >
                                 <Maximize />
@@ -328,16 +287,11 @@ export function PipelineCanvas() {
                     </Panel>
                 )}
                 {displayNodes.length === 0 && (
-                    <div
-                        className={cn(
-                            'pointer-events-none absolute inset-y-0 left-0 flex flex-col items-center justify-center gap-3 transition-[right] duration-200 ease-out',
-                            isSidePanelOpen ? 'right-[19rem]' : 'right-0',
-                        )}
-                    >
-                        <div className="border-border bg-card flex size-12 items-center justify-center rounded-lg border">
+                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
+                        <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-card">
                             <SquareMousePointer className={'text-muted-foreground'} />
                         </div>
-                        <p className="text-muted-foreground mx-5 text-center text-sm">{t('empty')}</p>
+                        <p className="mx-5 text-center text-muted-foreground text-sm">{t('empty')}</p>
                     </div>
                 )}
             </ReactFlow>

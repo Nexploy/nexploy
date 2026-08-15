@@ -83,11 +83,11 @@ export default function ContainersPage() {
         <div className="flex h-full flex-1 flex-col gap-4">
             <div className="flex justify-between gap-2 px-5">
                 <div className={'flex gap-3'}>
-                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Container className="text-primary size-7" />
+                    <div className="mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                        <Container className="size-7 text-primary" />
                     </div>
                     <div className="mt-3.5 flex flex-col">
-                        <h1 className="text-3xl font-semibold tracking-tight">{tNav('dockerContainers')}</h1>
+                        <h1 className="font-semibold text-3xl tracking-tight">{tNav('dockerContainers')}</h1>
                         {isLoading ? (
                             <Skeleton className={'my-1 h-3 w-40'} />
                         ) : (

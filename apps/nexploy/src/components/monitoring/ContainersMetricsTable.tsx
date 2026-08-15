@@ -76,7 +76,7 @@ export function ContainersMetricsTable({ stats, history, onSelect }: ContainersM
     return (
         <div className="space-y-3">
             <Input
-                className="shadow-xs w-1/3"
+                className="w-1/3 shadow-xs"
                 placeholder={t('table.searchPlaceholder')}
                 value={globalFilter}
                 onChange={(event) => setGlobalFilter(event.target.value)}

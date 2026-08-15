@@ -37,7 +37,7 @@ export function SetupForm() {
             <Card className="w-full max-w-xl">
                 <CardHeader>
                     <div className="flex items-center gap-2">
-                        <Shield className="text-primary h-8 w-8" />
+                        <Shield className="h-8 w-8 text-primary" />
                         <CardTitle className="text-3xl">{tAuth('setup.title')}</CardTitle>
                     </div>
                     <CardDescription>{tAuth('setup.description')}</CardDescription>
@@ -52,7 +52,7 @@ export function SetupForm() {
                             className="space-y-6"
                         >
                             <div className="space-y-4">
-                                <h3 className="text-lg font-semibold">{tAuth('setup.personalInfo')}</h3>
+                                <h3 className="font-semibold text-lg">{tAuth('setup.personalInfo')}</h3>
                                 <FormField
                                     control={form.control}
                                     name="name"

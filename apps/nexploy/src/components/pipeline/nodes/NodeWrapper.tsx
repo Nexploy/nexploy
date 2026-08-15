@@ -67,14 +67,14 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                 <div
                     onDoubleClick={(e) => e.stopPropagation()}
                     className={cn(
-                        'bg-background absolute -top-9 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1',
+                        'absolute -top-9 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 bg-background',
                         'scale-75 opacity-0 transition-all duration-150 group-hover:scale-100 group-hover:opacity-100',
                     )}
                 >
                     <Button
                         variant="ghost"
                         onClick={() => openDialogSettingNode(id)}
-                        className="text-muted-foreground hover:text-foreground size-6"
+                        className="size-6 text-muted-foreground hover:text-foreground"
                     >
                         <Settings className="size-3" />
                     </Button>
@@ -83,7 +83,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                 <div
                     onDoubleClick={(e) => e.stopPropagation()}
                     className={cn(
-                        'bg-background absolute -top-9 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-md',
+                        'absolute -top-9 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-md bg-background',
                         'scale-75 opacity-0 transition-all duration-150 group-hover:scale-100 group-hover:opacity-100',
                     )}
                 >

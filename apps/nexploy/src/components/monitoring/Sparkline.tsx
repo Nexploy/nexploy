@@ -45,7 +45,7 @@ export function Sparkline({ values, color = 'var(--chart-2)', className, max }: 
     }, [values, max]);
 
     if (isEmpty) {
-        return <div className={cn('bg-muted/40 h-8 w-full rounded-sm', className)} />;
+        return <div className={cn('h-8 w-full rounded-sm bg-muted/40', className)} />;
     }
 
     return (

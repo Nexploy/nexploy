@@ -50,7 +50,7 @@ export function ServicePorts() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noPortsConfigured')}</p>
+                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noPortsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -67,7 +67,7 @@ export function ServicePorts() {
                                         </FormItem>
                                     )}
                                 />
-                                <span className="text-muted-foreground mt-2">→</span>
+                                <span className="mt-2 text-muted-foreground">→</span>
                                 <FormField
                                     control={form.control}
                                     name={`ports.${index}.target`}

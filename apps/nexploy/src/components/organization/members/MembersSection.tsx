@@ -239,7 +239,7 @@ export function MembersSection({
 
             {canManageMembers && visibleInvitations.length > 0 && (
                 <div className="flex flex-col gap-3">
-                    <h2 className="flex items-center gap-2 text-sm font-medium">
+                    <h2 className="flex items-center gap-2 font-medium text-sm">
                         <Mail className="size-4" />
                         {t('invitations.pending')}
                     </h2>

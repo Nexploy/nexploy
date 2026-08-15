@@ -91,7 +91,7 @@ export function EnvVariableForm({ repositoryId, stageId, variable }: EnvVariable
                                         variant="ghost"
                                         size="xs"
                                         title={showValue ? t('hide') : t('show')}
-                                        className="absolute right-1 top-1/2 -translate-y-1/2"
+                                        className="absolute top-1/2 right-1 -translate-y-1/2"
                                         onClick={() => setShowValue((v) => !v)}
                                     >
                                         {showValue ? <EyeOff /> : <Eye />}

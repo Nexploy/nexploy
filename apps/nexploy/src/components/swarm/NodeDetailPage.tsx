@@ -45,8 +45,8 @@ export function NodeDetailPage({ nodeId }: NodeDetailPageProps) {
         <BreadcrumbProvider segments={{ nodeId: displayName }}>
             <div className="flex h-full flex-1 flex-col gap-5">
                 <div className="flex gap-3 px-5">
-                    <div className="bg-primary/10 mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg">
-                        <Server className="text-primary size-7" />
+                    <div className="mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                        <Server className="size-7 text-primary" />
                     </div>
                     <div className="mt-3.5 flex flex-1 flex-col">
                         {isConnecting ? (
@@ -56,7 +56,7 @@ export function NodeDetailPage({ nodeId }: NodeDetailPageProps) {
                             </>
                         ) : (
                             <div className="flex flex-col">
-                                <h1 className="text-3xl font-semibold tracking-tight">{node?.hostname}</h1>
+                                <h1 className="font-semibold text-3xl tracking-tight">{node?.hostname}</h1>
                                 {node && (
                                     <Badge
                                         variant={node.role === 'manager' ? 'default' : 'secondary'}

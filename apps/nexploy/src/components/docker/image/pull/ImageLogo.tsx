@@ -24,8 +24,8 @@ export function ImageLogo({ image }: ImageLogoProps) {
     }
 
     return (
-        <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-md">
-            <Box className="text-primary size-5" />
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/10">
+            <Box className="size-5 text-primary" />
         </div>
     );
 }

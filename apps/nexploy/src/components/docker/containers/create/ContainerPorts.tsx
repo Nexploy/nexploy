@@ -39,7 +39,7 @@ export function ContainerPorts() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="text-muted-foreground py-8 text-center text-sm">{t('noPortsConfigured')}</p>
+                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noPortsConfigured')}</p>
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (
@@ -56,7 +56,7 @@ export function ContainerPorts() {
                                         </FormItem>
                                     )}
                                 />
-                                <span className="text-muted-foreground mt-1.5">→</span>
+                                <span className="mt-1.5 text-muted-foreground">→</span>
                                 <FormField
                                     control={form.control}
                                     name={`ports.${index}.containerPort`}

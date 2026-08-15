@@ -54,8 +54,8 @@ export function GitSourceStep() {
         <Card>
             <CardHeader>
                 <div className="flex gap-2">
-                    <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg">
-                        <GitBranchIcon className="text-primary size-5" />
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                        <GitBranchIcon className="size-5 text-primary" />
                     </div>
                     <div className="flex flex-col">
                         <CardTitle>{t('title')}</CardTitle>
@@ -71,7 +71,7 @@ export function GitSourceStep() {
                         setSelectedAccount(account);
                     }}
                     noAccountsContent={
-                        <div className="text-muted-foreground flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center">
+                        <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center text-muted-foreground">
                             <div className="text-sm">{t('noAccounts')}</div>
                             <Button asChild>
                                 <Link href="/account#integrations">{t('connectAccount')}</Link>

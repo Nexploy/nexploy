@@ -98,7 +98,7 @@ export function ActivityDetailSheet({ entry, onOpenChange }: ActivityDetailSheet
                                 {displayedEntry.metadata !== null && displayedEntry.metadata !== undefined && (
                                     <div className="flex flex-col gap-1 py-2">
                                         <span className="text-muted-foreground text-xs">{t('detail.metadata')}</span>
-                                        <pre className="bg-muted overflow-x-auto rounded-md p-3 text-xs">
+                                        <pre className="overflow-x-auto rounded-md bg-muted p-3 text-xs">
                                             {JSON.stringify(displayedEntry.metadata, null, 2)}
                                         </pre>
                                     </div>

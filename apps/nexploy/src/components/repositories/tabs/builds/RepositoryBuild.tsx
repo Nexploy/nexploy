@@ -60,7 +60,7 @@ export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
     return (
         <Link
             href={`/repositories/${repositoryId}/${build.id}`}
-            className="hover:bg-muted/70 bg-card flex cursor-pointer items-center justify-between gap-2 p-3"
+            className="flex cursor-pointer items-center justify-between gap-2 bg-card p-3 hover:bg-muted/70"
         >
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
@@ -68,12 +68,12 @@ export function RepositoryBuild({ repositoryId, build }: BuildLogsProps) {
                     {isLive && !commitMessage ? (
                         <Skeleton className="h-4 w-48" />
                     ) : (
-                        <span className="line-clamp-1 text-sm font-medium">
+                        <span className="line-clamp-1 font-medium text-sm">
                             #{build.number} {commitMessage ?? `#${build.id}`}
                         </span>
                     )}
                 </div>
-                <div className={'text-muted-foreground flex items-center gap-2 text-xs'}>
+                <div className={'flex items-center gap-2 text-muted-foreground text-xs'}>
                     <span className="flex items-center gap-1">
                         <Clock className="size-3" />
                         {dayjs(build.createdAt).format('DD/MM/YYYY HH:mm:ss')}

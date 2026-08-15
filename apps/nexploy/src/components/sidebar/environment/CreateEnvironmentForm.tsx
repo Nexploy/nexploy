@@ -218,7 +218,7 @@ export function CreateEnvironmentForm() {
                 {connectionType === 'TCP_TLS' && (
                     <div className="space-y-4 rounded-lg border p-4">
                         <div className="flex items-center justify-between">
-                            <h4 className="text-sm font-medium">{t('tlsCertificates')}</h4>
+                            <h4 className="font-medium text-sm">{t('tlsCertificates')}</h4>
                             <DownloadCertScriptButton disabled={!host} host={host} />
                         </div>
                         <p className="text-muted-foreground text-xs">{t('tlsCertificatesDescription')}</p>

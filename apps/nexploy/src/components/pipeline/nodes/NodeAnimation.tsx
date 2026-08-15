@@ -51,9 +51,9 @@ export function NodeAnimation({
     const iconRounded = square || hasBody ? 'rounded-xl' : 'rounded-full';
 
     const cornerClass = cn(
-        'bg-card absolute size-4 rounded-full',
-        square || hasBody ? 'top-1.5 right-1.5' : 'top-[11px] right-[11px]',
-        isEndNode && !hasBody && 'top-1.5 left-1.5',
+        'absolute size-4 rounded-full bg-card',
+        square || hasBody ? 'top-2 right-2' : 'top-[11px] right-[11px]',
+        isEndNode && !hasBody && 'top-2 left-2',
     );
 
     const icon = (
@@ -80,7 +80,7 @@ export function NodeAnimation({
     );
 
     const content = hasBody ? (
-        <div className={cn('flex w-full max-w-[320px] min-w-0 flex-col', bodyAlwaysOpen ? 'w-[280px]' : 'w-[220px]')}>
+        <div className={cn('flex w-full min-w-0 max-w-xs flex-col', bodyAlwaysOpen ? 'w-[280px]' : 'w-[220px]')}>
             {header}
             <div
                 className={cn(
@@ -109,7 +109,7 @@ export function NodeAnimation({
                 </div>
                 <div
                     className={cn(
-                        'bg-card relative flex items-center p-4',
+                        'relative flex items-center bg-card p-4',
                         children || hasBody ? 'gap-3' : 'justify-center',
                         'overflow-hidden',
                         rounded,
@@ -139,7 +139,7 @@ export function NodeAnimation({
                       : undefined
             }
             className={cn(
-                'bg-card relative flex items-center overflow-hidden border-2 p-4 shadow-lg transition-[border-color,box-shadow] duration-300',
+                'relative flex items-center overflow-hidden border-2 bg-card p-4 shadow-lg transition-[border-color,box-shadow] duration-300',
                 children || hasBody ? 'gap-3' : 'justify-center',
                 rounded,
                 data.status === 'completed'

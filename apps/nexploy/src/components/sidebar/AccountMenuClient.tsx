@@ -51,7 +51,7 @@ export function AccountMenuClient({ session }: AccountMenuClientProps) {
                     <NotificationBadge
                         node={'accountMenu'}
                         variant={isSidebarExpanded ? 'count' : 'dot'}
-                        className={'pointer-events-none absolute -right-1 -top-1 z-10'}
+                        className={'pointer-events-none absolute -top-1 -right-1 z-10'}
                     />
                     <DropdownMenuContent
                         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"

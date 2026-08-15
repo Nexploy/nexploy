@@ -63,8 +63,8 @@ export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center gap-3 space-y-0">
-                <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-lg">
-                    <GitFork className="text-primary size-5" />
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <GitFork className="size-5 text-primary" />
                 </div>
                 <div>
                     <CardTitle>{t('mirrorTitle')}</CardTitle>
@@ -99,7 +99,7 @@ export function MirrorImageSection({ registries }: MirrorImageSectionProps) {
                                 onCheckedChange={setPrivateSource}
                                 disabled={isSubmitting}
                             />
-                            <label htmlFor="private-source" className="cursor-pointer text-sm font-medium">
+                            <label htmlFor="private-source" className="cursor-pointer font-medium text-sm">
                                 {t('privateSource')}
                             </label>
                         </div>

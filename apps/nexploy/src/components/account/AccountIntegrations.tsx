@@ -15,7 +15,7 @@ export async function AcountIntegrations() {
 
     if (providers.length === 0) {
         return (
-            <p className="text-muted-foreground rounded-md border p-8 text-center text-sm">
+            <p className="rounded-md border p-8 text-center text-muted-foreground text-sm">
                 {t('oauth.noProvidersAvailable')}
             </p>
         );

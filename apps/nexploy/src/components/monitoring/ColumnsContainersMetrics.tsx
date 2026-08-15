@@ -51,7 +51,7 @@ export function getColumnsContainersMetrics(
                         </Tooltip>
                         <StatusLabel className="truncate font-medium text-current">{row.original.name}</StatusLabel>
                     </Status>
-                    <span className="text-muted-foreground truncate text-xs">
+                    <span className="truncate text-muted-foreground text-xs">
                         {row.original.stack ? `${row.original.stack} • ${row.original.image}` : row.original.image}
                     </span>
                 </div>
@@ -65,9 +65,9 @@ export function getColumnsContainersMetrics(
                     <span className={cn('tabular-nums', usageToneClass(row.original.cpuPercent))}>
                         {formatPercent(row.original.cpuPercent, 2)}
                     </span>
-                    <div className="bg-primary/15 h-1 w-20 overflow-hidden rounded-full">
+                    <div className="h-1 w-20 overflow-hidden rounded-full bg-primary/15">
                         <div
-                            className="bg-primary h-full rounded-full"
+                            className="h-full rounded-full bg-primary"
                             style={{ width: `${Math.min(100, row.original.cpuPercent)}%` }}
                         />
                     </div>

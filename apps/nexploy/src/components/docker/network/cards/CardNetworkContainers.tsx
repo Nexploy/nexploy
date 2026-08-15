@@ -41,7 +41,7 @@ export function CardNetworkContainers() {
                                 >
                                     <Link
                                         href={`/docker/containers/${containerId}`}
-                                        className="text-primary truncate text-sm hover:underline"
+                                        className="truncate text-primary text-sm hover:underline"
                                     >
                                         {displayName}
                                     </Link>

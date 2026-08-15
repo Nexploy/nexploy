@@ -1,13 +1,12 @@
 import { useCallback } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
-import { useFitViewOptions } from '@/components/pipeline/utils/fitView';
 import { computeGraphLayout } from '@/components/pipeline/utils/graphLayout';
+import { FIT_VIEW_OPTIONS } from '@/components/pipeline/utils/fitViewOptions';
 
 export function useAutoLayout() {
     const { getNodes, getEdges, fitView } = useReactFlow();
     const { setNodes, triggerAutoSave } = usePipelineActions();
-    const fitViewOptions = useFitViewOptions();
 
     return useCallback(() => {
         const positionMap = computeGraphLayout(getNodes(), getEdges());
@@ -20,6 +19,6 @@ export function useAutoLayout() {
         );
 
         triggerAutoSave();
-        requestAnimationFrame(() => fitView(fitViewOptions));
-    }, [getNodes, getEdges, setNodes, triggerAutoSave, fitView, fitViewOptions]);
+        requestAnimationFrame(() => fitView(FIT_VIEW_OPTIONS));
+    }, [getNodes, getEdges, setNodes, triggerAutoSave, fitView]);
 }

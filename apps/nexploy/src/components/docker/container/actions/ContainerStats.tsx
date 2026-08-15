@@ -146,7 +146,7 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                     showCloseButton={false}
                     onOpenAutoFocus={(e) => e.preventDefault()}
                     aria-describedby={undefined}
-                    className="sm:max-w-5/6 gap-0 overflow-y-hidden overflow-x-visible p-0"
+                    className="gap-0 overflow-y-hidden overflow-x-visible p-0 sm:max-w-5/6"
                 >
                     <SSEProvider
                         connections={['stats']}
@@ -255,11 +255,11 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                                 <Skeleton className="h-3 w-56" />
                                                 <Skeleton className="h-[180px] w-full" />
                                             </div>
-                                            <div className="bg-border grid grid-cols-1 gap-px border-t sm:grid-cols-2 lg:grid-cols-1 lg:border-l lg:border-t-0">
+                                            <div className="grid grid-cols-1 gap-px border-t bg-border sm:grid-cols-2 lg:grid-cols-1 lg:border-t-0 lg:border-l">
                                                 {details.map((detail) => (
                                                     <div
                                                         key={detail.label}
-                                                        className="bg-background flex items-center justify-between gap-2 px-4 py-2"
+                                                        className="flex items-center justify-between gap-2 bg-background px-4 py-2"
                                                     >
                                                         <Skeleton className="h-3 w-28" />
                                                         <Skeleton className="h-3 w-16" />
@@ -364,16 +364,16 @@ export function ContainerStats({ children }: ContainerStatsProps) {
                                                 chartClassName="h-[180px]"
                                                 emptyLabel={t('waitingForData')}
                                             />
-                                            <div className="bg-border grid grid-cols-1 gap-px border-t sm:grid-cols-2 lg:grid-cols-1 lg:border-l lg:border-t-0">
+                                            <div className="grid grid-cols-1 gap-px border-t bg-border sm:grid-cols-2 lg:grid-cols-1 lg:border-t-0 lg:border-l">
                                                 {details.map((detail) => (
                                                     <div
                                                         key={detail.label}
-                                                        className="bg-background flex items-center justify-between gap-2 px-4 py-2"
+                                                        className="flex items-center justify-between gap-2 bg-background px-4 py-2"
                                                     >
-                                                        <span className="text-muted-foreground truncate text-xs">
+                                                        <span className="truncate text-muted-foreground text-xs">
                                                             {detail.label}
                                                         </span>
-                                                        <span className="truncate text-sm font-medium tabular-nums">
+                                                        <span className="truncate font-medium text-sm tabular-nums">
                                                             {detail.value}
                                                         </span>
                                                     </div>

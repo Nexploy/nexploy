@@ -29,17 +29,17 @@ export function BuildPreviewBanner({ buildNumber, onExit }: BuildPreviewBannerPr
     );
 
     return (
-        <Badge variant="secondary" className="text-muted-foreground gap-1.5 py-0 pr-0.5 pl-2">
+        <Badge variant="secondary" className="gap-1.5 py-0 pr-0.5 pl-2 text-muted-foreground">
             <Eye className="text-muted-foreground/70" />
             {t('viewingBuild', { number: buildNumber })}
-            <Kbd className="text-muted-foreground/70 bg-background/60 h-4 px-1 text-[10px]">Esc</Kbd>
+            <Kbd className="h-4 bg-background/60 px-1 text-[10px] text-muted-foreground/70">Esc</Kbd>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={onExit}
-                        className="hover:bg-background/60 hover:text-foreground size-5 rounded-sm"
+                        className="size-5 rounded-sm hover:bg-background/60 hover:text-foreground"
                     >
                         <X className="size-3" />
                     </Button>

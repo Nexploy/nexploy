@@ -35,12 +35,12 @@ export function LabelItem({
     ) : null;
 
     return (
-        <div className="bg-muted/60 flex items-center justify-between gap-2 rounded-md p-2">
+        <div className="flex items-center justify-between gap-2 rounded-md bg-muted/60 p-2">
             <div className="flex min-w-0 flex-1 items-center gap-1">
                 <code className="flex items-center gap-2 text-sm leading-none">
-                    <span className="text-primary shrink-0 truncate text-xs font-semibold">{displayLabel.key}:</span>
+                    <span className="shrink-0 truncate font-semibold text-primary text-xs">{displayLabel.key}:</span>
                 </code>
-                <span className="text-xs break-all">
+                <span className="break-all text-xs">
                     {displayLabel.value ? (
                         displayLabel.value
                     ) : (
@@ -53,7 +53,7 @@ export function LabelItem({
                 {isProtected ? (
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <span className="text-muted-foreground flex size-6 shrink-0 items-center justify-center">
+                            <span className="flex size-6 shrink-0 items-center justify-center text-muted-foreground">
                                 <Lock className="size-4" />
                             </span>
                         </TooltipTrigger>

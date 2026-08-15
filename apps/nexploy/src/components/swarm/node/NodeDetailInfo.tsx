@@ -84,7 +84,7 @@ export function NodeDetailInfo() {
                                 key={index}
                                 className={`grid grid-cols-[auto_1fr] items-center gap-4 ${index < fields.length - 1 ? 'border-b pb-2' : ''}`}
                             >
-                                <span className="text-muted-foreground text-sm whitespace-nowrap">{field.label}</span>
+                                <span className="whitespace-nowrap text-muted-foreground text-sm">{field.label}</span>
                                 <div className="flex min-w-0 items-center justify-end gap-1">
                                     <div className="flex min-w-0 flex-1 justify-end overflow-hidden">
                                         {typeof field.value === 'string' ? (

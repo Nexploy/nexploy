@@ -36,7 +36,7 @@ export function CardVolumeContainers() {
                             <div key={container.id} className="flex items-center gap-2 border-b pb-2 last:border-b-0">
                                 <Link
                                     href={`/docker/containers/${container.id}`}
-                                    className="text-primary truncate text-sm hover:underline"
+                                    className="truncate text-primary text-sm hover:underline"
                                 >
                                     {container.name}
                                 </Link>

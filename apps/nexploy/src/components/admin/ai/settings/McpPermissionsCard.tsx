@@ -79,8 +79,8 @@ export function McpPermissionsCard(props: McpPermissionsCardProps) {
                 <FormItem>
                     <FormLabel className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
                         <div className="flex items-center gap-3">
-                            <div className="bg-primary/10 flex size-7 shrink-0 items-center justify-center rounded-md">
-                                <Icon className="text-primary size-4" />
+                            <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10">
+                                <Icon className="size-4 text-primary" />
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-base">{t(`${name}`)}</span>
@@ -114,11 +114,11 @@ export function McpPermissionsCard(props: McpPermissionsCardProps) {
                 <Form {...form}>
                     <form onSubmit={handleSubmitWithAction} className="space-y-4">
                         <div className="flex flex-col gap-1">
-                            <p className="text-muted-foreground px-1 text-sm font-medium">{t('mcpSectionDocker')}</p>
+                            <p className="px-1 font-medium text-muted-foreground text-sm">{t('mcpSectionDocker')}</p>
                             <div className="flex flex-col gap-2">{DOCKER_PERMISSIONS.map(renderRow)}</div>
                         </div>
                         <div className="flex flex-col gap-1">
-                            <p className="text-muted-foreground px-1 text-sm font-medium">{t('mcpSectionNexploy')}</p>
+                            <p className="px-1 font-medium text-muted-foreground text-sm">{t('mcpSectionNexploy')}</p>
                             <div className="flex flex-col gap-2">{NEXPLOY_PERMISSIONS.map(renderRow)}</div>
                         </div>
                     </form>

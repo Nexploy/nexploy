@@ -34,10 +34,10 @@ export function EnvVarItem({
     ) : null;
 
     return (
-        <div className="bg-muted/60 flex items-center justify-between gap-2 rounded-md p-2">
+        <div className="flex items-center justify-between gap-2 rounded-md bg-muted/60 p-2">
             <code className="flex gap-2 text-sm leading-none">
-                <span className="text-primary shrink-0 text-xs font-semibold">{displayEnvVar.key}:</span>
-                <span className="text-xs break-all">
+                <span className="shrink-0 font-semibold text-primary text-xs">{displayEnvVar.key}:</span>
+                <span className="break-all text-xs">
                     {displayEnvVar.value ? (
                         displayEnvVar.value
                     ) : (

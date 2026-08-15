@@ -47,8 +47,8 @@ export function AskAiGroup() {
     return (
         <CommandGroup heading={t('aiAssistant')}>
             <CommandItem {...getItemProps(`ask-ai:${inputValue}`, () => handleAskAI(inputValue))}>
-                <Sparkles className="text-muted-foreground h-4 w-4 shrink-0" />
-                <span className="text-sm font-medium">{t('askAi', { query: inputValue })}</span>
+                <Sparkles className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className="font-medium text-sm">{t('askAi', { query: inputValue })}</span>
             </CommandItem>
         </CommandGroup>
     );

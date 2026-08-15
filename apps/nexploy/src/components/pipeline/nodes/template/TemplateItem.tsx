@@ -27,23 +27,23 @@ export function TemplateItem({
             draggable
             onDragStart={onDragStart}
             onClick={onClick}
-            className="border-border/60 bg-card hover:border-foreground/15 hover:bg-accent/40 group relative flex cursor-grab flex-col gap-2.5 overflow-hidden rounded-lg border py-2 pl-2.5 pr-1.5 transition-colors active:cursor-grabbing active:opacity-60"
+            className="group relative flex cursor-grab flex-col gap-2.5 overflow-hidden rounded-lg border border-border/60 bg-card py-2 pr-1.5 pl-2.5 transition-colors hover:border-foreground/15 hover:bg-accent/40 active:cursor-grabbing active:opacity-60"
         >
-            <span className="bg-primary absolute inset-y-1 left-0 w-0.5 rounded-full opacity-0 transition-opacity group-hover:opacity-100" />
+            <span className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-primary opacity-0 transition-opacity group-hover:opacity-100" />
 
             <div className="flex items-start gap-2.5">
-                <div className="bg-primary/10 text-primary flex size-7 shrink-0 items-center justify-center rounded-md">
+                <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
                     <Icon className="size-3.5" strokeWidth={1.6} />
                 </div>
                 <div className="min-w-0 flex-1 py-px">
-                    <span className="text-foreground block truncate text-xs font-medium">
+                    <span className="block truncate font-medium text-foreground text-xs">
                         {t(`templates.${template.id}.name`)}
                     </span>
-                    <span className="text-muted-foreground mt-0.5 line-clamp-2 text-[11px] leading-snug">
+                    <span className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground leading-snug">
                         {t(`templates.${template.id}.description`)}
                     </span>
                 </div>
-                <div className="bg-muted text-muted-foreground group-hover:text-foreground mt-px flex size-5 shrink-0 items-center justify-center rounded-md opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="mt-px flex size-5 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground opacity-0 transition-opacity group-hover:text-foreground group-hover:opacity-100">
                     <Plus className="size-3" strokeWidth={2} />
                 </div>
             </div>
@@ -64,7 +64,7 @@ export function TemplateItem({
                             >
                                 <NodeIcon className="size-3" strokeWidth={1.5} />
                             </div>
-                            {i < template.nodes.length - 1 && <div className="bg-border h-px w-3" />}
+                            {i < template.nodes.length - 1 && <div className="h-px w-3 bg-border" />}
                         </div>
                     );
                 })}

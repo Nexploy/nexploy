@@ -52,7 +52,7 @@ export function NotificationPreferences() {
 
             <div className={'space-y-2'}>
                 <div className={'flex flex-col'}>
-                    <span className={'text-base font-medium'}>{t('notifications.badges.title')}</span>
+                    <span className={'font-medium text-base'}>{t('notifications.badges.title')}</span>
                     <span className={'text-muted-foreground text-sm'}>{t('notifications.badges.description')}</span>
                 </div>
                 {notificationBadgeCategories.map((category) => (

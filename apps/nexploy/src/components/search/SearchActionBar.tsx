@@ -33,21 +33,21 @@ export function SearchActionBar() {
     if (!primaryLabel) return null;
 
     return (
-        <div className="bg-background/50 flex items-center justify-end gap-3 border-t p-2">
+        <div className="flex items-center justify-end gap-3 border-t bg-background/50 p-2">
             <Button size={'sm'} variant={'outline'} className="flex h-7 items-center pr-1!">
-                <span className="text-muted-foreground text-xs font-medium">{primaryLabel}</span>
+                <span className="font-medium text-muted-foreground text-xs">{primaryLabel}</span>
                 <Kbd>↵</Kbd>
             </Button>
 
             {secondaryAction && (
                 <>
-                    <div className="bg-border h-3.5 w-px" />
+                    <div className="h-3.5 w-px bg-border" />
                     <Button
                         size={'sm'}
                         className="flex h-7 cursor-pointer items-center gap-1.5"
                         onClick={() => secondaryAction.handler()}
                     >
-                        <span className="text-xs font-medium transition-colors">{secondaryAction.label}</span>
+                        <span className="font-medium text-xs transition-colors">{secondaryAction.label}</span>
                         <KbdGroup>
                             {secondaryAction.hotkeys.map((k) => (
                                 <Kbd key={k}>{k}</Kbd>

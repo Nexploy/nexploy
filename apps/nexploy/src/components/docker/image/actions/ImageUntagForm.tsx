@@ -43,7 +43,7 @@ export function ImageUntagForm({ image }: ImageUntagFormProps) {
                     <Label
                         key={repoTag}
                         htmlFor={`untag-${repoTag}`}
-                        className="bg-muted/50 flex cursor-pointer items-center gap-3 rounded-lg border p-3 font-mono text-sm"
+                        className="flex cursor-pointer items-center gap-3 rounded-lg border bg-muted/50 p-3 font-mono text-sm"
                     >
                         <Checkbox
                             id={`untag-${repoTag}`}

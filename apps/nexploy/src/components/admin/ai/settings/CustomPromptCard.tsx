@@ -54,7 +54,7 @@ export function CustomPromptCard({ customSystemPrompt }: CustomPromptCardProps) 
                                     </FormControl>
                                     <div className="flex items-center justify-between">
                                         <FormMessage />
-                                        <p className="text-muted-foreground ml-auto text-xs">{value.length}/4000</p>
+                                        <p className="ml-auto text-muted-foreground text-xs">{value.length}/4000</p>
                                     </div>
                                 </FormItem>
                             )}
