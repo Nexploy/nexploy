@@ -7,7 +7,6 @@ import { PropsWithChildren, ReactNode } from 'react';
 import { AnimatedCircleX } from '@/components/pipeline/nodes/animations/AnimatedCircleX.tsx';
 import { AnimatedBan } from '@/components/pipeline/nodes/animations/AnimatedBan.tsx';
 import { AnimatedAlertCircle } from '@/components/pipeline/nodes/animations/AnimatedAlertCircle.tsx';
-import { AnimatedCheckCircle } from '@/components/pipeline/nodes/animations/AnimatedCheckCircle.tsx';
 import { AnimatedNodeSpinner } from '@/components/pipeline/nodes/animations/AnimatedNodeSpinner.tsx';
 
 interface NodeAnimationProps {
@@ -153,7 +152,6 @@ export function NodeAnimation({
                 isFailed && 'border-destructive',
             )}
         >
-            {data.status === 'completed' && <AnimatedCheckCircle className={cornerClass} />}
             {isFailed && <AnimatedCircleX className={cornerClass} />}
             {data.status === 'cancelled' && <AnimatedBan className={cornerClass} />}
             {data.status === 'not-configured' && <AnimatedAlertCircle className={cornerClass} />}
