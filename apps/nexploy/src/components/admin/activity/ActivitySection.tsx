@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { SortingState } from '@tanstack/react-table';
@@ -20,6 +20,7 @@ export function ActivitySection() {
     const tCommon = useTranslations('common');
 
     const revision = useActivityStore((state) => state.revision);
+    const setStoreSearch = useActivityStore((state) => state.setSearch);
 
     const [search, setSearch] = useState('');
     const [selected, setSelected] = useState<ActivityLogEntry | null>(null);
@@ -28,6 +29,10 @@ export function ActivitySection() {
     const debouncedRevision = useDebouncedValue(revision, 1000);
 
     const columns = useMemo(() => getColumnsActivity(t), [t]);
+
+    useEffect(() => {
+        setStoreSearch(debouncedSearch);
+    }, [debouncedSearch, setStoreSearch]);
 
     return (
         <div className="flex flex-col gap-4">

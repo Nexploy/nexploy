@@ -33,6 +33,8 @@ export interface ActivityLogEntry {
 
 export type ActivityLogPage = PaginatedResult<ActivityLogEntry>;
 
+export type ActivityExportFormat = 'csv' | 'json' | 'ndjson';
+
 export interface ActivityPurgeResult {
     purged: number;
     purgedBefore: string | null;

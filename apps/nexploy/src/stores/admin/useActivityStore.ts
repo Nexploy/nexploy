@@ -10,10 +10,12 @@ export interface ActivityState {
     connectionState: ActivityConnectionState;
     lastUpdate: number | null;
     error: string | null;
+    search: string;
 
     connect: () => void;
     disconnect: () => void;
     refresh: () => void;
+    setSearch: (search: string) => void;
 }
 
 let eventSource: EventSource | null = null;
@@ -105,6 +107,7 @@ export const useActivityStore = create<ActivityState>((set) => {
         connectionState: 'disconnected',
         lastUpdate: null,
         error: null,
+        search: '',
 
         connect: () => {
             if (eventSource) return;
@@ -123,5 +126,7 @@ export const useActivityStore = create<ActivityState>((set) => {
 
             if (!eventSource) openStream();
         },
+
+        setSearch: (search: string) => set({ search }),
     };
 });

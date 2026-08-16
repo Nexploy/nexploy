@@ -651,6 +651,14 @@ exports[`permission matrix > resolves the same verdict for every endpoint and gl
   {
     "admin": "allow",
     "developer": "deny",
+    "endpoint": "GET src/app/api/admin/activity/export/route.ts",
+    "guards": "activity.read",
+    "guest": "deny",
+    "system": "deny",
+  },
+  {
+    "admin": "allow",
+    "developer": "deny",
     "endpoint": "GET src/app/api/admin/activity/route.ts",
     "guards": "activity.read",
     "guest": "deny",

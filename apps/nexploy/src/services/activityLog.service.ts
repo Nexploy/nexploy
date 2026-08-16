@@ -11,6 +11,7 @@ import { publishActivityPurged } from '@/lib/activity/activityBus';
 import { resolveOrderBy, resolvePagination, toPaginatedResult } from '@/lib/pagination';
 
 const DEFAULT_PAGE_SIZE = 50;
+const EXPORT_BATCH_SIZE = 500;
 
 const ACTIVITY_ORDER_BY: Record<string, (direction: SortDirection) => Prisma.ActivityLogOrderByWithRelationInput> = {
     createdAt: (direction) => ({ createdAt: direction }),
@@ -120,6 +121,41 @@ export async function queryActivityLogs(query: ActivityLogQuery): Promise<Activi
     });
 
     return toPaginatedResult(rows.map(toActivityLogEntry), { total, page, pageSize });
+}
+
+export async function countActivityLogs(query: ActivityLogQuery): Promise<number> {
+    return prisma.activityLog.count({ where: buildWhere(query) });
+}
+
+export async function* iterateActivityLogs(
+    query: ActivityLogQuery,
+    limit = Number.POSITIVE_INFINITY,
+): AsyncGenerator<ActivityLogEntry> {
+    const where = buildWhere(query);
+
+    let cursor: string | undefined;
+    let remaining = limit;
+
+    while (remaining > 0) {
+        const take = Math.min(EXPORT_BATCH_SIZE, remaining);
+
+        const rows = await prisma.activityLog.findMany({
+            where,
+            include: ACTIVITY_ACTOR_INCLUDE,
+            orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+            take,
+            ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+        });
+
+        if (rows.length === 0) return;
+
+        for (const row of rows) yield toActivityLogEntry(row);
+
+        remaining -= rows.length;
+        cursor = rows[rows.length - 1]?.id;
+
+        if (rows.length < take) return;
+    }
 }
 
 export async function getActivitySettings(): Promise<ActivitySettings> {

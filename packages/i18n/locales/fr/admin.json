@@ -343,6 +343,37 @@
       "userAgent": "Agent utilisateur",
       "error": "Erreur",
       "metadata": "Charge utile"
+    },
+    "export": {
+      "trigger": "Exporter",
+      "title": "Exporter les journaux d'activité",
+      "description": "Téléchargez l'historique d'audit sous forme de fichier, filtré selon vos besoins.",
+      "format": "Format",
+      "formats": {
+        "csv": "CSV (tableur)",
+        "json": "JSON (tableau)",
+        "ndjson": "NDJSON (une entrée par ligne)"
+      },
+      "period": "Période",
+      "periods": {
+        "24h": "Dernières 24 heures",
+        "7d": "7 derniers jours",
+        "30d": "30 derniers jours",
+        "90d": "90 derniers jours",
+        "all": "Tout l'historique",
+        "custom": "Plage personnalisée"
+      },
+      "from": "Du",
+      "to": "Au",
+      "allStatuses": "Tous les statuts",
+      "allSources": "Toutes les sources",
+      "applySearch": "Appliquer la recherche en cours",
+      "download": "Télécharger",
+      "success": "{count} entrées exportées",
+      "error": "Échec de l'export",
+      "limitNotice": "Les exports sont limités à {limit} entrées.",
+      "gdprNotice": "Chaque export est enregistré dans le journal d'audit.",
+      "privacyNotice": "Les données personnelles sont pseudonymisées : l'auteur devient un pseudonyme stable, l'e-mail est partiellement masqué, l'IP est tronquée à son réseau et le user agent est réduit à sa famille de navigateur et d'OS. Les e-mails, IP et jetons sont nettoyés des champs libres."
     }
   },
   "protection": {

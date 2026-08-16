@@ -6,6 +6,7 @@ import { purgeActivityLogsAction } from '@/actions/admin/activity/purgeActivityL
 import { updateActivityRetentionAction } from '@/actions/admin/activity/updateActivityRetention.action';
 import { updateCleanupSettingsAction } from '@/actions/admin/cleanup/updateCleanupSettings.action';
 import { GET as getActivity } from '@/app/api/admin/activity/route';
+import { GET as exportActivity } from '@/app/api/admin/activity/export/route';
 import { GET as getVersion } from '@/app/api/admin/version/route';
 import { callRoute, FORBIDDEN_MESSAGE, readJson, type ActionResult, type RouteHandler } from '../setup/invoke';
 import { allowOnly, describePermissionMatrix } from './permissionMatrix';
@@ -62,6 +63,15 @@ describePermissionMatrix('admin API routes', [
         kind: 'route',
         invoke: () =>
             callRoute(getActivity as RouteHandler, { url: 'http://localhost:3022/api/admin/activity?page=1' }),
+        expected: allowOnly('admin'),
+    },
+    {
+        name: 'GET /api/admin/activity/export',
+        kind: 'route',
+        invoke: () =>
+            callRoute(exportActivity as RouteHandler, {
+                url: 'http://localhost:3022/api/admin/activity/export?format=csv',
+            }),
         expected: allowOnly('admin'),
     },
     {
@@ -169,5 +179,73 @@ describe('activity log route payloads', () => {
         expect(response.status).toBe(200);
         expect(body.entries.some((entry) => entry.name === 'user.updateRole' && entry.status === 'DENIED')).toBe(true);
         expect(body.entries.every((entry) => entry.status === 'DENIED')).toBe(true);
+    });
+
+    it('streams a csv export of the filtered entries', async () => {
+        await loginAs(world.users.orgMember);
+        await updateUserRole({ userId: world.users.orgOwner.id, role: 'guest' });
+
+        await loginAs(world.users.admin);
+        const response = await callRoute(exportActivity as RouteHandler, {
+            url: 'http://localhost:3022/api/admin/activity/export?format=csv&status=DENIED',
+        });
+        const body = await response.text();
+        const [header, ...rows] = body.replace('﻿', '').trim().split('\r\n');
+
+        expect(response.status).toBe(200);
+        expect(response.headers.get('Content-Type')).toContain('text/csv');
+        expect(response.headers.get('Content-Disposition')).toContain('attachment; filename="nexploy-activity-');
+        expect(header).toContain('id,createdAt,name');
+        expect(rows.some((row) => row.includes('user.updateRole') && row.includes('DENIED'))).toBe(true);
+    });
+
+    it('pseudonymizes the personal data of every exported entry', async () => {
+        await loginAs(world.users.orgMember);
+        await updateUserRole({ userId: world.users.orgOwner.id, role: 'guest' });
+
+        await loginAs(world.users.admin);
+        const response = await callRoute(exportActivity as RouteHandler, {
+            url: 'http://localhost:3022/api/admin/activity/export?format=ndjson&status=DENIED',
+        });
+        const entries = (await response.text())
+            .trim()
+            .split('\n')
+            .map((line) => JSON.parse(line) as { actorId: string | null; actorEmail: string | null });
+
+        expect(entries.length).toBeGreaterThan(0);
+        expect(entries.every((entry) => entry.actorId === null || entry.actorId.startsWith('anon_'))).toBe(true);
+        expect(entries.every((entry) => entry.actorEmail === null || /^.\*\*\*@/.test(entry.actorEmail))).toBe(true);
+        expect(entries.some((entry) => entry.actorEmail === world.users.orgMember.email)).toBe(false);
+    });
+
+    it('records the export itself in the audit trail', async () => {
+        await loginAs(world.users.admin);
+
+        await callRoute(exportActivity as RouteHandler, {
+            url: 'http://localhost:3022/api/admin/activity/export?format=csv',
+        });
+
+        const record = await prisma.activityLog.findFirst({
+            where: { name: 'activity.export' },
+            orderBy: { createdAt: 'desc' },
+        });
+
+        expect(record?.status).toBe('SUCCESS');
+        expect((record?.metadata as { format?: string } | null)?.format).toBe('csv');
+    });
+
+    it('exports one json object per line in ndjson', async () => {
+        await loginAs(world.users.orgMember);
+        await updateUserRole({ userId: world.users.orgOwner.id, role: 'guest' });
+
+        await loginAs(world.users.admin);
+        const response = await callRoute(exportActivity as RouteHandler, {
+            url: 'http://localhost:3022/api/admin/activity/export?format=ndjson&status=DENIED',
+        });
+        const lines = (await response.text()).trim().split('\n');
+        const entries = lines.map((line) => JSON.parse(line) as { status: string; name: string });
+
+        expect(entries.length).toBeGreaterThan(0);
+        expect(entries.every((entry) => entry.status === 'DENIED')).toBe(true);
     });
 });

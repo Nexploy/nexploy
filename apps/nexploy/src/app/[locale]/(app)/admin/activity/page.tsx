@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { ActivitySection } from '@/components/admin/activity/ActivitySection';
+import { ActivityExportDialog } from '@/components/admin/activity/ActivityExportDialog';
 import { SSEProvider } from '@/providers/SSEProviders.tsx';
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default async function ActivityPage() {
                             <p className="text-muted-foreground text-sm">{t('description')}</p>
                         </div>
                     </div>
+                    <ActivityExportDialog />
                 </div>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
                     <div className="flex flex-col gap-5 px-5 pb-5">

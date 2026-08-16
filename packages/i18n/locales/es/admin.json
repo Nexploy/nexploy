@@ -341,6 +341,37 @@
       "userAgent": "Agente de usuario",
       "error": "Error",
       "metadata": "Carga útil"
+    },
+    "export": {
+      "trigger": "Exportar",
+      "title": "Exportar los registros de actividad",
+      "description": "Descarga el historial de auditoría como archivo, filtrado como lo necesites.",
+      "format": "Formato",
+      "formats": {
+        "csv": "CSV (hoja de cálculo)",
+        "json": "JSON (matriz)",
+        "ndjson": "NDJSON (una entrada por línea)"
+      },
+      "period": "Periodo",
+      "periods": {
+        "24h": "Últimas 24 horas",
+        "7d": "Últimos 7 días",
+        "30d": "Últimos 30 días",
+        "90d": "Últimos 90 días",
+        "all": "Todo el historial",
+        "custom": "Rango personalizado"
+      },
+      "from": "Desde",
+      "to": "Hasta",
+      "allStatuses": "Todos los estados",
+      "allSources": "Todas las fuentes",
+      "applySearch": "Aplicar la búsqueda actual",
+      "download": "Descargar",
+      "success": "{count} entradas exportadas",
+      "error": "Error al exportar",
+      "limitNotice": "Las exportaciones están limitadas a {limit} entradas.",
+      "gdprNotice": "Cada exportación se registra en el historial de auditoría.",
+      "privacyNotice": "Los datos personales se seudonimizan: el autor se convierte en un seudónimo estable, el correo se enmascara parcialmente, la IP se trunca a su red y el user agent se reduce a su familia de navegador y sistema operativo. Los correos, las IP y los tokens se limpian de los campos de texto libre."
     }
   },
   "protection": {

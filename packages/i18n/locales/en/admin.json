@@ -343,6 +343,37 @@
       "userAgent": "User agent",
       "error": "Error",
       "metadata": "Payload"
+    },
+    "export": {
+      "trigger": "Export",
+      "title": "Export activity logs",
+      "description": "Download the audit trail as a file, filtered the way you need it.",
+      "format": "Format",
+      "formats": {
+        "csv": "CSV (spreadsheet)",
+        "json": "JSON (array)",
+        "ndjson": "NDJSON (one entry per line)"
+      },
+      "period": "Period",
+      "periods": {
+        "24h": "Last 24 hours",
+        "7d": "Last 7 days",
+        "30d": "Last 30 days",
+        "90d": "Last 90 days",
+        "all": "All time",
+        "custom": "Custom range"
+      },
+      "from": "From",
+      "to": "To",
+      "allStatuses": "All statuses",
+      "allSources": "All sources",
+      "applySearch": "Apply the current search",
+      "download": "Download",
+      "success": "{count} entries exported",
+      "error": "Export failed",
+      "limitNotice": "Exports are capped at {limit} entries.",
+      "gdprNotice": "Every export is recorded in the audit trail.",
+      "privacyNotice": "Personal data is pseudonymized: the author becomes a stable pseudonym, the email is partly masked, the IP is truncated to its network and the user agent is reduced to its browser and OS family. Emails, IPs and tokens are scrubbed from free-text fields."
     }
   },
   "protection": {
