@@ -68,7 +68,13 @@ export function ContainersDropdownActions({ container: { id, name, state } }: Co
     };
 
     return (
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent
+            align="end"
+            onClick={(event) => {
+                event.stopPropagation();
+                event.preventDefault();
+            }}
+        >
             {otherTools.map(renderTool)}
             <DropdownMenuSeparator />
             {migrateOut.blocked ? (

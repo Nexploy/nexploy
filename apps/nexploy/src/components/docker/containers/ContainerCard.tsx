@@ -36,7 +36,15 @@ export function ContainerCard({ container }: ContainerCardProps) {
                     <Can resource="container" action="manage">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="size-8">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="size-8"
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        event.preventDefault();
+                                    }}
+                                >
                                     <MoreVertical />
                                 </Button>
                             </DropdownMenuTrigger>
