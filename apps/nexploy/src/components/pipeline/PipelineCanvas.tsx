@@ -91,7 +91,7 @@ export function PipelineCanvas() {
     const handleAutoLayout = useAutoLayout();
 
     const { nodes, displayNodes, displayEdges, isViewingBuild } = usePipelineDisplay();
-    const { nodes: laidOutNodes } = useBuildViewLayout(displayNodes, displayEdges, isViewingBuild);
+    const laidOutNodes = useBuildViewLayout(displayNodes, displayEdges, isViewingBuild);
     const animatedNodes = useAnimatedNodePositions(laidOutNodes, isViewingBuild);
     const {
         onNodesChange,
