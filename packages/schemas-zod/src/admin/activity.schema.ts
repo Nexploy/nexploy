@@ -32,6 +32,40 @@ export const activityExportQuerySchema = z.object({
 
 export type ActivityExportQueryInput = z.infer<typeof activityExportQuerySchema>;
 
+export const ACTIVITY_EXPORT_ALL_VALUE = 'all';
+
+export const activityExportPeriodSchema = z.enum(['24h', '7d', '30d', '90d', 'all', 'custom']);
+
+export type ActivityExportPeriod = z.infer<typeof activityExportPeriodSchema>;
+
+export const activityExportFormSchema = z
+    .object({
+        format: activityExportFormatSchema,
+        period: activityExportPeriodSchema,
+        customFrom: z.string(),
+        customTo: z.string(),
+        status: z.enum([ACTIVITY_EXPORT_ALL_VALUE, 'SUCCESS', 'FAILURE', 'DENIED']),
+        source: z.enum([ACTIVITY_EXPORT_ALL_VALUE, 'SERVER_ACTION', 'API_ROUTE']),
+        applySearch: z.boolean(),
+    })
+    .superRefine((values, ctx) => {
+        if (values.period !== 'custom') return;
+
+        if (!values.customFrom) {
+            ctx.addIssue({ code: 'custom', path: ['customFrom'], message: 'rangeRequired' });
+        }
+
+        if (!values.customTo) {
+            ctx.addIssue({ code: 'custom', path: ['customTo'], message: 'rangeRequired' });
+        }
+
+        if (values.customFrom && values.customTo && values.customFrom > values.customTo) {
+            ctx.addIssue({ code: 'custom', path: ['customTo'], message: 'rangeInvalid' });
+        }
+    });
+
+export type ActivityExportFormValues = z.infer<typeof activityExportFormSchema>;
+
 export const activityRetentionSchema = z.object({
     retentionDays: z.number().int().min(0).max(3650),
 });

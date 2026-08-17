@@ -371,7 +371,11 @@
       "error": "Esportazione non riuscita",
       "limitNotice": "Le esportazioni sono limitate a {limit} voci.",
       "gdprNotice": "Ogni esportazione viene registrata nel registro di audit.",
-      "privacyNotice": "I dati personali sono pseudonimizzati: l'autore diventa uno pseudonimo stabile, l'e-mail è parzialmente mascherata, l'IP è troncato alla sua rete e lo user agent è ridotto alla famiglia di browser e sistema operativo. E-mail, IP e token vengono ripuliti dai campi di testo libero."
+      "privacyNotice": "I dati personali sono pseudonimizzati: l'autore diventa uno pseudonimo stabile, l'e-mail è parzialmente mascherata, l'IP è troncato alla sua rete e lo user agent è ridotto alla famiglia di browser e sistema operativo. E-mail, IP e token vengono ripuliti dai campi di testo libero.",
+      "validation": {
+        "rangeRequired": "Scegli una data di inizio e una di fine",
+        "rangeInvalid": "La data di fine deve essere successiva a quella di inizio"
+      }
     }
   },
   "protection": {

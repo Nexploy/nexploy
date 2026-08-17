@@ -373,7 +373,11 @@
       "error": "Échec de l'export",
       "limitNotice": "Les exports sont limités à {limit} entrées.",
       "gdprNotice": "Chaque export est enregistré dans le journal d'audit.",
-      "privacyNotice": "Les données personnelles sont pseudonymisées : l'auteur devient un pseudonyme stable, l'e-mail est partiellement masqué, l'IP est tronquée à son réseau et le user agent est réduit à sa famille de navigateur et d'OS. Les e-mails, IP et jetons sont nettoyés des champs libres."
+      "privacyNotice": "Les données personnelles sont pseudonymisées : l'auteur devient un pseudonyme stable, l'e-mail est partiellement masqué, l'IP est tronquée à son réseau et le user agent est réduit à sa famille de navigateur et d'OS. Les e-mails, IP et jetons sont nettoyés des champs libres.",
+      "validation": {
+        "rangeRequired": "Choisissez une date de début et une date de fin",
+        "rangeInvalid": "La date de fin doit être postérieure à la date de début"
+      }
     }
   },
   "protection": {

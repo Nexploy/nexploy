@@ -373,7 +373,11 @@
       "error": "Export failed",
       "limitNotice": "Exports are capped at {limit} entries.",
       "gdprNotice": "Every export is recorded in the audit trail.",
-      "privacyNotice": "Personal data is pseudonymized: the author becomes a stable pseudonym, the email is partly masked, the IP is truncated to its network and the user agent is reduced to its browser and OS family. Emails, IPs and tokens are scrubbed from free-text fields."
+      "privacyNotice": "Personal data is pseudonymized: the author becomes a stable pseudonym, the email is partly masked, the IP is truncated to its network and the user agent is reduced to its browser and OS family. Emails, IPs and tokens are scrubbed from free-text fields.",
+      "validation": {
+        "rangeRequired": "Pick a start and an end date",
+        "rangeInvalid": "The end date must be after the start date"
+      }
     }
   },
   "protection": {
