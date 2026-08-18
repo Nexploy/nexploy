@@ -14,3 +14,7 @@ export function instanceTlsEnabled(): boolean {
 export function getInstanceCertificateId(): string | null {
     return process.env.NEXPLOY_TLS_CERTIFICATE_ID || null;
 }
+
+export function getInstanceFallbackIp(): string | null {
+    return process.env.NEXPLOY_FALLBACK_IP || null;
+}

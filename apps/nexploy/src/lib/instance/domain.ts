@@ -1,11 +1,12 @@
 import type { InstanceTlsMode } from '@workspace/schemas-zod/admin/instance.schema';
-import { getInstanceCertificateId, resolveInstanceTlsMode } from './tlsMode';
+import { getInstanceCertificateId, getInstanceFallbackIp, resolveInstanceTlsMode } from './tlsMode';
 
 export interface InstanceDomainSettings {
     domain: string;
     mode: InstanceTlsMode;
     acmeEmail: string;
     certificateId: string | null;
+    fallbackIp: string | null;
 }
 
 export function getInstanceDomainSettings(): InstanceDomainSettings | null {
@@ -19,5 +20,6 @@ export function getInstanceDomainSettings(): InstanceDomainSettings | null {
         mode: resolveInstanceTlsMode(),
         acmeEmail: process.env.ACME_EMAIL ?? '',
         certificateId: getInstanceCertificateId(),
+        fallbackIp: getInstanceFallbackIp(),
     };
 }

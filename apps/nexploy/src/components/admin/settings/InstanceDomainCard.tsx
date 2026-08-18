@@ -49,6 +49,7 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                     mode: settings.mode,
                     acmeEmail: settings.acmeEmail || undefined,
                     certificateId: settings.certificateId ?? undefined,
+                    fallbackIp: settings.fallbackIp ?? undefined,
                 },
             },
             actionProps: {
@@ -70,7 +71,8 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
         const nextMode = value as InstanceTlsMode;
         form.setValue('mode', nextMode, { shouldDirty: true });
         if (nextMode !== 'custom') form.setValue('certificateId', undefined);
-        form.clearErrors(['domain', 'acmeEmail', 'certificateId']);
+        if (nextMode === 'ip') form.setValue('fallbackIp', undefined);
+        form.clearErrors(['domain', 'acmeEmail', 'certificateId', 'fallbackIp']);
     };
 
     return (
@@ -207,6 +209,30 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                             {mode === 'custom' && (
                                                 <FormDescription>{t('acmeEmailOptionalDescription')}</FormDescription>
                                             )}
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
+
+                            {mode !== 'ip' && (
+                                <FormField
+                                    control={form.control}
+                                    name="fallbackIp"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('fallbackIpLabel')}</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder={t('domainPlaceholderIp')}
+                                                    {...field}
+                                                    value={field.value ?? ''}
+                                                    onChange={(event) =>
+                                                        field.onChange(event.target.value || undefined)
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                            <FormDescription>{t('fallbackIpDescription')}</FormDescription>
                                         </FormItem>
                                     )}
                                 />

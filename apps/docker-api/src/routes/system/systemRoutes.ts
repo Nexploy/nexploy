@@ -26,6 +26,8 @@ import type { TaskKind } from '@workspace/typescript-interface/task';
 
 const app = new Hono();
 
+const IP_FALLBACK_ROUTER = 'traefik.http.routers.nexploy-app-ip';
+
 interface DfImage {
     Size?: number;
     Containers?: number;
@@ -254,7 +256,7 @@ app.post(
 app.post(
     '/instance-domain',
     route({ json: instanceDomainSchema }, async (c) => {
-        const { domain, mode, acmeEmail, certificateId } = c.req.valid('json');
+        const { domain, mode, acmeEmail, certificateId, fallbackIp } = c.req.valid('json');
         const useTls = mode !== 'ip';
 
         const appContainer = defaultDocker.getContainer(NEXPLOY_APP_CONTAINER_NAME);
@@ -283,6 +285,11 @@ app.post(
         } else {
             envMap.delete('NEXPLOY_TLS_CERTIFICATE_ID');
         }
+        if (useTls && fallbackIp) {
+            envMap.set('NEXPLOY_FALLBACK_IP', fallbackIp);
+        } else {
+            envMap.delete('NEXPLOY_FALLBACK_IP');
+        }
         const env = Array.from(envMap.entries()).map(([key, value]) => `${key}=${value}`);
 
         const securityHeadersMiddleware = useTls ? 'security-headers@file' : 'security-headers-no-hsts@file';
@@ -290,6 +297,7 @@ app.post(
         const labels = { ...(appInfo.Config.Labels ?? {}) };
         labels['traefik.http.routers.nexploy-app.rule'] = `Host(\`${domain}\`)`;
         labels['traefik.http.routers.nexploy-app.middlewares'] = `gzip-compress@file,${securityHeadersMiddleware}`;
+        labels['traefik.http.routers.nexploy-app.service'] = 'nexploy-app';
         if (mode === 'letsencrypt') {
             labels['traefik.http.routers.nexploy-app.entrypoints'] = 'websecure';
             labels['traefik.http.routers.nexploy-app.tls'] = 'true';
@@ -305,6 +313,18 @@ app.post(
             delete labels['traefik.http.routers.nexploy-app.tls'];
             delete labels['traefik.http.routers.nexploy-app.tls.certresolver'];
             labels['traefik.http.routers.nexploy-app.priority'] = '1000';
+        }
+
+        for (const key of Object.keys(labels)) {
+            if (key.startsWith(`${IP_FALLBACK_ROUTER}.`)) delete labels[key];
+        }
+
+        if (useTls && fallbackIp) {
+            labels[`${IP_FALLBACK_ROUTER}.rule`] = `Host(\`${fallbackIp}\`)`;
+            labels[`${IP_FALLBACK_ROUTER}.entrypoints`] = 'web';
+            labels[`${IP_FALLBACK_ROUTER}.priority`] = '1000';
+            labels[`${IP_FALLBACK_ROUTER}.middlewares`] = 'gzip-compress@file,security-headers-no-hsts@file';
+            labels[`${IP_FALLBACK_ROUTER}.service`] = 'nexploy-app';
         }
 
         await fs.rm(TRAEFIK_STATIC_CONFIG_PATH, { force: true });

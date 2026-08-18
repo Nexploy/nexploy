@@ -12,11 +12,15 @@ import {
 } from '@/services/organization.service';
 import { permission } from './permissions';
 
-const extraTrustedOrigins = process.env.TRUSTED_ORIGINS
+const configuredTrustedOrigins = process.env.TRUSTED_ORIGINS
     ? process.env.TRUSTED_ORIGINS.split(',')
           .map((o) => o.trim())
           .filter(Boolean)
     : [];
+
+const fallbackIpOrigins = process.env.NEXPLOY_FALLBACK_IP ? [`http://${process.env.NEXPLOY_FALLBACK_IP}`] : [];
+
+const extraTrustedOrigins = [...new Set([...configuredTrustedOrigins, ...fallbackIpOrigins])];
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
