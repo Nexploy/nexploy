@@ -32,6 +32,7 @@ export const sslGroup: ToolGroup = {
                         name: c.name,
                         type: c.type,
                         domain: c.domain,
+                        coveredDomains: c.coveredDomains,
                         expiresAt: c.expiresAt,
                         createdAt: c.createdAt,
                     }));

@@ -9,14 +9,16 @@ export interface InstanceDomainSettings {
     fallbackIp: string | null;
 }
 
+export function getInstanceHost(): string {
+    const publicUrl = process.env.NEXPLOY_URL ?? process.env.BETTER_AUTH_URL ?? '';
+    return publicUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+}
+
 export function getInstanceDomainSettings(): InstanceDomainSettings | null {
     if (!process.env.TRAEFIK_STATIC_CONFIG_PATH) return null;
 
-    const publicUrl = process.env.NEXPLOY_URL ?? process.env.BETTER_AUTH_URL ?? '';
-    const domain = publicUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '');
-
     return {
-        domain,
+        domain: getInstanceHost(),
         mode: resolveInstanceTlsMode(),
         acmeEmail: process.env.ACME_EMAIL ?? '',
         certificateId: getInstanceCertificateId(),

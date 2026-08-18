@@ -10,6 +10,8 @@ import { ActivityRetentionCard } from '@/components/admin/settings/ActivityReten
 import { DockerEngineCard } from '@/components/admin/settings/DockerEngineCard';
 import { getActivitySettings } from '@/services/activityLog.service';
 import { getInstanceDomainSettings } from '@/lib/instance/domain';
+import { getInstanceCallbackTargets } from '@/lib/instance/oauthCallbacks';
+import { OAuthCallbacksCard } from '@/components/admin/settings/OAuthCallbacksCard';
 
 export const metadata: Metadata = {
     title: 'Settings',
@@ -18,10 +20,11 @@ export const metadata: Metadata = {
 
 export default async function SettingsPage() {
     const environmentId = await getCurrentEnvironmentKey();
-    const [t, settings, activitySettings] = await Promise.all([
+    const [t, settings, activitySettings, callbackTargets] = await Promise.all([
         getTranslations('admin.settings'),
         getCleanupSettings(environmentId),
         getActivitySettings(),
+        getInstanceCallbackTargets(),
     ]);
 
     const instanceDomainSettings = getInstanceDomainSettings();
@@ -46,6 +49,7 @@ export default async function SettingsPage() {
                         <CleanupScheduleCard settings={settings} />
                         <ActivityRetentionCard settings={activitySettings} />
                         {instanceDomainSettings && <InstanceDomainCard settings={instanceDomainSettings} />}
+                        <OAuthCallbacksCard targets={callbackTargets} />
                     </div>
                 </ScrollAreaWithShadow>
             </div>

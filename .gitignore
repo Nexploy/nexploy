@@ -42,4 +42,6 @@ infra/traefik/logs/
 infra/traefik/*.generated.yml
 acme.json
 infra/traefik/service/acme.json
+infra/traefik/service/certs/
+infra/traefik/service/nexploy-certs.yml
 *.log

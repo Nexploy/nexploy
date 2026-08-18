@@ -11,6 +11,7 @@ import {
     gitlabCreateRelease,
     gitlabCreateWebhook,
     gitlabDeleteWebhook,
+    gitlabUpdateWebhookUrl,
     gitlabFetchAllPages,
     gitlabRevokeToken,
     gitlabUpdateCommitStatus,
@@ -110,6 +111,12 @@ export const gitlabAdapter: GitProviderAdapter = {
             gitlabCreateWebhook(baseUrl, repo.gitId, webhookUrl, secret),
         );
         return `${result.id}`;
+    },
+
+    async updateWebhookUrl({ token, baseUrl, repo, webhookId, webhookUrl }): Promise<void> {
+        await tokenGitStorage.run(token, async () =>
+            gitlabUpdateWebhookUrl(baseUrl, repo.gitId, webhookId, webhookUrl),
+        );
     },
 
     async deleteWebhook({ token, baseUrl, repo, webhookId }): Promise<void> {

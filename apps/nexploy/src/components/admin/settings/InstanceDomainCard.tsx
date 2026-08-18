@@ -38,6 +38,7 @@ const MODE_LABEL_KEYS: Record<InstanceTlsMode, { title: string; description: str
 export function InstanceDomainCard({ settings }: { settings: InstanceDomainSettings }) {
     const t = useTranslations('admin.settings');
     const [isRestarting, setIsRestarting] = useState(false);
+    const [applyError, setApplyError] = useState<string | null>(null);
 
     const { form, handleSubmitWithAction, action } = useHookFormAction(
         updateInstanceDomainAction,
@@ -53,7 +54,14 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                 },
             },
             actionProps: {
-                onSuccess: () => setIsRestarting(true),
+                onSuccess: ({ data }) => {
+                    if (data && !data.applied) {
+                        setApplyError(data.error);
+                        return;
+                    }
+                    setApplyError(null);
+                    setIsRestarting(true);
+                },
                 onError: () => setIsRestarting(true),
             },
         },
@@ -69,6 +77,7 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
 
     const handleModeChange = (value: string) => {
         const nextMode = value as InstanceTlsMode;
+        setApplyError(null);
         form.setValue('mode', nextMode, { shouldDirty: true });
         if (nextMode !== 'custom') form.setValue('certificateId', undefined);
         if (nextMode === 'ip') form.setValue('fallbackIp', undefined);
@@ -236,6 +245,12 @@ export function InstanceDomainCard({ settings }: { settings: InstanceDomainSetti
                                         </FormItem>
                                     )}
                                 />
+                            )}
+
+                            {applyError && (
+                                <p className="rounded-md border border-destructive/40 bg-destructive/10 p-2 text-destructive text-sm">
+                                    {applyError}
+                                </p>
                             )}
 
                             <p className="text-muted-foreground text-xs">{t('domainWarning')}</p>

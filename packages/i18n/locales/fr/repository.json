@@ -330,7 +330,18 @@
       "addedSuccess": "Certificat ajouté avec succès",
       "addedError": "Échec de l'ajout du certificat",
       "deletedSuccess": "Certificat supprimé avec succès",
-      "deletedError": "Échec de la suppression du certificat"
+      "deletedError": "Échec de la suppression du certificat",
+      "edit": "Modifier",
+      "editCustom": "Modifier le certificat personnalisé",
+      "updatedSuccess": "Certificat mis à jour avec succès",
+      "covers": "Couvre :",
+      "wildcardHint": "Joker — couvre tous les sous-domaines de premier niveau",
+      "domainIsLabelOnly": "Simple libellé d'affichage. Les hôtes réellement protégés sont lus dans le certificat lui-même.",
+      "detectedHosts": "Hôtes détectés dans le certificat : {domains}",
+      "currentCoverage": "Hôtes couverts par le certificat actuel",
+      "replaceCertificate": "Remplacer le certificat (PEM)",
+      "replacePrivateKey": "Remplacer la clé privée (PEM)",
+      "replaceKeepBlank": "Laisse les deux champs vides pour conserver le certificat et la clé actuels."
     }
   },
   "pipeline": {

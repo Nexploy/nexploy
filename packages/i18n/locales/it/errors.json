@@ -66,9 +66,11 @@
     "fetchFailed": "Recupero dei certificati SSL non riuscito",
     "notFound": "Il certificato selezionato non esiste più",
     "notCustom": "Qui è utilizzabile solo un certificato personalizzato",
-    "domainMismatch": "Il certificato selezionato non copre questo dominio",
+    "domainMismatch": "Il certificato selezionato non copre {host} — copre: {domains}",
     "filesMissing": "I file del certificato non sono presenti sul disco: ricarica il certificato",
-    "inUseByInstance": "Questo certificato è attualmente usato dal dominio dell'istanza Nexploy"
+    "inUseByInstance": "Questo certificato è attualmente usato dal dominio dell'istanza Nexploy",
+    "notEditable": "I certificati Let's Encrypt sono gestiti automaticamente e non possono essere modificati",
+    "instanceHostNotCovered": "Il nuovo certificato non copre {host}, il dominio dell'istanza Nexploy che protegge attualmente — copre: {domains}"
   },
   "dns": {
     "saveCredentialFailed": "Errore DNS durante il salvataggio della credenziale",

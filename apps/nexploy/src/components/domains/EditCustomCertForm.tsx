@@ -2,7 +2,7 @@
 
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createCustomCertSchema } from '@workspace/schemas-zod/repository/sslCertificate.schema';
+import { updateCustomCertSchema } from '@workspace/schemas-zod/repository/sslCertificate.schema';
 import {
     Form,
     FormControl,
@@ -15,33 +15,41 @@ import {
 import { Input } from '@workspace/ui/components/input';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Button } from '@workspace/ui/components/button';
-import { createCustomCert } from '@/actions/repository/sslCertificate/createCustomCert.action';
+import { Badge } from '@workspace/ui/components/badge';
+import { Asterisk } from 'lucide-react';
+import { updateCustomCert } from '@/actions/repository/sslCertificate/updateCustomCert.action';
+import { isWildcardDomain, resolveCoveredDomains, type SSLCertRow } from '@/components/ssl/ColumnsSSL';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
-interface CustomCertFormProps {
+interface EditCustomCertFormProps {
+    certificate: SSLCertRow;
     onClose: () => void;
 }
 
-export function CustomCertForm({ onClose }: CustomCertFormProps) {
+export function EditCustomCertForm({ certificate, onClose }: EditCustomCertFormProps) {
     const t = useTranslations('repository.settings.ssl');
     const router = useRouter();
 
+    const currentCoveredDomains = resolveCoveredDomains(certificate);
+
     const { form, handleSubmitWithAction, action } = useHookFormAction(
-        createCustomCert,
-        zodResolver(createCustomCertSchema),
+        updateCustomCert,
+        zodResolver(updateCustomCertSchema),
         {
-            formProps: { defaultValues: { name: '', domain: '', certificate: '', privateKey: '' } },
+            formProps: {
+                defaultValues: {
+                    id: certificate.id,
+                    name: certificate.name,
+                    domain: certificate.domain,
+                    certificate: '',
+                    privateKey: '',
+                },
+            },
             actionProps: {
-                onSuccess: ({ data }) => {
-                    const detectedDomains = data?.coveredDomains ?? [];
-                    toast.success(
-                        t('addedSuccess'),
-                        detectedDomains.length > 0
-                            ? { description: t('detectedHosts', { domains: detectedDomains.join(', ') }) }
-                            : undefined,
-                    );
+                onSuccess: () => {
+                    toast.success(t('updatedSuccess'));
                     router.refresh();
                     onClose();
                 },
@@ -83,12 +91,38 @@ export function CustomCertForm({ onClose }: CustomCertFormProps) {
                         )}
                     />
                 </div>
+
+                {currentCoveredDomains.length > 0 && (
+                    <div className="space-y-2 rounded-lg border p-3">
+                        <p className="font-medium text-sm">{t('currentCoverage')}</p>
+                        <div className="flex flex-wrap gap-1">
+                            {currentCoveredDomains.map((coveredDomain) =>
+                                isWildcardDomain(coveredDomain) ? (
+                                    <Badge
+                                        key={coveredDomain}
+                                        variant="outline"
+                                        title={t('wildcardHint')}
+                                        className="border-amber-500/50 bg-amber-500/10 font-mono text-[11px] text-amber-600"
+                                    >
+                                        <Asterisk className="mr-0.5 size-3" />
+                                        {coveredDomain}
+                                    </Badge>
+                                ) : (
+                                    <Badge key={coveredDomain} variant="secondary" className="font-mono text-[11px]">
+                                        {coveredDomain}
+                                    </Badge>
+                                ),
+                            )}
+                        </div>
+                    </div>
+                )}
+
                 <FormField
                     control={form.control}
                     name="certificate"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('certificate')}</FormLabel>
+                            <FormLabel>{t('replaceCertificate')}</FormLabel>
                             <FormControl>
                                 <Textarea
                                     {...field}
@@ -96,6 +130,7 @@ export function CustomCertForm({ onClose }: CustomCertFormProps) {
                                     className="h-32 font-mono text-xs"
                                 />
                             </FormControl>
+                            <FormDescription>{t('replaceKeepBlank')}</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -105,7 +140,7 @@ export function CustomCertForm({ onClose }: CustomCertFormProps) {
                     name="privateKey"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('privateKey')}</FormLabel>
+                            <FormLabel>{t('replacePrivateKey')}</FormLabel>
                             <FormControl>
                                 <Textarea
                                     {...field}

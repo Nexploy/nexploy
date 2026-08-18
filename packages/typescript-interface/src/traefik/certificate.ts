@@ -3,4 +3,5 @@ export interface CertOption {
     name: string;
     type: 'LETS_ENCRYPT' | 'CUSTOM';
     domain: string;
+    coveredDomains: string[];
 }

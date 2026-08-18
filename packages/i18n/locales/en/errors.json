@@ -66,9 +66,11 @@
     "fetchFailed": "Failed to fetch SSL certificates",
     "notFound": "The selected certificate no longer exists",
     "notCustom": "Only a custom certificate can be used here",
-    "domainMismatch": "The selected certificate does not cover this domain",
+    "domainMismatch": "The selected certificate does not cover {host} — it covers: {domains}",
     "filesMissing": "The certificate files are missing on disk — re-upload the certificate",
-    "inUseByInstance": "This certificate is currently used by the Nexploy instance domain"
+    "inUseByInstance": "This certificate is currently used by the Nexploy instance domain",
+    "notEditable": "Let's Encrypt certificates are managed automatically and cannot be edited",
+    "instanceHostNotCovered": "The new certificate does not cover {host}, the Nexploy instance domain it currently secures — it covers: {domains}"
   },
   "dns": {
     "saveCredentialFailed": "DNS error saving credential",

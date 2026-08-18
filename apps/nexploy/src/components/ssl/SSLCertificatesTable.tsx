@@ -14,6 +14,8 @@ import { getColumnsSSL, SSLCertRow } from '@/components/ssl/ColumnsSSL';
 import { useTranslations } from 'next-intl';
 import { Input } from '@workspace/ui/components/input';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { EditCustomCertForm } from '@/components/domains/EditCustomCertForm';
 import { deleteSslCert } from '@/actions/repository/sslCertificate/deleteSslCert.action';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -27,8 +29,12 @@ interface SSLCertificatesTableProps {
 
 const globalFilterFn: FilterFn<SSLCertRow> = (row, _, value) => {
     const search = value.toLowerCase();
-    const { name, domain } = row.original;
-    return name.toLowerCase().includes(search) || domain.toLowerCase().includes(search);
+    const { name, domain, coveredDomains } = row.original;
+    return (
+        name.toLowerCase().includes(search) ||
+        domain.toLowerCase().includes(search) ||
+        coveredDomains.some((coveredDomain) => coveredDomain.toLowerCase().includes(search))
+    );
 };
 
 export function SSLCertificatesTable({ certificates }: SSLCertificatesTableProps) {
@@ -40,6 +46,14 @@ export function SSLCertificatesTable({ certificates }: SSLCertificatesTableProps
     const tCommon = useTranslations('common');
     const router = useRouter();
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const { openDialog, closeDialog } = useConfirmationDialogStore();
+
+    const handleEdit = (cert: SSLCertRow) => {
+        openDialog({
+            title: tSsl('editCustom'),
+            content: <EditCustomCertForm certificate={cert} onClose={closeDialog} />,
+        });
+    };
 
     const handleDelete = (cert: SSLCertRow) => {
         openAlertDialog({
@@ -62,6 +76,7 @@ export function SSLCertificatesTable({ certificates }: SSLCertificatesTableProps
     const table = useReactTable({
         data: certificates,
         columns: getColumnsSSL((key, values) => tSsl(key, values), {
+            onEdit: handleEdit,
             onDelete: handleDelete,
         }),
         getRowId: (row) => row.id,

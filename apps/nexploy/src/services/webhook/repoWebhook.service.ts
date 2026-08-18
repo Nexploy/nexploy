@@ -22,6 +22,10 @@ const repoWebhookSelect = {
     },
 } as const;
 
+export function buildRepositoryWebhookUrl(baseUrl: string, webhookPath: string, repositoryId: string): string {
+    return `${baseUrl}${webhookPath}?repositoryId=${repositoryId}`;
+}
+
 export async function setupRepositoryWebhook(
     repositoryId: string,
     baseUrl: string,
@@ -49,7 +53,7 @@ export async function setupRepositoryWebhook(
     }
 
     const adapter = getGitAdapter(repo.gitProvider);
-    const webhookUrl = `${baseUrl}${adapter.webhookPath}?repositoryId=${repositoryId}`;
+    const webhookUrl = buildRepositoryWebhookUrl(baseUrl, adapter.webhookPath, repositoryId);
     const secret = crypto.randomUUID();
 
     try {

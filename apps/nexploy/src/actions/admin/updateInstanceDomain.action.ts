@@ -5,10 +5,37 @@ import { instanceDomainSchema } from '@workspace/schemas-zod/admin/instance.sche
 import { kyDocker } from '@/lib/api/kyDocker';
 import { setToastServer } from '@/lib/toastServer';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
-import { certificateCoversHost, customCertFilesExist, regenerateCustomCertsConfig } from '@/lib/traefik/customCerts';
+import {
+    certificateHostsCoverHost,
+    customCertFilesExist,
+    readCustomCertHosts,
+    regenerateCustomCertsConfig,
+} from '@/lib/traefik/customCerts';
+import { recordActivity } from '@/lib/activity/recordActivity';
+import { propagateInstanceUrlToWebhooks } from '@/services/webhook/instanceWebhooks.service';
 import { prisma } from '../../../prisma/prisma';
 
-async function prepareCustomCertificate(certificateId: string, domain: string): Promise<void> {
+export type InstanceDomainResult = { applied: true } | { applied: false; error: string };
+
+async function propagateWebhooks(publicUrl: string): Promise<void> {
+    try {
+        const summary = await propagateInstanceUrlToWebhooks(publicUrl);
+
+        await recordActivity({
+            name: 'admin.propagateInstanceUrl',
+            source: 'SERVER_ACTION',
+            status: summary.failures.length > 0 || summary.gitHubApp === 'failed' ? 'FAILURE' : 'SUCCESS',
+            input: { publicUrl, ...summary },
+            errorMessage:
+                summary.failures.map((failure) => `${failure.repositoryName}: ${failure.error}`).join(' | ') ||
+                summary.gitHubAppError,
+        });
+    } catch (error) {
+        console.error('Failed to propagate the new instance URL to the Git webhooks:', error);
+    }
+}
+
+async function checkCustomCertificate(certificateId: string, domain: string): Promise<string | null> {
     const t = await getErrorTranslator();
 
     const certificate = await prisma.sslCertificate.findUnique({
@@ -16,30 +43,38 @@ async function prepareCustomCertificate(certificateId: string, domain: string): 
         select: { id: true, type: true, domain: true },
     });
 
-    if (!certificate) throw new Error(t('sslCertificate.notFound'));
-    if (certificate.type !== 'CUSTOM') throw new Error(t('sslCertificate.notCustom'));
-    if (!certificateCoversHost(certificate.domain, domain)) throw new Error(t('sslCertificate.domainMismatch'));
+    if (!certificate) return t('sslCertificate.notFound');
+    if (certificate.type !== 'CUSTOM') return t('sslCertificate.notCustom');
 
     await regenerateCustomCertsConfig();
 
-    if (!(await customCertFilesExist(certificate.id))) throw new Error(t('sslCertificate.filesMissing'));
+    if (!(await customCertFilesExist(certificate.id))) return t('sslCertificate.filesMissing');
+
+    const parsedHosts = await readCustomCertHosts(certificate.id);
+    const coveredHosts = parsedHosts.length > 0 ? parsedHosts : [certificate.domain];
+
+    if (!certificateHostsCoverHost(coveredHosts, domain)) {
+        return t('sslCertificate.domainMismatch', { host: domain, domains: coveredHosts.join(', ') });
+    }
+
+    return null;
 }
 
 export const updateInstanceDomainAction = authActionServer
     .metadata({ name: 'admin.updateInstanceDomain' })
     .use(requirePermission('traefik', 'manage'))
     .inputSchema(instanceDomainSchema)
-    .action(async ({ parsedInput }) => {
+    .action(async ({ parsedInput }): Promise<InstanceDomainResult> => {
         if (parsedInput.mode === 'custom' && parsedInput.certificateId) {
-            try {
-                await prepareCustomCertificate(parsedInput.certificateId, parsedInput.domain);
-            } catch (error) {
-                if (error instanceof Error) {
-                    await setToastServer({ type: 'error', message: error.message });
-                }
-                throw error;
+            const error = await checkCustomCertificate(parsedInput.certificateId, parsedInput.domain);
+            if (error) {
+                await setToastServer({ type: 'error', message: error });
+                return { applied: false, error };
             }
         }
+
+        const publicUrl = `${parsedInput.mode === 'ip' ? 'http' : 'https'}://${parsedInput.domain}`;
+        await propagateWebhooks(publicUrl);
 
         try {
             await kyDocker.post('system/instance-domain', { json: parsedInput, timeout: 10_000 }).json();
@@ -51,4 +86,6 @@ export const updateInstanceDomainAction = authActionServer
             type: 'info',
             message: 'Nexploy is restarting with the new domain settings — this takes a few seconds.',
         });
+
+        return { applied: true };
     });

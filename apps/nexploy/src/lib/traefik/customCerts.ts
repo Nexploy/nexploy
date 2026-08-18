@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'yaml';
@@ -26,6 +27,31 @@ export async function customCertFilesExist(certificateId: string): Promise<boole
     }
 }
 
+export function parseCertificateHosts(certificatePem: string): string[] {
+    const certificate = new crypto.X509Certificate(certificatePem);
+
+    const subjectAltNames = (certificate.subjectAltName ?? '')
+        .split(',')
+        .map((entry) => entry.trim())
+        .filter((entry) => entry.startsWith('DNS:') || entry.startsWith('IP Address:'))
+        .map((entry) => entry.slice(entry.indexOf(':') + 1).trim())
+        .filter(Boolean);
+
+    if (subjectAltNames.length > 0) return subjectAltNames;
+
+    const commonName = /CN=([^\n,]+)/.exec(certificate.subject ?? '')?.[1]?.trim();
+    return commonName ? [commonName] : [];
+}
+
+export async function readCustomCertHosts(certificateId: string): Promise<string[]> {
+    const { certFile } = getCustomCertPaths(certificateId);
+    try {
+        return parseCertificateHosts(await fs.readFile(certFile, 'utf-8'));
+    } catch {
+        return [];
+    }
+}
+
 export function certificateCoversHost(certificateDomain: string, host: string): boolean {
     const certDomain = certificateDomain.trim().toLowerCase();
     const target = host.trim().toLowerCase();
@@ -40,6 +66,24 @@ export function certificateCoversHost(certificateDomain: string, host: string): 
     }
 
     return false;
+}
+
+export function certificateHostsCoverHost(certificateHosts: string[], host: string): boolean {
+    return certificateHosts.some((certificateHost) => certificateCoversHost(certificateHost, host));
+}
+
+export async function backfillCustomCertCoveredDomains(): Promise<void> {
+    const staleCerts = await prisma.sslCertificate.findMany({
+        where: { type: 'CUSTOM', coveredDomains: { isEmpty: true } },
+        select: { id: true },
+    });
+
+    for (const cert of staleCerts) {
+        const hosts = await readCustomCertHosts(cert.id);
+        if (hosts.length === 0) continue;
+
+        await prisma.sslCertificate.update({ where: { id: cert.id }, data: { coveredDomains: hosts } }).catch(() => {});
+    }
 }
 
 export async function regenerateCustomCertsConfig(): Promise<void> {

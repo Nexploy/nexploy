@@ -103,6 +103,14 @@ export interface GitProviderAdapter {
         secret: string;
     }): Promise<string>;
 
+    updateWebhookUrl?(args: {
+        token: GitProviderToken;
+        baseUrl: string;
+        repo: WebhookRepoRef;
+        webhookId: string;
+        webhookUrl: string;
+    }): Promise<void>;
+
     deleteWebhook(args: {
         token: GitProviderToken;
         baseUrl: string;

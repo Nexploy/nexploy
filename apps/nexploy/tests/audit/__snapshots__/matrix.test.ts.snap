@@ -2067,6 +2067,14 @@ exports[`permission matrix > resolves the same verdict for every endpoint and gl
   {
     "admin": "allow",
     "developer": "allow",
+    "endpoint": "src/actions/repository/sslCertificate/updateCustomCert.action.ts#updateCustomCert",
+    "guards": "ssl.manage",
+    "guest": "deny",
+    "system": "deny",
+  },
+  {
+    "admin": "allow",
+    "developer": "allow",
     "endpoint": "src/actions/repository/stages/deleteStage.action.ts#deleteStageAction",
     "guards": "stage.manage",
     "guest": "deny",

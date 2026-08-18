@@ -137,6 +137,36 @@ export async function githubCreateWebhook(
         .json<{ id: number }>();
 }
 
+export async function githubUpdateWebhookUrl(
+    owner: string,
+    repo: string,
+    webhookId: string,
+    webhookUrl: string,
+): Promise<void> {
+    await kyGithubApi
+        .patch(`repos/${owner}/${repo}/hooks/${webhookId}/config`, {
+            headers: {
+                Accept: 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28',
+            },
+            json: { url: webhookUrl, content_type: 'json', insecure_ssl: '0' },
+        })
+        .json();
+}
+
+export async function githubUpdateAppWebhookUrl(appJwt: string, webhookUrl: string): Promise<void> {
+    await kyGithubApi
+        .patch('app/hook/config', {
+            token: appJwt,
+            headers: {
+                Accept: 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28',
+            },
+            json: { url: webhookUrl },
+        } as KyGithubOptions)
+        .json();
+}
+
 export async function githubDeleteWebhook(owner: string, repo: string, webhookId: string): Promise<void> {
     await kyGithubApi.delete(`repos/${owner}/${repo}/hooks/${webhookId}`).json();
 }

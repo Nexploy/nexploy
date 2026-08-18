@@ -77,6 +77,25 @@ export async function gitlabCreateWebhook(
         .json<{ id: number }>();
 }
 
+export async function gitlabUpdateWebhookUrl(
+    baseUrl: string,
+    projectId: string,
+    hookId: string,
+    webhookUrl: string,
+): Promise<void> {
+    await kyGitlab(baseUrl)
+        .put(`v4/projects/${encodeURIComponent(projectId)}/hooks/${hookId}`, {
+            json: {
+                url: webhookUrl,
+                push_events: true,
+                tag_push_events: true,
+                merge_requests_events: true,
+                enable_ssl_verification: true,
+            },
+        })
+        .json();
+}
+
 export async function gitlabDeleteWebhook(baseUrl: string, projectId: string, hookId: string): Promise<void> {
     await kyGitlab(baseUrl)
         .delete(`v4/projects/${encodeURIComponent(projectId)}/hooks/${hookId}`)

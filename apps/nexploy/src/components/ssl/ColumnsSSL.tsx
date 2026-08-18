@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import dayjs from 'dayjs';
-import { ArrowUpDown, MoreHorizontal, RefreshCw, ShieldCheck, Trash2 } from 'lucide-react';
+import { ArrowUpDown, Asterisk, MoreHorizontal, Pencil, RefreshCw, ShieldCheck, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
 import {
@@ -17,17 +17,27 @@ export interface SSLCertRow {
     id: string;
     name: string;
     domain: string;
+    coveredDomains: string[];
     type: 'LETS_ENCRYPT' | 'CUSTOM';
     expiresAt: Date | null;
     createdAt: Date;
 }
 
 interface ColumnsOptions {
+    onEdit: (cert: SSLCertRow) => void;
     onDelete: (cert: SSLCertRow) => void;
 }
 
+export function resolveCoveredDomains(cert: Pick<SSLCertRow, 'domain' | 'coveredDomains'>): string[] {
+    return cert.coveredDomains.length > 0 ? cert.coveredDomains : [cert.domain].filter(Boolean);
+}
+
+export function isWildcardDomain(domain: string): boolean {
+    return domain.startsWith('*.');
+}
+
 export const getColumnsSSL = (tSsl: TranslationFunction, options: ColumnsOptions): ColumnDef<SSLCertRow>[] => {
-    const { onDelete } = options;
+    const { onEdit, onDelete } = options;
 
     return [
         {
@@ -40,10 +50,37 @@ export const getColumnsSSL = (tSsl: TranslationFunction, options: ColumnsOptions
             ),
             cell: ({ row }) => {
                 const cert = row.original;
+                const coveredDomains = resolveCoveredDomains(cert);
                 return (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col gap-1">
                         <span className="font-medium">{cert.name}</span>
                         <span className="font-mono text-muted-foreground text-xs">{cert.domain}</span>
+                        {coveredDomains.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-1">
+                                <span className="text-muted-foreground text-xs">{tSsl('covers')}</span>
+                                {coveredDomains.map((coveredDomain) =>
+                                    isWildcardDomain(coveredDomain) ? (
+                                        <Badge
+                                            key={coveredDomain}
+                                            variant="outline"
+                                            title={tSsl('wildcardHint')}
+                                            className="border-amber-500/50 bg-amber-500/10 font-mono text-[11px] text-amber-600"
+                                        >
+                                            <Asterisk className="mr-0.5 size-3" />
+                                            {coveredDomain}
+                                        </Badge>
+                                    ) : (
+                                        <Badge
+                                            key={coveredDomain}
+                                            variant="secondary"
+                                            className="font-mono text-[11px]"
+                                        >
+                                            {coveredDomain}
+                                        </Badge>
+                                    ),
+                                )}
+                            </div>
+                        )}
                     </div>
                 );
             },
@@ -117,6 +154,7 @@ export const getColumnsSSL = (tSsl: TranslationFunction, options: ColumnsOptions
         },
         {
             id: 'actions',
+            size: 50,
             cell: ({ row }) => {
                 const cert = row.original;
                 return (
@@ -127,6 +165,12 @@ export const getColumnsSSL = (tSsl: TranslationFunction, options: ColumnsOptions
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                            {cert.type === 'CUSTOM' && (
+                                <DropdownMenuItem onClick={() => onEdit(cert)}>
+                                    <Pencil />
+                                    {tSsl('edit')}
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem variant={'destructive'} onClick={() => onDelete(cert)}>
                                 <Trash2 />
                                 {tSsl('delete')}

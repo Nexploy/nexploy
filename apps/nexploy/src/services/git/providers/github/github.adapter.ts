@@ -13,6 +13,7 @@ import {
     githubCreateRelease,
     githubCreateWebhook,
     githubDeleteWebhook,
+    githubUpdateWebhookUrl,
     githubExchangeCodeForToken,
     githubGetAuthenticatedUser,
     githubGetCommit,
@@ -111,6 +112,12 @@ export const githubAdapter: GitProviderAdapter = {
             githubCreateWebhook(owner, repoName, webhookUrl, secret),
         );
         return `${result.id}`;
+    },
+
+    async updateWebhookUrl({ token, repo, webhookId, webhookUrl }): Promise<void> {
+        const [owner, repoName] = repo.fullName.split('/');
+        if (!owner || !repoName) throw new Error(`Invalid repository name: ${repo.fullName}`);
+        await tokenGitStorage.run(token, async () => githubUpdateWebhookUrl(owner, repoName, webhookId, webhookUrl));
     },
 
     async deleteWebhook({ token, repo, webhookId }): Promise<void> {

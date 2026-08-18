@@ -119,6 +119,23 @@ export async function giteaCreateWebhook(
         .json<{ id: number }>();
 }
 
+export async function giteaUpdateWebhookUrl(
+    baseUrl: string,
+    owner: string,
+    repo: string,
+    hookId: string,
+    webhookUrl: string,
+): Promise<void> {
+    await kyGitea(baseUrl)
+        .patch(`repos/${owner}/${repo}/hooks/${hookId}`, {
+            json: {
+                active: true,
+                config: { url: webhookUrl, content_type: 'json' },
+            },
+        })
+        .json();
+}
+
 export async function giteaDeleteWebhook(baseUrl: string, owner: string, repo: string, hookId: string): Promise<void> {
     await kyGitea(baseUrl).delete(`repos/${owner}/${repo}/hooks/${hookId}`).json();
 }

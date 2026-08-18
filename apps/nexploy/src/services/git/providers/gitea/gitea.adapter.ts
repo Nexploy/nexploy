@@ -13,6 +13,7 @@ import {
     giteaCreateRelease,
     giteaCreateWebhook,
     giteaDeleteWebhook,
+    giteaUpdateWebhookUrl,
     giteaExchangeCodeForToken,
     giteaGetAuthenticatedUser,
     giteaGetCommits,
@@ -93,6 +94,14 @@ export const giteaAdapter: GitProviderAdapter = {
             giteaCreateWebhook(baseUrl, owner, repoName, webhookUrl, secret),
         );
         return `${result.id}`;
+    },
+
+    async updateWebhookUrl({ token, baseUrl, repo, webhookId, webhookUrl }): Promise<void> {
+        const [owner, repoName] = repo.fullName.split('/');
+        if (!owner || !repoName) throw new Error(`Invalid repository name: ${repo.fullName}`);
+        await tokenGitStorage.run(token, async () =>
+            giteaUpdateWebhookUrl(baseUrl, owner, repoName, webhookId, webhookUrl),
+        );
     },
 
     async deleteWebhook({ token, baseUrl, repo, webhookId }): Promise<void> {

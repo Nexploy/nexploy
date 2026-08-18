@@ -330,7 +330,18 @@
       "addedSuccess": "Certificado añadido correctamente",
       "addedError": "No se ha podido añadir el certificado",
       "deletedSuccess": "Certificado eliminado correctamente",
-      "deletedError": "No se ha podido eliminar el certificado"
+      "deletedError": "No se ha podido eliminar el certificado",
+      "edit": "Editar",
+      "editCustom": "Editar certificado personalizado",
+      "updatedSuccess": "Certificado actualizado correctamente",
+      "covers": "Cubre:",
+      "wildcardHint": "Comodín: cubre todos los subdominios de un solo nivel",
+      "domainIsLabelOnly": "Solo es una etiqueta de visualización. Los hosts realmente protegidos se leen del propio certificado.",
+      "detectedHosts": "Hosts detectados en el certificado: {domains}",
+      "currentCoverage": "Hosts cubiertos por el certificado actual",
+      "replaceCertificate": "Sustituir el certificado (PEM)",
+      "replacePrivateKey": "Sustituir la clave privada (PEM)",
+      "replaceKeepBlank": "Deja ambos campos vacíos para conservar el certificado y la clave actuales."
     }
   },
   "pipeline": {

@@ -11,6 +11,8 @@ model SslCertificate {
   email       String
   expiresAt   DateTime?
 
+  coveredDomains String[] @default([])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

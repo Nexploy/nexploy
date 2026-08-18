@@ -14,6 +14,7 @@ import { onDeployDockerfileVersion } from '@/actions/repository/versions/deployD
 import { createCustomCert } from '@/actions/repository/sslCertificate/createCustomCert.action';
 import { createLetsEncryptCert } from '@/actions/repository/sslCertificate/createLetsEncryptCert.action';
 import { deleteSslCert } from '@/actions/repository/sslCertificate/deleteSslCert.action';
+import { updateCustomCert } from '@/actions/repository/sslCertificate/updateCustomCert.action';
 import { onGetTokenBuildIdAction } from '@/actions/inngest/tokenBuildId.action';
 import { onGetTokenBuildTasksAction } from '@/actions/inngest/tokenBuildTasks.action';
 import { addDomain } from '@/actions/domains/addDomain.action';
@@ -241,6 +242,17 @@ describePermissionMatrix('SSL and domain endpoints', [
                 domain: 'app.example.test',
                 email: 'ops@example.test',
                 agreedToTos: true,
+            }),
+        expected: DEVELOPER_AND_ABOVE,
+    },
+    {
+        name: 'updateCustomCert',
+        kind: 'action',
+        invoke: () =>
+            updateCustomCert({
+                id: 'certificate-1',
+                name: 'custom renamed',
+                domain: 'app.example.test',
             }),
         expected: DEVELOPER_AND_ABOVE,
     },

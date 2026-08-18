@@ -66,9 +66,11 @@
     "fetchFailed": "No se han podido obtener los certificados SSL",
     "notFound": "El certificado seleccionado ya no existe",
     "notCustom": "Aquí solo se puede usar un certificado personalizado",
-    "domainMismatch": "El certificado seleccionado no cubre este dominio",
+    "domainMismatch": "El certificado seleccionado no cubre {host}; cubre: {domains}",
     "filesMissing": "Faltan los archivos del certificado en el disco: vuelve a subir el certificado",
-    "inUseByInstance": "Este certificado lo está usando el dominio de la instancia de Nexploy"
+    "inUseByInstance": "Este certificado lo está usando el dominio de la instancia de Nexploy",
+    "notEditable": "Los certificados de Let's Encrypt se gestionan automáticamente y no se pueden editar",
+    "instanceHostNotCovered": "El nuevo certificado no cubre {host}, el dominio de la instancia de Nexploy que protege actualmente; cubre: {domains}"
   },
   "dns": {
     "saveCredentialFailed": "Error DNS al guardar la credencial",

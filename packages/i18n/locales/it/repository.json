@@ -330,7 +330,18 @@
       "addedSuccess": "Certificato aggiunto con successo",
       "addedError": "Aggiunta del certificato non riuscita",
       "deletedSuccess": "Certificato eliminato con successo",
-      "deletedError": "Eliminazione del certificato non riuscita"
+      "deletedError": "Eliminazione del certificato non riuscita",
+      "edit": "Modifica",
+      "editCustom": "Modifica certificato personalizzato",
+      "updatedSuccess": "Certificato aggiornato con successo",
+      "covers": "Copre:",
+      "wildcardHint": "Wildcard: copre tutti i sottodomini di primo livello",
+      "domainIsLabelOnly": "È solo un'etichetta di visualizzazione. Gli host realmente protetti vengono letti dal certificato stesso.",
+      "detectedHosts": "Host rilevati nel certificato: {domains}",
+      "currentCoverage": "Host coperti dal certificato attuale",
+      "replaceCertificate": "Sostituisci il certificato (PEM)",
+      "replacePrivateKey": "Sostituisci la chiave privata (PEM)",
+      "replaceKeepBlank": "Lascia entrambi i campi vuoti per mantenere il certificato e la chiave attuali."
     }
   },
   "pipeline": {
