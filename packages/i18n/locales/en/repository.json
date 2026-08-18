@@ -336,7 +336,7 @@
       "updatedSuccess": "Certificate updated successfully",
       "covers": "Covers:",
       "wildcardHint": "Wildcard — covers every single-level subdomain",
-      "domainIsLabelOnly": "Display label only. The hosts actually secured are read from the certificate itself.",
+      "domainIsLabelOnly": "Display label only, wildcards allowed (e.g. *.example.com). The hosts actually secured are read from the certificate itself.",
       "detectedHosts": "Hosts detected in the certificate: {domains}",
       "currentCoverage": "Hosts covered by the current certificate",
       "replaceCertificate": "Replace certificate (PEM)",

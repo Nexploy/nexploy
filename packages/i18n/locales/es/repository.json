@@ -336,7 +336,7 @@
       "updatedSuccess": "Certificado actualizado correctamente",
       "covers": "Cubre:",
       "wildcardHint": "Comodín: cubre todos los subdominios de un solo nivel",
-      "domainIsLabelOnly": "Solo es una etiqueta de visualización. Los hosts realmente protegidos se leen del propio certificado.",
+      "domainIsLabelOnly": "Solo es una etiqueta de visualización, se admiten comodines (p. ej. *.example.com). Los hosts realmente protegidos se leen del propio certificado.",
       "detectedHosts": "Hosts detectados en el certificado: {domains}",
       "currentCoverage": "Hosts cubiertos por el certificado actual",
       "replaceCertificate": "Sustituir el certificado (PEM)",

@@ -336,7 +336,7 @@
       "updatedSuccess": "Certificat mis à jour avec succès",
       "covers": "Couvre :",
       "wildcardHint": "Joker — couvre tous les sous-domaines de premier niveau",
-      "domainIsLabelOnly": "Simple libellé d'affichage. Les hôtes réellement protégés sont lus dans le certificat lui-même.",
+      "domainIsLabelOnly": "Simple libellé d'affichage, les wildcards sont acceptés (ex. *.example.com). Les hôtes réellement protégés sont lus dans le certificat lui-même.",
       "detectedHosts": "Hôtes détectés dans le certificat : {domains}",
       "currentCoverage": "Hôtes couverts par le certificat actuel",
       "replaceCertificate": "Remplacer le certificat (PEM)",

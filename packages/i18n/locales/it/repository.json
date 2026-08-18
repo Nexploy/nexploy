@@ -336,7 +336,7 @@
       "updatedSuccess": "Certificato aggiornato con successo",
       "covers": "Copre:",
       "wildcardHint": "Wildcard: copre tutti i sottodomini di primo livello",
-      "domainIsLabelOnly": "È solo un'etichetta di visualizzazione. Gli host realmente protetti vengono letti dal certificato stesso.",
+      "domainIsLabelOnly": "È solo un'etichetta di visualizzazione, sono ammessi i wildcard (es. *.example.com). Gli host realmente protetti vengono letti dal certificato stesso.",
       "detectedHosts": "Host rilevati nel certificato: {domains}",
       "currentCoverage": "Host coperti dal certificato attuale",
       "replaceCertificate": "Sostituisci il certificato (PEM)",

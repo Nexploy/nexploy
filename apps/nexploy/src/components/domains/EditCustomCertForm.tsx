@@ -83,7 +83,7 @@ export function EditCustomCertForm({ certificate, onClose }: EditCustomCertFormP
                             <FormItem>
                                 <FormLabel>{t('domain')}</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="example.com" className="font-mono" />
+                                    <Input {...field} placeholder="*.example.com" className="font-mono" />
                                 </FormControl>
                                 <FormDescription>{t('domainIsLabelOnly')}</FormDescription>
                                 <FormMessage />

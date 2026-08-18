@@ -54,35 +54,33 @@ export function CustomCertForm({ onClose }: CustomCertFormProps) {
     return (
         <Form {...form}>
             <form onSubmit={handleSubmitWithAction} className="space-y-4">
-                <div className="grid items-start gap-4 md:grid-cols-2">
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>{t('name')}</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder={t('namePlaceholder')} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="domain"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>{t('domain')}</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="example.com" className="font-mono" />
-                                </FormControl>
-                                <FormDescription>{t('domainIsLabelOnly')}</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
+                <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('name')}</FormLabel>
+                            <FormControl>
+                                <Input {...field} placeholder={t('namePlaceholder')} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="domain"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{t('domain')}</FormLabel>
+                            <FormControl>
+                                <Input {...field} placeholder="*.example.com" className="font-mono" />
+                            </FormControl>
+                            <FormDescription>{t('domainIsLabelOnly')}</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
                 <FormField
                     control={form.control}
                     name="certificate"
