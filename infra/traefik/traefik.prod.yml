@@ -40,7 +40,7 @@ providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: "nexploy_traefik_network_prod"
+    network: "nexploy_traefik_network"
     watch: true
 
   file:

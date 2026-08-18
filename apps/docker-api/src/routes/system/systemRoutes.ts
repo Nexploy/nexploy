@@ -285,8 +285,11 @@ app.post(
         }
         const env = Array.from(envMap.entries()).map(([key, value]) => `${key}=${value}`);
 
+        const securityHeadersMiddleware = useTls ? 'security-headers@file' : 'security-headers-no-hsts@file';
+
         const labels = { ...(appInfo.Config.Labels ?? {}) };
         labels['traefik.http.routers.nexploy-app.rule'] = `Host(\`${domain}\`)`;
+        labels['traefik.http.routers.nexploy-app.middlewares'] = `gzip-compress@file,${securityHeadersMiddleware}`;
         if (mode === 'letsencrypt') {
             labels['traefik.http.routers.nexploy-app.entrypoints'] = 'websecure';
             labels['traefik.http.routers.nexploy-app.tls'] = 'true';
