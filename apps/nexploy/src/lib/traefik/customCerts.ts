@@ -27,9 +27,14 @@ export async function customCertFilesExist(certificateId: string): Promise<boole
     }
 }
 
-export function parseCertificateHosts(certificatePem: string): string[] {
-    const certificate = new crypto.X509Certificate(certificatePem);
+const PEM_CERTIFICATE_BLOCK = /-----BEGIN CERTIFICATE-----[\s\S]*?-----END CERTIFICATE-----/g;
+const HOSTNAME_PATTERN = /^\*?[a-z0-9-]+(\.[a-z0-9-]+)+$/i;
 
+function isHostname(value: string): boolean {
+    return HOSTNAME_PATTERN.test(value.startsWith('*.') ? value.slice(2) : value);
+}
+
+function hostsFromCertificate(certificate: crypto.X509Certificate): string[] {
     const subjectAltNames = (certificate.subjectAltName ?? '')
         .split(',')
         .map((entry) => entry.trim())
@@ -39,8 +44,25 @@ export function parseCertificateHosts(certificatePem: string): string[] {
 
     if (subjectAltNames.length > 0) return subjectAltNames;
 
-    const commonName = /CN=([^\n,]+)/.exec(certificate.subject ?? '')?.[1]?.trim();
-    return commonName ? [commonName] : [];
+    const commonName = /(?:^|\n)CN=(.+)$/m
+        .exec(certificate.subject ?? '')?.[1]
+        ?.replace(/\\,/g, ',')
+        .trim();
+
+    return commonName && isHostname(commonName) ? [commonName] : [];
+}
+
+export function parseCertificateHosts(certificatePem: string): string[] {
+    const blocks = certificatePem.match(PEM_CERTIFICATE_BLOCK) ?? [certificatePem];
+
+    for (const block of blocks) {
+        try {
+            const hosts = hostsFromCertificate(new crypto.X509Certificate(block));
+            if (hosts.length > 0) return hosts;
+        } catch {}
+    }
+
+    return [];
 }
 
 export async function readCustomCertHosts(certificateId: string): Promise<string[]> {
