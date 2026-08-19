@@ -1,4 +1,5 @@
 import type { GitProviderType } from 'generated/client';
+import { getInstancePublicUrl } from '@/lib/instance/publicUrl';
 import { prisma } from '../../../prisma/prisma';
 
 export type InstanceCallbackKind = 'oauthCallback' | 'setupRedirect' | 'webhook' | 'homepage';
@@ -18,9 +19,7 @@ export interface InstanceCallbackTarget {
     urls: InstanceCallbackUrl[];
 }
 
-export function getInstancePublicUrl(): string {
-    return (process.env.NEXPLOY_URL ?? process.env.BETTER_AUTH_URL ?? '').replace(/\/+$/, '');
-}
+export { getInstancePublicUrl };
 
 function githubAppSettingsUrl(appName: string | null, ownerName: string | null, ownerType: string | null): string {
     if (!appName) return 'https://github.com/settings/apps';

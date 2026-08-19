@@ -221,12 +221,80 @@ export async function connectRemainingNetworks(
     }
 }
 
+const DEFAULT_STOP_TIMEOUT_SECONDS = 300;
+const STOP_POLL_INTERVAL_MS = 500;
+const STOP_SETTLE_GRACE_SECONDS = 30;
+
+function resolveStopTimeoutSeconds(): number {
+    const configured = Number(process.env.MIGRATION_STOP_TIMEOUT_SECONDS);
+    return Number.isFinite(configured) && configured > 0 ? configured : DEFAULT_STOP_TIMEOUT_SECONDS;
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function isContainerRunning(container: Docker.Container): Promise<boolean> {
+    try {
+        const info = await container.inspect();
+        return info.State.Running === true;
+    } catch (err: any) {
+        if (err?.statusCode === 404) return false;
+        throw err;
+    }
+}
+
+export async function stopSourceContainer(container: Docker.Container, name: string): Promise<void> {
+    const timeoutSeconds = resolveStopTimeoutSeconds();
+
+    try {
+        await (container.stop as any)({ t: timeoutSeconds });
+    } catch (err: any) {
+        if (err?.statusCode !== 304) {
+            throw new HttpError(`Source container "${name}" could not be stopped: ${err.message}`, 502);
+        }
+    }
+
+    const deadline = Date.now() + (timeoutSeconds + STOP_SETTLE_GRACE_SECONDS) * 1000;
+
+    while (Date.now() < deadline) {
+        if (!(await isContainerRunning(container))) return;
+        await sleep(STOP_POLL_INTERVAL_MS);
+    }
+
+    throw new HttpError(`Source container "${name}" is still running after the stop timeout.`, 504);
+}
+
+async function transferMountArchive(
+    sourceContainer: Docker.Container,
+    targetContainer: Docker.Container,
+    mount: VolumeMount,
+): Promise<void> {
+    const archive = await sourceContainer.getArchive({ path: `${mount.destination}/.` });
+
+    const archiveFailure = new Promise<never>((_, reject) => {
+        archive.on('error', reject);
+    });
+
+    await Promise.race([targetContainer.putArchive(archive, { path: mount.destination }), archiveFailure]);
+}
+
 export async function copyVolumeData(
     sourceContainer: Docker.Container,
     targetContainer: Docker.Container,
     mounts: VolumeMount[],
     warn: (message: string) => void,
 ): Promise<string[]> {
+    if (mounts.length === 0) return [];
+
+    const sourceInfo = await sourceContainer.inspect();
+    const sourceName = sourceInfo.Name.replace(/^\//, '');
+
+    if (sourceInfo.State.Running) {
+        throw new HttpError(
+            `Volume data of "${sourceName}" cannot be copied while the source container is still running.`,
+            409,
+        );
+    }
+
     const migrated: string[] = [];
 
     for (const mount of mounts) {
@@ -236,12 +304,15 @@ export async function copyVolumeData(
         }
 
         try {
-            const archive = await sourceContainer.getArchive({ path: `${mount.destination}/.` });
-            await targetContainer.putArchive(archive, { path: mount.destination });
-            migrated.push(mount.name);
+            await transferMountArchive(sourceContainer, targetContainer, mount);
         } catch (err: any) {
-            warn(`Data of volume "${mount.name}" could not be copied: ${err.message}`);
+            throw new HttpError(
+                `Data of volume "${mount.name}" could not be copied from "${sourceName}": ${err.message}. The migrated data would be incomplete.`,
+                502,
+            );
         }
+
+        migrated.push(mount.name);
     }
 
     return migrated;
@@ -294,14 +365,21 @@ async function runMigration({
     lockCancellation();
 
     if (mustStopSource) {
-        await sourceContainer.stop();
+        try {
+            await stopSourceContainer(sourceContainer, containerName);
+        } catch (err: any) {
+            completeStep('create', 'failed');
+            throw err instanceof HttpError
+                ? err
+                : new HttpError(`Container "${containerName}" could not be stopped: ${err.message}`, 502);
+        }
     }
 
     let targetContainer: Docker.Container;
     try {
         targetContainer = await target.createContainer(buildCreateOptions(info, endpoints));
     } catch (err: any) {
-        if (mustStopSource && sourceAction === 'keep') {
+        if (mustStopSource) {
             await sourceContainer.start().catch(() => {});
         }
         completeStep('create', 'failed');
@@ -315,9 +393,22 @@ async function runMigration({
     completeStep('create');
 
     step('volumes');
-    const migratedVolumes = migrateVolumeData
-        ? await copyVolumeData(sourceContainer, targetContainer, volumeMounts, collectWarning)
-        : [];
+    let migratedVolumes: string[] = [];
+
+    if (migrateVolumeData) {
+        try {
+            migratedVolumes = await copyVolumeData(sourceContainer, targetContainer, volumeMounts, collectWarning);
+        } catch (err: any) {
+            await targetContainer.remove({ force: true }).catch(() => {});
+            if (mustStopSource) {
+                await sourceContainer.start().catch(() => {});
+            }
+            completeStep('volumes', 'failed');
+            throw err instanceof HttpError
+                ? err
+                : new HttpError(`Volume data of "${containerName}" could not be migrated: ${err.message}`, 502);
+        }
+    }
     completeStep('volumes', migrateVolumeData ? 'done' : 'skipped');
 
     step('start');

@@ -19,6 +19,7 @@ import {
     ensureImageOnTarget,
     ensureNetworksOnTarget,
     resolveTargetClient,
+    stopSourceContainer,
 } from '@/services/containerMigrationService';
 import { logger } from '@/utils/logger';
 
@@ -71,14 +72,14 @@ async function loadStackMembers(source: Docker, stackName: string): Promise<Stac
     );
 }
 
-async function rollbackCreatedContainers(members: StackMember[], sourceAction: StackMigrateApi['sourceAction']) {
+async function rollbackCreatedContainers(members: StackMember[]) {
     for (const member of members) {
         if (member.targetContainer) {
             await member.targetContainer.remove({ force: true }).catch(() => {});
             member.targetContainer = undefined;
         }
 
-        if (sourceAction === 'keep' && member.wasStopped) {
+        if (member.wasStopped) {
             await member.sourceContainer.start().catch(() => {});
             member.wasStopped = false;
         }
@@ -143,9 +144,21 @@ async function runStackMigration({
     processed = 0;
 
     for (const member of members) {
-        if (member.wasRunning && (sourceAction !== 'keep' || migrateVolumeData)) {
-            await member.sourceContainer.stop().catch(() => {});
+        if (!member.wasRunning || (sourceAction === 'keep' && !migrateVolumeData)) continue;
+
+        try {
+            await stopSourceContainer(member.sourceContainer, member.name);
             member.wasStopped = true;
+        } catch (err: any) {
+            member.wasStopped = true;
+            await rollbackCreatedContainers(members);
+            completeStep('create', 'failed');
+            throw err instanceof HttpError
+                ? err
+                : new HttpError(
+                      `The stack "${stackName}" could not be stopped on the source environment: ${err.message}`,
+                      502,
+                  );
         }
     }
 
@@ -156,7 +169,7 @@ async function runStackMigration({
             trackProgress(++processed);
         }
     } catch (err: any) {
-        await rollbackCreatedContainers(members, sourceAction);
+        await rollbackCreatedContainers(members);
         completeStep('create', 'failed');
         throw new HttpError(
             `The stack "${stackName}" could not be created on the target environment: ${err.message}`,
@@ -169,12 +182,23 @@ async function runStackMigration({
     if (migrateVolumeData) {
         processed = 0;
         for (const member of members) {
-            member.migratedVolumes = await copyVolumeData(
-                member.sourceContainer,
-                member.targetContainer!,
-                member.volumeMounts,
-                collectWarning,
-            );
+            try {
+                member.migratedVolumes = await copyVolumeData(
+                    member.sourceContainer,
+                    member.targetContainer!,
+                    member.volumeMounts,
+                    collectWarning,
+                );
+            } catch (err: any) {
+                await rollbackCreatedContainers(members);
+                completeStep('volumes', 'failed');
+                throw err instanceof HttpError
+                    ? err
+                    : new HttpError(
+                          `Volume data of the stack "${stackName}" could not be migrated: ${err.message}`,
+                          502,
+                      );
+            }
             trackProgress(++processed);
         }
     }
