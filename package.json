@@ -1,6 +1,6 @@
 {
   "name": "nexploy-monorepo",
-  "version": "0.12.5",
+  "version": "0.13.0",
   "description": "Nexploy - Self-hosted alternative to Vercel/Netlify, powered by Docker",
   "license": "GPL-3.0",
   "scripts": {
