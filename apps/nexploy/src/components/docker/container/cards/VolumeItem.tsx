@@ -3,20 +3,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Trash2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
-
-export type Mount = {
-    type: string;
-    source: string;
-    destination: string;
-    rw: boolean;
-    name?: string;
-    driver?: string;
-};
-
-interface VolumeItemProps {
-    mount: Mount;
-    isNew?: boolean;
-}
+import type { VolumeItemProps } from '@workspace/typescript-interface/docker/docker.volume';
 
 export function VolumeItem({ mount, isNew }: VolumeItemProps) {
     const t = useTranslations('docker.containerVolumes');

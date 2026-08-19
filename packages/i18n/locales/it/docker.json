@@ -319,6 +319,7 @@
     "cancelDelete": "Annulla l'eliminazione",
     "openWith": "Aprire con",
     "openWithIp": "Indirizzo IP dell'host",
+    "ipAccessBlocked": "Accesso tramite IP disattivato: questa porta è associata solo a 127.0.0.1",
     "noPorts": "Nessuna porta esposta"
   },
   "containerVolumes": {

@@ -83,3 +83,11 @@ export function validateEnvVariables(entries: EnvVariable[]): EnvValidationResul
         duplicateKeys,
     };
 }
+
+/**
+ * Split a single `KEY=VALUE` entry, as exposed by the Docker API, into its key and value.
+ */
+export function parseEnvEntry(entry: string): EnvVariable {
+    const [key, ...valueParts] = entry.split('=');
+    return { key: key ?? '', value: valueParts.join('=') };
+}

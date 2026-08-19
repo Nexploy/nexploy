@@ -72,6 +72,11 @@ export type Mount = {
     driver?: string;
 };
 
+export interface VolumeItemProps {
+    mount: Mount;
+    isNew?: boolean;
+}
+
 export interface VolumeTransferredVolume {
     name: string;
     created: boolean;

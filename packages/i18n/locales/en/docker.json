@@ -319,6 +319,7 @@
     "cancelDelete": "Cancel delete",
     "openWith": "Open with",
     "openWithIp": "Host IP",
+    "ipAccessBlocked": "IP access disabled: this port is bound to 127.0.0.1 only",
     "noPorts": "No exposed ports"
   },
   "containerVolumes": {

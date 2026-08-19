@@ -10,12 +10,9 @@ import { EnvForm } from '@/components/docker/container/forms/EnvForm';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
-import { type EnvVar, EnvVarItem } from './EnvVarItem';
-
-function parseEnvString(envString: string): EnvVar {
-    const [key, ...valueParts] = envString.split('=');
-    return { key: key!, value: valueParts.join('=') };
-}
+import { EnvVarItem } from './EnvVarItem';
+import type { Env } from '@workspace/typescript-interface/docker/docker.env';
+import { parseEnvEntry } from '@/utils/parseEnv';
 
 export function CardEnv() {
     const container = useContainerStore((state) => state.container);
@@ -27,7 +24,7 @@ export function CardEnv() {
     const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
     const t = useTranslations('docker.containerEnv');
 
-    const handleOpenDialog = (mode: 'add' | 'edit', envVar?: EnvVar, originalEnvVar?: EnvVar) => {
+    const handleOpenDialog = (mode: 'add' | 'edit', envVar?: Env, originalEnvVar?: Env) => {
         openDialog({
             title: mode === 'add' ? t('addTitle') : t('editTitle'),
             description: mode === 'add' ? t('addDescription') : t('editDescription'),
@@ -35,7 +32,7 @@ export function CardEnv() {
         });
     };
 
-    const getEnvChangeStatus = (env: EnvVar) => {
+    const getEnvChangeStatus = (env: Env) => {
         const editChange = envVarChanges.find(
             (change) =>
                 change.typeAction === 'edit' && change.currentKey === env.key && change.currentValue === env.value,
@@ -92,7 +89,7 @@ export function CardEnv() {
                     <ScrollAreaWithShadow bottomShadow className="h-72 overflow-hidden px-6">
                         <div className="space-y-2">
                             {container?.env.map((envString, idx) => {
-                                const env = parseEnvString(envString);
+                                const env = parseEnvEntry(envString);
                                 const { isEdited, isDeleted, editedEnvVar } = getEnvChangeStatus(env);
                                 const displayEnvVar = editedEnvVar || env;
 

@@ -6,6 +6,7 @@ import { Key, Network, ShieldCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useSwarmServiceStore } from '@/stores/docker/useSwarmServiceStore.ts';
+import { parseEnvEntry } from '@/utils/parseEnv';
 import { Skeleton } from '@workspace/ui/components/skeleton.tsx';
 
 export function ServiceDetailConfig() {
@@ -81,7 +82,7 @@ export function ServiceDetailConfig() {
                     ) : (
                         <div className="space-y-1.5">
                             {service?.env.map((entry, i) => {
-                                const [key, ...rest] = entry.split('=');
+                                const { key, value } = parseEnvEntry(entry);
                                 return (
                                     <div
                                         key={i}
@@ -89,7 +90,7 @@ export function ServiceDetailConfig() {
                                     >
                                         <span className="font-semibold text-primary">{key}</span>
                                         <span className="text-muted-foreground">=</span>
-                                        <span className="truncate">{rest.join('=') || ''}</span>
+                                        <span className="truncate">{value}</span>
                                     </div>
                                 );
                             })}

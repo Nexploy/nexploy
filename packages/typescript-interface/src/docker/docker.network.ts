@@ -128,3 +128,17 @@ export interface NetworkDetailEvent {
     network?: Network;
     timestamp: number;
 }
+
+export interface NetworkItemProps {
+    networkName: string;
+    networkInfo: {
+        ipAddress: string;
+        gateway: string;
+        macAddress: string;
+        ipPrefixLen: number;
+        globalIPv6Address?: string;
+        ipv6Gateway?: string;
+        endpointId: string;
+    };
+    isNew?: boolean;
+}

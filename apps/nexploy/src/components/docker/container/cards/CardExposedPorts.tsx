@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { ChevronDown, Globe, Network, Pencil, Plus, Server, X } from 'lucide-react';
+import { ChevronDown, Globe, Network, Pencil, Plus, Server, ShieldOff, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -12,7 +12,6 @@ import { cn } from '@workspace/ui/lib/utils';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
-import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { Can } from '@/components/permission/Can';
 import {
     DropdownMenu,
@@ -24,34 +23,23 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { useContainerDomains } from '@/hooks/useContainerDomains';
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
-
-function getPortUrl(port: number) {
-    const environment = useEnvironmentStore.getState().getSelectedEnvironment();
-
-    const { hostname } = window.location;
-    return `http://${environment?.host ?? hostname}:${port}`;
-}
-
-function getDomainUrl(domain: Domain) {
-    const protocol = domain.https ? 'https' : 'http';
-    const path = domain.path && domain.path !== '/' ? domain.path : '';
-    return `${protocol}://${domain.host}${path}`;
-}
+import { getDomainUrl, getPortUrl, isLoopbackOnly } from '@/utils/containerPortAccess';
 
 function PortLink({
     publicPort,
     privatePort,
     domains,
+    hostIps = [],
 }: {
     publicPort: number;
     privatePort: number;
     domains: Domain[];
+    hostIps?: string[];
 }) {
     const t = useTranslations('docker.containerPorts');
     const matchingDomains = domains.filter((domain) => domain.containerPort === privatePort);
     const ipUrl = getPortUrl(publicPort);
-
-    console.log(matchingDomains.length);
+    const ipBlocked = isLoopbackOnly(hostIps);
 
     return (
         <DropdownMenu>
@@ -61,12 +49,19 @@ function PortLink({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="max-w-72">
                 <DropdownMenuLabel>{t('openWith')}</DropdownMenuLabel>
-                <DropdownMenuItem asChild>
-                    <a href={ipUrl} target="_blank" rel="noopener noreferrer">
-                        <Server />
-                        <span className="truncate">{t('openWithIp')}</span>
-                    </a>
-                </DropdownMenuItem>
+                {ipBlocked ? (
+                    <div className="flex items-start gap-2 px-2 py-1.5 text-muted-foreground text-xs">
+                        <ShieldOff className="mt-0.5 size-3.5 shrink-0" />
+                        <span>{t('ipAccessBlocked')}</span>
+                    </div>
+                ) : (
+                    <DropdownMenuItem asChild>
+                        <a href={ipUrl} target="_blank" rel="noopener noreferrer">
+                            <Server />
+                            <span className="truncate">{t('openWithIp')}</span>
+                        </a>
+                    </DropdownMenuItem>
+                )}
                 {matchingDomains.length > 0 && <DropdownMenuSeparator />}
                 {matchingDomains.map((domain) => (
                     <DropdownMenuItem key={domain.id ?? domain.host} asChild>
@@ -186,6 +181,7 @@ export function CardExposedPorts() {
                                                         publicPort={displayPort.publicPort!}
                                                         privatePort={displayPort.privatePort}
                                                         domains={domains}
+                                                        hostIps={port.hostIps}
                                                     />
                                                 ) : (
                                                     <span className="font-semibold text-muted-foreground">—</span>

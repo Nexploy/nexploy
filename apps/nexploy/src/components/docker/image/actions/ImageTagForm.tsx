@@ -12,18 +12,10 @@ import { imageTagSchema } from '@workspace/schemas-zod/docker/image/imageAction.
 import { onImageTagAction } from '@/actions/docker/image/imageTagAction.action';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import type { Image } from '@workspace/typescript-interface/docker/docker.image';
+import { splitRepoTag } from '@/utils/imageTag';
 
 interface ImageTagFormProps {
     image: Image;
-}
-
-function splitRepoTag(repoTag: string | undefined): { repo: string; tag: string } {
-    if (!repoTag) return { repo: '', tag: 'latest' };
-
-    const lastColon = repoTag.lastIndexOf(':');
-    if (lastColon === -1) return { repo: repoTag, tag: 'latest' };
-
-    return { repo: repoTag.slice(0, lastColon), tag: repoTag.slice(lastColon + 1) };
 }
 
 export function ImageTagForm({ image }: ImageTagFormProps) {

@@ -2,18 +2,7 @@ import { Pencil, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
 import { useTranslations } from 'next-intl';
-
-export type EnvVar = { key: string; value: string };
-
-export interface EnvVarItemProps {
-    env: EnvVar;
-    isEdited: boolean;
-    isDeleted: boolean;
-    isNew?: boolean;
-    displayEnvVar: EnvVar;
-    onEdit?: (envVar: EnvVar, originalEnvVar?: EnvVar) => void;
-    onCancelDelete?: () => void;
-}
+import type { EnvVarItemProps } from '@workspace/typescript-interface/docker/docker.env';
 
 export function EnvVarItem({
     env,

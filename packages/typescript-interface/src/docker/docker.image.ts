@@ -144,3 +144,8 @@ export interface ScanImageResult {
     high: number;
     output: string;
 }
+
+export interface RepoTag {
+    repo: string;
+    tag: string;
+}

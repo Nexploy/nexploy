@@ -4,20 +4,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { useTranslations } from 'next-intl';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { useContainerStore } from '@/stores/docker/useContainerStore.ts';
-
-export interface NetworkItemProps {
-    networkName: string;
-    networkInfo: {
-        ipAddress: string;
-        gateway: string;
-        macAddress: string;
-        ipPrefixLen: number;
-        globalIPv6Address?: string;
-        ipv6Gateway?: string;
-        endpointId: string;
-    };
-    isNew?: boolean;
-}
+import type { NetworkItemProps } from '@workspace/typescript-interface/docker/docker.network';
 
 export function NetworkItem({ networkName, networkInfo, isNew }: NetworkItemProps) {
     const t = useTranslations('docker.containerNetworks');
