@@ -7,6 +7,7 @@ import {
     certificateHostsCoverHost,
     CUSTOM_CERTS_DIR,
     getCustomCertPaths,
+    parseCertificateExpiry,
     parseCertificateHosts,
     regenerateCustomCertsConfig,
 } from '@/lib/traefik/customCerts';
@@ -20,15 +21,6 @@ function parseCertHostsSafe(certPem: string): string[] {
         return parseCertificateHosts(certPem);
     } catch {
         return [];
-    }
-}
-
-function parseCertExpiry(certPem: string): Date | null {
-    try {
-        const cert = new crypto.X509Certificate(certPem);
-        return new Date(cert.validTo);
-    } catch {
-        return null;
     }
 }
 
@@ -88,7 +80,7 @@ export async function createCustomCertificate(name: string, domain: string, cert
     const t = await getErrorTranslator();
     await validateCertKeyPair(certificate, privateKey);
 
-    const expiresAt = parseCertExpiry(certificate);
+    const expiresAt = parseCertificateExpiry(certificate);
     const coveredDomains = parseCertHostsSafe(certificate);
 
     const cert = await prisma.sslCertificate.create({
@@ -172,7 +164,7 @@ export async function updateCustomCertificate(input: UpdateCustomCertificateInpu
         data: {
             name: input.name,
             domain: input.domain,
-            expiresAt: parseCertExpiry(certificate),
+            expiresAt: parseCertificateExpiry(certificate),
             coveredDomains,
         },
     });

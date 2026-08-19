@@ -166,8 +166,8 @@
     "deleteFailed": "No se ha podido eliminar la versión"
   },
   "gitProvider": {
-    "oauthTokenExpired": "Tu token OAuth de {provider} ha caducado o ha sido revocado. Vuelve a conectar tu cuenta desde los ajustes de integraciones.",
-    "gitlabOauthExpired": "Tu token OAuth de GitLab ha caducado o ha sido revocado. Vuelve a conectar tu cuenta de GitLab desde los ajustes de integraciones.",
+    "oauthTokenExpired": "Su token OAuth de {provider} ha caducado o ha sido revocado. Vuelva a conectar su cuenta desde los ajustes de integraciones.",
+    "gitlabOauthExpired": "Su token OAuth de GitLab ha caducado o ha sido revocado. Vuelva a conectar su cuenta de GitLab desde los ajustes de integraciones.",
     "unknownProvider": "Proveedor desconocido: {provider}",
     "fetchCommitsFailed": "No se han podido obtener los commits: {error}",
     "invalidGitlabUrl": "URL de repositorio GitLab no válida: {url}",

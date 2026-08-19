@@ -15,9 +15,9 @@
     "domains": "Dominios",
     "changeImage": "Cambiar imagen",
     "changeImageTitle": "Cambiar la imagen del contenedor",
-    "changeImageDescription": "Actualiza la imagen Docker de este contenedor conservando toda su configuración (puertos, variables de entorno, volúmenes, redes).",
+    "changeImageDescription": "Actualice la imagen Docker de este contenedor conservando toda su configuración (puertos, variables de entorno, volúmenes, redes).",
     "renameTitle": "Renombrar contenedor",
-    "renameDescription": "Introduce un nuevo nombre para este contenedor.",
+    "renameDescription": "Introduzca un nuevo nombre para este contenedor.",
     "notFoundTitle": "Contenedor no encontrado",
     "notFoundDescription": "Este contenedor ya no existe o ha sido eliminado.",
     "backToContainers": "Volver a los contenedores",
@@ -37,7 +37,7 @@
     "title": "Política de reinicio",
     "subtitle": "Se aplica en caliente",
     "autoRemove": "No disponible: este contenedor está configurado para eliminarse automáticamente.",
-    "selectPolicy": "Selecciona una política",
+    "selectPolicy": "Seleccione una política",
     "never": "Nunca",
     "always": "Siempre",
     "onFailure": "En caso de fallo",
@@ -126,7 +126,7 @@
   "creating": "Creando...",
   "createVolume": "Crear volumen",
   "deleteNetwork": "Eliminar red",
-  "confirmDeleteNetwork": "¿Seguro que quieres eliminar esta red?",
+  "confirmDeleteNetwork": "¿Seguro que quiere eliminar esta red?",
   "networkCreatedSuccess": "Red creada correctamente",
   "volumeCreatedSuccess": "Volumen creado correctamente",
   "refreshDocker": "Actualizar Docker",
@@ -145,7 +145,7 @@
     "restart": "Reiniciar",
     "delete": "Eliminar",
     "removeTitle": "Eliminar contenedor",
-    "removeDescription": "¿Seguro que quieres eliminar el contenedor {name}?",
+    "removeDescription": "¿Seguro que quiere eliminar el contenedor {name}?",
     "cancel": "Cancelar",
     "remove": "Eliminar"
   },
@@ -178,7 +178,7 @@
   "none": "none",
   "imageDetail": {
     "description": "Detalles e información de la imagen Docker",
-    "useImage": "Usa esta imagen para crear un contenedor",
+    "useImage": "Use esta imagen para crear un contenedor",
     "notFoundTitle": "Imagen no encontrada",
     "notFoundDescription": "Esta imagen ya no existe o ha sido eliminada.",
     "backToImages": "Volver a las imágenes"
@@ -297,7 +297,7 @@
   "containerEnv": {
     "title": "Variables de entorno",
     "addTitle": "Añadir una variable de entorno",
-    "addDescription": "Añade una nueva variable de entorno a este contenedor.",
+    "addDescription": "Añada una nueva variable de entorno a este contenedor.",
     "editTitle": "Editar variable de entorno",
     "editDescription": "Edita esta variable de entorno.",
     "noVariables": "Sin variables de entorno",
@@ -334,7 +334,7 @@
   "containerNetworks": {
     "title": "Redes conectadas",
     "addTitle": "Añadir una red",
-    "addDescription": "Conecta este contenedor a una red.",
+    "addDescription": "Conecte este contenedor a una red.",
     "add": "Añadir",
     "ipAddress": "Dirección IP:",
     "gateway": "Gateway:",
@@ -476,19 +476,19 @@
   "pages": {
     "images": {
       "title": "Imágenes Docker",
-      "description": "Gestiona y consulta todas tus imágenes Docker"
+      "description": "Gestione y consulte todas sus imágenes Docker"
     },
     "networks": {
       "title": "Redes Docker",
-      "description": "Gestiona y consulta todas tus redes Docker"
+      "description": "Gestione y consulte todas sus redes Docker"
     },
     "volumes": {
       "title": "Volúmenes Docker",
-      "description": "Gestiona y consulta todos tus volúmenes Docker"
+      "description": "Gestione y consulte todos sus volúmenes Docker"
     },
     "diskUsage": {
       "title": "Uso del disco",
-      "description": "Monitoriza y recupera el espacio en disco que usa Docker"
+      "description": "Monitorice y recupere el espacio en disco que usa Docker"
     }
   },
   "tables": {
@@ -512,21 +512,21 @@
     "customNetwork": "Red personalizada",
     "stacks": "Stacks",
     "noStacks": "Sin stacks de Docker",
-    "noStacksMatchSearch": "Ningún stack coincide con tu búsqueda.",
-    "noStacksDescription": "No se han encontrado stacks de contenedores. Despliega un stack de Docker Compose para verlo aquí.",
+    "noStacksMatchSearch": "Ningún stack coincide con su búsqueda.",
+    "noStacksDescription": "No se han encontrado stacks de contenedores. Despliegue un stack de Docker Compose para verlo aquí.",
     "removeImages": "Eliminar imágenes",
-    "confirmRemoveImages": "¿Seguro que quieres eliminar {count} imagen(es)?",
+    "confirmRemoveImages": "¿Seguro que quiere eliminar {count} imagen(es)?",
     "forceDelete": "Forzar la eliminación",
     "forceDeleteDescription": "Elimínala aunque la usen contenedores detenidos",
     "use": "Usar",
-    "selectImageToUse": "Selecciona una imagen para usar",
-    "selectOnlyOneImage": "Selecciona una sola imagen",
+    "selectImageToUse": "Seleccione una imagen para usar",
+    "selectOnlyOneImage": "Seleccione una sola imagen",
     "noRepositoryTags": "Esta imagen no tiene etiquetas de repositorio",
     "imagesPerPage": "Imágenes por página",
     "noImagesFound": "No se han encontrado imágenes.",
-    "noImagesMatchSearch": "Ninguna imagen coincide con tu búsqueda.",
+    "noImagesMatchSearch": "Ninguna imagen coincide con su búsqueda.",
     "deleteVolumes": "Eliminar volúmenes",
-    "confirmDeleteVolumes": "¿Seguro que quieres eliminar {count} volumen(es)?",
+    "confirmDeleteVolumes": "¿Seguro que quiere eliminar {count} volumen(es)?",
     "volumesPerPage": "Volúmenes por página",
     "noVolumesFound": "No se han encontrado volúmenes.",
     "containerStatus": "Estado",
@@ -534,9 +534,9 @@
     "containerPorts": "Puertos",
     "containersPerPage": "Contenedores por página",
     "noContainersFound": "No se han encontrado contenedores.",
-    "noContainersMatchSearch": "Ningún contenedor coincide con tu búsqueda.",
+    "noContainersMatchSearch": "Ningún contenedor coincide con su búsqueda.",
     "removeContainers": "Eliminar contenedores",
-    "confirmRemoveContainers": "¿Seguro que quieres eliminar {count} contenedor(es)?",
+    "confirmRemoveContainers": "¿Seguro que quiere eliminar {count} contenedor(es)?",
     "forceRemove": "Forzar la eliminación",
     "forceRemoveDescription": "Fuerza la eliminación de los contenedores en ejecución."
   },
@@ -553,7 +553,7 @@
       "hostPort": "Puerto del host",
       "hostPortDescription": "Déjalo vacío para exponerlo solo en la red Docker.",
       "protocol": "Protocolo",
-      "selectProtocol": "Selecciona un protocolo"
+      "selectProtocol": "Seleccione un protocolo"
     },
     "volume": {
       "hostPath": "Ruta del host",
@@ -563,7 +563,7 @@
     },
     "network": {
       "network": "Red",
-      "selectNetwork": "Selecciona una red"
+      "selectNetwork": "Seleccione una red"
     },
     "label": {
       "keyPlaceholder": "com.example.label"
@@ -572,7 +572,7 @@
   "createStack": {
     "create": "Crear stack",
     "title": "Nuevo stack",
-    "description": "Despliega un stack de Docker Compose",
+    "description": "Despliegue un stack de Docker Compose",
     "back": "Atrás",
     "deploying": "Desplegando el stack...",
     "deployButton": "Desplegar el stack",
@@ -584,13 +584,13 @@
     "stackNamePlaceholder": "mi-stack",
     "stackNameDescription": "Un nombre único para identificar el stack (nombre del proyecto Compose)",
     "composeFile": "Archivo Compose",
-    "composeFileDescription": "Escribe o sube un archivo docker-compose.yml",
+    "composeFileDescription": "Escriba o suba un archivo docker-compose.yml",
     "uploadFile": "Subir archivo"
   },
   "createContainer": {
     "create": "Crear contenedor",
     "title": "Nuevo contenedor",
-    "description": "Crea y configura un nuevo contenedor Docker",
+    "description": "Cree y configure un nuevo contenedor Docker",
     "back": "Atrás",
     "creating": "Creando...",
     "creatingContainer": "Creando el contenedor...",
@@ -608,13 +608,13 @@
     "availableImages": "Imágenes disponibles",
     "registryLabel": "Registry",
     "registryNone": "Público (sin autenticación)",
-    "registryDescription": "Selecciona un registry para autenticarte al descargar una imagen privada.",
+    "registryDescription": "Seleccione un registry para autenticarse al descargar una imagen privada.",
     "hostname": "Nombre de host",
     "hostnamePlaceholder": "mi-app",
     "network": "Red",
     "networkPlaceholder": "bridge",
     "restartPolicy": "Política de reinicio",
-    "selectPolicy": "Selecciona una política",
+    "selectPolicy": "Seleccione una política",
     "restartNever": "Nunca",
     "restartAlways": "Siempre",
     "restartOnFailure": "En caso de fallo",
@@ -630,14 +630,14 @@
     "containerPort": "Puerto del contenedor",
     "protocol": "Protocolo",
     "noPortsConfigured": "No hay puertos configurados",
-    "dragToImportPorts": "Arrastra una referencia para importar los puertos de otro nodo",
+    "dragToImportPorts": "Arrastre una referencia para importar los puertos de otro nodo",
     "envVars": "Variables de entorno",
     "envVarsDescription": "Variables que se inyectarán en el contenedor",
     "addVariable": "Añadir variable",
     "keyPlaceholder": "Clave",
     "valuePlaceholder": "Valor",
     "noEnvVarsConfigured": "No hay variables de entorno configuradas",
-    "dragToImportEnvVars": "Arrastra una referencia para importar las variables de entorno de otro nodo",
+    "dragToImportEnvVars": "Arrastre una referencia para importar las variables de entorno de otro nodo",
     "volumes": "Volúmenes",
     "volumesDescription": "Montaje de volúmenes entre el host y el contenedor",
     "addVolume": "Añadir volumen",
@@ -645,7 +645,7 @@
     "containerPath": "/ruta/contenedor",
     "readOnly": "RO",
     "noVolumesConfigured": "No hay volúmenes configurados",
-    "dragToImportVolumes": "Arrastra una referencia para importar los volúmenes de otro nodo",
+    "dragToImportVolumes": "Arrastre una referencia para importar los volúmenes de otro nodo",
     "networks": "Redes",
     "networksDescription": "Redes Docker a las que conectar este contenedor",
     "addNetwork": "Añadir red",
@@ -670,7 +670,7 @@
     "description": "Descripción",
     "descriptionPlaceholder": "Describe este entorno...",
     "connectionType": "Tipo de conexión",
-    "selectConnectionType": "Selecciona el tipo de conexión",
+    "selectConnectionType": "Seleccione el tipo de conexión",
     "unixSocket": "Socket Unix (local)",
     "tcp": "TCP (remoto)",
     "tcpTls": "TCP con TLS (remoto seguro)",
@@ -690,9 +690,9 @@
     "tlsKeyPlaceholder": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----",
     "modeFile": "Subir un archivo",
     "modePaste": "Pegar manualmente",
-    "dropZoneText": "Arrastra un archivo aquí, o haz clic para explorar",
+    "dropZoneText": "Arrastre un archivo aquí, o haga clic para explorar",
     "dropZoneFormats": ".pem, .crt, .key, .cert",
-    "hostCertWarning": "Si cambias el host, también debes actualizar los certificados TLS, ya que están vinculados a la dirección del servidor.",
+    "hostCertWarning": "Si cambia el host, también debe actualizar los certificados TLS, ya que están vinculados a la dirección del servidor.",
     "downloadCertScript": "Generar los certificados",
     "certAlreadyConfigured": "Certificado ya configurado",
     "certAlreadyConfiguredPaste": "Certificado ya configurado. Pega un nuevo contenido para sustituirlo.",
@@ -704,7 +704,7 @@
     "addEnvironment": "Añadiendo entorno",
     "updating": "Actualizando...",
     "updateEnvironment": "Actualizar el entorno",
-    "selectionNotice": "Cuando seleccionas un entorno distinto del predeterminado, todas tus interacciones con Docker (contenedores, imágenes, volúmenes, redes, despliegues...) pasarán por este nuevo entorno.",
+    "selectionNotice": "Cuando selecciona un entorno distinto del predeterminado, todas sus interacciones con Docker (contenedores, imágenes, volúmenes, redes, despliegues...) pasarán por este nuevo entorno.",
     "optional": "Opcional"
   },
   "dropdownActions": {
@@ -713,30 +713,30 @@
     "use": "Usar",
     "network": {
       "removeTitle": "Eliminar red",
-      "removeDescription": "¿Seguro que quieres eliminar la red {name}?"
+      "removeDescription": "¿Seguro que quiere eliminar la red {name}?"
     },
     "image": {
       "removeTitle": "Eliminar imagen",
-      "removeDescription": "¿Seguro que quieres eliminar la imagen {name}?",
+      "removeDescription": "¿Seguro que quiere eliminar la imagen {name}?",
       "noRepositoryTags": "Esta imagen no tiene etiquetas de repositorio",
       "forceDelete": "Forzar la eliminación",
       "forceDeleteDescription": "Elimínala aunque la usen contenedores detenidos"
     },
     "volume": {
       "removeTitle": "Eliminar volumen",
-      "removeDescription": "¿Seguro que quieres eliminar el volumen {name}?"
+      "removeDescription": "¿Seguro que quiere eliminar el volumen {name}?"
     }
   },
   "pullImagePage": {
     "title": "Nueva imagen",
-    "description": "Descarga una nueva imagen Docker",
+    "description": "Descargue una nueva imagen Docker",
     "back": "Atrás",
     "downloading": "Descargando...",
     "downloadButton": "Descargar la imagen",
     "downloadingImage": "Descargando la imagen {name}...",
     "rateLimitInfo": "Hasta 100 descargas cada 6 horas de forma anónima mediante Docker Hub",
     "configuration": "Configuración",
-    "configDescription": "Introduce el nombre de una imagen Docker concreta",
+    "configDescription": "Introduzca el nombre de una imagen Docker concreta",
     "imageName": "Nombre de la imagen",
     "imageNamePlaceholder": "image:tag",
     "imageNameDescription": "El nombre de la imagen Docker que se descargará (p. ej. nginx:latest, postgres:15, redis:alpine)",
@@ -745,7 +745,7 @@
     "registryLabel": "Registry",
     "registryNone": "Sin registry (Docker Hub / público)",
     "popularImages": "Explorar imágenes",
-    "popularImagesDescription": "Busca y selecciona una imagen en Docker Hub",
+    "popularImagesDescription": "Busque y seleccione una imagen en Docker Hub",
     "dockerHub": "Docker Hub",
     "browseImages": "Buscar imágenes en Docker Hub...",
     "browseImagesTitle": "Buscar en Docker Hub",
@@ -753,7 +753,7 @@
     "searchImagesPlaceholder": "Buscar imágenes (p. ej. postgres, nginx, redis)...",
     "searchingImages": "Buscando imágenes...",
     "loadingMoreImages": "Cargando más imágenes...",
-    "searchImagesEmpty": "Escribe para buscar imágenes en Docker Hub",
+    "searchImagesEmpty": "Escriba para buscar imágenes en Docker Hub",
     "searchImagesNoResults": "No se han encontrado imágenes para \"{query}\"",
     "sortLabel": "Ordenar por",
     "sortPulls": "Más descargadas",
@@ -762,14 +762,14 @@
     "sourceAll": "Todos los orígenes",
     "sourceOfficial": "Solo oficiales",
     "pullStarted": "Descarga de «{name}» iniciada",
-    "pullStartedDescription": "Sigue su progreso desde el menú de acciones en curso en la cabecera."
+    "pullStartedDescription": "Siga su progreso desde el menú de acciones en curso en la cabecera."
   },
   "createNetworkPage": {
     "driver": "Driver",
-    "selectDriver": "Selecciona un driver",
+    "selectDriver": "Seleccione un driver",
     "driverDescription": "El tipo de red que se creará",
     "scope": "Ámbito",
-    "selectScope": "Selecciona un ámbito",
+    "selectScope": "Seleccione un ámbito",
     "scopeDescription": "El ámbito de la red (local, global o swarm)",
     "scopes": {
       "local": "Local",
@@ -777,13 +777,13 @@
       "swarm": "Swarm"
     },
     "title": "Nueva red",
-    "description": "Crea una nueva red Docker",
+    "description": "Cree una nueva red Docker",
     "back": "Atrás",
     "creating": "Creando...",
     "createButton": "Crear red",
     "creatingNetwork": "Creando la red {name}...",
     "basicConfig": "Configuración básica",
-    "configureParams": "Configura los parámetros de la nueva red",
+    "configureParams": "Configure los parámetros de la nueva red",
     "networkName": "Nombre de la red",
     "networkNamePlaceholder": "mi-red",
     "networkNameDescription": "Un nombre único para identificar la red (p. ej. app-network, backend-net)",
@@ -802,7 +802,7 @@
     "configOnly": "Solo configuración",
     "configOnlyDescription": "Crea una red de solo configuración",
     "ipamConfig": "Configuración de red (IPAM)",
-    "ipamConfigDescription": "Configura los parámetros IPAM de esta red",
+    "ipamConfigDescription": "Configure los parámetros IPAM de esta red",
     "ipamDriver": "Driver IPAM",
     "ipamDriverDescription": "El driver IPAM que se usará (predeterminado: default)",
     "subnetPlaceholder": "Subred (p. ej. 192.168.1.0/24)",
@@ -813,19 +813,19 @@
     "ipRange": "Rango de IP:",
     "gateway": "Gateway:",
     "configFromExisting": "Configuración a partir de una red existente",
-    "configFromExistingDescription": "Crea esta red basándote en la configuración de una red existente",
+    "configFromExistingDescription": "Crea esta red basándose en la configuración de una red existente",
     "sourceNetworkName": "Nombre de la red de origen",
-    "sourceNetworkPlaceholder": "Selecciona una red de solo configuración",
+    "sourceNetworkPlaceholder": "Seleccione una red de solo configuración",
     "sourceNetworkEmpty": "No hay redes de solo configuración disponibles",
     "sourceNetworkDescription": "El nombre de la red de la que se copiará la configuración",
     "driverOptions": "Opciones del driver",
-    "driverOptionsCardDescription": "Configura las opciones específicas del driver para esta red",
+    "driverOptionsCardDescription": "Configure las opciones específicas del driver para esta red",
     "addOption": "Añadir opción",
     "noOptionsConfigured": "No hay opciones configuradas",
     "optionKeyPlaceholder": "Clave (p. ej. com.docker.network.bridge.name)",
     "optionValuePlaceholder": "Valor (p. ej. docker0)",
     "labels": "Etiquetas",
-    "labelsCardDescription": "Añade metadatos para organizar e identificar esta red",
+    "labelsCardDescription": "Añada metadatos para organizar e identificar esta red",
     "addLabel": "Añadir etiqueta",
     "noLabelsConfigured": "No hay etiquetas configuradas",
     "labelKeyPlaceholder": "Clave (p. ej. env)",
@@ -835,26 +835,26 @@
   },
   "createVolumePage": {
     "title": "Nuevo volumen",
-    "description": "Crea un nuevo volumen Docker",
+    "description": "Cree un nuevo volumen Docker",
     "back": "Atrás",
     "creating": "Creando...",
     "createButton": "Crear volumen",
     "configuration": "Configuración",
-    "configureParams": "Configura los parámetros del nuevo volumen",
+    "configureParams": "Configure los parámetros del nuevo volumen",
     "volumeName": "Nombre del volumen",
     "volumeNamePlaceholder": "mi-volumen",
     "volumeNameDescription": "Un nombre único para identificar el volumen (p. ej. postgres-data, app-logs)",
     "driver": "Driver",
-    "selectDriver": "Selecciona un driver",
+    "selectDriver": "Seleccione un driver",
     "driverDescription": "El driver de almacenamiento que se usará para este volumen",
     "driverOptions": "Opciones del driver",
-    "driverOptionsCardDescription": "Configura las opciones de montaje y almacenamiento específicas del driver",
+    "driverOptionsCardDescription": "Configure las opciones de montaje y almacenamiento específicas del driver",
     "keyPlaceholder": "Clave (p. ej. type)",
     "valuePlaceholder": "Valor (p. ej. nfs)",
     "addOption": "Añadir opción",
     "noDriverOptionsConfigured": "No hay opciones del driver configuradas",
     "labels": "Etiquetas",
-    "labelsCardDescription": "Añade metadatos para organizar e identificar este volumen",
+    "labelsCardDescription": "Añada metadatos para organizar e identificar este volumen",
     "addLabel": "Añadir etiqueta",
     "noLabelsConfigured": "No hay etiquetas configuradas",
     "labelsDescription": "Metadatos para organizar e identificar el volumen. Ejemplos:"
@@ -863,14 +863,14 @@
     "title": "Importar un volumen",
     "description": "Restaurar un volumen desde un archivo de copia de seguridad",
     "archive": "Archivo de copia de seguridad",
-    "dropZoneText": "Arrastra un archivo aquí, o haz clic para explorar",
+    "dropZoneText": "Arrastre un archivo aquí, o haga clic para explorar",
     "archiveHint": ".tar.gz, .tgz — un archivo exportado desde la página Copias de seguridad",
     "volumeName": "Nombre del volumen",
     "volumeNamePlaceholder": "mi-volumen",
     "overwrite": "Sobrescribir el volumen existente",
     "overwriteHint": "Borra el contenido actual del volumen antes de restaurar",
     "import": "Importar",
-    "fileRequired": "Selecciona un archivo de copia de seguridad",
+    "fileRequired": "Seleccione un archivo de copia de seguridad",
     "importError": "Error al importar el volumen",
     "importSuccess": "Volumen {name} importado correctamente"
   },
@@ -913,7 +913,7 @@
   "stack": {
     "title": "stack",
     "removeTitle": "Eliminar stack",
-    "removeDescription": "¿Seguro que quieres eliminar el stack {name}? Todos los contenedores de este stack se detendrán y se eliminarán.",
+    "removeDescription": "¿Seguro que quiere eliminar el stack {name}? Todos los contenedores de este stack se detendrán y se eliminarán.",
     "forceRemove": "Forzar la eliminación",
     "forceRemoveDescription": "Fuerza la eliminación de los contenedores en ejecución sin detenerlos antes."
   },
@@ -966,7 +966,7 @@
   "moveContainer": {
     "moveWarning": "«{name}» se recreará en el entorno de destino con la misma imagen, configuración, puertos y redes.",
     "targetLabel": "Entorno de destino",
-    "targetPlaceholder": "Selecciona un entorno",
+    "targetPlaceholder": "Seleccione un entorno",
     "targetDescription": "El entorno Docker en el que se recreará el contenedor.",
     "registryLabel": "Registro",
     "registryNone": "Público (sin autenticación)",
@@ -994,14 +994,14 @@
     "cancel": "Cancelar",
     "move": "Mover",
     "startedTitle": "Traslado de «{name}» iniciado",
-    "startedDescription": "Sigue su progreso desde el menú de acciones en curso en la cabecera."
+    "startedDescription": "Siga su progreso desde el menú de acciones en curso en la cabecera."
   },
   "moveStack": {
     "dialogTitle": "Mover el stack a otro entorno",
     "dialogDescription": "Recrear todos los contenedores del stack en otro entorno Docker.",
     "moveWarning": "«{name}» y sus {count} contenedores se recrearán en el entorno de destino con las mismas imágenes, configuración, puertos y redes.",
     "targetLabel": "Entorno de destino",
-    "targetPlaceholder": "Selecciona un entorno",
+    "targetPlaceholder": "Seleccione un entorno",
     "targetDescription": "El entorno Docker en el que se recreará el stack.",
     "registryLabel": "Registro",
     "registryNone": "Público (sin autenticación)",
@@ -1029,7 +1029,7 @@
     "cancel": "Cancelar",
     "move": "Mover",
     "startedTitle": "Movimiento de «{name}» iniciado",
-    "startedDescription": "Sigue su progreso desde el menú de acciones en curso de la cabecera."
+    "startedDescription": "Siga su progreso desde el menú de acciones en curso de la cabecera."
   },
   "tasks": {
     "title": "Acciones en curso",
@@ -1140,7 +1140,7 @@
     }
   },
   "imageActions": {
-    "archiveDropZone": "Suelta aquí un archivo de imagen o haz clic para seleccionarlo",
+    "archiveDropZone": "Suelte aquí un archivo de imagen o haga clic para seleccionarlo",
     "archiveFormats": "Formatos aceptados: .tar, .tar.gz, .tgz",
     "imageReference": "Referencia de la imagen",
     "import": "Importar",
@@ -1165,7 +1165,7 @@
     "tagSuccess": "Imagen etiquetada correctamente.",
     "tagTitle": "Etiquetar la imagen",
     "untag": "Eliminar etiquetas",
-    "untagDescription": "Selecciona las etiquetas que quieres eliminar de esta imagen.",
+    "untagDescription": "Seleccione las etiquetas que quiere eliminar de esta imagen.",
     "untagLastTagWarning": "Esta imagen solo tiene una etiqueta: eliminarla borra la imagen.",
     "untagSuccess": "{count, plural, one {# etiqueta eliminada} other {# etiquetas eliminadas}}",
     "untagTitle": "Eliminar las etiquetas de la imagen"
@@ -1174,7 +1174,7 @@
     "badge": "Infraestructura",
     "badgeTooltip": "Recurso interno de Nexploy. Detenerlo, eliminarlo o modificarlo deja esta instancia fuera de servicio.",
     "bypassTitle": "Modo debug activo — infraestructura expuesta",
-    "bypassDescription": "NEXPLOY_DEBUG=true: los contenedores, imágenes, redes y volúmenes de Nexploy son visibles y todas las acciones sobre ellos están permitidas. Detener o eliminar uno de ellos deja esta instancia fuera de servicio, y eliminar el volumen de la base de datos es irrecuperable. Desactívalo en cuanto termines de depurar."
+    "bypassDescription": "NEXPLOY_DEBUG=true: los contenedores, imágenes, redes y volúmenes de Nexploy son visibles y todas las acciones sobre ellos están permitidas. Detener o eliminar uno de ellos deja esta instancia fuera de servicio, y eliminar el volumen de la base de datos es irrecuperable. Desactívelo en cuanto termine de depurar."
   },
   "system": {
     "tooltip": "Recurso de sistema de Nexploy. Hace funcionar esta instancia: modificarlo, detenerlo o eliminarlo puede dejar Nexploy fuera de servicio."

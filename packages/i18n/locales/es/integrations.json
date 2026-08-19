@@ -1,39 +1,39 @@
 {
   "title": "Integraciones",
-  "description": "Conecta tus servicios externos",
+  "description": "Conecte sus servicios externos",
   "gitProviders": "Proveedores Git",
   "cloudInfrastructure": "Cloud e infraestructura",
   "github": {
     "title": "GitHub",
-    "description": "Conecta tu cuenta de GitHub para desplegar repositorios"
+    "description": "Conecte su cuenta de GitHub para desplegar repositorios"
   },
   "gitlab": {
     "title": "GitLab",
-    "description": "Conecta tu cuenta de GitLab para desplegar repositorios"
+    "description": "Conecte su cuenta de GitLab para desplegar repositorios"
   },
   "gitea": {
     "title": "Gitea",
-    "description": "Conecta tu instancia de Gitea o Forgejo para desplegar repositorios"
+    "description": "Conecte su instancia de Gitea o Forgejo para desplegar repositorios"
   },
   "oauth": {
     "title": "Proveedores Git",
-    "description": "Configura las integraciones con proveedores Git para que los usuarios puedan conectar sus repositorios",
+    "description": "Configure las integraciones con proveedores Git para que los usuarios puedan conectar sus repositorios",
     "configured": "Configurado",
     "notConfigured": "Sin configurar",
     "clientId": "Client ID",
-    "clientIdPlaceholder": "Introduce el ID de tu aplicación",
+    "clientIdPlaceholder": "Introduzca el ID de su aplicación",
     "clientSecret": "Client Secret",
-    "clientSecretPlaceholder": "Introduce el secreto de tu aplicación",
+    "clientSecretPlaceholder": "Introduzca el secreto de su aplicación",
     "displayName": "Nombre mostrado",
     "displayNamePlaceholder": "p. ej. GitHub de mi org, GitLab del trabajo",
     "configureTitle": "Configurar {provider}",
-    "configureDescription": "Introduce las credenciales de la aplicación OAuth para {provider}",
+    "configureDescription": "Introduzca las credenciales de la aplicación OAuth para {provider}",
     "save": "Guardar",
     "saveSuccess": "Proveedor guardado correctamente",
     "saveFailed": "No se ha podido guardar el proveedor",
     "deleteSuccess": "Proveedor eliminado correctamente",
     "deleteConfirmTitle": "Eliminar proveedor Git",
-    "deleteConfirmDescription": "¿Seguro que quieres eliminar \"{name}\"? Esta acción no se puede deshacer.",
+    "deleteConfirmDescription": "¿Seguro que quiere eliminar \"{name}\"? Esta acción no se puede deshacer.",
     "deleteConfirmAction": "Eliminar",
     "noProvidersAvailable": "El administrador aún no ha configurado ningún proveedor Git.",
     "connectedSuccess": "Proveedor Git conectado correctamente.",
@@ -43,7 +43,7 @@
     "instanceCount": "{count, plural, =0 {Sin instancias} one {# instancia} other {# instancias}}",
     "guide": {
       "github": {
-        "manifestDescription": "Crea una GitHub App para que los usuarios puedan conectar sus repositorios. La app se configurará automáticamente con los permisos correctos.",
+        "manifestDescription": "Cree una GitHub App para que los usuarios puedan conectar sus repositorios. La app se configurará automáticamente con los permisos correctos.",
         "organization": "Instalar en una organización",
         "organizationPlaceholder": "Nombre de la organización",
         "createApp": "Crear GitHub App",
@@ -54,36 +54,36 @@
         "permStatuses": "Commit statuses: lectura y escritura"
       },
       "gitlab": {
-        "step1": "Ve a GitLab → Preferences → Applications → New application",
-        "step2": "Establece el Redirect URI en: {url}/api/git/oauth/callback y selecciona los scopes: api, read_api, read_repository",
-        "step3": "Copia el Application ID y el Secret",
+        "step1": "Vaya a GitLab → Preferences → Applications → New application",
+        "step2": "Establezca el Redirect URI en: {url}/api/git/oauth/callback y seleccione los scopes: api, read_api, read_repository",
+        "step3": "Copie el Application ID y el Secret",
         "useCustomUrl": "Usar una instancia de GitLab personalizada",
         "customUrlLabel": "URL de la instancia de GitLab",
         "customUrlPlaceholder": "https://gitlab.miempresa.com",
         "createApp": "Crear GitLab App"
       },
       "gitea": {
-        "step1": "En Gitea, ve a Settings → Applications → Manage OAuth2 Applications → Create a new OAuth2 application",
-        "step2": "Establece el Redirect URI en: {url}/api/git/oauth/callback",
-        "step3": "Copia el Client ID y el Client Secret",
+        "step1": "En Gitea, vaya a Settings → Applications → Manage OAuth2 Applications → Create a new OAuth2 application",
+        "step2": "Establezca el Redirect URI en: {url}/api/git/oauth/callback",
+        "step3": "Copie el Client ID y el Client Secret",
         "baseUrlLabel": "URL de la instancia de Gitea",
         "baseUrlPlaceholder": "https://gitea.miempresa.com",
         "createApp": "Crear Gitea App"
       },
       "bitbucket": {
-        "step1": "En Bitbucket, ve a Workspace settings → OAuth consumers → Add consumer",
-        "step2": "Establece la Callback URL en: {url}/api/git/oauth/callback",
-        "step3": "Marca los permisos: Account (Read), Repositories (Read, Write, Admin), Webhooks (Read and write), Pull requests (Read)",
-        "step4": "Copia la Key y el Secret del consumer creado",
+        "step1": "En Bitbucket, vaya a Workspace settings → OAuth consumers → Add consumer",
+        "step2": "Establezca la Callback URL en: {url}/api/git/oauth/callback",
+        "step3": "Marque los permisos: Account (Read), Repositories (Read, Write, Admin), Webhooks (Read and write), Pull requests (Read)",
+        "step4": "Copie la Key y el Secret del consumer creado",
         "keyLabel": "Key (Client ID)",
         "secretLabel": "Secret (Client Secret)",
         "createApp": "Crear Bitbucket App"
       },
       "azureRepos": {
-        "step1": "En el portal de Azure, ve a Microsoft Entra ID → App registrations → New registration",
-        "step2": "Establece el Redirect URI (tipo Web) en: {url}/api/git/oauth/callback",
-        "step3": "En API permissions, añade Azure DevOps → user_impersonation y concede el consentimiento de administrador",
-        "step4": "En Certificates & secrets, crea un client secret y copia su valor",
+        "step1": "En el portal de Azure, vaya a Microsoft Entra ID → App registrations → New registration",
+        "step2": "Establezca el Redirect URI (tipo Web) en: {url}/api/git/oauth/callback",
+        "step3": "En API permissions, añada Azure DevOps → user_impersonation y conceda el consentimiento de administrador",
+        "step4": "En Certificates & secrets, cree un client secret y copie su valor",
         "clientIdLabel": "Application (client) ID",
         "secretLabel": "Valor del client secret",
         "tenantIdLabel": "Directory (tenant) ID",
@@ -97,14 +97,14 @@
   },
   "bucketStorage": {
     "title": "Almacenamiento en bucket",
-    "description": "Añade AWS S3 o cualquier almacenamiento compatible con S3 para habilitar las copias de seguridad",
+    "description": "Añada AWS S3 o cualquier almacenamiento compatible con S3 para habilitar las copias de seguridad",
     "tooltip": "Se usa para almacenar copias de seguridad cifradas de la base de datos y los volúmenes en Amazon S3 o en cualquier proveedor compatible con S3 (MinIO, Cloudflare R2, Backblaze B2, DigitalOcean Spaces…). Conecta una cuenta con permisos de escritura en S3.",
     "displayName": "Nombre mostrado",
     "displayNamePlaceholder": "p. ej. Producción, Backup",
     "accessKeyIdLabel": "Access Key ID",
     "accessKeyIdPlaceholder": "AKIAIOSFODNN7EXAMPLE",
     "secretAccessKeyLabel": "Secret Access Key",
-    "secretAccessKeyPlaceholder": "Tu secret access key",
+    "secretAccessKeyPlaceholder": "Su secret access key",
     "regionLabel": "Región",
     "regionPlaceholder": "us-east-1",
     "endpointLabel": "Endpoint",
@@ -115,48 +115,48 @@
     "providerSpaces": "DigitalOcean Spaces",
     "providerMinio": "MinIO",
     "providerCustom": "Otro (compatible con S3)",
-    "hintAws": "Usa tus claves de acceso de AWS IAM. Establece la región en la de tu bucket.",
+    "hintAws": "Use sus claves de acceso de AWS IAM. Establezca la región en la de su bucket.",
     "hintR2": "La región debe ser \"auto\". Endpoint: https://ACCOUNT_ID.r2.cloudflarestorage.com",
-    "hintB2": "Crea una application key compatible con S3. Endpoint: https://s3.REGION.backblazeb2.com",
-    "hintSpaces": "Crea una clave de acceso de Spaces. Endpoint: https://REGION.digitaloceanspaces.com",
-    "hintMinio": "Usa tus claves de acceso de MinIO y la URL de tu servidor MinIO como endpoint.",
-    "hintCustom": "Cualquier almacenamiento compatible con S3. Introduce la URL del endpoint S3 del proveedor.",
+    "hintB2": "Cree una application key compatible con S3. Endpoint: https://s3.REGION.backblazeb2.com",
+    "hintSpaces": "Cree una clave de acceso de Spaces. Endpoint: https://REGION.digitaloceanspaces.com",
+    "hintMinio": "Use sus claves de acceso de MinIO y la URL de su servidor MinIO como endpoint.",
+    "hintCustom": "Cualquier almacenamiento compatible con S3. Introduzca la URL del endpoint S3 del proveedor.",
     "addTitle": "Añadir cuenta de almacenamiento",
-    "addDescription": "Introduce tus credenciales. La cuenta debe tener permisos de escritura. Deja el endpoint vacío para AWS S3.",
+    "addDescription": "Introduzca sus credenciales. La cuenta debe tener permisos de escritura. Deje el endpoint vacío para AWS S3.",
     "addAccount": "Añadir cuenta",
     "add": "Añadir",
     "addedSuccess": "Cuenta de almacenamiento añadida correctamente",
     "addFailed": "No se ha podido añadir la cuenta de almacenamiento",
     "deletedSuccess": "Cuenta de almacenamiento eliminada",
     "deleteConfirmTitle": "Eliminar cuenta de almacenamiento",
-    "deleteConfirmDescription": "¿Seguro que quieres eliminar \"{name}\"? Esta acción no se puede deshacer.",
+    "deleteConfirmDescription": "¿Seguro que quiere eliminar \"{name}\"? Esta acción no se puede deshacer.",
     "deleteConfirmAction": "Eliminar",
     "configured": "Configurado",
     "instanceCount": "{count, plural, =0 {Sin cuentas} one {# cuenta} other {# cuentas}}"
   },
   "dns": {
     "title": "Proveedores DNS",
-    "description": "Gestiona los registros DNS de tus dominios",
-    "tooltip": "Se usa para gestionar los registros DNS de tus dominios. Vincula una cuenta de proveedor DNS para habilitar el enrutamiento de dominios personalizados.",
+    "description": "Gestione los registros DNS de sus dominios",
+    "tooltip": "Se usa para gestionar los registros DNS de sus dominios. Vincule una cuenta de proveedor DNS para habilitar el enrutamiento de dominios personalizados.",
     "provider": "Proveedor",
-    "selectProvider": "Selecciona un proveedor",
+    "selectProvider": "Seleccione un proveedor",
     "displayName": "Nombre mostrado",
     "displayNamePlaceholder": "p. ej. Producción, Personal",
     "connectedSuccess": "Cuenta DNS añadida correctamente",
     "addFailed": "No se ha podido añadir la cuenta DNS",
     "deletedSuccess": "Cuenta DNS eliminada",
     "deleteConfirmTitle": "Eliminar cuenta DNS",
-    "deleteConfirmDescription": "¿Seguro que quieres eliminar \"{name}\"? Esta acción no se puede deshacer.",
+    "deleteConfirmDescription": "¿Seguro que quiere eliminar \"{name}\"? Esta acción no se puede deshacer.",
     "deleteConfirmAction": "Eliminar",
     "addTitle": "Añadir cuenta DNS",
-    "addDescription": "Introduce las credenciales de tu proveedor con los siguientes permisos:",
+    "addDescription": "Introduzca las credenciales de su proveedor con los siguientes permisos:",
     "addAccount": "Añadir cuenta",
     "add": "Añadir",
     "configured": "Configurado",
     "instanceCount": "{count, plural, =0 {Sin cuentas} one {# cuenta} other {# cuentas}}",
     "connect": "Conectar",
     "experimental": "Experimental",
-    "experimentalWarning": "Este proveedor es experimental: aún no se ha validado con una cuenta de producción. Comprueba que el registro DNS se crea correctamente tras añadir tu primer dominio.",
+    "experimentalWarning": "Este proveedor es experimental: aún no se ha validado con una cuenta de producción. Compruebe que el registro DNS se crea correctamente tras añadir su primer dominio.",
     "providers": {
       "CLOUDFLARE": {
         "name": "Cloudflare",
@@ -165,7 +165,7 @@
         "fields": {
           "apiToken": {
             "label": "Token de API",
-            "placeholder": "Tu token de API de Cloudflare"
+            "placeholder": "Su token de API de Cloudflare"
           }
         }
       },
@@ -176,7 +176,7 @@
         "fields": {
           "apiToken": {
             "label": "Token de API",
-            "placeholder": "Tu token de API de Hetzner Cloud"
+            "placeholder": "Su token de API de Hetzner Cloud"
           }
         }
       },
@@ -187,18 +187,18 @@
         "fields": {
           "apiToken": {
             "label": "Personal Access Token",
-            "placeholder": "Tu token de API de DigitalOcean"
+            "placeholder": "Su token de API de DigitalOcean"
           }
         }
       },
       "VULTR": {
         "name": "Vultr",
         "requirementZone": "Una clave de API de Vultr (Account > API)",
-        "requirementRecord": "La API debe estar habilitada y tu IP permitida en la lista de acceso",
+        "requirementRecord": "La API debe estar habilitada y su IP permitida en la lista de acceso",
         "fields": {
           "apiToken": {
             "label": "Clave de API",
-            "placeholder": "Tu clave de API de Vultr"
+            "placeholder": "Su clave de API de Vultr"
           }
         }
       },
@@ -209,14 +209,14 @@
         "fields": {
           "apiToken": {
             "label": "Personal Access Token",
-            "placeholder": "Tu token de API de Linode"
+            "placeholder": "Su token de API de Linode"
           }
         }
       },
       "PORKBUN": {
         "name": "Porkbun",
         "requirementZone": "Una clave de API y una clave secreta (Account > API Access)",
-        "requirementRecord": "El acceso API debe estar habilitado en cada dominio que quieras gestionar",
+        "requirementRecord": "El acceso API debe estar habilitado en cada dominio que quiera gestionar",
         "fields": {
           "apiKey": {
             "label": "Clave de API",
@@ -230,7 +230,7 @@
       },
       "POWERDNS": {
         "name": "PowerDNS",
-        "requirementZone": "La API debe estar habilitada en tu servidor (api=yes, api-key=...)",
+        "requirementZone": "La API debe estar habilitada en su servidor (api=yes, api-key=...)",
         "requirementRecord": "La URL base debe ser accesible desde Nexploy",
         "fields": {
           "baseUrl": {
@@ -239,7 +239,7 @@
           },
           "apiKey": {
             "label": "Clave de API",
-            "placeholder": "Tu clave de API de PowerDNS"
+            "placeholder": "Su clave de API de PowerDNS"
           },
           "serverId": {
             "label": "ID del servidor (opcional)",
@@ -254,15 +254,15 @@
         "fields": {
           "applicationKey": {
             "label": "Application Key",
-            "placeholder": "Tu application key"
+            "placeholder": "Su application key"
           },
           "applicationSecret": {
             "label": "Application Secret",
-            "placeholder": "Tu application secret"
+            "placeholder": "Su application secret"
           },
           "consumerKey": {
             "label": "Consumer Key",
-            "placeholder": "Tu consumer key"
+            "placeholder": "Su consumer key"
           },
           "endpoint": {
             "label": "Endpoint (opcional)",
@@ -278,11 +278,11 @@
   "connecting": "Conectando...",
   "bitbucket": {
     "title": "Bitbucket",
-    "description": "Conecta tu workspace de Bitbucket Cloud para desplegar repositorios"
+    "description": "Conecte su workspace de Bitbucket Cloud para desplegar repositorios"
   },
   "azureRepos": {
     "title": "Azure Repos",
-    "description": "Conecta tus organizaciones de Azure DevOps para desplegar repositorios de Azure Repos"
+    "description": "Conecte sus organizaciones de Azure DevOps para desplegar repositorios de Azure Repos"
   },
   "experimental": "Experimental"
 }

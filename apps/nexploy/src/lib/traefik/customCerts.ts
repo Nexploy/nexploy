@@ -52,6 +52,14 @@ function hostsFromCertificate(certificate: crypto.X509Certificate): string[] {
     return commonName && isHostname(commonName) ? [commonName] : [];
 }
 
+export function parseCertificateExpiry(certificatePem: string): Date | null {
+    try {
+        return new Date(new crypto.X509Certificate(certificatePem).validTo);
+    } catch {
+        return null;
+    }
+}
+
 export function parseCertificateHosts(certificatePem: string): string[] {
     const blocks = certificatePem.match(PEM_CERTIFICATE_BLOCK) ?? [certificatePem];
 

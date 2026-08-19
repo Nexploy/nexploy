@@ -23,7 +23,7 @@
   "all": "Todos",
   "size": "Tamaño",
   "noResults": "No se han encontrado resultados",
-  "noMatchSearch": "Ningún resultado coincide con tu búsqueda.",
+  "noMatchSearch": "Ningún resultado coincide con su búsqueda.",
   "connect": "Conectar",
   "disconnect": "Desconectar",
   "start": "Iniciar",
@@ -38,27 +38,27 @@
   "toggleMenu": "Mostrar/ocultar menú",
   "up": "Arriba",
   "down": "Abajo",
-  "forbidden": "No tienes permiso para realizar esta acción.",
+  "forbidden": "No tiene permiso para realizar esta acción.",
   "onboarding": {
     "welcome": {
       "title": "Bienvenido a Nexploy 🎉",
-      "content": "Tu cuenta de administrador está lista. Hagamos un recorrido rápido para empezar en unos pocos pasos."
+      "content": "Su cuenta de administrador está lista. Hagamos un recorrido rápido para empezar en unos pocos pasos."
     },
     "docker": {
       "title": "Docker",
-      "content": "Este es tu centro Docker: gestiona contenedores, imágenes, volúmenes, redes y eventos, todo en un mismo lugar."
+      "content": "Este es su centro Docker: gestione contenedores, imágenes, volúmenes, redes y eventos, todo en un mismo lugar."
     },
     "integrations": {
       "title": "Integraciones",
-      "content": "Empieza aquí añadiendo un proveedor Git (GitHub, GitLab, Gitea, Bitbucket o Azure Repos). Es la conexión que Nexploy usa para acceder a tus repositorios."
+      "content": "Empiece aquí añadiendo un proveedor Git (GitHub, GitLab, Gitea, Bitbucket o Azure Repos). Es la conexión que Nexploy usa para acceder a sus repositorios."
     },
     "account": {
-      "title": "Vincula tu cuenta",
-      "content": "Una vez añadido un proveedor, ve a tu cuenta para vincular tu cuenta personal. Esto autoriza a Nexploy a clonar y desplegar tus repositorios."
+      "title": "Vincule su cuenta",
+      "content": "Una vez añadido un proveedor, vaya a su cuenta para vincular su cuenta personal. Esto autoriza a Nexploy a clonar y desplegar sus repositorios."
     },
     "repositories": {
       "title": "Repositorios",
-      "content": "¡Todo listo! Crea aquí tu primer repositorio y despliégalo en Docker en unos pocos clics."
+      "content": "¡Todo listo! Cree aquí su primer repositorio y despliéguelo en Docker en unos pocos clics."
     },
     "controls": {
       "back": "Atrás",

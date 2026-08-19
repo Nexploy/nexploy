@@ -1,16 +1,16 @@
 {
   "title": "Account",
-  "description": "Gestisci il tuo profilo utente e le tue preferenze",
+  "description": "Gestisca il suo profilo utente e le sue preferenze",
   "profile": "Profilo",
   "security": "Sicurezza",
   "profileInfo": {
     "title": "Informazioni del profilo",
-    "description": "Gestisci le tue informazioni personali e i dettagli dell'account",
+    "description": "Gestisca le sue informazioni personali e i dettagli dell'account",
     "name": "Nome",
     "username": "Nome utente",
-    "namePlaceholder": "Il tuo nome",
+    "namePlaceholder": "Il suo nome",
     "email": "Email",
-    "emailPlaceholder": "tua@email.com",
+    "emailPlaceholder": "nome@email.com",
     "updateProfile": "Aggiorna profilo",
     "updating": "Aggiornamento in corso...",
     "profileUpdated": "Nome utente aggiornato con successo"
@@ -20,33 +20,33 @@
   },
   "securitySettings": {
     "title": "Impostazioni di sicurezza",
-    "description": "Gestisci la sicurezza del tuo account e le preferenze di autenticazione",
+    "description": "Gestisca la sicurezza del suo account e le preferenze di autenticazione",
     "password": "Password",
-    "passwordDescription": "Cambia la tua password per mantenere sicuro il tuo account",
+    "passwordDescription": "Cambi la sua password per mantenere sicuro il suo account",
     "change": "Cambia"
   },
   "integrations": {
     "title": "Integrazioni",
-    "description": "Collega il tuo account a servizi e strumenti esterni"
+    "description": "Colleghi il suo account a servizi e strumenti esterni"
   },
   "notifications": {
     "title": "Preferenze di notifica",
-    "description": "Controlla quando ricevi le notifiche",
+    "description": "Controlli quando riceve le notifiche",
     "badges": {
       "title": "Badge dell'interfaccia",
-      "description": "Mostra un contatore nell'interfaccia quando un elemento richiede la tua attenzione",
+      "description": "Mostra un contatore nell'interfaccia quando un elemento richiede la sua attenzione",
       "invitations": "Inviti alle organizzazioni",
-      "invitationsDescription": "Mostra un badge nel menu dell'account quando hai inviti in sospeso"
+      "invitationsDescription": "Mostra un badge nel menu dell'account quando ha inviti in sospeso"
     }
   },
   "regional": {
     "title": "Impostazioni regionali",
-    "description": "Configura le preferenze di lingua e fuso orario",
+    "description": "Configuri le preferenze di lingua e fuso orario",
     "language": "Lingua"
   },
   "password": {
     "title": "Cambia password",
-    "description": "Inserisci la password attuale e scegli una nuova password",
+    "description": "Inserisca la password attuale e scelga una nuova password",
     "currentPassword": "Password attuale",
     "newPassword": "Nuova password",
     "confirmPassword": "Conferma password",
@@ -56,30 +56,30 @@
   },
   "twoFactor": {
     "title": "Autenticazione a due fattori",
-    "description": "Aggiungi un ulteriore livello di sicurezza al tuo account",
+    "description": "Aggiunga un ulteriore livello di sicurezza al suo account",
     "enabled": "Attivata",
     "disabled": "Disattivata",
     "enable": "Attiva 2FA",
     "disable": "Disattiva 2FA",
     "settings": "Configurazione 2FA",
     "settingsTitle": "Impostazioni dell'autenticazione a due fattori",
-    "settingsDescription": "Gestisci le impostazioni della tua autenticazione a due fattori.",
+    "settingsDescription": "Gestisca le impostazioni della sua autenticazione a due fattori.",
     "enableTitle": "Attiva 2FA",
-    "enableDescription": "Proteggi il tuo account attivando l'autenticazione a due fattori.",
+    "enableDescription": "Protegga il suo account attivando l'autenticazione a due fattori.",
     "disableTitle": "Disattiva l'autenticazione a due fattori",
-    "disableDescription": "Sei sicuro di voler disattivare l'autenticazione a due fattori? Il tuo account sarà meno sicuro.",
+    "disableDescription": "È sicuro di voler disattivare l'autenticazione a due fattori? Il suo account sarà meno sicuro.",
     "disableButton": "Disattiva l'autenticazione a due fattori",
-    "cantScan": "Non riesci a scansionare? Puoi inserire manualmente la chiave segreta nella tua app di autenticazione",
+    "cantScan": "Non riesce a scansionare? Può inserire manualmente la chiave segreta nella sua app di autenticazione",
     "verifTotp": "Verifica TOTP",
-    "verifTotpDescription": "Scansiona il codice QR con la tua app di autenticazione per completare la configurazione dell'autenticazione a due fattori.",
-    "enterVerificationCode": "Inserisci il codice di verifica:",
+    "verifTotpDescription": "Scansioni il codice QR con la sua app di autenticazione per completare la configurazione dell'autenticazione a due fattori.",
+    "enterVerificationCode": "Inserisca il codice di verifica:",
     "backupCodes": "Codici di backup",
     "backupCodesDescription": "Conserva questi codici di backup in un luogo sicuro. Ogni codice può essere usato una sola volta.",
     "downloadCodes": "Scarica i codici",
     "close": "Chiudi",
     "useBackupCode": "Usa un codice di backup",
     "password": "Password",
-    "passwordPlaceholder": "Inserisci la tua password"
+    "passwordPlaceholder": "Inserisca la sua password"
   },
   "alerts": {
     "containerAlerts": "Avvisi sui container",
@@ -95,7 +95,7 @@
   },
   "language": {
     "title": "Lingua",
-    "selectLanguage": "Seleziona una lingua",
+    "selectLanguage": "Selezionare una lingua",
     "en": "English (US)",
     "fr": "Français",
     "it": "Italiano",
@@ -111,9 +111,9 @@
     "title": "Zona pericolosa",
     "description": "Azioni irreversibili e distruttive",
     "signOut": "Disconnetti",
-    "confirmSignOut": "Sei sicuro di volerti disconnettere? Dovrai accedere di nuovo per usare il tuo account.",
+    "confirmSignOut": "È sicuro di volersi disconnettere? Dovrà accedere di nuovo per usare il suo account.",
     "logOut": "Esci",
     "clear": "Svuota",
-    "confirmDelete": "Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata."
+    "confirmDelete": "È sicuro di voler eliminare il suo account? Questa azione non può essere annullata."
   }
 }

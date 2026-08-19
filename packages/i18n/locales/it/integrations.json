@@ -1,39 +1,39 @@
 {
   "title": "Integrazioni",
-  "description": "Collega i tuoi servizi esterni",
+  "description": "Colleghi i suoi servizi esterni",
   "gitProviders": "Provider Git",
   "cloudInfrastructure": "Cloud e infrastruttura",
   "github": {
     "title": "GitHub",
-    "description": "Collega il tuo account GitHub per distribuire i repository"
+    "description": "Colleghi il suo account GitHub per distribuire i repository"
   },
   "gitlab": {
     "title": "GitLab",
-    "description": "Collega il tuo account GitLab per distribuire i repository"
+    "description": "Colleghi il suo account GitLab per distribuire i repository"
   },
   "gitea": {
     "title": "Gitea",
-    "description": "Collega la tua istanza Gitea o Forgejo per distribuire i repository"
+    "description": "Colleghi la sua istanza Gitea o Forgejo per distribuire i repository"
   },
   "oauth": {
     "title": "Provider Git",
-    "description": "Configura le integrazioni con i provider Git affinché gli utenti possano collegare i loro repository",
+    "description": "Configuri le integrazioni con i provider Git affinché gli utenti possano collegare i loro repository",
     "configured": "Configurato",
     "notConfigured": "Non configurato",
     "clientId": "Client ID",
-    "clientIdPlaceholder": "Inserisci l'ID della tua applicazione",
+    "clientIdPlaceholder": "Inserisca l'ID della sua applicazione",
     "clientSecret": "Client Secret",
-    "clientSecretPlaceholder": "Inserisci il segreto della tua applicazione",
+    "clientSecretPlaceholder": "Inserisca il segreto della sua applicazione",
     "displayName": "Nome visualizzato",
     "displayNamePlaceholder": "es. GitHub della mia org, GitLab lavoro",
     "configureTitle": "Configura {provider}",
-    "configureDescription": "Inserisci le credenziali dell'applicazione OAuth per {provider}",
+    "configureDescription": "Inserisca le credenziali dell'applicazione OAuth per {provider}",
     "save": "Salva",
     "saveSuccess": "Provider salvato con successo",
     "saveFailed": "Salvataggio del provider non riuscito",
     "deleteSuccess": "Provider rimosso con successo",
     "deleteConfirmTitle": "Rimuovi provider Git",
-    "deleteConfirmDescription": "Sei sicuro di voler rimuovere \"{name}\"? Questa azione non può essere annullata.",
+    "deleteConfirmDescription": "È sicuro di voler rimuovere \"{name}\"? Questa azione non può essere annullata.",
     "deleteConfirmAction": "Rimuovi",
     "noProvidersAvailable": "L'amministratore non ha ancora configurato alcun provider Git.",
     "connectedSuccess": "Provider Git collegato con successo.",
@@ -43,7 +43,7 @@
     "instanceCount": "{count, plural, =0 {Nessuna istanza} one {# istanza} other {# istanze}}",
     "guide": {
       "github": {
-        "manifestDescription": "Crea una GitHub App per consentire agli utenti di collegare i loro repository. L'app verrà configurata automaticamente con i permessi corretti.",
+        "manifestDescription": "Crei una GitHub App per consentire agli utenti di collegare i loro repository. L'app verrà configurata automaticamente con i permessi corretti.",
         "organization": "Installa su un'organizzazione",
         "organizationPlaceholder": "Nome dell'organizzazione",
         "createApp": "Crea GitHub App",
@@ -54,9 +54,9 @@
         "permStatuses": "Commit statuses: lettura e scrittura"
       },
       "gitlab": {
-        "step1": "Vai su GitLab → Preferences → Applications → New application",
-        "step2": "Imposta il Redirect URI su: {url}/api/git/oauth/callback e seleziona gli scope: api, read_api, read_repository",
-        "step3": "Copia l'Application ID e il Secret",
+        "step1": "Vada su GitLab → Preferences → Applications → New application",
+        "step2": "Imposti il Redirect URI su: {url}/api/git/oauth/callback e selezioni gli scope: api, read_api, read_repository",
+        "step3": "Copi l'Application ID e il Secret",
         "useCustomUrl": "Usa un'istanza GitLab personalizzata",
         "customUrlLabel": "URL dell'istanza GitLab",
         "customUrlPlaceholder": "https://gitlab.miaazienda.com",
@@ -65,25 +65,25 @@
       "gitea": {
         "step1": "In Gitea, vai su Settings → Applications → Manage OAuth2 Applications → Create a new OAuth2 application",
         "step2": "Imposta il Redirect URI su: {url}/api/git/oauth/callback",
-        "step3": "Copia il Client ID e il Client Secret",
+        "step3": "Copi il Client ID e il Client Secret",
         "baseUrlLabel": "URL dell'istanza Gitea",
         "baseUrlPlaceholder": "https://gitea.miaazienda.com",
         "createApp": "Crea Gitea App"
       },
       "bitbucket": {
         "step1": "In Bitbucket, vai su Workspace settings → OAuth consumers → Add consumer",
-        "step2": "Imposta la Callback URL su: {url}/api/git/oauth/callback",
-        "step3": "Seleziona i permessi: Account (Read), Repositories (Read, Write, Admin), Webhooks (Read and write), Pull requests (Read)",
-        "step4": "Copia la Key e il Secret del consumer creato",
+        "step2": "Imposti la Callback URL su: {url}/api/git/oauth/callback",
+        "step3": "Selezioni i permessi: Account (Read), Repositories (Read, Write, Admin), Webhooks (Read and write), Pull requests (Read)",
+        "step4": "Copi la Key e il Secret del consumer creato",
         "keyLabel": "Key (Client ID)",
         "secretLabel": "Secret (Client Secret)",
         "createApp": "Crea Bitbucket App"
       },
       "azureRepos": {
         "step1": "Nel portale Azure, vai su Microsoft Entra ID → App registrations → New registration",
-        "step2": "Imposta il Redirect URI (tipo Web) su: {url}/api/git/oauth/callback",
+        "step2": "Imposti il Redirect URI (tipo Web) su: {url}/api/git/oauth/callback",
         "step3": "In API permissions, aggiungi Azure DevOps → user_impersonation, poi concedi il consenso amministratore",
-        "step4": "In Certificates & secrets, crea un client secret e copia il suo valore",
+        "step4": "In Certificates & secrets, crei un client secret e copi il suo valore",
         "clientIdLabel": "Application (client) ID",
         "secretLabel": "Valore del client secret",
         "tenantIdLabel": "Directory (tenant) ID",
@@ -97,14 +97,14 @@
   },
   "bucketStorage": {
     "title": "Storage su bucket",
-    "description": "Aggiungi AWS S3 o qualsiasi storage compatibile con S3 per abilitare i backup",
+    "description": "Aggiunga AWS S3 o qualsiasi storage compatibile con S3 per abilitare i backup",
     "tooltip": "Utilizzato per archiviare i backup cifrati del database e dei volumi su Amazon S3 o su qualsiasi provider compatibile con S3 (MinIO, Cloudflare R2, Backblaze B2, DigitalOcean Spaces…). Collega un account con permessi di scrittura S3.",
     "displayName": "Nome visualizzato",
     "displayNamePlaceholder": "es. Produzione, Backup",
     "accessKeyIdLabel": "Access Key ID",
     "accessKeyIdPlaceholder": "AKIAIOSFODNN7EXAMPLE",
     "secretAccessKeyLabel": "Secret Access Key",
-    "secretAccessKeyPlaceholder": "La tua secret access key",
+    "secretAccessKeyPlaceholder": "La sua secret access key",
     "regionLabel": "Regione",
     "regionPlaceholder": "us-east-1",
     "endpointLabel": "Endpoint",
@@ -115,48 +115,48 @@
     "providerSpaces": "DigitalOcean Spaces",
     "providerMinio": "MinIO",
     "providerCustom": "Altro (compatibile S3)",
-    "hintAws": "Usa le tue chiavi di accesso AWS IAM. Imposta la regione su quella del tuo bucket.",
+    "hintAws": "Usi le sue chiavi di accesso AWS IAM. Imposti la regione su quella del suo bucket.",
     "hintR2": "La regione deve essere \"auto\". Endpoint: https://ACCOUNT_ID.r2.cloudflarestorage.com",
-    "hintB2": "Crea una application key compatibile con S3. Endpoint: https://s3.REGION.backblazeb2.com",
-    "hintSpaces": "Crea una chiave di accesso Spaces. Endpoint: https://REGION.digitaloceanspaces.com",
-    "hintMinio": "Usa le tue chiavi di accesso MinIO e l'URL del tuo server MinIO come endpoint.",
+    "hintB2": "Crei una application key compatibile con S3. Endpoint: https://s3.REGION.backblazeb2.com",
+    "hintSpaces": "Crei una chiave di accesso Spaces. Endpoint: https://REGION.digitaloceanspaces.com",
+    "hintMinio": "Usi le sue chiavi di accesso MinIO e l'URL del suo server MinIO come endpoint.",
     "hintCustom": "Qualsiasi storage compatibile con S3. Inserisci l'URL dell'endpoint S3 del provider.",
     "addTitle": "Aggiungi account di storage",
-    "addDescription": "Inserisci le tue credenziali. L'account deve avere permessi di scrittura. Lascia vuoto l'endpoint per AWS S3.",
+    "addDescription": "Inserisca le sue credenziali. L'account deve avere permessi di scrittura. Lasci vuoto l'endpoint per AWS S3.",
     "addAccount": "Aggiungi account",
     "add": "Aggiungi",
     "addedSuccess": "Account di storage aggiunto con successo",
     "addFailed": "Aggiunta dell'account di storage non riuscita",
     "deletedSuccess": "Account di storage rimosso",
     "deleteConfirmTitle": "Rimuovi account di storage",
-    "deleteConfirmDescription": "Sei sicuro di voler rimuovere \"{name}\"? Questa azione non può essere annullata.",
+    "deleteConfirmDescription": "È sicuro di voler rimuovere \"{name}\"? Questa azione non può essere annullata.",
     "deleteConfirmAction": "Rimuovi",
     "configured": "Configurato",
     "instanceCount": "{count, plural, =0 {Nessun account} one {# account} other {# account}}"
   },
   "dns": {
     "title": "Provider DNS",
-    "description": "Gestisci i record DNS dei tuoi domini",
-    "tooltip": "Utilizzato per gestire i record DNS dei tuoi domini. Collega un account provider DNS per abilitare il routing dei domini personalizzati.",
+    "description": "Gestisca i record DNS dei suoi domini",
+    "tooltip": "Utilizzato per gestire i record DNS dei suoi domini. Colleghi un account provider DNS per abilitare il routing dei domini personalizzati.",
     "provider": "Provider",
-    "selectProvider": "Seleziona un provider",
+    "selectProvider": "Selezionare un provider",
     "displayName": "Nome visualizzato",
     "displayNamePlaceholder": "es. Produzione, Personale",
     "connectedSuccess": "Account DNS aggiunto con successo",
     "addFailed": "Aggiunta dell'account DNS non riuscita",
     "deletedSuccess": "Account DNS rimosso",
     "deleteConfirmTitle": "Rimuovi account DNS",
-    "deleteConfirmDescription": "Sei sicuro di voler rimuovere \"{name}\"? Questa azione non può essere annullata.",
+    "deleteConfirmDescription": "È sicuro di voler rimuovere \"{name}\"? Questa azione non può essere annullata.",
     "deleteConfirmAction": "Rimuovi",
     "addTitle": "Aggiungi account DNS",
-    "addDescription": "Inserisci le credenziali del tuo provider con i seguenti permessi:",
+    "addDescription": "Inserisca le credenziali del suo provider con i seguenti permessi:",
     "addAccount": "Aggiungi account",
     "add": "Aggiungi",
     "configured": "Configurato",
     "instanceCount": "{count, plural, =0 {Nessun account} one {# account} other {# account}}",
     "connect": "Connetti",
     "experimental": "Sperimentale",
-    "experimentalWarning": "Questo provider è sperimentale: non è ancora stato validato su un account di produzione. Verifica che il record DNS venga creato correttamente dopo aver aggiunto il tuo primo dominio.",
+    "experimentalWarning": "Questo provider è sperimentale: non è ancora stato validato su un account di produzione. Verifichi che il record DNS venga creato correttamente dopo aver aggiunto il suo primo dominio.",
     "providers": {
       "CLOUDFLARE": {
         "name": "Cloudflare",
@@ -165,7 +165,7 @@
         "fields": {
           "apiToken": {
             "label": "Token API",
-            "placeholder": "Il tuo token API Cloudflare"
+            "placeholder": "Il suo token API Cloudflare"
           }
         }
       },
@@ -176,7 +176,7 @@
         "fields": {
           "apiToken": {
             "label": "Token API",
-            "placeholder": "Il tuo token API Hetzner Cloud"
+            "placeholder": "Il suo token API Hetzner Cloud"
           }
         }
       },
@@ -187,18 +187,18 @@
         "fields": {
           "apiToken": {
             "label": "Personal Access Token",
-            "placeholder": "Il tuo token API DigitalOcean"
+            "placeholder": "Il suo token API DigitalOcean"
           }
         }
       },
       "VULTR": {
         "name": "Vultr",
         "requirementZone": "Una chiave API Vultr (Account > API)",
-        "requirementRecord": "L'API deve essere abilitata e il tuo IP autorizzato nella lista di accesso",
+        "requirementRecord": "L'API deve essere abilitata e il suo IP autorizzato nella lista di accesso",
         "fields": {
           "apiToken": {
             "label": "Chiave API",
-            "placeholder": "La tua chiave API Vultr"
+            "placeholder": "La sua chiave API Vultr"
           }
         }
       },
@@ -209,7 +209,7 @@
         "fields": {
           "apiToken": {
             "label": "Personal Access Token",
-            "placeholder": "Il tuo token API Linode"
+            "placeholder": "Il suo token API Linode"
           }
         }
       },
@@ -230,7 +230,7 @@
       },
       "POWERDNS": {
         "name": "PowerDNS",
-        "requirementZone": "L'API deve essere abilitata sul tuo server (api=yes, api-key=...)",
+        "requirementZone": "L'API deve essere abilitata sul suo server (api=yes, api-key=...)",
         "requirementRecord": "L'URL di base deve essere raggiungibile da Nexploy",
         "fields": {
           "baseUrl": {
@@ -239,7 +239,7 @@
           },
           "apiKey": {
             "label": "Chiave API",
-            "placeholder": "La tua chiave API PowerDNS"
+            "placeholder": "La sua chiave API PowerDNS"
           },
           "serverId": {
             "label": "ID del server (opzionale)",
@@ -254,15 +254,15 @@
         "fields": {
           "applicationKey": {
             "label": "Application Key",
-            "placeholder": "La tua application key"
+            "placeholder": "La sua application key"
           },
           "applicationSecret": {
             "label": "Application Secret",
-            "placeholder": "Il tuo application secret"
+            "placeholder": "Il suo application secret"
           },
           "consumerKey": {
             "label": "Consumer Key",
-            "placeholder": "La tua consumer key"
+            "placeholder": "La sua consumer key"
           },
           "endpoint": {
             "label": "Endpoint (opzionale)",
@@ -278,11 +278,11 @@
   "connecting": "Connessione in corso...",
   "bitbucket": {
     "title": "Bitbucket",
-    "description": "Collega il tuo workspace Bitbucket Cloud per distribuire i repository"
+    "description": "Colleghi il suo workspace Bitbucket Cloud per distribuire i repository"
   },
   "azureRepos": {
     "title": "Azure Repos",
-    "description": "Collega le tue organizzazioni Azure DevOps per distribuire i repository Azure Repos"
+    "description": "Colleghi le sue organizzazioni Azure DevOps per distribuire i repository Azure Repos"
   },
   "experimental": "Sperimentale"
 }

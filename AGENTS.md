@@ -362,6 +362,13 @@ The authoritative list is `appLocales` in `packages/i18n/index.ts`. When a new l
 4. Keep translation keys in camelCase and logically grouped (e.g., `"backups.create"`, `"backups.restore"`)
 5. Never commit a component with hardcoded user-facing strings — always use `t("key")`
 6. **docker-api translations:** Important user-facing messages returned by `docker-api` (error messages, status labels, notifications) must also be translated. Use the `@workspace/i18n` package to ensure these texts are available in every locale
+7. **Formal address (MANDATORY):** Never address the user informally in any locale. Use the formal register consistently:
+   - `fr` — vouvoiement only: "vous", "votre", "vos", and the vous-form imperative ("Choisissez", "Sélectionnez"). Never "tu", "ton/ta/tes", "toi"
+   - `es` — usted only: "su", "sus", "usted", and the usted imperative ("Seleccione", "Introduzca", "Gestione"). Never "tú", "tu/tus", "ti", or tú imperatives ("Selecciona", "Introduce")
+   - `it` — Lei only: "suo/sua/suoi/sue" and the Lei imperative ("Selezioni", "Inserisca", "Gestisca"), or the impersonal infinitive for selector placeholders ("Selezionare un driver"). Never "tu", "tuo/tua/tuoi/tue", "puoi/vuoi/devi"
+   - Email placeholders follow the same rule: `vous@exemple.com` (fr), `usuario@example.com` (es), `nome@example.com` (it)
+   - Descriptions of what a toggle or option does stay in the third person ("Muestra un contador", "Verifica se esiste già una rete") — they describe behavior, they do not address the user
+   - Short action labels on buttons stay as they are ("Aggiungi", "Eliminar", "Enregistrer") — they are commands the user issues, not address
 
 ### Git Provider Integration
 

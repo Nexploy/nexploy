@@ -13,7 +13,7 @@
     "title": "Membri",
     "member": "Membro",
     "role": "Ruolo",
-    "you": "(tu)",
+    "you": "(lei)",
     "email": "Email",
     "invite": "Invita membro",
     "inviteDescription": "L'utente invitato deve già avere un account Nexploy",
@@ -21,7 +21,7 @@
     "confirmRemove": "Rimuovere {name} da questa organizzazione?",
     "transferOwnership": "Trasferisci la proprietà",
     "confirmTransferOwnership": "Rendere {name} proprietario di questa organizzazione? I proprietari hanno il controllo completo, inclusa l'eliminazione.",
-    "searchPlaceholder": "Cerca per nome o email",
+    "searchPlaceholder": "Cercare per nome o email",
     "noUserFound": "Nessun account corrispondente",
     "noMembers": "Nessun membro",
     "perPage": "Membri per pagina"
@@ -38,7 +38,7 @@
   },
   "settings": {
     "rename": "Rinomina organizzazione",
-    "renameDescription": "Cambia il nome visualizzato di \"{name}\"",
+    "renameDescription": "Cambi il nome visualizzato di \"{name}\"",
     "save": "Salva",
     "deleteOrganization": "Elimina organizzazione",
     "confirmDelete": "Eliminare \"{name}\"? L'operazione non può essere annullata.",
@@ -46,7 +46,7 @@
     "confirmLeave": "Abbandonare \"{name}\"? Perderai l'accesso ai suoi repository."
   },
   "errors": {
-    "guestCannotCreate": "Il tuo ruolo non consente di creare organizzazioni",
+    "guestCannotCreate": "Il suo ruolo non consente di creare organizzazioni",
     "userNotFound": "Nessun account Nexploy trovato per questa email",
     "alreadyMember": "Questo utente è già membro dell'organizzazione",
     "notFound": "Organizzazione non trovata",
@@ -66,9 +66,9 @@
     "leaveFailed": "Abbandono dell'organizzazione non riuscito",
     "deleteFailed": "Eliminazione dell'organizzazione non riuscita",
     "setActiveFailed": "Cambio di organizzazione non riuscito",
-    "cannotDeletePersonal": "La tua organizzazione personale non può essere eliminata",
-    "cannotRenamePersonal": "La tua organizzazione personale non può essere rinominata",
-    "cannotInvitePersonal": "La tua organizzazione personale non può avere altri membri"
+    "cannotDeletePersonal": "La sua organizzazione personale non può essere eliminata",
+    "cannotRenamePersonal": "La sua organizzazione personale non può essere rinominata",
+    "cannotInvitePersonal": "La sua organizzazione personale non può avere altri membri"
   },
   "success": {
     "created": "Organizzazione creata",

@@ -13,7 +13,7 @@
   "success": "Successo",
   "error": "Errore",
   "search": "Cerca",
-  "searchPlaceholder": "Cerca...",
+  "searchPlaceholder": "Cercare...",
   "actions": "Azioni",
   "remove": "Rimuovi",
   "create": "Crea",
@@ -23,7 +23,7 @@
   "all": "Tutti",
   "size": "Dimensione",
   "noResults": "Nessun risultato trovato",
-  "noMatchSearch": "Nessun risultato corrisponde alla tua ricerca.",
+  "noMatchSearch": "Nessun risultato corrisponde alla sua ricerca.",
   "connect": "Connetti",
   "disconnect": "Disconnetti",
   "start": "Avvia",
@@ -38,27 +38,27 @@
   "toggleMenu": "Attiva/disattiva menu",
   "up": "Su",
   "down": "Giù",
-  "forbidden": "Non hai il permesso di eseguire questa azione.",
+  "forbidden": "Non ha il permesso di eseguire questa azione.",
   "onboarding": {
     "welcome": {
       "title": "Benvenuto in Nexploy 🎉",
-      "content": "Il tuo account amministratore è pronto. Facciamo un breve tour per iniziare in pochi passaggi."
+      "content": "Il suo account amministratore è pronto. Facciamo un breve tour per iniziare in pochi passaggi."
     },
     "docker": {
       "title": "Docker",
-      "content": "Questo è il tuo hub Docker: gestisci container, immagini, volumi, reti ed eventi, tutto in un unico posto."
+      "content": "Questo è il suo hub Docker: gestisca container, immagini, volumi, reti ed eventi, tutto in un unico posto."
     },
     "integrations": {
       "title": "Integrazioni",
-      "content": "Inizia da qui aggiungendo un provider Git (GitHub, GitLab, Gitea, Bitbucket o Azure Repos). È la connessione che Nexploy usa per raggiungere i tuoi repository."
+      "content": "Inizi da qui aggiungendo un provider Git (GitHub, GitLab, Gitea, Bitbucket o Azure Repos). È la connessione che Nexploy usa per raggiungere i suoi repository."
     },
     "account": {
-      "title": "Collega il tuo account",
-      "content": "Una volta aggiunto un provider, vai al tuo account per collegarvi il tuo account personale. In questo modo autorizzi Nexploy a clonare e distribuire i tuoi repository."
+      "title": "Colleghi il suo account",
+      "content": "Una volta aggiunto un provider, vada al suo account per collegarvi il suo account personale. In questo modo autorizza Nexploy a clonare e distribuire i suoi repository."
     },
     "repositories": {
       "title": "Repository",
-      "content": "È tutto pronto! Crea qui il tuo primo repository e distribuiscilo su Docker in pochi clic."
+      "content": "È tutto pronto! Crei qui il suo primo repository e lo distribuisca su Docker in pochi clic."
     },
     "controls": {
       "back": "Indietro",

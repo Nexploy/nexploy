@@ -4,7 +4,7 @@
   "waitingForRequests": "In attesa di richieste...",
   "noRequests": "Nessuna richiesta",
   "requestsCaptured": "{count, plural, one {# richiesta catturata da Traefik} other {# richieste catturate da Traefik}}",
-  "searchPlaceholder": "Cerca per percorso, host...",
+  "searchPlaceholder": "Cercare per percorso, host...",
   "method": "Metodo",
   "allMethods": "Tutti",
   "status": "Stato",

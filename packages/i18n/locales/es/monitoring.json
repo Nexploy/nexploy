@@ -1,6 +1,6 @@
 {
   "title": "Monitorización",
-  "description": "Monitoriza tu servidor y tus contenedores en tiempo real",
+  "description": "Monitorice su servidor y sus contenedores en tiempo real",
   "cpuUsage": "Uso de CPU",
   "memory": "Memoria",
   "disk": "Disco",
@@ -90,7 +90,7 @@
     "networkTx": "Enviado",
     "blockRead": "Lectura",
     "blockWrite": "Escritura",
-    "searchPlaceholder": "Busca un contenedor, un stack o una imagen…",
+    "searchPlaceholder": "Busque un contenedor, un stack o una imagen…",
     "noContainers": "Ningún contenedor coincide con estos filtros",
     "perPage": "Contenedores por página"
   }

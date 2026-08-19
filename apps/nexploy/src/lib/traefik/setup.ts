@@ -108,7 +108,9 @@ async function renderStaticConfig(): Promise<void> {
 
 async function syncCustomCertificates(): Promise<void> {
     try {
+        const { ensureInstanceCertificateRecord } = await import('@/lib/instance/bootstrapCertificate');
         const { backfillCustomCertCoveredDomains, regenerateCustomCertsConfig } = await import('./customCerts');
+        await ensureInstanceCertificateRecord();
         await regenerateCustomCertsConfig();
         await backfillCustomCertCoveredDomains();
     } catch (error) {

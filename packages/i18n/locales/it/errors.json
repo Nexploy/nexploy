@@ -166,8 +166,8 @@
     "deleteFailed": "Eliminazione della versione non riuscita"
   },
   "gitProvider": {
-    "oauthTokenExpired": "Il tuo token OAuth {provider} è scaduto o è stato revocato. Ricollega il tuo account dalle impostazioni delle integrazioni.",
-    "gitlabOauthExpired": "Il tuo token OAuth GitLab è scaduto o è stato revocato. Ricollega il tuo account GitLab dalle impostazioni delle integrazioni.",
+    "oauthTokenExpired": "Il suo token OAuth {provider} è scaduto o è stato revocato. Ricollega il suo account dalle impostazioni delle integrazioni.",
+    "gitlabOauthExpired": "Il suo token OAuth GitLab è scaduto o è stato revocato. Ricollega il suo account GitLab dalle impostazioni delle integrazioni.",
     "unknownProvider": "Provider sconosciuto: {provider}",
     "fetchCommitsFailed": "Recupero dei commit non riuscito: {error}",
     "invalidGitlabUrl": "URL del repository GitLab non valido: {url}",

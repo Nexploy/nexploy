@@ -13,7 +13,7 @@
     "title": "Miembros",
     "member": "Miembro",
     "role": "Rol",
-    "you": "(tú)",
+    "you": "(usted)",
     "email": "Email",
     "invite": "Invitar miembro",
     "inviteDescription": "El usuario invitado debe tener ya una cuenta de Nexploy",
@@ -38,7 +38,7 @@
   },
   "settings": {
     "rename": "Renombrar organización",
-    "renameDescription": "Cambia el nombre mostrado de \"{name}\"",
+    "renameDescription": "Cambie el nombre mostrado de \"{name}\"",
     "save": "Guardar",
     "deleteOrganization": "Eliminar organización",
     "confirmDelete": "¿Eliminar \"{name}\"? Esta acción no se puede deshacer.",
@@ -46,7 +46,7 @@
     "confirmLeave": "¿Abandonar \"{name}\"? Perderás el acceso a sus repositorios."
   },
   "errors": {
-    "guestCannotCreate": "Tu rol no permite crear organizaciones",
+    "guestCannotCreate": "Su rol no permite crear organizaciones",
     "userNotFound": "No se ha encontrado ninguna cuenta de Nexploy para este email",
     "alreadyMember": "Este usuario ya es miembro de la organización",
     "notFound": "Organización no encontrada",
@@ -66,9 +66,9 @@
     "leaveFailed": "No se ha podido abandonar la organización",
     "deleteFailed": "No se ha podido eliminar la organización",
     "setActiveFailed": "No se ha podido cambiar de organización",
-    "cannotDeletePersonal": "Tu organización personal no se puede eliminar",
-    "cannotRenamePersonal": "Tu organización personal no se puede renombrar",
-    "cannotInvitePersonal": "Tu organización personal no puede tener otros miembros"
+    "cannotDeletePersonal": "Su organización personal no se puede eliminar",
+    "cannotRenamePersonal": "Su organización personal no se puede renombrar",
+    "cannotInvitePersonal": "Su organización personal no puede tener otros miembros"
   },
   "success": {
     "created": "Organización creada",

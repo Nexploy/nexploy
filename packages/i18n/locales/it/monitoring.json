@@ -1,6 +1,6 @@
 {
   "title": "Monitoraggio",
-  "description": "Monitora il tuo server e i tuoi container in tempo reale",
+  "description": "Monitori il suo server e i suoi container in tempo reale",
   "cpuUsage": "Utilizzo CPU",
   "memory": "Memoria",
   "disk": "Disco",
@@ -90,7 +90,7 @@
     "networkTx": "Inviato",
     "blockRead": "Lettura",
     "blockWrite": "Scrittura",
-    "searchPlaceholder": "Cerca un container, uno stack o un'immagine…",
+    "searchPlaceholder": "Cercare un container, uno stack o un'immagine…",
     "noContainers": "Nessun container corrisponde a questi filtri",
     "perPage": "Container per pagina"
   }
