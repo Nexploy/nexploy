@@ -7,7 +7,6 @@ import { PropsWithChildren, ReactNode } from 'react';
 import { AnimatedCircleX } from '@/components/pipeline/nodes/animations/AnimatedCircleX.tsx';
 import { AnimatedBan } from '@/components/pipeline/nodes/animations/AnimatedBan.tsx';
 import { AnimatedAlertCircle } from '@/components/pipeline/nodes/animations/AnimatedAlertCircle.tsx';
-import { AnimatedNodeSpinner } from '@/components/pipeline/nodes/animations/AnimatedNodeSpinner.tsx';
 
 interface NodeAnimationProps {
     data: NodeData;
@@ -115,14 +114,6 @@ export function NodeAnimation({
                     )}
                 >
                     {content}
-                    <AnimatedNodeSpinner
-                        categoryHex={categoryHex!}
-                        className={cn(
-                            'absolute',
-                            square || hasBody ? 'top-1.5 right-1.5' : 'top-[11px] right-[11px]',
-                            isEndNode && !hasBody && 'top-1 left-1',
-                        )}
-                    />
                 </div>
             </div>
         );
