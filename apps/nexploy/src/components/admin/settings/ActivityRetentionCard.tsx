@@ -42,25 +42,32 @@ export function ActivityRetentionCard({ settings }: { settings: ActivitySettings
         },
     );
 
-    const purge = async () => {
-        const result = await purgeActivityLogsAction({});
+    const purgeAll = async () => {
+        const result = await purgeActivityLogsAction({ scope: 'all' });
 
         if (result?.serverError) {
             toast.error(result.serverError);
             return;
         }
 
+        const purged = result?.data?.purged ?? 0;
         setLastPurgeAt(dayjs().toISOString());
-        toast.success(t('retentionPurged', { count: result?.data?.purged ?? 0 }));
+
+        if (purged === 0) {
+            toast.info(t('retentionPurgedNone'));
+            return;
+        }
+
+        toast.success(t('retentionPurged', { count: purged }));
     };
 
-    const handlePurge = () => {
+    const handlePurgeAll = () => {
         openAlertDialog({
-            title: t('retentionPurgeConfirmTitle'),
-            description: t('retentionPurgeConfirmDescription'),
+            title: t('retentionPurgeAllConfirmTitle'),
+            description: t('retentionPurgeAllConfirmDescription'),
             cancelLabel: tCommon('cancel'),
-            actionLabel: t('retentionPurgeConfirmAction'),
-            onAction: purge,
+            actionLabel: t('retentionPurgeAllConfirmAction'),
+            onAction: purgeAll,
         });
     };
 
@@ -101,20 +108,23 @@ export function ActivityRetentionCard({ settings }: { settings: ActivitySettings
                             )}
                         />
 
-                        <div className="flex items-center justify-between rounded-lg border p-4">
+                        <div className="flex items-center justify-between rounded-lg border border-destructive/40 p-4">
                             <div className="flex flex-col">
-                                <span className="text-base">{t('retentionPurgeTitle')}</span>
+                                <span className="text-base">{t('retentionPurgeAllTitle')}</span>
                                 <span className="text-muted-foreground text-xs">
-                                    {lastPurgeAt
-                                        ? t('retentionLastPurge', {
-                                              date: dayjs(lastPurgeAt).format('DD/MM/YYYY HH:mm'),
-                                          })
-                                        : t('retentionPurgeNowDescription')}
+                                    {t('retentionPurgeAllDescription')}
                                 </span>
+                                {lastPurgeAt && (
+                                    <span className="text-muted-foreground text-xs">
+                                        {t('retentionLastPurge', {
+                                            date: dayjs(lastPurgeAt).format('DD/MM/YYYY HH:mm'),
+                                        })}
+                                    </span>
+                                )}
                             </div>
-                            <Button type="button" variant="destructive" onClick={handlePurge}>
+                            <Button type="button" variant="destructive" onClick={handlePurgeAll}>
                                 <Trash2 className="size-4" />
-                                {t('retentionPurgeNow')}
+                                {t('retentionPurgeAll')}
                             </Button>
                         </div>
 

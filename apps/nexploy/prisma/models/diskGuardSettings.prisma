@@ -1,0 +1,12 @@
+model DiskGuardSettings {
+  id             String    @id @default(cuid())
+  environmentId  String    @unique @default("default")
+  enabled        Boolean   @default(true)
+  warnPercent    Int       @default(80)
+  blockPercent   Int       @default(90)
+  minFreeMb      Int       @default(2048)
+  lastAlertAt    DateTime?
+  lastAlertLevel String?
+
+  @@map("disk_guard_settings")
+}

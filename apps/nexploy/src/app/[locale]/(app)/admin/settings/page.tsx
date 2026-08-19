@@ -8,7 +8,9 @@ import { InstanceDomainCard } from '@/components/admin/settings/InstanceDomainCa
 import { UpgradeCard } from '@/components/admin/settings/UpgradeCard';
 import { ActivityRetentionCard } from '@/components/admin/settings/ActivityRetentionCard';
 import { DockerEngineCard } from '@/components/admin/settings/DockerEngineCard';
+import { DiskGuardCard } from '@/components/admin/settings/DiskGuardCard';
 import { getActivitySettings } from '@/services/activityLog.service';
+import { getDiskGuardSettings } from '@/services/diskGuardSettings.service';
 import { getInstanceDomainSettings } from '@/lib/instance/domain';
 import { getInstanceCallbackTargets } from '@/lib/instance/oauthCallbacks';
 import { OAuthCallbacksCard } from '@/components/admin/settings/OAuthCallbacksCard';
@@ -20,14 +22,15 @@ export const metadata: Metadata = {
 
 export default async function SettingsPage() {
     const environmentId = await getCurrentEnvironmentKey();
-    const [t, settings, activitySettings, callbackTargets] = await Promise.all([
+    const instanceDomainSettings = getInstanceDomainSettings();
+
+    const [t, settings, activitySettings, diskGuardSettings, callbackTargets] = await Promise.all([
         getTranslations('admin.settings'),
         getCleanupSettings(environmentId),
         getActivitySettings(),
-        getInstanceCallbackTargets(),
+        getDiskGuardSettings(),
+        instanceDomainSettings ? getInstanceCallbackTargets() : Promise.resolve(null),
     ]);
-
-    const instanceDomainSettings = getInstanceDomainSettings();
 
     return (
         <div className="flex h-full flex-1 flex-col">
@@ -46,10 +49,11 @@ export default async function SettingsPage() {
                     <div className="flex flex-col gap-5 pb-5">
                         <UpgradeCard />
                         <DockerEngineCard />
+                        <DiskGuardCard settings={diskGuardSettings} />
                         <CleanupScheduleCard settings={settings} />
                         <ActivityRetentionCard settings={activitySettings} />
                         {instanceDomainSettings && <InstanceDomainCard settings={instanceDomainSettings} />}
-                        <OAuthCallbacksCard targets={callbackTargets} />
+                        {callbackTargets && <OAuthCallbacksCard targets={callbackTargets} />}
                     </div>
                 </ScrollAreaWithShadow>
             </div>

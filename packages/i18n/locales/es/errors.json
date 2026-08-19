@@ -254,5 +254,11 @@
     "deleteFailed": "No se ha podido eliminar el runner de compilación",
     "regenerateFailed": "No se ha podido regenerar el token del runner",
     "nameTaken": "Ya existe un runner de compilación con ese nombre"
+  },
+  "diskGuard": {
+    "getFailed": "No se han podido obtener los ajustes de la protección de disco",
+    "updateFailed": "No se han podido guardar los ajustes de la protección de disco",
+    "statusFailed": "No se ha podido leer el uso del disco",
+    "blocked": "Espacio libre en disco insuficiente: {usedPercent} % usado, {freeMb} MB libres. Libere espacio o aumente el umbral de la protección de disco en los ajustes de administración."
   }
 }

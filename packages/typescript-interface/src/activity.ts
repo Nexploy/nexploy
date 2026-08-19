@@ -1,6 +1,6 @@
 import type { PaginatedResult } from './table';
 
-export type ActivitySource = 'SERVER_ACTION' | 'API_ROUTE';
+export type ActivitySource = 'SERVER_ACTION' | 'API_ROUTE' | 'SYSTEM';
 
 export type ActivityStatus = 'SUCCESS' | 'FAILURE' | 'DENIED';
 

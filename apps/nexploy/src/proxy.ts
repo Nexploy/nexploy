@@ -1,5 +1,5 @@
 import createMiddleware from 'next-intl/middleware';
-import { routing } from '@/i18n/routing';
+import { appLocales, defaultLocale, routing } from '@/i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminExist } from '@/services/auth/auth.service';
 import { auth } from '@/lib/auth/auth';
@@ -38,12 +38,26 @@ const PERMISSION_ROUTES: { path: string; resource: PermissionResource; action: s
     { path: '/traefik', resource: 'traefik', action: 'manage' },
 ];
 
+function unavailableResponse(request: NextRequest): NextResponse {
+    const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+    const locale = appLocales.includes(cookieLocale as (typeof appLocales)[number]) ? cookieLocale : defaultLocale;
+
+    return NextResponse.rewrite(new URL(`/${locale}/unavailable`, request.url), { status: 503 });
+}
+
 async function getRedirectUrl(request: NextRequest): Promise<string | NextResponse | null> {
     const path = request.nextUrl.pathname;
 
     if (SIMPLE_REDIRECTS[path]) return SIMPLE_REDIRECTS[path];
 
-    const [hasAdmin, session] = await Promise.all([isAdminExist(), auth.api.getSession({ headers: request.headers })]);
+    let hasAdmin: boolean;
+    let session: Awaited<ReturnType<typeof auth.api.getSession>>;
+
+    try {
+        [hasAdmin, session] = await Promise.all([isAdminExist(), auth.api.getSession({ headers: request.headers })]);
+    } catch {
+        return unavailableResponse(request);
+    }
 
     const setupRoute = path.startsWith('/setup');
     const publicRoute = PUBLIC_ROUTES.some((route) => path.startsWith(route));

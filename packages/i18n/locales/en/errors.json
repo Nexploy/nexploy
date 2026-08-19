@@ -254,5 +254,11 @@
     "deleteFailed": "Failed to delete the build runner",
     "regenerateFailed": "Failed to regenerate the runner token",
     "nameTaken": "A build runner with this name already exists"
+  },
+  "diskGuard": {
+    "getFailed": "Failed to get the disk guard settings",
+    "updateFailed": "Failed to save the disk guard settings",
+    "statusFailed": "Failed to read disk usage",
+    "blocked": "Not enough free disk space: {usedPercent}% used, {freeMb} MB free. Free some space or raise the disk guard threshold in the admin settings."
   }
 }

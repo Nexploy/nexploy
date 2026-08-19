@@ -20,6 +20,7 @@ import {
     getEnvironmentProtection,
     isEnvironmentActionBlocked,
 } from '@/services/environment/environmentProtection.service';
+import { assertDiskSpaceAvailable } from '@/services/docker/diskGuard.service';
 
 function pipelineAcceptsWebhookTrigger(nodes: unknown, trigger: WebhookTrigger, branch?: string): boolean {
     const webhookNodes = (Array.isArray(nodes) ? (nodes as PipelineNode[]) : []).filter(
@@ -86,6 +87,8 @@ export async function startBuildRepository(
     if (webhookTrigger && !pipelineAcceptsWebhookTrigger(pipelineConfig.nodes, webhookTrigger, branch)) {
         return null;
     }
+
+    await assertDiskSpaceAvailable();
 
     const build = await createBuild({
         repositoryId: repository.id,

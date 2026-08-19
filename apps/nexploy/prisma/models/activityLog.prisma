@@ -50,6 +50,7 @@ model ActivitySettings {
 enum ActivitySource {
   SERVER_ACTION
   API_ROUTE
+  SYSTEM
 }
 
 enum ActivityStatus {

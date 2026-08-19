@@ -29,7 +29,7 @@ const EXPORT_ENDPOINT = '/api/admin/activity/export';
 const FORMATS: ActivityExportFormat[] = ['csv', 'json', 'ndjson'];
 const PERIODS: ActivityExportPeriod[] = ['24h', '7d', '30d', '90d', 'all', 'custom'];
 const STATUSES = ['SUCCESS', 'FAILURE', 'DENIED'] as const;
-const SOURCES = ['SERVER_ACTION', 'API_ROUTE'] as const;
+const SOURCES = ['SERVER_ACTION', 'API_ROUTE', 'SYSTEM'] as const;
 
 const DEFAULT_VALUES: ActivityExportFormValues = {
     format: 'csv',

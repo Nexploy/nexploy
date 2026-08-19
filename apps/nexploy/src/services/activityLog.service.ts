@@ -4,6 +4,7 @@ import type {
     ActivityPurgeResult,
     ActivitySettings,
 } from '@workspace/typescript-interface/activity';
+import type { ActivityPurgeScope } from '@workspace/schemas-zod/admin/activity.schema';
 import type { PageSize, SortDirection } from '@workspace/typescript-interface/table';
 import type { Prisma } from '../../generated/client';
 import { prisma } from '../../prisma/prisma';
@@ -186,21 +187,34 @@ export async function updateActivityRetention(retentionDays: number): Promise<Ac
     };
 }
 
-export async function purgeExpiredActivityLogs(): Promise<ActivityPurgeResult> {
-    const { retentionDays } = await getActivitySettings();
-
-    if (retentionDays <= 0) return { purged: 0, purgedBefore: null };
-
-    const threshold = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
-    const { count } = await prisma.activityLog.deleteMany({ where: { createdAt: { lt: threshold } } });
+async function applyPurge(where: Prisma.ActivityLogWhereInput, purgedBefore: string | null) {
+    const { count } = await prisma.activityLog.deleteMany({ where });
 
     await prisma.activitySettings.update({
         where: { singleton: 'default' },
         data: { lastPurgeAt: new Date(), lastPurgeCount: count },
     });
 
-    const result: ActivityPurgeResult = { purged: count, purgedBefore: threshold.toISOString() };
+    const result: ActivityPurgeResult = { purged: count, purgedBefore };
     publishActivityPurged(result);
 
     return result;
+}
+
+export async function purgeExpiredActivityLogs(): Promise<ActivityPurgeResult> {
+    const { retentionDays } = await getActivitySettings();
+
+    if (retentionDays <= 0) return { purged: 0, purgedBefore: null };
+
+    const threshold = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
+
+    return applyPurge({ createdAt: { lt: threshold } }, threshold.toISOString());
+}
+
+export async function purgeAllActivityLogs(): Promise<ActivityPurgeResult> {
+    return applyPurge({}, null);
+}
+
+export async function purgeActivityLogs(scope: ActivityPurgeScope): Promise<ActivityPurgeResult> {
+    return scope === 'all' ? purgeAllActivityLogs() : purgeExpiredActivityLogs();
 }

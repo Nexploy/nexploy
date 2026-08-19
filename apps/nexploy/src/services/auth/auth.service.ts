@@ -1,7 +1,6 @@
 import { auth, Session } from '@/lib/auth/auth';
 import { User } from 'better-auth';
 import { headers } from 'next/headers';
-import { setToastServer } from '@/lib/toastServer';
 import { prisma } from '../../../prisma/prisma';
 import { getTranslations } from 'next-intl/server';
 import { TypeChangeUsernameFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
@@ -46,24 +45,17 @@ export async function signInUser(email: string, password: string): Promise<User>
     return parseRes.user;
 }
 
-export async function isAdminExist() {
-    try {
-        const userAdmin = await prisma.user.findFirst({
-            where: {
-                role: 'admin',
-            },
-            select: {
-                id: true,
-            },
-        });
+export async function isAdminExist(): Promise<boolean> {
+    const userAdmin = await prisma.user.findFirst({
+        where: {
+            role: 'admin',
+        },
+        select: {
+            id: true,
+        },
+    });
 
-        return !!userAdmin;
-    } catch {
-        await setToastServer({
-            type: 'error',
-            message: 'Errored while checking if admin exists.',
-        });
-    }
+    return !!userAdmin;
 }
 
 export async function changeUsername({ newName }: TypeChangeUsernameFormSchema) {

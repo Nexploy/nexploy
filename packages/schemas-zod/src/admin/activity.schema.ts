@@ -5,7 +5,7 @@ export const activityQuerySchema = paginationQuerySchema.extend({
     name: z.string().trim().min(1).optional(),
     resource: z.string().trim().min(1).optional(),
     status: z.enum(['SUCCESS', 'FAILURE', 'DENIED']).optional(),
-    source: z.enum(['SERVER_ACTION', 'API_ROUTE']).optional(),
+    source: z.enum(['SERVER_ACTION', 'API_ROUTE', 'SYSTEM']).optional(),
     actorId: z.string().trim().min(1).optional(),
     from: z.coerce.date().optional(),
     to: z.coerce.date().optional(),
@@ -23,7 +23,7 @@ export const activityExportQuerySchema = z.object({
     name: z.string().trim().min(1).optional(),
     resource: z.string().trim().min(1).optional(),
     status: z.enum(['SUCCESS', 'FAILURE', 'DENIED']).optional(),
-    source: z.enum(['SERVER_ACTION', 'API_ROUTE']).optional(),
+    source: z.enum(['SERVER_ACTION', 'API_ROUTE', 'SYSTEM']).optional(),
     actorId: z.string().trim().min(1).optional(),
     from: z.coerce.date().optional(),
     to: z.coerce.date().optional(),
@@ -45,7 +45,7 @@ export const activityExportFormSchema = z
         customFrom: z.string(),
         customTo: z.string(),
         status: z.enum([ACTIVITY_EXPORT_ALL_VALUE, 'SUCCESS', 'FAILURE', 'DENIED']),
-        source: z.enum([ACTIVITY_EXPORT_ALL_VALUE, 'SERVER_ACTION', 'API_ROUTE']),
+        source: z.enum([ACTIVITY_EXPORT_ALL_VALUE, 'SERVER_ACTION', 'API_ROUTE', 'SYSTEM']),
         applySearch: z.boolean(),
     })
     .superRefine((values, ctx) => {
@@ -72,6 +72,12 @@ export const activityRetentionSchema = z.object({
 
 export type ActivityRetentionInput = z.infer<typeof activityRetentionSchema>;
 
-export const purgeActivityLogsSchema = z.object({});
+export const activityPurgeScopeSchema = z.enum(['expired', 'all']);
+
+export type ActivityPurgeScope = z.infer<typeof activityPurgeScopeSchema>;
+
+export const purgeActivityLogsSchema = z.object({
+    scope: activityPurgeScopeSchema.default('expired'),
+});
 
 export type PurgeActivityLogsInput = z.infer<typeof purgeActivityLogsSchema>;

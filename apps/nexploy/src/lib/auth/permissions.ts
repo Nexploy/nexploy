@@ -156,6 +156,7 @@ const system = ac.newRole({
     image: ['read'],
     network: ['read'],
     volume: ['read'],
+    setting: ['read'],
     monitoring: ['read'],
 });
 

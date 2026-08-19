@@ -75,9 +75,6 @@
     "retentionDays": "Retención (días)",
     "retentionDaysDescription": "Ponga 0 para conservar todas las entradas indefinidamente.",
     "retentionSaved": "Retención actualizada.",
-    "retentionPurgeTitle": "Purga manual",
-    "retentionPurgeNow": "Purgar ahora",
-    "retentionPurgeNowDescription": "Elimine las entradas caducadas de inmediato sin esperar a la ejecución nocturna.",
     "retentionPurged": "{count} entradas eliminadas.",
     "retentionLastPurge": "Última purga: {date}",
     "dockerEngineTitle": "Motor Docker",
@@ -86,7 +83,32 @@
     "dockerEngineApiVersion": "Versión de la API",
     "dockerEnginePlatform": "SO / arquitectura",
     "dockerEngineKernel": "Versión del kernel",
-    "dockerEngineUnavailable": "No se puede contactar con el daemon de Docker"
+    "dockerEngineUnavailable": "No se puede contactar con el daemon de Docker",
+    "diskGuardTitle": "Protección de espacio en disco",
+    "diskGuardDescription": "Bloquea las compilaciones, los despliegues y cualquier otra operación que consuma espacio antes de que el disco del servidor se llene",
+    "diskGuardEnabled": "Activar la protección de disco",
+    "diskGuardEnabledDescription": "Una vez activada, las compilaciones, las descargas de imágenes y la creación de contenedores y volúmenes se rechazan al alcanzar un umbral",
+    "diskGuardWarnPercent": "Umbral de aviso (%)",
+    "diskGuardWarnPercentDescription": "Por encima de este uso se registra un aviso en el registro de actividad, sin bloquear nada",
+    "diskGuardBlockPercent": "Umbral de bloqueo (%)",
+    "diskGuardBlockPercentDescription": "Por encima de este uso se rechaza toda operación que consuma espacio. Debe ser superior al umbral de aviso",
+    "diskGuardMinFree": "Espacio libre mínimo (MB)",
+    "diskGuardMinFreeDescription": "Las operaciones también se rechazan por debajo de este espacio libre, sea cual sea el porcentaje",
+    "diskGuardCurrentUsage": "Uso actual",
+    "diskGuardUsageDetail": "{percent} % usado — {free} libres de {total}",
+    "diskGuardLevel": {
+      "ok": "Normal",
+      "warn": "Aviso",
+      "block": "Bloqueo"
+    },
+    "diskGuardSaved": "Protección de disco guardada",
+    "retentionPurgedNone": "No hay entradas que eliminar.",
+    "retentionPurgeAllTitle": "Eliminar todo",
+    "retentionPurgeAllDescription": "Vacía por completo el registro de actividad, sin tener en cuenta el periodo de retención.",
+    "retentionPurgeAll": "Eliminar todo",
+    "retentionPurgeAllConfirmTitle": "¿Eliminar todas las entradas de actividad?",
+    "retentionPurgeAllConfirmDescription": "El registro de actividad se eliminará definitivamente por completo, incluidas las entradas recientes. Esta acción es irreversible.",
+    "retentionPurgeAllConfirmAction": "Eliminar todo"
   },
   "users": "Usuarios",
   "user": "Usuario",
@@ -334,7 +356,8 @@
     },
     "source": {
       "SERVER_ACTION": "Server action",
-      "API_ROUTE": "Ruta API"
+      "API_ROUTE": "Ruta API",
+      "SYSTEM": "Sistema"
     },
     "actorType": {
       "USER": "Usuario",

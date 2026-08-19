@@ -254,5 +254,11 @@
     "deleteFailed": "Impossible de supprimer le runner de build",
     "regenerateFailed": "Impossible de régénérer le token du runner",
     "nameTaken": "Un runner de build porte déjà ce nom"
+  },
+  "diskGuard": {
+    "getFailed": "Impossible de récupérer les paramètres du garde-fou disque",
+    "updateFailed": "Impossible d'enregistrer les paramètres du garde-fou disque",
+    "statusFailed": "Impossible de lire l'utilisation du disque",
+    "blocked": "Espace disque insuffisant : {usedPercent} % utilisés, {freeMb} Mo libres. Libérez de l'espace ou augmentez le seuil du garde-fou disque dans les paramètres d'administration."
   }
 }

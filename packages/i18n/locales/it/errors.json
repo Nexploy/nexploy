@@ -254,5 +254,11 @@
     "deleteFailed": "Impossibile eliminare il runner di build",
     "regenerateFailed": "Impossibile rigenerare il token del runner",
     "nameTaken": "Esiste già un runner di build con questo nome"
+  },
+  "diskGuard": {
+    "getFailed": "Impossibile recuperare le impostazioni della protezione del disco",
+    "updateFailed": "Impossibile salvare le impostazioni della protezione del disco",
+    "statusFailed": "Impossibile leggere l'utilizzo del disco",
+    "blocked": "Spazio su disco insufficiente: {usedPercent}% utilizzato, {freeMb} MB liberi. Liberi dello spazio o aumenti la soglia della protezione del disco nelle impostazioni di amministrazione."
   }
 }

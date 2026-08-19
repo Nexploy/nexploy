@@ -20,3 +20,5 @@ export const NEXPLOY_APP_HEALTHCHECK = {
     Retries: 30,
     StartPeriod: 60_000_000_000,
 };
+
+export const DISK_GUARD_PATH = process.env.DISK_GUARD_PATH ?? process.env.DEPLOYER_WORK_DIR ?? '/tmp/deployer';

@@ -9,6 +9,9 @@ import { HttpError } from '@nexploy/shared/http-error';
 import { buildCachePruneSchema, type CleanupTarget } from '@workspace/schemas-zod/docker/system/systemCleanup.schema';
 import { instanceDomainSchema, upgradeSchema } from '@workspace/schemas-zod/admin/instance.schema';
 import type { DiskUsage, DockerEngineVersion } from '@workspace/typescript-interface/docker/docker.system';
+import type { DiskGuardStatus } from '@workspace/typescript-interface/docker/docker.disk';
+import { readHostDiskUsage, resolveDiskGuardLevel } from '@/lib/diskSpace';
+import { getDiskGuardSettings } from '@/lib/diskGuardSettings';
 import {
     DOCKER_API_CONTAINER_NAME,
     DOCKER_API_IMAGE_REPOSITORY,
@@ -111,6 +114,15 @@ app.get(
             totalSize,
             totalReclaimable,
         };
+    }),
+);
+
+app.get(
+    '/disk',
+    route(async (): Promise<DiskGuardStatus> => {
+        const [usage, settings] = await Promise.all([readHostDiskUsage(), getDiskGuardSettings()]);
+
+        return { ...usage, level: resolveDiskGuardLevel(usage, settings), settings };
     }),
 );
 
