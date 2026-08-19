@@ -71,3 +71,16 @@ export type Mount = {
     name?: string;
     driver?: string;
 };
+
+export interface VolumeTransferredVolume {
+    name: string;
+    created: boolean;
+    overwritten: boolean;
+    stoppedContainers: string[];
+}
+
+export interface VolumeTransferResult {
+    targetEnvironmentId: string;
+    volumes: VolumeTransferredVolume[];
+    warnings: string[];
+}

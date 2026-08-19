@@ -7,6 +7,7 @@ import { kyDocker } from '@/lib/api/kyDocker';
 import { containerChangeImageSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { getRegistryWithPassword } from '@/services/registry.service';
 import { byContainerIds } from '@/lib/auth/resolveOrgContext';
+import { getPortBindingHostIp } from '@/services/networkExposureSettings.service';
 
 export const onContainerChangeImageAction = authActionServer
     .metadata({ name: 'container.changeImage' })
@@ -27,10 +28,12 @@ export const onContainerChangeImageAction = authActionServer
             }
         }
 
+        const hostIp = await getPortBindingHostIp();
+
         try {
             return await kyDocker
                 .post('container/recreate', {
-                    json: { containerId, image, pullImage, auth, async: true },
+                    json: { containerId, image, pullImage, auth, async: true, hostIp },
                 })
                 .json<{ taskId: string; name: string }>();
         } catch (err: unknown) {

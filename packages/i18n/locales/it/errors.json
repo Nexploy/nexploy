@@ -226,6 +226,7 @@
     "repositoryFetchFailed": "Recupero del repository non riuscito",
     "repositoryNotFound": "Repository non trovato",
     "certificatesFetchFailed": "Recupero dei certificati SSL non riuscito",
+    "domainsFetchFailed": "Recupero dei domini non riuscito",
     "environmentsFetchFailed": "Recupero degli ambienti non riuscito",
     "organizationsFetchFailed": "Recupero delle organizzazioni non riuscito",
     "organizationNotFound": "Organizzazione non trovata",
@@ -260,5 +261,10 @@
     "updateFailed": "Impossibile salvare le impostazioni della protezione del disco",
     "statusFailed": "Impossibile leggere l'utilizzo del disco",
     "blocked": "Spazio su disco insufficiente: {usedPercent}% utilizzato, {freeMb} MB liberi. Liberi dello spazio o aumenti la soglia della protezione del disco nelle impostazioni di amministrazione."
+  },
+  "networkExposure": {
+    "getFailed": "Impossibile recuperare le impostazioni di accesso diretto tramite IP",
+    "updateFailed": "Impossibile salvare le impostazioni di accesso diretto tramite IP",
+    "getExposedFailed": "Impossibile elencare i container esposti sull'IP del server"
   }
 }

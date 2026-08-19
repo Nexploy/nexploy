@@ -9,8 +9,10 @@ import { UpgradeCard } from '@/components/admin/settings/UpgradeCard';
 import { ActivityRetentionCard } from '@/components/admin/settings/ActivityRetentionCard';
 import { DockerEngineCard } from '@/components/admin/settings/DockerEngineCard';
 import { DiskGuardCard } from '@/components/admin/settings/DiskGuardCard';
+import { NetworkExposureCard } from '@/components/admin/settings/NetworkExposureCard';
 import { getActivitySettings } from '@/services/activityLog.service';
 import { getDiskGuardSettings } from '@/services/diskGuardSettings.service';
+import { getNetworkExposureSettings } from '@/services/networkExposureSettings.service';
 import { getInstanceDomainSettings } from '@/lib/instance/domain';
 import { getInstanceCallbackTargets } from '@/lib/instance/oauthCallbacks';
 import { OAuthCallbacksCard } from '@/components/admin/settings/OAuthCallbacksCard';
@@ -23,14 +25,17 @@ export const metadata: Metadata = {
 export default async function SettingsPage() {
     const environmentId = await getCurrentEnvironmentKey();
     const instanceDomainSettings = getInstanceDomainSettings();
+    const showNetworkExposure = process.env.NODE_ENV === 'production';
 
-    const [t, settings, activitySettings, diskGuardSettings, callbackTargets] = await Promise.all([
-        getTranslations('admin.settings'),
-        getCleanupSettings(environmentId),
-        getActivitySettings(),
-        getDiskGuardSettings(),
-        instanceDomainSettings ? getInstanceCallbackTargets() : Promise.resolve(null),
-    ]);
+    const [t, settings, activitySettings, diskGuardSettings, networkExposureSettings, callbackTargets] =
+        await Promise.all([
+            getTranslations('admin.settings'),
+            getCleanupSettings(environmentId),
+            getActivitySettings(),
+            getDiskGuardSettings(),
+            showNetworkExposure ? getNetworkExposureSettings() : Promise.resolve(null),
+            instanceDomainSettings ? getInstanceCallbackTargets() : Promise.resolve(null),
+        ]);
 
     return (
         <div className="flex h-full flex-1 flex-col">
@@ -50,6 +55,7 @@ export default async function SettingsPage() {
                         <UpgradeCard />
                         <DockerEngineCard />
                         <DiskGuardCard settings={diskGuardSettings} />
+                        {networkExposureSettings && <NetworkExposureCard settings={networkExposureSettings} />}
                         <CleanupScheduleCard settings={settings} />
                         <ActivityRetentionCard settings={activitySettings} />
                         {instanceDomainSettings && <InstanceDomainCard settings={instanceDomainSettings} />}

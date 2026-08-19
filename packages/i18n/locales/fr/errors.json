@@ -226,6 +226,7 @@
     "repositoryFetchFailed": "Échec de la récupération du dépôt",
     "repositoryNotFound": "Dépôt introuvable",
     "certificatesFetchFailed": "Échec de la récupération des certificats SSL",
+    "domainsFetchFailed": "Échec de la récupération des domaines",
     "environmentsFetchFailed": "Échec de la récupération des environnements",
     "organizationsFetchFailed": "Échec de la récupération des organisations",
     "organizationNotFound": "Organisation introuvable",
@@ -260,5 +261,10 @@
     "updateFailed": "Impossible d'enregistrer les paramètres du garde-fou disque",
     "statusFailed": "Impossible de lire l'utilisation du disque",
     "blocked": "Espace disque insuffisant : {usedPercent} % utilisés, {freeMb} Mo libres. Libérez de l'espace ou augmentez le seuil du garde-fou disque dans les paramètres d'administration."
+  },
+  "networkExposure": {
+    "getFailed": "Impossible de récupérer les paramètres d'accès direct par IP",
+    "updateFailed": "Impossible d'enregistrer les paramètres d'accès direct par IP",
+    "getExposedFailed": "Impossible de lister les conteneurs exposés sur l'IP du serveur"
   }
 }

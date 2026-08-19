@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { ExternalLink, Network, Pencil, Plus, X } from 'lucide-react';
+import { ChevronDown, Globe, Network, Pencil, Plus, Server, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
@@ -12,15 +12,73 @@ import { cn } from '@workspace/ui/lib/utils';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
 import { useEnvironmentStore } from '@/stores/docker/useEnvironmentStore';
 import { Can } from '@/components/permission/Can';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@workspace/ui/components/dropdown-menu';
+import { useContainerDomains } from '@/hooks/useContainerDomains';
+import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 
 function getPortUrl(port: number) {
     const environment = useEnvironmentStore.getState().getSelectedEnvironment();
 
     const { hostname } = window.location;
     return `http://${environment?.host ?? hostname}:${port}`;
+}
+
+function getDomainUrl(domain: Domain) {
+    const protocol = domain.https ? 'https' : 'http';
+    const path = domain.path && domain.path !== '/' ? domain.path : '';
+    return `${protocol}://${domain.host}${path}`;
+}
+
+function PortLink({
+    publicPort,
+    privatePort,
+    domains,
+}: {
+    publicPort: number;
+    privatePort: number;
+    domains: Domain[];
+}) {
+    const t = useTranslations('docker.containerPorts');
+    const matchingDomains = domains.filter((domain) => domain.containerPort === privatePort);
+    const ipUrl = getPortUrl(publicPort);
+
+    console.log(matchingDomains.length);
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex cursor-pointer items-center gap-1 font-semibold text-primary">
+                {publicPort}
+                <ChevronDown className="h-3 w-3" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="max-w-72">
+                <DropdownMenuLabel>{t('openWith')}</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                    <a href={ipUrl} target="_blank" rel="noopener noreferrer">
+                        <Server />
+                        <span className="truncate">{t('openWithIp')}</span>
+                    </a>
+                </DropdownMenuItem>
+                {matchingDomains.length > 0 && <DropdownMenuSeparator />}
+                {matchingDomains.map((domain) => (
+                    <DropdownMenuItem key={domain.id ?? domain.host} asChild>
+                        <a href={getDomainUrl(domain)} target="_blank" rel="noopener noreferrer">
+                            <Globe />
+                            <span className="truncate">{domain.host}</span>
+                        </a>
+                    </DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 }
 
 export function CardExposedPorts() {
@@ -32,6 +90,7 @@ export function CardExposedPorts() {
     const onPortChange = useContainerChangesStore((state) => state.onPortChange);
     const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
     const t = useTranslations('docker.containerPorts');
+    const { domains } = useContainerDomains(container?.name);
 
     const handleAddPort = () =>
         openDialog({
@@ -123,14 +182,11 @@ export function CardExposedPorts() {
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">
                                                 {hasPublicPort ? (
-                                                    <Link
-                                                        href={getPortUrl(displayPort.publicPort!)}
-                                                        target="_blank"
-                                                        className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
-                                                    >
-                                                        {displayPort.publicPort}
-                                                        <ExternalLink className="h-3 w-3" />
-                                                    </Link>
+                                                    <PortLink
+                                                        publicPort={displayPort.publicPort!}
+                                                        privatePort={displayPort.privatePort}
+                                                        domains={domains}
+                                                    />
                                                 ) : (
                                                     <span className="font-semibold text-muted-foreground">—</span>
                                                 )}
@@ -196,15 +252,11 @@ export function CardExposedPorts() {
                                         >
                                             <code className="flex items-center gap-2 text-sm leading-none">
                                                 {hasPublicPort ? (
-                                                    <a
-                                                        href={getPortUrl(change.publicPort!)}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
-                                                    >
-                                                        {change.publicPort}
-                                                        <ExternalLink className="h-3 w-3" />
-                                                    </a>
+                                                    <PortLink
+                                                        publicPort={change.publicPort!}
+                                                        privatePort={change.privatePort!}
+                                                        domains={domains}
+                                                    />
                                                 ) : (
                                                     <span className="font-semibold text-muted-foreground">—</span>
                                                 )}

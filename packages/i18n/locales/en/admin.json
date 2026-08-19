@@ -108,7 +108,16 @@
       "warn": "Warning",
       "block": "Blocking"
     },
-    "diskGuardSaved": "Disk guard saved"
+    "diskGuardSaved": "Disk guard saved",
+    "networkExposureTitle": "Direct IP access",
+    "networkExposureDescription": "Control whether published container ports are reachable from outside the server, through its public IP address",
+    "networkExposureBindLoopback": "Disable access through the server IP",
+    "networkExposureBindLoopbackDescription": "Published ports are bound to 127.0.0.1 instead of every interface. Containers stay reachable through Traefik and their domains, but not through http://server-ip:port",
+    "networkExposureSaved": "Direct IP access settings saved",
+    "networkExposureStillExposedTitle": "Containers still reachable through the server IP",
+    "networkExposureStillExposedDescription": "The setting applies to newly created containers. {count} existing container(s) still publish their ports on every interface — recreate them to apply the new binding.",
+    "networkExposureRebind": "Recreate",
+    "networkExposureRebound": "Container recreated with the new port binding"
   },
   "users": "Users",
   "user": "User",

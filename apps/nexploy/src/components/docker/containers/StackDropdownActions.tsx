@@ -1,8 +1,8 @@
 'use client';
 
-import { MouseEvent, useRef } from 'react';
+import { MouseEvent, useMemo, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { ArrowRightLeft, MoreVertical, Trash2 } from 'lucide-react';
+import { ArrowRightLeft, DatabaseBackup, MoreVertical, Trash2 } from 'lucide-react';
 import { Button } from '@workspace/ui/components/button';
 import {
     DropdownMenu,
@@ -16,6 +16,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/component
 import { cn } from '@workspace/ui/lib/utils';
 import { onComposesAction } from '@/actions/docker/composes/composeAction';
 import { MoveStackForm } from '@/components/docker/containers/forms/MoveStackForm';
+import { TransferVolumeForm } from '@/components/docker/volume/forms/TransferVolumeForm';
+import { useContainersStore } from '@/stores/docker/useContainersStore';
+import { COMPOSE_PROJECT_LABEL } from '@nexploy/shared/ownership';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useProtectionTooltip } from '@/hooks/useProtectionTooltip';
@@ -32,6 +35,18 @@ export function StackDropdownActions({ stackName, containerCount, triggerClassNa
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const openDialog = useConfirmationDialogStore((state) => state.openDialog);
     const migrateOut = useProtectionTooltip('container.migrateOut');
+    const volumeProtection = useProtectionTooltip('volume.manage');
+    const containers = useContainersStore((state) => state.containers);
+
+    const stackVolumes = useMemo(() => {
+        const names = containers
+            .filter((container) => container.labels?.[COMPOSE_PROJECT_LABEL] === stackName)
+            .flatMap((container) => container.mounts ?? [])
+            .filter((mount) => mount.type === 'volume' && !!mount.name)
+            .map((mount) => mount.name as string);
+
+        return [...new Set(names)];
+    }, [containers, stackName]);
     const removeProtection = useProtectionTooltip('container.remove');
 
     const handleMoveEnvironment = () => {
@@ -39,6 +54,14 @@ export function StackDropdownActions({ stackName, containerCount, triggerClassNa
             title: tDocker('moveStack.dialogTitle'),
             description: tDocker('moveStack.dialogDescription'),
             content: <MoveStackForm stackName={stackName} containerCount={containerCount} />,
+        });
+    };
+
+    const handleTransferVolumes = () => {
+        openDialog({
+            title: tDocker('transferVolume.dialogTitle'),
+            description: tDocker('transferVolume.dialogDescription'),
+            content: <TransferVolumeForm volumeNames={stackVolumes} />,
         });
     };
 
@@ -131,6 +154,14 @@ export function StackDropdownActions({ stackName, containerCount, triggerClassNa
                     ArrowRightLeft,
                     tDocker('moveStack.move'),
                 )}
+                {stackVolumes.length > 0 &&
+                    renderItem(
+                        volumeProtection.blocked,
+                        volumeProtection.tooltip,
+                        handleTransferVolumes,
+                        DatabaseBackup,
+                        tDocker('transferVolume.transferStackVolumes'),
+                    )}
                 <DropdownMenuSeparator />
                 {renderItem(
                     removeProtection.blocked,

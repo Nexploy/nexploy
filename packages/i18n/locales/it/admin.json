@@ -108,7 +108,16 @@
     "retentionPurgeAll": "Elimina tutto",
     "retentionPurgeAllConfirmTitle": "Eliminare tutte le voci di attività?",
     "retentionPurgeAllConfirmDescription": "L'intero registro attività sarà eliminato definitivamente, comprese le voci recenti. Questa azione è irreversibile.",
-    "retentionPurgeAllConfirmAction": "Elimina tutto"
+    "retentionPurgeAllConfirmAction": "Elimina tutto",
+    "networkExposureTitle": "Accesso diretto tramite IP",
+    "networkExposureDescription": "Controlli se le porte pubblicate dei container sono raggiungibili dall'esterno del server, tramite il suo indirizzo IP pubblico",
+    "networkExposureBindLoopback": "Disattivare l'accesso tramite l'IP del server",
+    "networkExposureBindLoopbackDescription": "Le porte pubblicate vengono associate a 127.0.0.1 invece che a tutte le interfacce. I container restano raggiungibili tramite Traefik e i loro domini, ma non tramite http://ip-del-server:porta",
+    "networkExposureSaved": "Impostazioni di accesso diretto tramite IP salvate",
+    "networkExposureStillExposedTitle": "Container ancora raggiungibili tramite l'IP del server",
+    "networkExposureStillExposedDescription": "L'impostazione si applica ai container creati d'ora in poi. {count} container esistenti pubblicano ancora le loro porte su tutte le interfacce — li ricrei per applicare la nuova associazione.",
+    "networkExposureRebind": "Ricrea",
+    "networkExposureRebound": "Container ricreato con la nuova associazione di porta"
   },
   "users": "Utenti",
   "user": "Utente",

@@ -1,0 +1,7 @@
+model NetworkExposureSettings {
+  id               String  @id @default(cuid())
+  environmentId    String  @unique @default("default")
+  bindLoopbackOnly Boolean @default(false)
+
+  @@map("network_exposure_settings")
+}

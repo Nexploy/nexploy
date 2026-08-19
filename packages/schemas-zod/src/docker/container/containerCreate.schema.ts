@@ -51,6 +51,7 @@ export const containerCreateFormSchema = z.object({
     labels: z.array(labelsSchema).default([]),
     registryId: z.string().optional(),
     auth: createAuthSchema.optional(),
+    hostIp: z.string().optional(),
 });
 
 export type ContainerCreateForm = z.infer<typeof containerCreateFormSchema>;

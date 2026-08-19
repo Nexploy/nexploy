@@ -317,6 +317,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "cancelDelete": "Cancel delete",
+    "openWith": "Open with",
+    "openWithIp": "Host IP",
     "noPorts": "No exposed ports"
   },
   "containerVolumes": {
@@ -1108,7 +1110,8 @@
       "swarm-service-update": "Updating the service {name}",
       "swarm-service-scale": "Scaling the service {name}",
       "swarm-service-force-update": "Forcing an update of the service {name}",
-      "swarm-service-remove": "Removing the service {name}"
+      "swarm-service-remove": "Removing the service {name}",
+      "volume-transfer": "Copying the volumes {name}"
     },
     "status": {
       "running": "In progress",
@@ -1131,7 +1134,11 @@
       "push": "Pushing to the registry",
       "cleanup": "Cleaning up",
       "pipelineNode": "Step: {step}",
-      "import": "Importing the image"
+      "import": "Importing the image",
+      "transferPrepare": "Preparing the volumes",
+      "transferStop": "Stopping the containers",
+      "transferCopy": "Copying the data",
+      "transferRestart": "Restarting the containers"
     },
     "toasts": {
       "succeeded": "\"{name}\" completed successfully.",
@@ -1178,5 +1185,30 @@
   },
   "system": {
     "tooltip": "Nexploy system resource. It runs this instance: changing, stopping or deleting it can take Nexploy down."
+  },
+  "transferVolume": {
+    "dialogTitle": "Copy volume data",
+    "dialogDescription": "Copy the content of the selected volumes to another Docker environment.",
+    "transfer": "Copy to another server",
+    "transferContainerVolumes": "Copy the volume data",
+    "transferStackVolumes": "Copy the stack volume data",
+    "transferWarning": "{count, plural, one {# volume will be copied} other {# volumes will be copied}} to the target environment.",
+    "targetLabel": "Target environment",
+    "targetPlaceholder": "Select an environment",
+    "stopModeLabel": "Containers using these volumes",
+    "stopMode": {
+      "both": "Stop on both sides",
+      "bothDescription": "Source and target containers are stopped before the copy, then restarted. Required for a consistent database copy.",
+      "target": "Stop on the target only",
+      "targetDescription": "Only the target containers are stopped. The source keeps running, which can produce an inconsistent copy.",
+      "none": "Stop nothing",
+      "noneDescription": "The copy is refused if a container is still using one of these volumes."
+    },
+    "overwriteLabel": "Overwrite existing data",
+    "overwriteDescription": "The content of the target volume is deleted before the copy. Without this, the copy fails when the target is not empty.",
+    "noTargetEnvironment": "No other environment is available for this copy.",
+    "startedTitle": "{count, plural, one {Copy of # volume started} other {Copy of # volumes started}}",
+    "startedDescription": "Follow the progress in the tasks panel.",
+    "cancel": "Cancel"
   }
 }

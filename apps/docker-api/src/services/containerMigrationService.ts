@@ -10,6 +10,7 @@ import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
 import { getCurrentDockerClient, getCurrentEnvironmentId } from '@/lib/dockerContext';
 import { loadEnvironmentByIdFromAPI } from '@/lib/loadEnvironments';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
+import { stopContainerAndWait } from '@/lib/stopContainer';
 import { StartedTask, TaskContext, runAsTask } from '@/lib/taskRunner';
 import { resolveContainersOwner } from '@/lib/taskOwnership';
 import { logger } from '@/utils/logger';
@@ -221,48 +222,6 @@ export async function connectRemainingNetworks(
     }
 }
 
-const DEFAULT_STOP_TIMEOUT_SECONDS = 300;
-const STOP_POLL_INTERVAL_MS = 500;
-const STOP_SETTLE_GRACE_SECONDS = 30;
-
-function resolveStopTimeoutSeconds(): number {
-    const configured = Number(process.env.MIGRATION_STOP_TIMEOUT_SECONDS);
-    return Number.isFinite(configured) && configured > 0 ? configured : DEFAULT_STOP_TIMEOUT_SECONDS;
-}
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-async function isContainerRunning(container: Docker.Container): Promise<boolean> {
-    try {
-        const info = await container.inspect();
-        return info.State.Running === true;
-    } catch (err: any) {
-        if (err?.statusCode === 404) return false;
-        throw err;
-    }
-}
-
-export async function stopSourceContainer(container: Docker.Container, name: string): Promise<void> {
-    const timeoutSeconds = resolveStopTimeoutSeconds();
-
-    try {
-        await (container.stop as any)({ t: timeoutSeconds });
-    } catch (err: any) {
-        if (err?.statusCode !== 304) {
-            throw new HttpError(`Source container "${name}" could not be stopped: ${err.message}`, 502);
-        }
-    }
-
-    const deadline = Date.now() + (timeoutSeconds + STOP_SETTLE_GRACE_SECONDS) * 1000;
-
-    while (Date.now() < deadline) {
-        if (!(await isContainerRunning(container))) return;
-        await sleep(STOP_POLL_INTERVAL_MS);
-    }
-
-    throw new HttpError(`Source container "${name}" is still running after the stop timeout.`, 504);
-}
-
 async function transferMountArchive(
     sourceContainer: Docker.Container,
     targetContainer: Docker.Container,
@@ -366,7 +325,7 @@ async function runMigration({
 
     if (mustStopSource) {
         try {
-            await stopSourceContainer(sourceContainer, containerName);
+            await stopContainerAndWait(sourceContainer, containerName);
         } catch (err: any) {
             completeStep('create', 'failed');
             throw err instanceof HttpError

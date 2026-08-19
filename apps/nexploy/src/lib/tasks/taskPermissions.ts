@@ -31,6 +31,7 @@ const TASK_KIND_RESOURCE: Record<TaskKind, TaskResource> = {
     'volume-remove': 'volume',
     'volume-prune': 'volume',
     'volume-import': 'volume',
+    'volume-transfer': 'volume',
     'stack-start': 'container',
     'stack-stop': 'container',
     'stack-restart': 'container',

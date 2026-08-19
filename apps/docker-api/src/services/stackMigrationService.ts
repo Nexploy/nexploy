@@ -19,8 +19,8 @@ import {
     ensureImageOnTarget,
     ensureNetworksOnTarget,
     resolveTargetClient,
-    stopSourceContainer,
 } from '@/services/containerMigrationService';
+import { stopContainerAndWait } from '@/lib/stopContainer';
 import { logger } from '@/utils/logger';
 
 const MIGRATION_STEPS = ['images', 'networks', 'create', 'volumes', 'start', 'source'] as const;
@@ -147,7 +147,7 @@ async function runStackMigration({
         if (!member.wasRunning || (sourceAction === 'keep' && !migrateVolumeData)) continue;
 
         try {
-            await stopSourceContainer(member.sourceContainer, member.name);
+            await stopContainerAndWait(member.sourceContainer, member.name);
             member.wasStopped = true;
         } catch (err: any) {
             member.wasStopped = true;

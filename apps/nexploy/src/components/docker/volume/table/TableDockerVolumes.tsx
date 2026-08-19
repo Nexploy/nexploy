@@ -17,11 +17,13 @@ import { Volume } from '@workspace/typescript-interface/docker/docker.volume';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { ProtectedAction } from '@/components/permission/ProtectedAction';
-import { Trash2 } from 'lucide-react';
+import { ArrowRightLeft, Trash2 } from 'lucide-react';
 import { formatBytes } from '@/utils/formatBytes';
 import { Badge } from '@workspace/ui/components/badge';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { onVolumeAction } from '@/actions/docker/volume/volumeAction.action';
+import { TransferVolumeForm } from '@/components/docker/volume/forms/TransferVolumeForm';
 import { useDockerStore } from '@/stores/docker/useDockerStore.ts';
 import { TableShell } from '@/components/table/TableShell';
 import { TablePagination } from '@/components/table/TablePagination';
@@ -49,6 +51,7 @@ export function TableDockerVolumes() {
 
     const t = useTranslations('docker.tables');
     const tCommon = useTranslations('common');
+    const tVolume = useTranslations('docker.transferVolume');
 
     const router = useRouter();
 
@@ -57,6 +60,7 @@ export function TableDockerVolumes() {
     const volumes = useVolumesStore((state) => state.volumes);
     const lastUpdate = useVolumesStore((state) => state.lastUpdate);
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
+    const openDialog = useConfirmationDialogStore((state) => state.openDialog);
 
     const isLoading = !volumes.length && !lastUpdate;
     const isEmpty = !volumes.length && !!lastUpdate;
@@ -88,6 +92,15 @@ export function TableDockerVolumes() {
 
     const numberOfSelectedRows = Object.keys(rowSelection).length;
 
+    const handleTransferAction = () => {
+        const volumeNames = Object.keys(rowSelection);
+        openDialog({
+            title: tVolume('dialogTitle'),
+            description: tVolume('dialogDescription'),
+            content: <TransferVolumeForm volumeNames={volumeNames} onTransferred={() => table.resetRowSelection()} />,
+        });
+    };
+
     const handleDeleteAction = () => {
         const volumeNames = Object.keys(rowSelection);
         openAlertDialog({
@@ -114,6 +127,21 @@ export function TableDockerVolumes() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                 />
                 <div className={'flex gap-3'}>
+                    <ProtectedAction action="volume.manage">
+                        <Button
+                            variant={'outline'}
+                            onClick={handleTransferAction}
+                            disabled={numberOfSelectedRows === 0 || statusDocker !== 'connected'}
+                            icon={ArrowRightLeft}
+                        >
+                            {tVolume('transfer')}
+                            {numberOfSelectedRows > 1 && (
+                                <Badge variant={'secondary'} className={'rounded-full'}>
+                                    {numberOfSelectedRows}
+                                </Badge>
+                            )}
+                        </Button>
+                    </ProtectedAction>
                     <ProtectedAction action="volume.remove">
                         <Button
                             variant={'destructive'}

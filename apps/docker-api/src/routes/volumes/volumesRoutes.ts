@@ -10,9 +10,11 @@ import {
     volumePruneSchema,
 } from '@workspace/schemas-zod/docker/volume/volumeAction.schema';
 import { cacheRestoreSchema, cacheSaveSchema } from '@workspace/schemas-zod/docker/volume/volumeCache.schema';
+import { volumeTransferApiSchema } from '@workspace/schemas-zod/docker/volume/volumeTransfer.schema';
 import { stripProtectedLabelEntries } from '@nexploy/shared/protectedLabels';
 import { restoreCache, saveCache } from '@/services/cacheService';
 import { deleteVolumes } from '@/services/volumeService';
+import { startVolumeTransfer } from '@/services/volumeTransferService';
 import { assertVolumeNameAvailable, hidesInfrastructureVolume } from '@/lib/infrastructureGuard';
 import { runTrackedTask } from '@/lib/taskRunner';
 import { joinSubjects } from '@/utils/taskSubjects';
@@ -140,6 +142,13 @@ app.post(
             throw new HttpError(`Volume ${volumeName} not found.`, 404);
         }
         return await saveCache(volumeName, sourcePath, workDir, cacheKey);
+    }),
+);
+
+app.post(
+    '/transfer',
+    route({ json: volumeTransferApiSchema }, async (c) => {
+        return await startVolumeTransfer(c.req.valid('json'));
     }),
 );
 

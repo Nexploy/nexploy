@@ -226,6 +226,7 @@
     "repositoryFetchFailed": "No se ha podido obtener el repositorio",
     "repositoryNotFound": "Repositorio no encontrado",
     "certificatesFetchFailed": "No se han podido obtener los certificados SSL",
+    "domainsFetchFailed": "No se han podido obtener los dominios",
     "environmentsFetchFailed": "No se han podido obtener los entornos",
     "organizationsFetchFailed": "No se han podido obtener las organizaciones",
     "organizationNotFound": "Organización no encontrada",
@@ -260,5 +261,10 @@
     "updateFailed": "No se han podido guardar los ajustes de la protección de disco",
     "statusFailed": "No se ha podido leer el uso del disco",
     "blocked": "Espacio libre en disco insuficiente: {usedPercent} % usado, {freeMb} MB libres. Libere espacio o aumente el umbral de la protección de disco en los ajustes de administración."
+  },
+  "networkExposure": {
+    "getFailed": "No se han podido obtener los ajustes de acceso directo por IP",
+    "updateFailed": "No se han podido guardar los ajustes de acceso directo por IP",
+    "getExposedFailed": "No se han podido listar los contenedores expuestos en la IP del servidor"
   }
 }

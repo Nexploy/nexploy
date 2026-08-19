@@ -6,6 +6,7 @@ import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { ContainerRecreateFormSchema } from '@workspace/schemas-zod/docker/container/containerRecreate.schema';
 import { byContainerIds } from '@/lib/auth/resolveOrgContext';
+import { getPortBindingHostIp } from '@/services/networkExposureSettings.service';
 
 export const onContainerRecreateAction = authActionServer
     .metadata({ name: 'container.recreate' })
@@ -13,8 +14,12 @@ export const onContainerRecreateAction = authActionServer
     .use(requireUnprotectedEnvironment('container.update'))
     .inputSchema(ContainerRecreateFormSchema)
     .action(async ({ parsedInput }) => {
+        const hostIp = await getPortBindingHostIp();
+
         try {
-            return await kyDocker.post('container/recreate', { json: parsedInput }).json<{ id: string }>();
+            return await kyDocker
+                .post('container/recreate', { json: { ...parsedInput, hostIp } })
+                .json<{ id: string }>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {
                 await setToastServer({

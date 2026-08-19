@@ -226,6 +226,7 @@
     "repositoryFetchFailed": "Failed to fetch repository",
     "repositoryNotFound": "Repository not found",
     "certificatesFetchFailed": "Failed to fetch SSL certificates",
+    "domainsFetchFailed": "Failed to fetch domains",
     "environmentsFetchFailed": "Failed to fetch environments",
     "organizationsFetchFailed": "Failed to fetch organizations",
     "organizationNotFound": "Organization not found",
@@ -260,5 +261,10 @@
     "updateFailed": "Failed to save the disk guard settings",
     "statusFailed": "Failed to read disk usage",
     "blocked": "Not enough free disk space: {usedPercent}% used, {freeMb} MB free. Free some space or raise the disk guard threshold in the admin settings."
+  },
+  "networkExposure": {
+    "getFailed": "Failed to get the direct IP access settings",
+    "updateFailed": "Failed to save the direct IP access settings",
+    "getExposedFailed": "Failed to list the containers exposed on the server IP"
   }
 }

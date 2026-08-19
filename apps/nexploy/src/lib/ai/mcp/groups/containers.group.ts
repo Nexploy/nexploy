@@ -1,6 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/container/containerCreate.schema';
+import { getPortBindingHostIp } from '@/services/networkExposureSettings.service';
 import {
     containerRenameSchema,
     mcpContainerActionSchema,
@@ -236,7 +237,7 @@ export const containersGroup: ToolGroup = {
                 try {
                     await kyDocker
                         .post('container/recreate', {
-                            json: params,
+                            json: { ...params, hostIp: await getPortBindingHostIp() },
                             environmentId: ctx.environmentId,
                         } as KyDockerOptions)
                         .json();
@@ -259,7 +260,7 @@ export const containersGroup: ToolGroup = {
                 try {
                     const response = await kyDocker
                         .post('container/create', {
-                            json: params,
+                            json: { ...params, hostIp: await getPortBindingHostIp() },
                             environmentId: ctx.environmentId,
                         } as KyDockerOptions)
                         .json<{ id: string }>();

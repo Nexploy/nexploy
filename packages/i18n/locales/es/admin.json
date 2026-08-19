@@ -108,7 +108,16 @@
     "retentionPurgeAll": "Eliminar todo",
     "retentionPurgeAllConfirmTitle": "¿Eliminar todas las entradas de actividad?",
     "retentionPurgeAllConfirmDescription": "El registro de actividad se eliminará definitivamente por completo, incluidas las entradas recientes. Esta acción es irreversible.",
-    "retentionPurgeAllConfirmAction": "Eliminar todo"
+    "retentionPurgeAllConfirmAction": "Eliminar todo",
+    "networkExposureTitle": "Acceso directo por IP",
+    "networkExposureDescription": "Controle si los puertos publicados de los contenedores son accesibles desde fuera del servidor, a través de su dirección IP pública",
+    "networkExposureBindLoopback": "Desactivar el acceso mediante la IP del servidor",
+    "networkExposureBindLoopbackDescription": "Los puertos publicados se enlazan a 127.0.0.1 en lugar de a todas las interfaces. Los contenedores siguen siendo accesibles mediante Traefik y sus dominios, pero ya no mediante http://ip-del-servidor:puerto",
+    "networkExposureSaved": "Ajustes de acceso directo por IP guardados",
+    "networkExposureStillExposedTitle": "Contenedores aún accesibles mediante la IP del servidor",
+    "networkExposureStillExposedDescription": "El ajuste se aplica a los contenedores creados a partir de ahora. {count} contenedor(es) existente(s) siguen publicando sus puertos en todas las interfaces — recréelos para aplicar el nuevo enlace.",
+    "networkExposureRebind": "Recrear",
+    "networkExposureRebound": "Contenedor recreado con el nuevo enlace de puerto"
   },
   "users": "Usuarios",
   "user": "Usuario",

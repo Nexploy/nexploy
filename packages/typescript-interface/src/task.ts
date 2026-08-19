@@ -30,6 +30,7 @@ export type TaskKind =
     | 'volume-remove'
     | 'volume-prune'
     | 'volume-import'
+    | 'volume-transfer'
     | 'stack-start'
     | 'stack-stop'
     | 'stack-restart'

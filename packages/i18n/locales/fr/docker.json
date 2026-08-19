@@ -317,6 +317,8 @@
     "edit": "Modifier",
     "delete": "Supprimer",
     "cancelDelete": "Annuler la suppression",
+    "openWith": "Ouvrir avec",
+    "openWithIp": "Adresse IP de l'hôte",
     "noPorts": "Aucun port exposé"
   },
   "containerVolumes": {
@@ -1108,7 +1110,8 @@
       "swarm-service-update": "Mise à jour du service {name}",
       "swarm-service-scale": "Mise à l’échelle du service {name}",
       "swarm-service-force-update": "Mise à jour forcée du service {name}",
-      "swarm-service-remove": "Suppression du service {name}"
+      "swarm-service-remove": "Suppression du service {name}",
+      "volume-transfer": "Copie des volumes {name}"
     },
     "status": {
       "running": "En cours",
@@ -1131,7 +1134,11 @@
       "push": "Envoi vers le registry",
       "cleanup": "Nettoyage",
       "pipelineNode": "Étape : {step}",
-      "import": "Import de l’image"
+      "import": "Import de l’image",
+      "transferPrepare": "Préparation des volumes",
+      "transferStop": "Arrêt des conteneurs",
+      "transferCopy": "Copie des données",
+      "transferRestart": "Redémarrage des conteneurs"
     },
     "toasts": {
       "succeeded": "« {name} » est terminé.",
@@ -1178,5 +1185,30 @@
   },
   "system": {
     "tooltip": "Ressource système Nexploy. Elle fait tourner cette instance : la modifier, l'arrêter ou la supprimer peut mettre Nexploy hors service."
+  },
+  "transferVolume": {
+    "dialogTitle": "Copier les données des volumes",
+    "dialogDescription": "Copiez le contenu des volumes sélectionnés vers un autre environnement Docker.",
+    "transfer": "Copier vers un autre serveur",
+    "transferContainerVolumes": "Copier les données des volumes",
+    "transferStackVolumes": "Copier les volumes de la stack",
+    "transferWarning": "{count, plural, one {# volume sera copié} other {# volumes seront copiés}} vers l'environnement cible.",
+    "targetLabel": "Environnement cible",
+    "targetPlaceholder": "Sélectionnez un environnement",
+    "stopModeLabel": "Conteneurs utilisant ces volumes",
+    "stopMode": {
+      "both": "Arrêter des deux côtés",
+      "bothDescription": "Les conteneurs source et cible sont arrêtés avant la copie, puis redémarrés. Nécessaire pour copier une base de données de façon cohérente.",
+      "target": "Arrêter uniquement la cible",
+      "targetDescription": "Seuls les conteneurs cible sont arrêtés. La source continue de tourner, ce qui peut produire une copie incohérente.",
+      "none": "Ne rien arrêter",
+      "noneDescription": "La copie est refusée si un conteneur utilise encore l'un de ces volumes."
+    },
+    "overwriteLabel": "Écraser les données existantes",
+    "overwriteDescription": "Le contenu du volume cible est supprimé avant la copie. Sans cette option, la copie échoue si la cible n'est pas vide.",
+    "noTargetEnvironment": "Aucun autre environnement n'est disponible pour cette copie.",
+    "startedTitle": "{count, plural, one {Copie de # volume lancée} other {Copie de # volumes lancée}}",
+    "startedDescription": "Suivez la progression dans le panneau des tâches.",
+    "cancel": "Annuler"
   }
 }

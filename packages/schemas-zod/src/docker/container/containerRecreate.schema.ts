@@ -50,6 +50,7 @@ export const ContainerRecreateFormSchema = z.object({
     pullImage: z.boolean().optional(),
     auth: recreateAuthSchema.optional(),
     async: z.boolean().optional(),
+    hostIp: z.string().optional(),
 });
 
 export type ContainerRecreateForm = z.infer<typeof ContainerRecreateFormSchema>;
@@ -59,6 +60,7 @@ export const containerChangeImageSchema = z.object({
     image: z.string().min(1, 'Image is required'),
     registryId: z.string().optional(),
     pullImage: z.boolean().default(true),
+    hostIp: z.string().optional(),
 });
 
 export type ContainerChangeImageForm = z.infer<typeof containerChangeImageSchema>;

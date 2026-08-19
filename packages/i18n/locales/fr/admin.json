@@ -108,7 +108,16 @@
       "warn": "Alerte",
       "block": "Blocage"
     },
-    "diskGuardSaved": "Garde-fou disque enregistré"
+    "diskGuardSaved": "Garde-fou disque enregistré",
+    "networkExposureTitle": "Accès direct par IP",
+    "networkExposureDescription": "Contrôlez si les ports publiés des conteneurs sont joignables depuis l'extérieur du serveur, via son adresse IP publique",
+    "networkExposureBindLoopback": "Désactiver l'accès via l'IP du serveur",
+    "networkExposureBindLoopbackDescription": "Les ports publiés sont liés à 127.0.0.1 au lieu de toutes les interfaces. Les conteneurs restent joignables via Traefik et leurs domaines, mais plus via http://ip-du-serveur:port",
+    "networkExposureSaved": "Paramètres d'accès direct par IP enregistrés",
+    "networkExposureStillExposedTitle": "Conteneurs encore joignables via l'IP du serveur",
+    "networkExposureStillExposedDescription": "Le paramètre s'applique aux conteneurs nouvellement créés. {count} conteneur(s) existant(s) publient encore leurs ports sur toutes les interfaces — recréez-les pour appliquer la nouvelle liaison.",
+    "networkExposureRebind": "Recréer",
+    "networkExposureRebound": "Conteneur recréé avec la nouvelle liaison de port"
   },
   "users": "Utilisateurs",
   "user": "Utilisateur",

@@ -193,7 +193,7 @@ app.post(
 app.post(
     '/create',
     route({ json: containerCreateFormSchema }, async (c) => {
-        const { envVars, volumes, networks, labels, hostname, name, ports, restart, image, autoRemove, auth } =
+        const { envVars, volumes, networks, labels, hostname, name, ports, restart, image, autoRemove, auth, hostIp } =
             c.req.valid('json');
 
         assertContainerNameAvailable(name);
@@ -248,6 +248,7 @@ app.post(
                 portBindings[containerPortKey] = [
                     {
                         HostPort: String(port.hostPort),
+                        ...(hostIp !== undefined && { HostIp: hostIp }),
                     },
                 ];
             });

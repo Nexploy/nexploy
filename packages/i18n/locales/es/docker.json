@@ -317,6 +317,8 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "cancelDelete": "Cancelar la eliminación",
+    "openWith": "Abrir con",
+    "openWithIp": "Dirección IP del host",
     "noPorts": "Sin puertos expuestos"
   },
   "containerVolumes": {
@@ -1108,7 +1110,8 @@
       "swarm-service-update": "Actualizando el servicio {name}",
       "swarm-service-scale": "Escalando el servicio {name}",
       "swarm-service-force-update": "Forzando la actualización del servicio {name}",
-      "swarm-service-remove": "Eliminando el servicio {name}"
+      "swarm-service-remove": "Eliminando el servicio {name}",
+      "volume-transfer": "Copiando los volúmenes {name}"
     },
     "status": {
       "running": "En curso",
@@ -1131,7 +1134,11 @@
       "push": "Enviando al registro",
       "cleanup": "Limpieza",
       "pipelineNode": "Paso: {step}",
-      "import": "Importando la imagen"
+      "import": "Importando la imagen",
+      "transferPrepare": "Preparando los volúmenes",
+      "transferStop": "Deteniendo los contenedores",
+      "transferCopy": "Copiando los datos",
+      "transferRestart": "Reiniciando los contenedores"
     },
     "toasts": {
       "succeeded": "«{name}» se ha completado.",
@@ -1178,5 +1185,30 @@
   },
   "system": {
     "tooltip": "Recurso de sistema de Nexploy. Hace funcionar esta instancia: modificarlo, detenerlo o eliminarlo puede dejar Nexploy fuera de servicio."
+  },
+  "transferVolume": {
+    "dialogTitle": "Copiar los datos de los volúmenes",
+    "dialogDescription": "Copie el contenido de los volúmenes seleccionados a otro entorno Docker.",
+    "transfer": "Copiar a otro servidor",
+    "transferContainerVolumes": "Copiar los datos de los volúmenes",
+    "transferStackVolumes": "Copiar los volúmenes del stack",
+    "transferWarning": "{count, plural, one {Se copiará # volumen} other {Se copiarán # volúmenes}} al entorno de destino.",
+    "targetLabel": "Entorno de destino",
+    "targetPlaceholder": "Seleccione un entorno",
+    "stopModeLabel": "Contenedores que usan estos volúmenes",
+    "stopMode": {
+      "both": "Detener en ambos lados",
+      "bothDescription": "Los contenedores de origen y de destino se detienen antes de la copia y se reinician después. Necesario para copiar una base de datos de forma coherente.",
+      "target": "Detener solo el destino",
+      "targetDescription": "Solo se detienen los contenedores de destino. El origen sigue en marcha, lo que puede producir una copia incoherente.",
+      "none": "No detener nada",
+      "noneDescription": "La copia se rechaza si algún contenedor sigue usando uno de estos volúmenes."
+    },
+    "overwriteLabel": "Sobrescribir los datos existentes",
+    "overwriteDescription": "El contenido del volumen de destino se elimina antes de la copia. Sin esta opción, la copia falla si el destino no está vacío.",
+    "noTargetEnvironment": "No hay ningún otro entorno disponible para esta copia.",
+    "startedTitle": "{count, plural, one {Copia de # volumen iniciada} other {Copia de # volúmenes iniciada}}",
+    "startedDescription": "Siga el progreso en el panel de tareas.",
+    "cancel": "Cancelar"
   }
 }

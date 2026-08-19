@@ -7,6 +7,7 @@ import { containerCreateFormSchema } from '@workspace/schemas-zod/docker/contain
 import { setToastServer } from '@/lib/toastServer';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { getRegistryWithPassword } from '@/services/registry.service';
+import { getPortBindingHostIp } from '@/services/networkExposureSettings.service';
 
 export const onContainerCreateAction = authActionServer
     .metadata({ name: 'container.create' })
@@ -29,9 +30,11 @@ export const onContainerCreateAction = authActionServer
             }
         }
 
+        const hostIp = await getPortBindingHostIp();
+
         try {
             return await kyDocker
-                .post(`container/create`, { json: { ...createInput, auth }, timeout: false })
+                .post(`container/create`, { json: { ...createInput, auth, hostIp }, timeout: false })
                 .json<{ id: string }>();
         } catch (err: unknown) {
             if (err instanceof HTTPError) {

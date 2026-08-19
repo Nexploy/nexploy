@@ -19,7 +19,7 @@ const NOOP_CONTEXT: Pick<TaskContext, 'step' | 'completeStep' | 'setProgress'> =
 
 export async function recreateContainer(
     docker: Docker,
-    { ports, envVars, volumes, networks, containerId, image, pullImage, auth }: ContainerRecreateForm,
+    { ports, envVars, volumes, networks, containerId, image, pullImage, auth, hostIp }: ContainerRecreateForm,
     { step, completeStep, setProgress }: Pick<TaskContext, 'step' | 'completeStep' | 'setProgress'> = NOOP_CONTEXT,
 ): Promise<{ id: string }> {
     const container = docker.getContainer(containerId);
@@ -56,7 +56,7 @@ export async function recreateContainer(
         const key = `${privatePort}/${type}`;
         exposedPorts[key] = {};
         portBindings[key] = portBindings[key] || [];
-        portBindings[key].push({ HostPort: String(publicPort) });
+        portBindings[key].push({ HostPort: String(publicPort), ...(hostIp !== undefined && { HostIp: hostIp }) });
     };
 
     for (const port of ports) {
@@ -167,6 +167,12 @@ export async function recreateContainer(
 
     step('recreate');
     await container.remove();
+
+    if (hostIp !== undefined) {
+        for (const key of Object.keys(portBindings)) {
+            portBindings[key] = portBindings[key].map((binding: any) => ({ ...binding, HostIp: hostIp }));
+        }
+    }
 
     const newContainer = await docker.createContainer({
         name: containerInfo.Name.replace('/', ''),

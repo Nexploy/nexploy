@@ -1,6 +1,6 @@
 'use client';
 
-import { Activity, ArrowRightLeft, FileText, PencilLine, Replace, Terminal } from 'lucide-react';
+import { Activity, ArrowRightLeft, DatabaseBackup, FileText, PencilLine, Replace, Terminal } from 'lucide-react';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { useContainerStore } from '@/stores/docker/useContainerStore';
 import { CardInfoDetail } from '@/components/docker/container/cards/CardInfoDetail';
@@ -35,6 +35,7 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { RenameContainerForm } from '@/components/docker/container/forms/RenameContainerForm';
 import { ChangeImageForm } from '@/components/docker/container/forms/ChangeImageForm';
 import { MoveContainerForm } from '@/components/docker/container/forms/MoveContainerForm';
+import { TransferVolumeForm } from '@/components/docker/volume/forms/TransferVolumeForm';
 import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider.tsx';
 import { NotFoundSSE } from '@/components/shared/NotFoundSSE';
 import { Badge } from '@workspace/ui/components/badge.tsx';
@@ -45,12 +46,18 @@ export function ContainerDetailPage() {
     const notFound = useContainerStore((state) => state.notFound);
 
     const t = useTranslations('docker.containerDetail');
+    const tTransfer = useTranslations('docker.transferVolume');
     const { openDialog } = useConfirmationDialogStore();
     const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
 
     const execProtection = useProtectionTooltip('container.exec');
     const updateProtection = useProtectionTooltip('container.update');
     const migrateProtection = useProtectionTooltip('container.migrateOut');
+    const volumeProtection = useProtectionTooltip('volume.manage');
+
+    const namedVolumes = (container?.mounts ?? [])
+        .filter((mount) => mount.type === 'volume' && !!mount.name)
+        .map((mount) => mount.name as string);
 
     const handleRename = () => {
         if (!container) return;
@@ -76,6 +83,15 @@ export function ContainerDetailPage() {
             title: t('moveEnvironmentTitle'),
             description: t('moveEnvironmentDescription'),
             content: <MoveContainerForm containerId={container.id} containerName={container.name} />,
+        });
+    };
+
+    const handleTransferVolumes = () => {
+        if (namedVolumes.length === 0) return;
+        openDialog({
+            title: tTransfer('dialogTitle'),
+            description: tTransfer('dialogDescription'),
+            content: <TransferVolumeForm volumeNames={namedVolumes} />,
         });
     };
 
@@ -182,6 +198,15 @@ export function ContainerDetailPage() {
                                                 onClick={handleMoveEnvironment}
                                                 disabled={migrateProtection.blocked}
                                                 disabledReason={migrateProtection.tooltip}
+                                            />
+                                        )}
+                                        {namedVolumes.length > 0 && (
+                                            <ToolbarButton
+                                                icon={DatabaseBackup}
+                                                label={tTransfer('transferContainerVolumes')}
+                                                onClick={handleTransferVolumes}
+                                                disabled={volumeProtection.blocked}
+                                                disabledReason={volumeProtection.tooltip}
                                             />
                                         )}
                                     </ButtonGroup>

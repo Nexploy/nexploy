@@ -317,6 +317,8 @@
     "edit": "Modifica",
     "delete": "Elimina",
     "cancelDelete": "Annulla l'eliminazione",
+    "openWith": "Aprire con",
+    "openWithIp": "Indirizzo IP dell'host",
     "noPorts": "Nessuna porta esposta"
   },
   "containerVolumes": {
@@ -1108,7 +1110,8 @@
       "swarm-service-update": "Aggiornamento del servizio {name}",
       "swarm-service-scale": "Scalatura del servizio {name}",
       "swarm-service-force-update": "Aggiornamento forzato del servizio {name}",
-      "swarm-service-remove": "Rimozione del servizio {name}"
+      "swarm-service-remove": "Rimozione del servizio {name}",
+      "volume-transfer": "Copia dei volumi {name}"
     },
     "status": {
       "running": "In corso",
@@ -1131,7 +1134,11 @@
       "push": "Invio al registry",
       "cleanup": "Pulizia",
       "pipelineNode": "Passaggio: {step}",
-      "import": "Importazione dell’immagine"
+      "import": "Importazione dell’immagine",
+      "transferPrepare": "Preparazione dei volumi",
+      "transferStop": "Arresto dei container",
+      "transferCopy": "Copia dei dati",
+      "transferRestart": "Riavvio dei container"
     },
     "toasts": {
       "succeeded": "«{name}» è stato completato.",
@@ -1178,5 +1185,30 @@
   },
   "system": {
     "tooltip": "Risorsa di sistema Nexploy. Fa girare questa istanza: modificarla, arrestarla o eliminarla può mettere Nexploy fuori servizio."
+  },
+  "transferVolume": {
+    "dialogTitle": "Copiare i dati dei volumi",
+    "dialogDescription": "Copi il contenuto dei volumi selezionati in un altro ambiente Docker.",
+    "transfer": "Copia su un altro server",
+    "transferContainerVolumes": "Copia i dati dei volumi",
+    "transferStackVolumes": "Copia i volumi dello stack",
+    "transferWarning": "{count, plural, one {Verrà copiato # volume} other {Verranno copiati # volumi}} nell'ambiente di destinazione.",
+    "targetLabel": "Ambiente di destinazione",
+    "targetPlaceholder": "Selezionare un ambiente",
+    "stopModeLabel": "Container che usano questi volumi",
+    "stopMode": {
+      "both": "Arrestare su entrambi i lati",
+      "bothDescription": "I container di origine e di destinazione vengono arrestati prima della copia e riavviati dopo. Necessario per copiare un database in modo coerente.",
+      "target": "Arrestare solo la destinazione",
+      "targetDescription": "Vengono arrestati solo i container di destinazione. L'origine resta in esecuzione e la copia può risultare incoerente.",
+      "none": "Non arrestare nulla",
+      "noneDescription": "La copia viene rifiutata se un container sta ancora usando uno di questi volumi."
+    },
+    "overwriteLabel": "Sovrascrivere i dati esistenti",
+    "overwriteDescription": "Il contenuto del volume di destinazione viene eliminato prima della copia. Senza questa opzione la copia fallisce se la destinazione non è vuota.",
+    "noTargetEnvironment": "Nessun altro ambiente è disponibile per questa copia.",
+    "startedTitle": "{count, plural, one {Copia di # volume avviata} other {Copia di # volumi avviata}}",
+    "startedDescription": "Segua l'avanzamento nel pannello delle attività.",
+    "cancel": "Annulla"
   }
 }
