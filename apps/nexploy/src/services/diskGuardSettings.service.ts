@@ -13,7 +13,6 @@ export async function getDiskGuardSettings() {
             update: {},
         });
     } catch (error: unknown) {
-        console.error('[diskGuard] Failed to read the disk guard settings', error);
         throw new Error(t('diskGuard.getFailed'), { cause: error });
     }
 }
@@ -27,7 +26,6 @@ export async function updateDiskGuardSettings(data: UpdateDiskGuardSettings) {
             update: data,
         });
     } catch (error: unknown) {
-        console.error('[diskGuard] Failed to save the disk guard settings', error);
         throw new Error(t('diskGuard.updateFailed'), { cause: error });
     }
 }
