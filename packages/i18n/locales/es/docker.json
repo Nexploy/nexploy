@@ -319,6 +319,8 @@
     "cancelDelete": "Cancelar la eliminación",
     "openWith": "Abrir con",
     "openWithIp": "Dirección IP del host",
+    "resolvingHostIp": "Detectando la IP del host…",
+    "hostIpUnavailable": "IP del host no disponible",
     "ipAccessBlocked": "Acceso por IP desactivado: este puerto está vinculado solo a 127.0.0.1",
     "noPorts": "Sin puertos expuestos"
   },

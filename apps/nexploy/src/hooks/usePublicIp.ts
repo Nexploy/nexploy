@@ -5,10 +5,12 @@ interface PublicIpResponse {
     ip: string;
 }
 
-export function usePublicIp() {
-    const { data, isLoading, error, mutate } = useSWR<PublicIpResponse>({ url: '/api/network/public-ip' }, fetcherApi, {
-        revalidateOnFocus: false,
-    });
+export function usePublicIp(enabled = true) {
+    const { data, isLoading, error, mutate } = useSWR<PublicIpResponse>(
+        enabled ? { url: '/api/network/public-ip', disableToast: true } : null,
+        fetcherApi,
+        { revalidateOnFocus: false },
+    );
 
     return {
         ip: data?.ip,

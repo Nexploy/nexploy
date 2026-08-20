@@ -22,8 +22,9 @@ import {
     DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { useContainerDomains } from '@/hooks/useContainerDomains';
-import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
-import { getDomainUrl, getPortUrl, isLoopbackOnly } from '@/utils/containerPortAccess';
+import { useHostAddress } from '@/hooks/useHostAddress';
+import { getBoundHostIp, getDomainUrl, getPortUrl, isLoopbackOnly } from '@/utils/containerPortAccess';
+import { getLabelDomains, mergePortDomains, type PortDomain } from '@/utils/containerLabelDomains';
 
 function PortLink({
     publicPort,
@@ -33,12 +34,15 @@ function PortLink({
 }: {
     publicPort: number;
     privatePort: number;
-    domains: Domain[];
+    domains: PortDomain[];
     hostIps?: string[];
 }) {
     const t = useTranslations('docker.containerPorts');
-    const matchingDomains = domains.filter((domain) => domain.containerPort === privatePort);
-    const ipUrl = getPortUrl(publicPort);
+    const { host, isLoading: isHostLoading } = useHostAddress();
+    const matchingDomains = domains.filter(
+        (domain) => domain.containerPort === undefined || domain.containerPort === privatePort,
+    );
+    const resolvedHost = getBoundHostIp(hostIps) ?? host;
     const ipBlocked = isLoopbackOnly(hostIps);
 
     return (
@@ -54,13 +58,23 @@ function PortLink({
                         <ShieldOff className="mt-0.5 size-3.5 shrink-0" />
                         <span>{t('ipAccessBlocked')}</span>
                     </div>
-                ) : (
+                ) : resolvedHost ? (
                     <DropdownMenuItem asChild>
-                        <a href={ipUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={getPortUrl(resolvedHost, publicPort)} target="_blank" rel="noopener noreferrer">
                             <Server />
-                            <span className="truncate">{t('openWithIp')}</span>
+                            <span className="flex min-w-0 flex-col">
+                                <span className="truncate">{t('openWithIp')}</span>
+                                <span className="truncate font-mono text-muted-foreground text-xs">
+                                    {resolvedHost}:{publicPort}
+                                </span>
+                            </span>
                         </a>
                     </DropdownMenuItem>
+                ) : (
+                    <div className="flex items-start gap-2 px-2 py-1.5 text-muted-foreground text-xs">
+                        <Server className="mt-0.5 size-3.5 shrink-0" />
+                        <span>{isHostLoading ? t('resolvingHostIp') : t('hostIpUnavailable')}</span>
+                    </div>
                 )}
                 {matchingDomains.length > 0 && <DropdownMenuSeparator />}
                 {matchingDomains.map((domain) => (
@@ -86,6 +100,7 @@ export function CardExposedPorts() {
     const isSwarmContainer = useContainerStore((state) => !!state.container?.labels?.['com.docker.swarm.service.id']);
     const t = useTranslations('docker.containerPorts');
     const { domains } = useContainerDomains(container?.name);
+    const portDomains = mergePortDomains(domains, getLabelDomains(container?.labels));
 
     const handleAddPort = () =>
         openDialog({
@@ -180,7 +195,7 @@ export function CardExposedPorts() {
                                                     <PortLink
                                                         publicPort={displayPort.publicPort!}
                                                         privatePort={displayPort.privatePort}
-                                                        domains={domains}
+                                                        domains={portDomains}
                                                         hostIps={port.hostIps}
                                                     />
                                                 ) : (
@@ -251,7 +266,7 @@ export function CardExposedPorts() {
                                                     <PortLink
                                                         publicPort={change.publicPort!}
                                                         privatePort={change.privatePort!}
-                                                        domains={domains}
+                                                        domains={portDomains}
                                                     />
                                                 ) : (
                                                     <span className="font-semibold text-muted-foreground">—</span>

@@ -319,6 +319,8 @@
     "cancelDelete": "Cancel delete",
     "openWith": "Open with",
     "openWithIp": "Host IP",
+    "resolvingHostIp": "Resolving host IP…",
+    "hostIpUnavailable": "Host IP unavailable",
     "ipAccessBlocked": "IP access disabled: this port is bound to 127.0.0.1 only",
     "noPorts": "No exposed ports"
   },
