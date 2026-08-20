@@ -23,6 +23,7 @@ import {
 } from '@workspace/ui/components/dropdown-menu';
 import { useContainerDomains } from '@/hooks/useContainerDomains';
 import { useHostAddress } from '@/hooks/useHostAddress';
+import { useBrowserHostname } from '@/hooks/useBrowserHostname';
 import { getBoundHostIp, getDomainUrl, getPortUrl, isLoopbackOnly } from '@/utils/containerPortAccess';
 import { getLabelDomains, mergePortDomains, type PortDomain } from '@/utils/containerLabelDomains';
 
@@ -42,8 +43,12 @@ function PortLink({
     const matchingDomains = domains.filter(
         (domain) => domain.containerPort === undefined || domain.containerPort === privatePort,
     );
+    const browserHostname = useBrowserHostname();
     const resolvedHost = getBoundHostIp(hostIps) ?? host;
     const ipBlocked = isLoopbackOnly(hostIps);
+    const isBrowserHostListed = matchingDomains.some((domain) => domain.host === browserHostname);
+    const currentDomain =
+        browserHostname && browserHostname !== resolvedHost && !isBrowserHostListed ? browserHostname : null;
 
     return (
         <DropdownMenu>
@@ -75,6 +80,19 @@ function PortLink({
                         <Server className="mt-0.5 size-3.5 shrink-0" />
                         <span>{isHostLoading ? t('resolvingHostIp') : t('hostIpUnavailable')}</span>
                     </div>
+                )}
+                {!ipBlocked && currentDomain && (
+                    <DropdownMenuItem asChild>
+                        <a href={getPortUrl(currentDomain, publicPort)} target="_blank" rel="noopener noreferrer">
+                            <Globe />
+                            <span className="flex min-w-0 flex-col">
+                                <span className="truncate">{t('openWithCurrentDomain')}</span>
+                                <span className="truncate font-mono text-muted-foreground text-xs">
+                                    {currentDomain}:{publicPort}
+                                </span>
+                            </span>
+                        </a>
+                    </DropdownMenuItem>
                 )}
                 {matchingDomains.length > 0 && <DropdownMenuSeparator />}
                 {matchingDomains.map((domain) => (

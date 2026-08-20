@@ -319,6 +319,7 @@
     "cancelDelete": "Annulla l'eliminazione",
     "openWith": "Aprire con",
     "openWithIp": "Indirizzo IP dell'host",
+    "openWithCurrentDomain": "Dominio attuale",
     "resolvingHostIp": "Rilevamento dell'IP dell'host…",
     "hostIpUnavailable": "IP dell'host non disponibile",
     "ipAccessBlocked": "Accesso tramite IP disattivato: questa porta è associata solo a 127.0.0.1",
