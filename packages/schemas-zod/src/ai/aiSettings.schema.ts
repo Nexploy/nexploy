@@ -21,6 +21,7 @@ export const updateAIMcpPermissionsSchema = z.object({
     allowRegistriesGroup: z.boolean(),
     allowSslGroup: z.boolean(),
     allowEnvironmentsGroup: z.boolean(),
+    allowPipelineGroup: z.boolean(),
 });
 
 export const updateAICustomPromptSchema = z.object({

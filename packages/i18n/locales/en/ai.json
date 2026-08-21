@@ -42,6 +42,8 @@
       "allowSslGroupDescription": "Allow the AI to list, issue and delete SSL certificates.",
       "allowEnvironmentsGroup": "Environments",
       "allowEnvironmentsGroupDescription": "Allow the AI to list, create, update and delete Docker environments.",
+      "allowPipelineGroup": "Pipelines",
+      "allowPipelineGroupDescription": "Allow the AI to read the node catalog, analyze repositories and overwrite pipelines.",
       "customPrompt": "Custom system prompt",
       "customPromptDescription": "Append additional instructions to the base system prompt. Useful for org-specific rules or constraints.",
       "customPromptPlaceholder": "e.g. Always tag images with the prefix prod- before pushing…"

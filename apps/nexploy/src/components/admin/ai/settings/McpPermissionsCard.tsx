@@ -15,6 +15,7 @@ import {
     Lock,
     ShieldCheck,
     Terminal,
+    Workflow,
 } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@workspace/ui/components/form';
@@ -34,6 +35,7 @@ interface McpPermissionsCardProps {
     allowRegistriesGroup: boolean;
     allowSslGroup: boolean;
     allowEnvironmentsGroup: boolean;
+    allowPipelineGroup: boolean;
 }
 
 type PermissionField = keyof Omit<McpPermissionsCardProps, never>;
@@ -57,6 +59,7 @@ const NEXPLOY_PERMISSIONS: PermissionRow[] = [
     { name: 'allowRegistriesGroup', icon: Box },
     { name: 'allowSslGroup', icon: Lock },
     { name: 'allowEnvironmentsGroup', icon: KeyRound },
+    { name: 'allowPipelineGroup', icon: Workflow },
 ];
 
 export function McpPermissionsCard(props: McpPermissionsCardProps) {

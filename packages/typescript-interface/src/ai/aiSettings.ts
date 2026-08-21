@@ -14,4 +14,5 @@ export interface AISettingsUpdate {
     allowRegistriesGroup?: boolean;
     allowSslGroup?: boolean;
     allowEnvironmentsGroup?: boolean;
+    allowPipelineGroup?: boolean;
 }

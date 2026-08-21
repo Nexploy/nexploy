@@ -42,14 +42,19 @@ export function analyzeGraph(graph: PipelineGraph, triggerSource: 'manual' | 'we
         throw new Error('Pipeline contains a cycle');
     }
 
-    const startNodeIds =
+    const manualStartNodeIds = graph.nodes
+        .filter((node) => node.data.isStartNode === true && node.data.type !== 'webhook-clone')
+        .map((node) => node.id);
+
+    const webhookStartNodeIds = graph.nodes.filter((node) => node.data.type === 'webhook-clone').map((node) => node.id);
+
+    const startNodeIds = new Set(
         triggerSource === 'webhook'
-            ? new Set(graph.nodes.filter((node) => node.data.type === 'webhook-clone').map((n) => n.id))
-            : new Set(
-                  graph.nodes
-                      .filter((node) => node.data.isStartNode === true && node.data.type !== 'webhook-clone')
-                      .map((node) => node.id),
-              );
+            ? webhookStartNodeIds.length > 0
+                ? webhookStartNodeIds
+                : manualStartNodeIds
+            : manualStartNodeIds,
+    );
     const reachableNodeIds = new Set<string>(startNodeIds);
     const bfsQueue = [...startNodeIds];
 

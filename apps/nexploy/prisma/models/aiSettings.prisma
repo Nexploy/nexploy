@@ -15,6 +15,7 @@ model AISettings {
   allowRegistriesGroup           Boolean @default(true)
   allowSslGroup                  Boolean @default(true)
   allowEnvironmentsGroup         Boolean @default(true)
+  allowPipelineGroup             Boolean @default(true)
 
   @@map("ai_settings")
 }

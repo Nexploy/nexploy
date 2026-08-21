@@ -223,6 +223,24 @@ export async function azureGetRootItems(
     return listing.value ?? [];
 }
 
+export async function azureGetTree(
+    organization: string,
+    project: string,
+    repository: string,
+    branch: string,
+): Promise<{ path: string; isFolder?: boolean }[]> {
+    const listing = await azureGet<AzureReposCollection<{ path: string; isFolder?: boolean }>>(
+        `${azureRepositoryApiUrl(organization, project, repository)}/items`,
+        {
+            scopePath: '/',
+            recursionLevel: 'full',
+            'versionDescriptor.version': branch,
+            'versionDescriptor.versionType': 'branch',
+        },
+    );
+    return listing.value ?? [];
+}
+
 export const AZURE_REPOS_WEBHOOK_EVENTS = [
     'git.push',
     'git.pullrequest.created',

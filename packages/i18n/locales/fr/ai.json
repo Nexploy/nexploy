@@ -42,6 +42,8 @@
       "allowSslGroupDescription": "Autorise l'IA à lister, émettre et supprimer les certificats SSL.",
       "allowEnvironmentsGroup": "Environnements",
       "allowEnvironmentsGroupDescription": "Autorise l'IA à lister, créer, modifier et supprimer les environnements Docker.",
+      "allowPipelineGroup": "Pipelines",
+      "allowPipelineGroupDescription": "Autorise l'IA à lire le catalogue de nœuds, analyser les dépôts et remplacer les pipelines.",
       "customPrompt": "Prompt système personnalisé",
       "customPromptDescription": "Ajoutez des instructions supplémentaires au prompt système de base. Utile pour les règles ou contraintes spécifiques à votre organisation.",
       "customPromptPlaceholder": "ex. Toujours préfixer les images avec prod- avant de les pousser…"
