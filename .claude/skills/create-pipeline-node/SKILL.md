@@ -27,7 +27,9 @@ src/nodes/my-action/
 ├── Config.tsx         ← client-side config panel
 ├── locales/
 │   ├── en.json        ← name, description, own config labels
-│   └── fr.json
+│   ├── fr.json
+│   ├── es.json
+│   └── it.json
 └── lifecycle.ts       ← optional, only if the node needs setup/teardown hooks
 ```
 
@@ -45,12 +47,12 @@ drag-and-drop outputs panel. **Never restate any of that anywhere else** — it 
 | 2 | `src/nodes/my-action/node.ts` | the descriptor |
 | 3 | `src/nodes/my-action/executor.ts` | the executor |
 | 4 | `src/nodes/my-action/Config.tsx` | the config panel |
-| 5 | `src/nodes/my-action/locales/{en,fr}.json` | node name, description, own config labels |
+| 5 | `src/nodes/my-action/locales/{en,fr,es,it}.json` | node name, description, own config labels |
 | 6 | `src/nodes/registry/descriptors.ts` | 1 import + 1 array entry |
 | 7 | `src/nodes/registry/server.ts` | 1 import + 1 array entry |
 | 8 | `src/nodes/registry/client.ts` | 1 import + 1 map entry |
-| 9 | `src/nodes/registry/messages.ts` | 2 imports + 2 array entries |
-| 10 | `src/nodes/registry/locales/{en,fr}.json` | shared config labels + output labels |
+| 9 | `src/nodes/registry/messages.ts` | 4 imports + 4 array entries |
+| 10 | `src/nodes/registry/locales/{en,fr,es,it}.json` | shared config labels + output labels |
 
 `NodeId` is an open `string` and `nodeTypeSchema` is `z.string()` — there is **no union or enum to update**.
 A node type is valid because a descriptor is registered for it; `savePipelineConfig` rejects graphs that
@@ -452,7 +454,9 @@ import { MyActionConfig } from '../my-action/Config';
 ```typescript
 import myActionEn from '../my-action/locales/en.json';
 import myActionFr from '../my-action/locales/fr.json';
-// …then add `myActionEn,` to the en array and `myActionFr,` to the fr array
+import myActionEs from '../my-action/locales/es.json';
+import myActionIt from '../my-action/locales/it.json';
+// …then add each to its own array: `myActionEn,` `myActionFr,` `myActionEs,` `myActionIt,`
 ```
 
 ### Optional lifecycle hooks
@@ -462,12 +466,12 @@ For setup/teardown on add/remove (as `webhook-clone` does), create `my-action/li
 
 ---
 
-## Step 6 — i18n (mandatory, both locales)
+## Step 6 — i18n (mandatory, all four locales)
 
 Everything a node says lives in the node library. Nexploy's `repository.json` no longer holds
 node strings.
 
-### Node-owned strings — `my-action/locales/{en,fr}.json`
+### Node-owned strings — `my-action/locales/{en,fr,es,it}.json`
 
 Keys are relative to `repository.pipeline`; `registry/messages.ts` merges them into that
 namespace at request time. Put here the node name, its description, and every config label
@@ -496,7 +500,9 @@ that only this node uses:
 }
 ```
 
-`name` and `description` are required in **both** locales.
+`name` and `description` are required in **all four** locales: `en`, `fr`, `es`, `it`.
+
+French, Spanish and Italian address the user formally — vouvoiement, usted, Lei. Never `tu`, `tú`, `tuo`.
 
 `steps` and `summary` back the `labelKey` and `key` passed to `ctx.reporter` (Step 3). Every key
 the executor can emit needs an entry in **every** locale — a missing key falls back to the raw
@@ -504,7 +510,7 @@ key string, which is what the user then reads on the canvas. Keep them short: th
 truncated line inside a 280px card. Put the identifying value first (`{branch} · {commit}`, not
 `Cloned repository on branch {branch}`).
 
-### Shared vocabulary — `registry/locales/{en,fr}.json`
+### Shared vocabulary — `registry/locales/{en,fr,es,it}.json`
 
 Labels used by more than one node, and every output-field label. Add here only when the wording
 is genuinely shared:
@@ -552,15 +558,15 @@ pnpm types
 - [ ] Executor talks to the host only through `ctx.services.*` — zero `@/` imports
 - [ ] Progress reported via `createProgressTracker` or `reporter.reportProgress`
 - [ ] `reporter.reportSummary` on every non-throwing exit path, tone matching the outcome
-- [ ] Every `labelKey` / summary `key` present under `nodes.<type>.steps` / `.summary` in **all** locales
+- [ ] Every `labelKey` / summary `key` present under `nodes.<type>.steps` / `.summary` in **all four** locales
 - [ ] Config panel exported as `<PascalCase>Config`; uses `useFormContext()`; no props
 - [ ] No `className` on shadcn/ui components
 - [ ] Refable fields wrapped in `<RefAware>`; resource fields use `InputAutoComplete`
 - [ ] `usePipelineEnvironmentId()` used — no hand-rolled `findAncestor`
 - [ ] Registered in `descriptors.ts`, `server.ts`, `client.ts` and `messages.ts`
-- [ ] `locales/{en,fr}.json` created in the node folder with `nodes.<type>.name` + `.description`
-- [ ] Both locale files imported and listed in `registry/messages.ts`
-- [ ] Own config labels in the node's `locales/{en,fr}.json`; shared ones in `registry/locales/{en,fr}.json`
+- [ ] `locales/{en,fr,es,it}.json` created in the node folder with `nodes.<type>.name` + `.description`
+- [ ] All four locale files imported and listed in `registry/messages.ts`
+- [ ] Own config labels in the node's `locales/{en,fr,es,it}.json`; shared ones in `registry/locales/{en,fr,es,it}.json`
 - [ ] Output label + `desc_` per non-internal key under `inputs`, in **both** locales
 - [ ] No comments written anywhere in the code
 - [ ] `pnpm types` clean
