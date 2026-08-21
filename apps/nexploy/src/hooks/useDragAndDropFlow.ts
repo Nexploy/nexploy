@@ -1,14 +1,16 @@
 import { useCallback, useState } from 'react';
-import { Edge, Node, ReactFlowInstance } from '@xyflow/react';
+import { Node, ReactFlowInstance } from '@xyflow/react';
 import { NodeId } from '@nexploy/nodes/core/node';
 import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
 import { getConfigDefaults } from '@/components/pipeline/nodeManifestRegistry';
 import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { getTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
+import { useApplyPipelineTemplate } from '@/hooks/useApplyPipelineTemplate';
 
 export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
     const [isDragOver, setIsDragOver] = useState(false);
-    const { setNodes, setEdges, triggerAutoSave, handleNodeAdded } = usePipelineActions();
+    const { setNodes, triggerAutoSave, handleNodeAdded } = usePipelineActions();
+    const applyTemplate = useApplyPipelineTemplate();
 
     const onDragOver = useCallback((event: React.DragEvent) => {
         event.preventDefault();
@@ -33,43 +35,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
             if (templateId) {
                 const template = getTemplate(templateId);
                 if (!template) return;
-
-                const ts = Date.now();
-                const newNodes: Node[] = template.nodes.map((tn, i) => {
-                    const def = getNodeDefinition(tn.type as NodeId);
-                    return {
-                        id: `${tn.type}-${ts}-${i}`,
-                        type: def?.type,
-                        position: {
-                            x: dropPosition.x + tn.offsetX,
-                            y: dropPosition.y + tn.offsetY,
-                        },
-                        data: {
-                            label: tn.type,
-                            nodeType: tn.type,
-                            definition: def,
-                            config: {
-                                ...getConfigDefaults(tn.type),
-                                ...(tn.config ?? {}),
-                            },
-                            isStartNode: def?.isStartNode ?? false,
-                            isEndNode: def?.isEndNode ?? false,
-                        },
-                    };
-                });
-
-                const newEdges: Edge[] = template.edges.map((te) => ({
-                    id: `e-${newNodes[te.sourceIndex]!.id}-${newNodes[te.targetIndex]!.id}`,
-                    source: newNodes[te.sourceIndex]!.id,
-                    target: newNodes[te.targetIndex]!.id,
-                    sourceHandle: te.sourceHandle,
-                    targetHandle: te.targetHandle,
-                    type: 'gradient-edge',
-                }));
-
-                setNodes(() => newNodes);
-                setEdges(() => newEdges);
-                triggerAutoSave();
+                applyTemplate(template, dropPosition);
                 return;
             }
 
@@ -98,7 +64,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
             triggerAutoSave();
             handleNodeAdded(nodeType, newNodeId);
         },
-        [rfInstance, setNodes, setEdges, triggerAutoSave, handleNodeAdded],
+        [rfInstance, setNodes, triggerAutoSave, handleNodeAdded, applyTemplate],
     );
 
     return { isDragOver, onDragOver, onDragLeave, onDrop };

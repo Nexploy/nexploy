@@ -2,8 +2,6 @@ import { NodeId } from '@nexploy/nodes/core/node';
 
 export type TemplateNode = {
     type: NodeId;
-    offsetX: number;
-    offsetY: number;
     config?: Record<string, unknown>;
 };
 
@@ -25,11 +23,7 @@ export const PIPELINE_TEMPLATES: PipelineTemplate[] = [
     {
         id: 'dockerfile',
         icon: 'dockerfile',
-        nodes: [
-            { type: 'clone-repository', offsetX: 0, offsetY: 0 },
-            { type: 'build-docker-image', offsetX: 240, offsetY: 0 },
-            { type: 'create-container', offsetX: 480, offsetY: 0 },
-        ],
+        nodes: [{ type: 'clone-repository' }, { type: 'build-docker-image' }, { type: 'create-container' }],
         edges: [
             { sourceIndex: 0, targetIndex: 1, sourceHandle: 'output', targetHandle: 'input' },
             { sourceIndex: 1, targetIndex: 2, sourceHandle: 'output', targetHandle: 'input' },
@@ -39,11 +33,11 @@ export const PIPELINE_TEMPLATES: PipelineTemplate[] = [
         id: 'docker-compose',
         icon: 'compose',
         nodes: [
-            { type: 'clone-repository', offsetX: 0, offsetY: 0 },
-            { type: 'validate-compose', offsetX: 220, offsetY: 0 },
-            { type: 'deploy-compose', offsetX: 420, offsetY: 0 },
-            { type: 'clean-workdir', offsetX: 820, offsetY: 0 },
-            { type: 'save-version', offsetX: 480, offsetY: 260 },
+            { type: 'clone-repository' },
+            { type: 'validate-compose' },
+            { type: 'deploy-compose' },
+            { type: 'clean-workdir' },
+            { type: 'save-version' },
         ],
         edges: [
             { sourceIndex: 0, targetIndex: 1, sourceHandle: 'output', targetHandle: 'input' },

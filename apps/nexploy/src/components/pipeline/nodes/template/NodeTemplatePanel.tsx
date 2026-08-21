@@ -6,10 +6,8 @@ import { usePipelinePanelStore } from '@/stores/pipeline/usePipelinePanelStore';
 import { PIPELINE_TEMPLATES, PipelineTemplate } from './pipelineTemplates';
 import { TemplateItem } from '@/components/pipeline/nodes/template/TemplateItem';
 import { useReactFlow } from '@xyflow/react';
-import { getNodeDefinition } from '@/components/pipeline/nodeRegistry';
-import { getConfigDefaults } from '@/components/pipeline/nodeManifestRegistry';
-import { NodeId } from '@nexploy/nodes/core/node';
-import { useIsViewingBuild, usePipelineActions } from '@/stores/pipeline/usePipelineStore';
+import { useIsViewingBuild } from '@/stores/pipeline/usePipelineStore';
+import { useApplyPipelineTemplate } from '@/hooks/useApplyPipelineTemplate';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 
@@ -18,8 +16,8 @@ export function NodeTemplatePanel() {
     const { screenToFlowPosition } = useReactFlow();
     const closePanel = usePipelinePanelStore((s) => s.closePanel);
 
-    const { setNodes, setEdges, triggerAutoSave } = usePipelineActions();
     const isViewingBuild = useIsViewingBuild();
+    const applyTemplate = useApplyPipelineTemplate();
 
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
@@ -32,39 +30,7 @@ export function NodeTemplatePanel() {
         const center = screenToFlowPosition({ x: centerX, y: centerY });
         const dropPosition = { x: center.x - 45, y: center.y - 45 };
 
-        const ts = Date.now();
-        const newNodes = template.nodes.map((tn, i) => {
-            const def = getNodeDefinition(tn.type as NodeId);
-            return {
-                id: `${tn.type}-${ts}-${i}`,
-                type: def?.type,
-                position: { x: dropPosition.x + tn.offsetX, y: dropPosition.y + tn.offsetY },
-                data: {
-                    label: tn.type,
-                    nodeType: tn.type,
-                    definition: def,
-                    config: {
-                        ...getConfigDefaults(tn.type),
-                        ...(tn.config ?? {}),
-                    },
-                    isStartNode: def?.isStartNode ?? false,
-                    isEndNode: def?.isEndNode ?? false,
-                },
-            };
-        });
-
-        const newEdges = template.edges.map((te) => ({
-            id: `e-${newNodes[te.sourceIndex]!.id}-${newNodes[te.targetIndex]!.id}`,
-            source: newNodes[te.sourceIndex]!.id,
-            target: newNodes[te.targetIndex]!.id,
-            sourceHandle: te.sourceHandle,
-            targetHandle: te.targetHandle,
-            type: 'gradient-edge',
-        }));
-
-        setNodes(() => newNodes);
-        setEdges(() => newEdges);
-        triggerAutoSave();
+        applyTemplate(template, dropPosition);
     };
 
     return (
