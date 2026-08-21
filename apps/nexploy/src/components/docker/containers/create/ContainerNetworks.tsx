@@ -9,6 +9,7 @@ import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/com
 import { Button } from '@workspace/ui/components/button';
 import { InputAutoComplete } from '@workspace/ui/components/search-command';
 import { useNetworksStore } from '@/stores/docker/useNetworksStore.ts';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function ContainerNetworks() {
     const t = useTranslations('docker.createContainer');
@@ -35,7 +36,7 @@ export function ContainerNetworks() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noNetworksConfigured')}</p>
+                    <EmptyState icon={Network} title={t('noNetworksConfigured')} bordered={false} />
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

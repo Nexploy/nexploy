@@ -5,6 +5,7 @@ import { gitlabAdapter } from '@/services/git/providers/gitlab/gitlab.adapter';
 import { giteaAdapter } from '@/services/git/providers/gitea/gitea.adapter';
 import { bitbucketAdapter } from '@/services/git/providers/bitbucket/bitbucket.adapter';
 import { azureReposAdapter } from '@/services/git/providers/azureRepos/azureRepos.adapter';
+import { customAdapter } from '@/services/git/providers/custom/custom.adapter';
 
 const gitAdapters: Record<GitProviderType, GitProviderAdapter> = {
     GITHUB: githubAdapter,
@@ -12,6 +13,7 @@ const gitAdapters: Record<GitProviderType, GitProviderAdapter> = {
     GITEA: giteaAdapter,
     BITBUCKET: bitbucketAdapter,
     AZURE_REPOS: azureReposAdapter,
+    CUSTOM: customAdapter,
 };
 
 export function getGitAdapter(provider: GitProviderType): GitProviderAdapter {

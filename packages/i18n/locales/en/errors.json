@@ -195,7 +195,9 @@
     "gitAccountNotFound": "Git account not found",
     "disconnectFailed": "Failed to disconnect git account",
     "fetchReposFailed": "Failed to fetch repositories",
-    "fetchBranchesFailed": "Failed to fetch branches"
+    "fetchBranchesFailed": "Failed to fetch branches",
+    "repositoryNotPublic": "This repository is not public. Only public repositories can be added by URL.",
+    "repositoryUnreachable": "This repository could not be reached. Check the URL."
   },
   "oauth": {
     "invalidState": "Invalid OAuth state",

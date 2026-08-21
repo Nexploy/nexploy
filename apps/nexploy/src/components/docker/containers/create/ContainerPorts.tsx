@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { ArrowLeftRight, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeftRight, Network, Plus, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
@@ -17,6 +17,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@workspace/ui/components/select';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function ContainerPorts() {
     const t = useTranslations('docker.createContainer');
@@ -39,7 +40,7 @@ export function ContainerPorts() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noPortsConfigured')}</p>
+                    <EmptyState icon={Network} title={t('noPortsConfigured')} bordered={false} />
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

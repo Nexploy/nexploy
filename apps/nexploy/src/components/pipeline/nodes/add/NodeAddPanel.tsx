@@ -21,6 +21,7 @@ import { getConfigDefaults } from '@/components/pipeline/nodeManifestRegistry';
 import { useIsViewingBuild, usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');
@@ -191,12 +192,7 @@ export function NodeAddPanel() {
                         {isSearching && (
                             <>
                                 {searchResults.length === 0 ? (
-                                    <div className="flex flex-col items-center gap-2.5 py-12 text-center">
-                                        <div className="flex size-10 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-                                            <SearchX className="size-4" />
-                                        </div>
-                                        <p className="text-muted-foreground text-xs">{t('searchNoResults')}</p>
-                                    </div>
+                                    <EmptyState icon={SearchX} title={t('searchNoResults')} bordered={false} />
                                 ) : (
                                     <div className="flex flex-col gap-1.5">
                                         {orderedSearchCategories.map(([category, defs]) => (

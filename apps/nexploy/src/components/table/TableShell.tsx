@@ -5,10 +5,14 @@ import { flexRender, type Row, type Table as TanstackTable } from '@tanstack/rea
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@workspace/ui/components/table';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { cn } from '@workspace/ui/lib/utils';
+import { Inbox, SearchX, type LucideIcon } from 'lucide-react';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export interface TableShellProps<TData> {
     table: TanstackTable<TData>;
     emptyLabel: ReactNode;
+    emptyDescription?: ReactNode;
+    emptyIcon?: LucideIcon;
     noResultsLabel?: ReactNode;
     hasActiveFilters?: boolean;
     isLoading?: boolean;
@@ -27,6 +31,8 @@ const INTERACTIVE_SELECTOR =
 export function TableShell<TData>({
     table,
     emptyLabel,
+    emptyDescription,
+    emptyIcon = Inbox,
     noResultsLabel,
     hasActiveFilters = false,
     isLoading = false,
@@ -81,10 +87,17 @@ export function TableShell<TData>({
 
                 {!isLoading && rows.length === 0 && (
                     <TableRow>
-                        <TableCell colSpan={columns.length} className="py-6 text-center">
-                            <span className="text-muted-foreground text-sm">
-                                {hasActiveFilters && noResultsLabel ? noResultsLabel : emptyLabel}
-                            </span>
+                        <TableCell colSpan={columns.length}>
+                            {hasActiveFilters && noResultsLabel ? (
+                                <EmptyState icon={SearchX} title={noResultsLabel} bordered={false} />
+                            ) : (
+                                <EmptyState
+                                    icon={emptyIcon}
+                                    title={emptyLabel}
+                                    description={emptyDescription}
+                                    bordered={false}
+                                />
+                            )}
                         </TableCell>
                     </TableRow>
                 )}

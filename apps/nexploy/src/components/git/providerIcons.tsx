@@ -3,6 +3,7 @@ import Gitlab from '@thesvg/react/gitlab';
 import Gitea from '@thesvg/react/gitea';
 import Bitbucket from '@thesvg/react/bitbucket';
 import AzureAzureDevops from '@thesvg/react/azure-azure-devops';
+import { Link2 } from 'lucide-react';
 import { GitProviderType } from 'generated/client';
 
 export const PROVIDER_ICONS: Record<GitProviderType, React.ElementType> = {
@@ -11,4 +12,5 @@ export const PROVIDER_ICONS: Record<GitProviderType, React.ElementType> = {
     GITEA: Gitea,
     BITBUCKET: Bitbucket,
     AZURE_REPOS: AzureAzureDevops,
+    CUSTOM: Link2,
 };

@@ -2,12 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Cpu, Plus, Trash2 } from 'lucide-react';
+import { Cpu, Plus, Settings2, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function VolumeDriverOptions() {
     const t = useTranslations('docker.createVolumePage');
@@ -33,7 +34,7 @@ export function VolumeDriverOptions() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noDriverOptionsConfigured')}</p>
+                    <EmptyState icon={Settings2} title={t('noDriverOptionsConfigured')} bordered={false} />
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

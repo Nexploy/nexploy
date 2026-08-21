@@ -17,6 +17,7 @@ import { useContainersStore } from '@/stores/docker/useContainersStore';
 import { NEXPLOY_LABELS } from '@nexploy/shared/nexployLabels';
 import { VersionDeployButton } from '@/components/repositories/tabs/versions/VersionDeployButton.tsx';
 import { VersionDropdownActions } from '@/components/repositories/tabs/versions/VersionDropdownActions';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 const ESTIMATED_HEADER_HEIGHT = 36;
 const ESTIMATED_VERSION_HEIGHT = 73;
@@ -186,15 +187,7 @@ export function RepositoryVersions({ repositoryId, versions: initialVersions }: 
         <div className="flex flex-col gap-2 px-5">
             <h2 className="font-semibold text-xl">{t('title')}</h2>
             {versions.length === 0 ? (
-                <div className="flex flex-col items-center gap-3 rounded-md border p-8 text-center">
-                    <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
-                        <Tag className="size-5 text-primary" />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <span className="font-medium text-sm">{t('noVersions')}</span>
-                        <span className="text-muted-foreground text-sm">{t('noVersionsDescription')}</span>
-                    </div>
-                </div>
+                <EmptyState icon={Tag} title={t('noVersions')} description={t('noVersionsDescription')} />
             ) : (
                 <div ref={listRef} className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
                     {virtualizer.getVirtualItems().map((virtualItem) => {

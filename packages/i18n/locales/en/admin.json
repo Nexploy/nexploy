@@ -252,6 +252,7 @@
     "save": "Save changes",
     "list": "Registry list",
     "noRegistries": "No registries configured. Add one to push images during builds.",
+    "noRegistriesDescription": "Add a Docker registry to push your built images",
     "createSuccess": "Registry added successfully",
     "updateSuccess": "Registry updated successfully",
     "deleteTitle": "Delete Registry",
@@ -597,6 +598,7 @@
     "installTitle": "Install on the build machine",
     "installHint": "Requires Docker on the build machine. The runner connects on its own, no inbound port to open.",
     "noRunners": "No build runner yet. Add one to move builds off this server.",
+    "noRunnersDescription": "Add a build runner to offload builds from your production host",
     "noDescription": "No description",
     "disabled": "Disabled",
     "status": {

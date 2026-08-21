@@ -28,6 +28,7 @@ import { GET as getVersions } from '@/app/api/repositories/[repositoryId]/versio
 import { GET as getWebhook } from '@/app/api/repositories/[repositoryId]/webhook/route';
 import { GET as getGitBranches } from '@/app/api/git/branches/route';
 import { GET as getGitRepositories } from '@/app/api/git/repositories/route';
+import { GET as inspectCustomRepository } from '@/app/api/git/custom/inspect/route';
 import { GET as getMultiplexedEvents } from '@/app/api/events/multiplexed/route';
 import { callRoute, type RouteHandler } from '../setup/invoke';
 import { NEXPLOY_ORGANIZATION_LABEL } from '@nexploy/shared/ownership';
@@ -300,6 +301,15 @@ describePermissionMatrix('git and event endpoints', [
                 url: 'http://localhost:3022/api/git/repositories?provider=GITHUB&gitAccountId=git-account-1',
             }),
         expected: EVERY_ROLE,
+    },
+    {
+        name: 'GET /api/git/custom/inspect',
+        kind: 'route',
+        invoke: () =>
+            callRoute(inspectCustomRepository as RouteHandler, {
+                url: 'http://localhost:3022/api/git/custom/inspect?repositoryUrl=https%3A%2F%2Fexample.invalid%2Fowner%2Frepo',
+            }),
+        expected: DEVELOPER_AND_ABOVE,
     },
     {
         name: 'GET /api/git/branches',

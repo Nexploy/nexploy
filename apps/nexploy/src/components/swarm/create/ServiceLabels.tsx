@@ -8,6 +8,7 @@ import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/com
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function ServiceLabels() {
     const t = useTranslations('swarm.createService');
@@ -32,7 +33,7 @@ export function ServiceLabels() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noLabelsConfigured')}</p>
+                    <EmptyState icon={Tags} title={t('noLabelsConfigured')} bordered={false} />
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

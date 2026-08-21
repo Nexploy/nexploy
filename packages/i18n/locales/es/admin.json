@@ -252,6 +252,7 @@
     "save": "Guardar cambios",
     "list": "Lista de registries",
     "noRegistries": "No hay registries configurados. Añade uno para publicar imágenes durante las builds.",
+    "noRegistriesDescription": "Añada un registro Docker para subir sus imágenes construidas",
     "createSuccess": "Registry añadido correctamente",
     "updateSuccess": "Registry actualizado correctamente",
     "deleteTitle": "Eliminar registry",
@@ -598,6 +599,7 @@
     "installTitle": "Instalar en la máquina de compilación",
     "installHint": "Requiere Docker en la máquina de compilación. El runner se conecta solo, sin puertos entrantes.",
     "noRunners": "Todavía no hay runners. Añade uno para sacar las compilaciones de este servidor.",
+    "noRunnersDescription": "Añada un runner de build para descargar las builds de su servidor de producción",
     "noDescription": "Sin descripción",
     "disabled": "Desactivado",
     "status": {

@@ -36,6 +36,7 @@
     "deleteConfirmDescription": "Êtes-vous sûr de vouloir supprimer \"{name}\" ? Cette action est irréversible.",
     "deleteConfirmAction": "Supprimer",
     "noProvidersAvailable": "Aucun fournisseur Git n'a encore été configuré par l'administrateur.",
+    "noProvidersAvailableDescription": "Un administrateur doit configurer un fournisseur Git avant de pouvoir connecter un compte",
     "connectedSuccess": "Fournisseur Git connecté avec succès.",
     "addGithub": "Ajouter GitHub",
     "addGitlab": "Ajouter GitLab",

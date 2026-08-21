@@ -195,7 +195,9 @@
     "gitAccountNotFound": "Account Git non trovato",
     "disconnectFailed": "Disconnessione dell'account Git non riuscita",
     "fetchReposFailed": "Recupero dei repository non riuscito",
-    "fetchBranchesFailed": "Recupero dei branch non riuscito"
+    "fetchBranchesFailed": "Recupero dei branch non riuscito",
+    "repositoryNotPublic": "Questo repository non è pubblico. Solo i repository pubblici possono essere aggiunti tramite URL.",
+    "repositoryUnreachable": "Non è stato possibile raggiungere questo repository. Verifichi l’URL."
   },
   "oauth": {
     "invalidState": "Stato OAuth non valido",

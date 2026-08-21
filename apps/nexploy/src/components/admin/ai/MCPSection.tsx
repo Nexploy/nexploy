@@ -12,6 +12,8 @@ import { MCPKeyCard } from '@/components/admin/ai/MCPKeyCard.tsx';
 import type { McpApiKey } from '@workspace/typescript-interface/ai/mcpApiKey';
 import CopyButton from '@/components/shared/CopyButton.tsx';
 import { GenerateMcpKeyButton } from '@/components/admin/ai/GenerateMcpKeyButton.tsx';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { KeyRound } from 'lucide-react';
 
 interface MCPSectionProps {
     mcpUrl: string;
@@ -58,7 +60,7 @@ export function MCPSection({ mcpUrl, keys }: MCPSectionProps) {
                     <GenerateMcpKeyButton />
                 </span>
                 {keys.length === 0 ? (
-                    <div className="rounded-md border p-8 text-center text-muted-foreground text-sm">{t('noKeys')}</div>
+                    <EmptyState icon={KeyRound} title={t('noKeys')} description={t('noKeysDescription')} />
                 ) : (
                     keys.map((k) => <MCPKeyCard key={k.id} k={k} onRevoke={handleRevoke} />)
                 )}

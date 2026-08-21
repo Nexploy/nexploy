@@ -9,6 +9,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { useBuildsInfinite } from '@/hooks/useBuildsInfinite';
 import { useScrollAreaViewport } from '@/hooks/useScrollAreaViewport';
 import { RepositoryBuild } from '@/components/repositories/tabs/builds/RepositoryBuild';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 const ESTIMATED_BUILD_HEIGHT = 73;
 const OVERSCAN = 6;
@@ -51,17 +52,7 @@ export function BuildsHistoryList({ repositoryId, stageId, initialBuilds, initia
     }, [lastVisibleIndex, builds.length, hasMore, isLoadingMore, loadMore]);
 
     if (builds.length === 0) {
-        return (
-            <div className="flex flex-col items-center gap-3 rounded-md border p-8 text-center">
-                <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
-                    <Hammer className="size-5 text-primary" />
-                </div>
-                <div className="flex flex-col gap-1">
-                    <span className="font-medium text-sm">{t('noBuilds')}</span>
-                    <span className="text-muted-foreground text-sm">{t('noBuildsDescription')}</span>
-                </div>
-            </div>
-        );
+        return <EmptyState icon={Hammer} title={t('noBuilds')} description={t('noBuildsDescription')} />;
     }
 
     return (

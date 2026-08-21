@@ -2,12 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Plus, ServerCog, Trash2 } from 'lucide-react';
+import { MapPin, Plus, ServerCog, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function ServicePlacement() {
     const t = useTranslations('swarm.createService');
@@ -32,7 +33,7 @@ export function ServicePlacement() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noConstraintsConfigured')}</p>
+                    <EmptyState icon={MapPin} title={t('noConstraintsConfigured')} bordered={false} />
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

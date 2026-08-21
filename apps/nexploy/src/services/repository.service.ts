@@ -25,7 +25,7 @@ export async function createRepository(
             data: {
                 name,
                 gitProvider,
-                gitAccountId,
+                gitAccountId: gitAccountId ?? null,
                 gitId: repo.id,
                 repositoryUrl: repo.url,
                 userId: ctx.session.user.id,

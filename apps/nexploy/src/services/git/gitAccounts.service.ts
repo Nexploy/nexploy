@@ -13,6 +13,7 @@ const DEFAULT_BASE_URL: Record<GitProviderType, string> = {
     GITEA: '',
     BITBUCKET: 'https://bitbucket.org',
     AZURE_REPOS: 'https://dev.azure.com',
+    CUSTOM: '',
 };
 
 async function resolveBaseUrl(provider: GitProviderType, gitAccountId?: string): Promise<string> {
@@ -49,6 +50,28 @@ export async function getRepositories(
     } catch (error: unknown) {
         throw new Error(t('git.fetchReposFailed'));
     }
+}
+
+export async function inspectCustomRepository(
+    repositoryUrl: string,
+): Promise<GitRepository & { branches: GitBranch[] }> {
+    const adapter = getGitAdapter('CUSTOM');
+
+    const repository = await adapter.getRepository({
+        token: { accessToken: null, refreshToken: null, accessTokenExpiresAt: null },
+        baseUrl: '',
+        gitId: repositoryUrl,
+        repositoryUrl,
+    });
+
+    const branches = await adapter.listBranches({
+        token: { accessToken: null, refreshToken: null, accessTokenExpiresAt: null },
+        baseUrl: '',
+        repoId: repository.id,
+        repositoryUrl,
+    });
+
+    return { ...repository, branches };
 }
 
 export async function getBranches(

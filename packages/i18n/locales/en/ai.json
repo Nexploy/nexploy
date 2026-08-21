@@ -76,6 +76,7 @@
       "generatedWarning": "Copy this key now — it will not be shown again.",
       "copyKey": "Copy",
       "noKeys": "No API keys yet. Generate one to connect an external MCP client.",
+      "noKeysDescription": "Generate an API key to let an MCP client connect to this server",
       "keyName": "Key",
       "createdAt": "Created",
       "expiresAt": "Expires",

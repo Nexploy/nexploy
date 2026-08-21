@@ -17,6 +17,7 @@ import { usePermissions } from '@/contexts/PermissionContext';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import CopyButton from '@/components/shared/CopyButton.tsx';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 interface EnvVariable {
     id?: string;
@@ -138,20 +139,18 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
             </div>
 
             {envVariables.length === 0 ? (
-                <div className="flex flex-col items-center gap-3 rounded-md border p-8 text-center">
-                    <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
-                        <Key className="size-5 text-primary" />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                        <span className="font-medium text-sm">{t('noVariables')}</span>
-                        <span className="text-muted-foreground text-sm">{t('description')}</span>
-                    </div>
-                    {canEdit && (
-                        <Button variant="outline" size="sm" icon={Plus} onClick={handleAddNew}>
-                            {t('addVariable')}
-                        </Button>
-                    )}
-                </div>
+                <EmptyState
+                    icon={Key}
+                    title={t('noVariables')}
+                    description={t('description')}
+                    action={
+                        canEdit && (
+                            <Button variant="outline" size="sm" icon={Plus} onClick={handleAddNew}>
+                                {t('addVariable')}
+                            </Button>
+                        )
+                    }
+                />
             ) : (
                 <div className="flex flex-col divide-y overflow-hidden rounded-md border">
                     {envVariables.map((variable, index) => {

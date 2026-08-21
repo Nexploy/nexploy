@@ -10,6 +10,7 @@ import { Input } from '@workspace/ui/components/input';
 import { Label } from '@workspace/ui/components/label';
 import { Button } from '@workspace/ui/components/button';
 import { Switch } from '@workspace/ui/components/switch';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function ContainerVolumes() {
     const t = useTranslations('docker.createContainer');
@@ -32,7 +33,7 @@ export function ContainerVolumes() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noVolumesConfigured')}</p>
+                    <EmptyState icon={HardDrive} title={t('noVolumesConfigured')} bordered={false} />
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

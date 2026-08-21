@@ -12,6 +12,8 @@ import { EditBuildRunnerForm } from '@/components/admin/servers/EditBuildRunnerF
 import { RunnerTokenPanel } from '@/components/admin/servers/RunnerTokenPanel';
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { Server } from 'lucide-react';
 
 interface BuildRunnerSectionProps {
     runners: BuildRunnerInfo[];
@@ -82,7 +84,7 @@ export function BuildRunnerSection({ runners, serverUrl }: BuildRunnerSectionPro
     return (
         <div className="flex flex-col gap-3">
             {runners.length === 0 ? (
-                <div className="rounded-md border p-8 text-center text-muted-foreground text-sm">{t('noRunners')}</div>
+                <EmptyState icon={Server} title={t('noRunners')} description={t('noRunnersDescription')} />
             ) : (
                 runners.map((runner) => (
                     <BuildRunnerCard

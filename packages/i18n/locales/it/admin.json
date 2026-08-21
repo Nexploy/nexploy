@@ -252,6 +252,7 @@
     "save": "Salva modifiche",
     "list": "Elenco dei registry",
     "noRegistries": "Nessun registry configurato. Aggiungine uno per pubblicare le immagini durante le build.",
+    "noRegistriesDescription": "Aggiunga un registry Docker per caricare le immagini costruite",
     "createSuccess": "Registry aggiunto con successo",
     "updateSuccess": "Registry aggiornato con successo",
     "deleteTitle": "Elimina registry",
@@ -598,6 +599,7 @@
     "installTitle": "Installa sulla macchina di build",
     "installHint": "Richiede Docker sulla macchina di build. Il runner si collega da solo, nessuna porta in entrata da aprire.",
     "noRunners": "Nessun runner di build. Aggiungine uno per spostare le build fuori da questo server.",
+    "noRunnersDescription": "Aggiunga un runner di build per alleggerire il server di produzione",
     "noDescription": "Nessuna descrizione",
     "disabled": "Disattivato",
     "status": {

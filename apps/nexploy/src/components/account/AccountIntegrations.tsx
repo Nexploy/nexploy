@@ -4,6 +4,8 @@ import { PROVIDER_ICONS } from '@/components/git/providerIcons';
 import { getAllGitProviders } from '@/services/git/gitProviders.service';
 import { listGitAccounts } from '@/services/git/gitAccounts.service';
 import { getUserSession } from '@/services/auth/auth.service';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { Plug } from 'lucide-react';
 
 export async function AcountIntegrations() {
     const session = await getUserSession();
@@ -15,9 +17,11 @@ export async function AcountIntegrations() {
 
     if (providers.length === 0) {
         return (
-            <p className="rounded-md border p-8 text-center text-muted-foreground text-sm">
-                {t('oauth.noProvidersAvailable')}
-            </p>
+            <EmptyState
+                icon={Plug}
+                title={t('oauth.noProvidersAvailable')}
+                description={t('oauth.noProvidersAvailableDescription')}
+            />
         );
     }
 

@@ -103,7 +103,7 @@ export async function startBuildRepository(
         gitAccountId: repository.gitAccountId ?? undefined,
         repositoryId: repository.id,
         organizationId: repository.organizationId,
-        gitProvider: repository.gitProvider,
+        gitProvider: repository.gitProvider as BuildConfig['gitProvider'],
         gitUrl: repository.repositoryUrl,
         buildId: build.id,
         triggerSource,

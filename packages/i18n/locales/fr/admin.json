@@ -252,6 +252,7 @@
     "save": "Enregistrer",
     "list": "Liste des registres",
     "noRegistries": "Aucun registre configuré. Ajoutez-en un pour pousser les images lors des builds.",
+    "noRegistriesDescription": "Ajoutez un registre Docker pour pousser vos images construites",
     "createSuccess": "Registre ajouté avec succès",
     "updateSuccess": "Registre mis à jour avec succès",
     "deleteTitle": "Supprimer le registre",
@@ -597,6 +598,7 @@
     "installTitle": "Installer sur la machine de build",
     "installHint": "Docker est requis sur la machine de build. Le runner se connecte tout seul, aucun port entrant à ouvrir.",
     "noRunners": "Aucun runner de build. Ajoutez-en un pour sortir les builds de ce serveur.",
+    "noRunnersDescription": "Ajoutez un runner de build pour décharger vos builds du serveur de production",
     "noDescription": "Aucune description",
     "disabled": "Désactivé",
     "status": {

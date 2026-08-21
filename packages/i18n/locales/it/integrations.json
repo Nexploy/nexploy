@@ -36,6 +36,7 @@
     "deleteConfirmDescription": "È sicuro di voler rimuovere \"{name}\"? Questa azione non può essere annullata.",
     "deleteConfirmAction": "Rimuovi",
     "noProvidersAvailable": "L'amministratore non ha ancora configurato alcun provider Git.",
+    "noProvidersAvailableDescription": "Un amministratore deve configurare un provider Git prima di poter collegare un account",
     "connectedSuccess": "Provider Git collegato con successo.",
     "addGithub": "Aggiungi GitHub",
     "addGitlab": "Aggiungi GitLab",

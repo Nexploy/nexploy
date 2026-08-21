@@ -12,7 +12,8 @@
     "gitlab": "GitLab",
     "gitea": "Gitea",
     "bitbucket": "Bitbucket",
-    "azureRepos": "Azure Repos"
+    "azureRepos": "Azure Repos",
+    "custom": "URL personalizada"
   },
   "create": {
     "title": "Nuevo repositorio",
@@ -109,7 +110,17 @@
       "account": "Cuenta Git",
       "selectAccount": "Seleccione una cuenta",
       "noAccounts": "No hay ninguna cuenta Git conectada. Conecte una desde los ajustes de su cuenta.",
-      "connectAccount": "Conectar una cuenta"
+      "connectAccount": "Conectar una cuenta",
+      "modeAccount": "Cuenta conectada",
+      "modeCustom": "URL pública"
+    },
+    "customSource": {
+      "urlLabel": "URL del repositorio",
+      "urlPlaceholder": "https://github.com/OpenLabs-so/openanalytics",
+      "check": "Comprobar",
+      "publicOnly": "Solo repositorios públicos. No se guarda ninguna credencial ni se registra ningún webhook.",
+      "branch": "Rama",
+      "unreachable": "No se ha podido acceder a este repositorio."
     }
   },
   "settings": {
@@ -453,6 +464,7 @@
     "list": "Fases",
     "stages": "Fases",
     "noStages": "Todavía no hay fases para este repositorio",
+    "noStagesDescription": "Cree un stage para desplegar este repositorio en varios entornos aislados",
     "configuration": "Configuración",
     "addNewStage": "Añadir una nueva fase",
     "addNewStageDescription": "Cree una nueva fase de despliegue para este repositorio.",

@@ -195,7 +195,9 @@
     "gitAccountNotFound": "Compte Git introuvable",
     "disconnectFailed": "Échec de la déconnexion du compte Git",
     "fetchReposFailed": "Échec de la récupération des dépôts",
-    "fetchBranchesFailed": "Échec de la récupération des branches"
+    "fetchBranchesFailed": "Échec de la récupération des branches",
+    "repositoryNotPublic": "Ce dépôt n'est pas public. Seuls les dépôts publics peuvent être ajoutés par URL.",
+    "repositoryUnreachable": "Ce dépôt n'a pas pu être atteint. Vérifiez l'URL."
   },
   "oauth": {
     "invalidState": "État OAuth invalide",

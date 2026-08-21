@@ -8,6 +8,7 @@ import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Button } from '@workspace/ui/components/button';
 import { Input } from '@workspace/ui/components/input';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function NetworkLabels() {
     const t = useTranslations('docker.createNetworkPage');
@@ -30,7 +31,7 @@ export function NetworkLabels() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noLabelsConfigured')}</p>
+                    <EmptyState icon={Tags} title={t('noLabelsConfigured')} bordered={false} />
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

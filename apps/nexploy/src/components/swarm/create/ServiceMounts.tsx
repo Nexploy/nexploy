@@ -19,6 +19,7 @@ import {
     SelectValue,
 } from '@workspace/ui/components/select';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function ServiceMounts() {
     const t = useTranslations('swarm.createService');
@@ -45,7 +46,7 @@ export function ServiceMounts() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noMountsConfigured')}</p>
+                    <EmptyState icon={HardDrive} title={t('noMountsConfigured')} bordered={false} />
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

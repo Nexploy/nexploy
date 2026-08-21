@@ -2,12 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { KeyRound, Plus, Trash2 } from 'lucide-react';
+import { Key, KeyRound, Plus, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { CardHeaderWithIcon } from '@/components/CardHeaderWithIcon.tsx';
 import { FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
 import { Input } from '@workspace/ui/components/input';
 import { Button } from '@workspace/ui/components/button';
+import { EmptyState } from '@/components/shared/EmptyState';
 
 export function ContainerEnvVars() {
     const t = useTranslations('docker.createContainer');
@@ -30,7 +31,7 @@ export function ContainerEnvVars() {
             </CardHeaderWithIcon>
             <CardContent>
                 {fields.length === 0 ? (
-                    <p className="py-8 text-center text-muted-foreground text-sm">{t('noEnvVarsConfigured')}</p>
+                    <EmptyState icon={Key} title={t('noEnvVarsConfigured')} bordered={false} />
                 ) : (
                     <div className="space-y-3">
                         {fields.map((field, index) => (

@@ -12,7 +12,8 @@
     "gitlab": "GitLab",
     "gitea": "Gitea",
     "bitbucket": "Bitbucket",
-    "azureRepos": "Azure Repos"
+    "azureRepos": "Azure Repos",
+    "custom": "Custom URL"
   },
   "create": {
     "title": "New Repository",
@@ -39,7 +40,7 @@
   "versions": {
     "title": "Versions",
     "noVersions": "No versions available",
-    "noVersionsDescription": "Versions appear here when the \u201cSave Version\u201d node runs in the pipeline",
+    "noVersionsDescription": "Versions appear here when the “Save Version” node runs in the pipeline",
     "noEnvironment": "Default environment (active at build time)",
     "deployed": "Deployed",
     "deploy": "Deploy",
@@ -109,7 +110,17 @@
       "account": "Git Account",
       "selectAccount": "Select an account",
       "noAccounts": "No Git accounts connected. Connect one from your account settings.",
-      "connectAccount": "Connect an account"
+      "connectAccount": "Connect an account",
+      "modeAccount": "Connected account",
+      "modeCustom": "Public URL"
+    },
+    "customSource": {
+      "urlLabel": "Repository URL",
+      "urlPlaceholder": "https://github.com/OpenLabs-so/openanalytics",
+      "check": "Check",
+      "publicOnly": "Public repositories only. No credentials are stored, and no webhook is registered.",
+      "branch": "Branch",
+      "unreachable": "This repository could not be reached."
     }
   },
   "settings": {
@@ -453,6 +464,7 @@
     "list": "Stages",
     "stages": "Stages",
     "noStages": "No stages for this repository yet",
+    "noStagesDescription": "Create a stage to deploy this repository to several isolated environments",
     "configuration": "Configuration",
     "addNewStage": "Add a new stage",
     "addNewStageDescription": "Create a new deployment stage for this repository.",

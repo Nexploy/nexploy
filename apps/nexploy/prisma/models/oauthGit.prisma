@@ -46,4 +46,5 @@ enum GitProviderType {
   GITEA
   BITBUCKET
   AZURE_REPOS
+  CUSTOM
 }

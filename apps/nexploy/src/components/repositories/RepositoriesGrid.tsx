@@ -27,6 +27,7 @@ import Gitlab from '@thesvg/react/gitlab';
 import Gitea from '@thesvg/react/gitea';
 import Bitbucket from '@thesvg/react/bitbucket';
 import AzureAzureDevops from '@thesvg/react/azure-azure-devops';
+import { Link2 } from 'lucide-react';
 import { STATUS_PIPELINE } from '@/components/shared/buildStatusMapping';
 import { BuildStatus, GitProviderType } from 'generated/client';
 
@@ -114,6 +115,12 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                                     <span className="flex items-center gap-2">
                                         <AzureAzureDevops className="size-3.5 [&_path]:fill-current" />
                                         {t('providers.azureRepos')}
+                                    </span>
+                                </SelectItem>
+                                <SelectItem value="CUSTOM">
+                                    <span className="flex items-center gap-2">
+                                        <Link2 className="size-3.5" />
+                                        {t('providers.custom')}
                                     </span>
                                 </SelectItem>
                             </SelectGroup>

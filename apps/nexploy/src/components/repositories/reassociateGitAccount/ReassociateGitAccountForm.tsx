@@ -12,6 +12,8 @@ import { relinkGitAccountSchema } from '@workspace/schemas-zod/repository/relink
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { DeleteRepositoryForm } from '@/components/repositories/DeleteRepositoryForm';
 import { GitAccountFormField } from '@/components/git/GitAccountFormField';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { PlugZap } from 'lucide-react';
 
 interface ReassociateGitAccountFormProps {
     repositoryId: string;
@@ -62,12 +64,16 @@ export function ReassociateGitAccountForm({
             <form onSubmit={handleSubmitWithAction} className="flex flex-col gap-4 px-6 pb-6">
                 <GitAccountFormField
                     noAccountsContent={
-                        <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-6 text-center text-muted-foreground text-sm">
-                            <span>{tSource('noAccounts')}</span>
-                            <Button asChild size="sm" onClick={onClose}>
-                                <Link href="/account#integrations">{tSource('connectAccount')}</Link>
-                            </Button>
-                        </div>
+                        <EmptyState
+                            icon={PlugZap}
+                            title={tSource('noAccounts')}
+                            className="border-dashed"
+                            action={
+                                <Button asChild size="sm" onClick={onClose}>
+                                    <Link href="/account#integrations">{tSource('connectAccount')}</Link>
+                                </Button>
+                            }
+                        />
                     }
                 />
 

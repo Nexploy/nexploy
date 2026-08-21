@@ -12,7 +12,8 @@
     "gitlab": "GitLab",
     "gitea": "Gitea",
     "bitbucket": "Bitbucket",
-    "azureRepos": "Azure Repos"
+    "azureRepos": "Azure Repos",
+    "custom": "URL personnalisée"
   },
   "create": {
     "title": "Nouveau dépôt",
@@ -109,7 +110,17 @@
       "account": "Compte Git",
       "selectAccount": "Sélectionner un compte",
       "noAccounts": "Aucun compte Git connecté. Connectez-en un depuis les paramètres de votre compte.",
-      "connectAccount": "Connecter un compte"
+      "connectAccount": "Connecter un compte",
+      "modeAccount": "Compte connecté",
+      "modeCustom": "URL publique"
+    },
+    "customSource": {
+      "urlLabel": "URL du dépôt",
+      "urlPlaceholder": "https://github.com/OpenLabs-so/openanalytics",
+      "check": "Vérifier",
+      "publicOnly": "Dépôts publics uniquement. Aucun identifiant n'est enregistré et aucun webhook n'est posé.",
+      "branch": "Branche",
+      "unreachable": "Ce dépôt n'a pas pu être atteint."
     }
   },
   "settings": {
@@ -453,6 +464,7 @@
     "list": "Stages",
     "stages": "Stages",
     "noStages": "Aucun stage pour ce dépôt pour le moment",
+    "noStagesDescription": "Créez un stage pour déployer ce dépôt sur plusieurs environnements isolés",
     "configuration": "Configuration",
     "addNewStage": "Ajouter un nouveau stage",
     "addNewStageDescription": "Créez un nouveau stage de déploiement pour ce dépôt.",

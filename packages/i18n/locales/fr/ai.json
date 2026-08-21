@@ -76,6 +76,7 @@
       "generatedWarning": "Copiez cette clé maintenant — elle ne sera plus affichée.",
       "copyKey": "Copier",
       "noKeys": "Aucune clé API. Générez-en une pour connecter un client MCP externe.",
+      "noKeysDescription": "Générez une clé API pour permettre à un client MCP de se connecter à ce serveur",
       "keyName": "Clé",
       "createdAt": "Créée le",
       "expiresAt": "Expire le",

@@ -1,6 +1,6 @@
 export interface GitAccountSummary {
     id: string;
-    provider: 'GITHUB' | 'GITLAB' | 'GITEA' | 'BITBUCKET' | 'AZURE_REPOS';
+    provider: 'GITHUB' | 'GITLAB' | 'GITEA' | 'BITBUCKET' | 'AZURE_REPOS' | 'CUSTOM';
     providerAccountId: string;
     providerUsername: string | null;
     gitProviderId: string;

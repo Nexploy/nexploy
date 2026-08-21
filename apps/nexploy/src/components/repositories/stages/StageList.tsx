@@ -2,6 +2,8 @@ import { getTranslations } from 'next-intl/server';
 
 import { StageCard } from '@/components/repositories/stages/StageCard';
 import { DeploymentStage } from 'generated/client';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { Layers } from 'lucide-react';
 
 interface StageListProps {
     repositoryId: string;
@@ -12,7 +14,7 @@ export async function StageList({ repositoryId, stages }: StageListProps) {
     const t = await getTranslations('repository.stages');
 
     if (stages.length === 0) {
-        return <div className="rounded-md border p-8 text-center text-muted-foreground text-sm">{t('noStages')}</div>;
+        return <EmptyState icon={Layers} title={t('noStages')} description={t('noStagesDescription')} />;
     }
 
     return (

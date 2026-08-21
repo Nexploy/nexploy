@@ -825,6 +825,14 @@ exports[`permission matrix > resolves the same verdict for every endpoint and gl
     "system": "allow",
   },
   {
+    "admin": "allow",
+    "developer": "allow",
+    "endpoint": "GET src/app/api/git/custom/inspect/route.ts",
+    "guards": "repository.create",
+    "guest": "deny",
+    "system": "deny",
+  },
+  {
     "admin": "exempt:session-scoped",
     "developer": "exempt:session-scoped",
     "endpoint": "GET src/app/api/git/oauth/callback/route.ts",

@@ -1,14 +1,14 @@
 import { getRegistries } from '@/services/registry.service';
 import { RegistryCard } from '@/components/registry/RegistryCard';
 import { getTranslations } from 'next-intl/server';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { Package } from 'lucide-react';
 
 export async function RegistryList() {
     const [registries, t] = await Promise.all([getRegistries(), getTranslations('admin.registry')]);
 
     if (registries.length === 0) {
-        return (
-            <div className="rounded-md border p-8 text-center text-muted-foreground text-sm">{t('noRegistries')}</div>
-        );
+        return <EmptyState icon={Package} title={t('noRegistries')} description={t('noRegistriesDescription')} />;
     }
 
     return (

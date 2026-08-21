@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import useSWR from 'swr';
 import { toast } from 'sonner';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,6 +17,7 @@ import { diskGuardSettingsSchema } from '@workspace/schemas-zod/docker/system/di
 import type { DiskGuardStatus } from '@workspace/typescript-interface/docker/docker.disk';
 import { updateDiskGuardSettingsAction } from '@/actions/admin/diskGuard/updateDiskGuardSettings.action';
 import { formatBytes } from '@/utils/formatBytes';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 
 interface DiskGuardCardSettings {
     enabled: boolean;
@@ -33,7 +34,10 @@ const LEVEL_CLASSES: Record<DiskGuardStatus['level'], string> = {
 
 export function DiskGuardCard({ settings }: { settings: DiskGuardCardSettings }) {
     const t = useTranslations('admin.settings');
-    const [status, setStatus] = useState<DiskGuardStatus | null>(null);
+    const { data: status } = useSWR<DiskGuardStatus>({ url: '/api/system/disk', disableToast: true }, fetcherApi, {
+        refreshInterval: 30_000,
+        revalidateOnFocus: false,
+    });
 
     const { form, handleSubmitWithAction, action } = useHookFormAction(
         updateDiskGuardSettingsAction,
@@ -55,29 +59,6 @@ export function DiskGuardCard({ settings }: { settings: DiskGuardCardSettings })
             },
         },
     );
-
-    useEffect(() => {
-        let cancelled = false;
-
-        const load = async () => {
-            try {
-                const response = await fetch('/api/system/disk');
-                if (!response.ok) return;
-                const data = (await response.json()) as DiskGuardStatus;
-                if (!cancelled) setStatus(data);
-            } catch {
-                /* empty */
-            }
-        };
-
-        load();
-        const interval = setInterval(load, 30_000);
-
-        return () => {
-            cancelled = true;
-            clearInterval(interval);
-        };
-    }, []);
 
     return (
         <Card>
