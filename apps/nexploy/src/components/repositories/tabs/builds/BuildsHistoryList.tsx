@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { Build } from 'generated/client';
-import { Loader2 } from 'lucide-react';
+import { Hammer, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '@workspace/ui/lib/utils';
@@ -52,8 +52,14 @@ export function BuildsHistoryList({ repositoryId, stageId, initialBuilds, initia
 
     if (builds.length === 0) {
         return (
-            <div className="rounded-md border">
-                <div className="p-8 text-center text-muted-foreground text-sm">{t('noBuilds')}</div>
+            <div className="flex flex-col items-center gap-3 rounded-md border p-8 text-center">
+                <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
+                    <Hammer className="size-5 text-primary" />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <span className="font-medium text-sm">{t('noBuilds')}</span>
+                    <span className="text-muted-foreground text-sm">{t('noBuildsDescription')}</span>
+                </div>
             </div>
         );
     }

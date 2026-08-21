@@ -39,6 +39,7 @@
   "versions": {
     "title": "Versioni",
     "noVersions": "Nessuna versione disponibile",
+    "noVersionsDescription": "Le versioni appaiono qui quando il nodo «Salva versione» viene eseguito nella pipeline",
     "noEnvironment": "Ambiente predefinito (attivo al momento della build)",
     "deployed": "Distribuita",
     "deploy": "Distribuisci",
@@ -64,6 +65,7 @@
     "commit": "Commit",
     "branch": "Branch",
     "noBuilds": "Nessuna build disponibile",
+    "noBuildsDescription": "Le build appaiono qui una volta eseguita la pipeline per questo repository",
     "noEnvironment": "Ambiente predefinito (attivo al momento della build)",
     "noBuild": "Nessuna build",
     "startedAt": "Iniziata alle",

@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import useSWR from 'swr';
 import { toast } from 'sonner';
 import { useHookFormAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,6 +17,7 @@ import { networkExposureSettingsSchema } from '@workspace/schemas-zod/docker/sys
 import type { PubliclyExposedContainer } from '@workspace/typescript-interface/docker/docker.networkExposure';
 import { updateNetworkExposureSettingsAction } from '@/actions/admin/networkExposure/updateNetworkExposureSettings.action';
 import { onContainerRecreateAction } from '@/actions/docker/container/containerRecreate.action';
+import { fetcherApi } from '@/lib/api/fetcherApi';
 
 interface NetworkExposureCardSettings {
     bindLoopbackOnly: boolean;
@@ -23,19 +25,15 @@ interface NetworkExposureCardSettings {
 
 export function NetworkExposureCard({ settings }: { settings: NetworkExposureCardSettings }) {
     const t = useTranslations('admin.settings');
-    const [exposedContainers, setExposedContainers] = useState<PubliclyExposedContainer[]>([]);
     const [rebindingId, setRebindingId] = useState<string | null>(null);
 
-    const loadExposedContainers = useCallback(async () => {
-        try {
-            const response = await fetch('/api/admin/network-exposure/exposed-containers');
-            if (!response.ok) return;
-            const data = (await response.json()) as { containers: PubliclyExposedContainer[] };
-            setExposedContainers(data.containers);
-        } catch {
-            /* empty */
-        }
-    }, []);
+    const { data, mutate } = useSWR<{ containers: PubliclyExposedContainer[] }>(
+        { url: '/api/admin/network-exposure/exposed-containers', disableToast: true },
+        fetcherApi,
+        { revalidateOnFocus: false },
+    );
+
+    const exposedContainers = data?.containers ?? [];
 
     const { form, handleSubmitWithAction, action } = useHookFormAction(
         updateNetworkExposureSettingsAction,
@@ -48,17 +46,13 @@ export function NetworkExposureCard({ settings }: { settings: NetworkExposureCar
                 onSuccess: ({ input }) => {
                     form.reset(input);
                     toast.success(t('networkExposureSaved'));
-                    loadExposedContainers();
+                    mutate();
                 },
             },
         },
     );
 
     const bindLoopbackOnly = form.watch('bindLoopbackOnly');
-
-    useEffect(() => {
-        loadExposedContainers();
-    }, [loadExposedContainers]);
 
     const handleRebind = async (containerId: string) => {
         setRebindingId(containerId);
@@ -75,7 +69,7 @@ export function NetworkExposureCard({ settings }: { settings: NetworkExposureCar
                 return;
             }
             toast.success(t('networkExposureRebound'));
-            await loadExposedContainers();
+            await mutate();
         } finally {
             setRebindingId(null);
         }

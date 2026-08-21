@@ -39,6 +39,7 @@
   "versions": {
     "title": "Versions",
     "noVersions": "Aucune version disponible",
+    "noVersionsDescription": "Les versions apparaissent ici lorsque le node « Sauvegarder la version » est exécuté dans le pipeline",
     "noEnvironment": "Environnement par défaut (actif au moment du build)",
     "deployed": "Déployée",
     "deploy": "Déployer",
@@ -64,6 +65,7 @@
     "commit": "Commit",
     "branch": "Branche",
     "noBuilds": "Aucun build disponible",
+    "noBuildsDescription": "Les builds apparaissent ici une fois le pipeline exécuté pour ce dépôt",
     "noEnvironment": "Environnement par défaut (actif au moment du build)",
     "noBuild": "Aucun build",
     "startedAt": "Démarré le",

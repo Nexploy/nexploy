@@ -39,6 +39,7 @@
   "versions": {
     "title": "Versiones",
     "noVersions": "No hay versiones disponibles",
+    "noVersionsDescription": "Las versiones aparecen aquí cuando el nodo «Guardar versión» se ejecuta en el pipeline",
     "noEnvironment": "Entorno predeterminado (activo en el momento de la build)",
     "deployed": "Desplegada",
     "deploy": "Desplegar",
@@ -64,6 +65,7 @@
     "commit": "Commit",
     "branch": "Rama",
     "noBuilds": "No hay builds disponibles",
+    "noBuildsDescription": "Las builds aparecen aquí una vez que se ejecuta el pipeline de este repositorio",
     "noEnvironment": "Entorno predeterminado (activo en el momento de la build)",
     "noBuild": "Sin build",
     "startedAt": "Iniciada a las",

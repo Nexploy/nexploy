@@ -16,8 +16,22 @@ import { GET as activityStream } from '@/app/api/events/activity/stream/route';
 import { GET as aiProviders } from '@/app/api/ai/providers/route';
 import { GET as aiModels } from '@/app/api/ai/models/[provider]/route';
 import { POST as chat } from '@/app/api/chat/route';
+import { updateDiskGuardSettingsAction } from '@/actions/admin/diskGuard/updateDiskGuardSettings.action';
+import { updateNetworkExposureSettingsAction } from '@/actions/admin/networkExposure/updateNetworkExposureSettings.action';
+import { GET as diskGuardSettings } from '@/app/api/system/disk-guard/route';
+import { GET as diskStatus } from '@/app/api/system/disk/route';
+import { GET as exposedContainers } from '@/app/api/admin/network-exposure/exposed-containers/route';
 import { callRoute, type RouteHandler } from '../setup/invoke';
-import { ADMIN_ONLY, DEVELOPER_AND_ABOVE, describePermissionMatrix, EVERY_ROLE } from './permissionMatrix';
+import { mockDocker, mockDockerFallback } from '../setup/dockerMock';
+import { ADMIN_ONLY, allowOnly, DEVELOPER_AND_ABOVE, describePermissionMatrix, EVERY_ROLE } from './permissionMatrix';
+
+const SETTING_READERS = allowOnly('developer', 'admin', 'system', 'orgOwner', 'orgAdmin', 'orgMember', 'outsider');
+
+function mockSystemEndpoints() {
+    mockDockerFallback(() => ({}));
+    mockDocker('get', 'containers', []);
+    mockDocker('get', 'system/disk', { totalBytes: 0, freeBytes: 0, usedPercent: 0 });
+}
 
 const route = (handler: unknown, path: string, options: Record<string, unknown> = {}) =>
     callRoute(handler as RouteHandler, { url: `http://localhost:3022${path}`, ...options });
@@ -143,7 +157,7 @@ describePermissionMatrix('instance maintenance endpoints', [
         name: 'GET /api/admin/active-builds',
         kind: 'route',
         invoke: () => route(activeBuilds, '/api/admin/active-builds'),
-        expected: DEVELOPER_AND_ABOVE,
+        expected: SETTING_READERS,
     },
 ]);
 
@@ -159,5 +173,42 @@ describePermissionMatrix('event stream endpoints', [
         kind: 'route',
         invoke: () => route(activityStream, '/api/events/activity/stream'),
         expected: ADMIN_ONLY,
+    },
+]);
+
+describePermissionMatrix('disk guard and network exposure endpoints', [
+    {
+        name: 'updateDiskGuardSettingsAction',
+        kind: 'action',
+        invoke: () =>
+            updateDiskGuardSettingsAction({ enabled: true, warnPercent: 80, blockPercent: 90, minFreeMb: 1024 }),
+        expected: ADMIN_ONLY,
+    },
+    {
+        name: 'updateNetworkExposureSettingsAction',
+        kind: 'action',
+        invoke: () => updateNetworkExposureSettingsAction({ bindLoopbackOnly: true }),
+        expected: ADMIN_ONLY,
+    },
+    {
+        name: 'GET /api/system/disk-guard',
+        kind: 'route',
+        setup: mockSystemEndpoints,
+        invoke: () => route(diskGuardSettings, '/api/system/disk-guard'),
+        expected: SETTING_READERS,
+    },
+    {
+        name: 'GET /api/system/disk',
+        kind: 'route',
+        setup: mockSystemEndpoints,
+        invoke: () => route(diskStatus, '/api/system/disk'),
+        expected: EVERY_ROLE,
+    },
+    {
+        name: 'GET /api/admin/network-exposure/exposed-containers',
+        kind: 'route',
+        setup: mockSystemEndpoints,
+        invoke: () => route(exposedContainers, '/api/admin/network-exposure/exposed-containers'),
+        expected: SETTING_READERS,
     },
 ]);

@@ -1,13 +1,19 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Button } from '@workspace/ui/components/button';
-import { Trash2, X } from 'lucide-react';
+import { DatabaseBackup, Trash2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useContainerChangesStore } from '@/stores/forms/useContainerChangesStore';
 import type { VolumeItemProps } from '@workspace/typescript-interface/docker/docker.volume';
+import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
+import { TransferVolumeForm } from '@/components/docker/volume/forms/TransferVolumeForm';
+import { useProtectionTooltip } from '@/hooks/useProtectionTooltip';
 
 export function VolumeItem({ mount, isNew }: VolumeItemProps) {
     const t = useTranslations('docker.containerVolumes');
+    const tTransfer = useTranslations('docker.transferVolume');
     const { volumeChanges, onVolumeChange } = useContainerChangesStore();
+    const { openDialog } = useConfirmationDialogStore();
+    const volumeProtection = useProtectionTooltip('volume.manage');
 
     const isDeleted = volumeChanges.some(
         (change) =>
@@ -36,6 +42,17 @@ export function VolumeItem({ mount, isNew }: VolumeItemProps) {
         });
     };
 
+    const canTransfer = !isNew && !isDeleted && mount.type === 'volume' && !!mount.name;
+
+    const handleTransfer = () => {
+        if (!mount.name) return;
+        openDialog({
+            title: tTransfer('dialogTitle'),
+            description: tTransfer('dialogDescription'),
+            content: <TransferVolumeForm volumeNames={[mount.name]} />,
+        });
+    };
+
     const statusIndicator = isNew ? (
         <span className="text-green-500">+</span>
     ) : isDeleted ? (
@@ -53,25 +70,48 @@ export function VolumeItem({ mount, isNew }: VolumeItemProps) {
                     <code className="font-medium text-xs">{mount.name ?? mount.source}</code>
                     {statusIndicator}
                 </div>
-                {isDeleted ? (
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleCancelDelete}>
-                                <X />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>{t('cancelDelete')}</TooltipContent>
-                    </Tooltip>
-                ) : (
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button size="icon" variant="destructiveGhost" className="h-6 w-6" onClick={handleDelete}>
-                                <Trash2 />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>{t('delete')}</TooltipContent>
-                    </Tooltip>
-                )}
+                <div className="flex items-center gap-1">
+                    {canTransfer && (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-6 w-6"
+                                    aria-disabled={volumeProtection.blocked}
+                                    onClick={volumeProtection.blocked ? undefined : handleTransfer}
+                                >
+                                    <DatabaseBackup />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{volumeProtection.tooltip ?? tTransfer('transfer')}</TooltipContent>
+                        </Tooltip>
+                    )}
+                    {isDeleted ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleCancelDelete}>
+                                    <X />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('cancelDelete')}</TooltipContent>
+                        </Tooltip>
+                    ) : (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    size="icon"
+                                    variant="destructiveGhost"
+                                    className="h-6 w-6"
+                                    onClick={handleDelete}
+                                >
+                                    <Trash2 />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{t('delete')}</TooltipContent>
+                        </Tooltip>
+                    )}
+                </div>
             </div>
             <div className="space-y-1 text-xs">
                 <div className="flex gap-2">

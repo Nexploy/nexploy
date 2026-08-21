@@ -4,7 +4,6 @@ exports[`permission usage > records which declared permissions no endpoint requi
 [
   "backup.delete",
   "deployment.rollback",
-  "domain.read",
   "gitProvider.read",
   "gitProvider.update",
   "image.remove",

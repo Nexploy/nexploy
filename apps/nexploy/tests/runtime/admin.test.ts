@@ -78,7 +78,7 @@ describePermissionMatrix('admin API routes', [
         name: 'GET /api/admin/version',
         kind: 'route',
         invoke: () => callRoute(getVersion as RouteHandler, { url: 'http://localhost:3022/api/admin/version' }),
-        expected: allowOnly('developer', 'admin', 'orgOwner', 'orgAdmin', 'orgMember', 'outsider'),
+        expected: allowOnly('developer', 'admin', 'system', 'orgOwner', 'orgAdmin', 'orgMember', 'outsider'),
     },
 ]);
 

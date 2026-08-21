@@ -19,9 +19,18 @@ import { onRemoveServicesAction } from '@/actions/docker/swarm/removeServices.ac
 import { onScaleServiceAction } from '@/actions/docker/swarm/scaleService.action';
 import { GET as searchImages } from '@/app/api/docker/images/search/route';
 import { GET as saveImages } from '@/app/api/docker/images/save/route';
+import { onVolumeTransferAction } from '@/actions/docker/volume/volumeTransfer.action';
+import { GET as listDomains } from '@/app/api/domains/route';
 import { callRoute, type RouteHandler } from '../setup/invoke';
 import { mockDocker, mockDockerFallback } from '../setup/dockerMock';
-import { ADMIN_ONLY, allowOnly, DEVELOPER_AND_ABOVE, describePermissionMatrix, EVERY_ROLE } from './permissionMatrix';
+import {
+    ADMIN_ONLY,
+    allowOnly,
+    DEVELOPER_AND_ABOVE,
+    describePermissionMatrix,
+    EVERY_ROLE,
+    EVERY_ROLE_BUT_SYSTEM,
+} from './permissionMatrix';
 
 const ORG_A_CONTAINER = 'container-of-org-a';
 const HOST_CONTAINER = 'container-of-the-host';
@@ -165,6 +174,35 @@ describePermissionMatrix('docker host resources', [
                 url: 'http://localhost:3022/api/docker/images/save?imageIds=sha256%3Aabc',
             }),
         expected: EVERY_ROLE,
+    },
+]);
+
+describePermissionMatrix('volume transfer between environments', [
+    {
+        name: 'onVolumeTransferAction',
+        kind: 'action',
+        setup: () => {
+            mockContainerOwnership();
+            mockDocker('post', 'volumes/transfer', { taskId: 'task-transfer', name: 'volume-transfer' });
+        },
+        invoke: () =>
+            onVolumeTransferAction({
+                volumeNames: ['tests-volume'],
+                targetEnvironmentId: 'environment-does-not-exist',
+                overwrite: false,
+                stopMode: 'both',
+            }),
+        expected: ADMIN_ONLY,
+    },
+]);
+
+describePermissionMatrix('domain listing', [
+    {
+        name: 'GET /api/domains',
+        kind: 'route',
+        setup: mockContainerOwnership,
+        invoke: () => callRoute(listDomains as RouteHandler, { url: 'http://localhost:3022/api/domains' }),
+        expected: EVERY_ROLE_BUT_SYSTEM,
     },
 ]);
 

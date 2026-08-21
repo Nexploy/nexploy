@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useRef } from 'react';
 import useSWR from 'swr';
-import { Boxes, Clock, Container, GitBranch, GitCommit } from 'lucide-react';
+import { Boxes, Clock, Container, GitBranch, GitCommit, Tag } from 'lucide-react';
 import dayjs from 'dayjs';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Separator } from '@workspace/ui/components/separator';
@@ -186,7 +186,15 @@ export function RepositoryVersions({ repositoryId, versions: initialVersions }: 
         <div className="flex flex-col gap-2 px-5">
             <h2 className="font-semibold text-xl">{t('title')}</h2>
             {versions.length === 0 ? (
-                <div className="rounded-md border p-8 text-center text-muted-foreground text-sm">{t('noVersions')}</div>
+                <div className="flex flex-col items-center gap-3 rounded-md border p-8 text-center">
+                    <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
+                        <Tag className="size-5 text-primary" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <span className="font-medium text-sm">{t('noVersions')}</span>
+                        <span className="text-muted-foreground text-sm">{t('noVersionsDescription')}</span>
+                    </div>
+                </div>
             ) : (
                 <div ref={listRef} className="relative w-full" style={{ height: virtualizer.getTotalSize() }}>
                     {virtualizer.getVirtualItems().map((virtualItem) => {

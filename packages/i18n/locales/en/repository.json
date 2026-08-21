@@ -39,6 +39,7 @@
   "versions": {
     "title": "Versions",
     "noVersions": "No versions available",
+    "noVersionsDescription": "Versions appear here when the \u201cSave Version\u201d node runs in the pipeline",
     "noEnvironment": "Default environment (active at build time)",
     "deployed": "Deployed",
     "deploy": "Deploy",
@@ -64,6 +65,7 @@
     "commit": "Commit",
     "branch": "Branch",
     "noBuilds": "No builds available",
+    "noBuildsDescription": "Builds appear here once the pipeline is run for this repository",
     "noEnvironment": "Default environment (active at build time)",
     "noBuild": "No Build",
     "startedAt": "Started at",

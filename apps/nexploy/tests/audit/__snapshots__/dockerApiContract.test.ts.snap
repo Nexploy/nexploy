@@ -20,6 +20,7 @@ exports[`docker-api contract > records the calls nexploy makes, so a change to t
   "GET /api/swarm/nodes",
   "GET /api/swarm/services",
   "GET /api/system/df",
+  "GET /api/system/disk",
   "GET /api/system/docker-version",
   "GET /api/system/version",
   "GET /api/tasks/:param",
@@ -92,6 +93,7 @@ exports[`docker-api contract > records the calls nexploy makes, so a change to t
   "POST /api/volumes/delete",
   "POST /api/volumes/hardRefresh",
   "POST /api/volumes/prune",
+  "POST /api/volumes/transfer",
   "PUT /api/environments/:param/protection",
 ]
 `;
