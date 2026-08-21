@@ -419,6 +419,8 @@
     "node": {
       "enable": "Enable node",
       "disable": "Disable node",
+      "setting": "Node settings",
+      "view": "View node",
       "delete": "Delete node"
     },
     "templates": {

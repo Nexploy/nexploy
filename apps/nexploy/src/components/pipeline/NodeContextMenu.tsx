@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { useTranslations } from 'next-intl';
-import { Power, Settings, Trash2 } from 'lucide-react';
+import { Eye, Power, Settings, Trash2 } from 'lucide-react';
 import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import {
     ContextMenu,
@@ -21,10 +21,11 @@ export interface NodeContextMenuState {
 
 interface NodeContextMenuProps {
     menu: NodeContextMenuState;
+    viewOnly?: boolean;
     onClose: () => void;
 }
 
-export function NodeContextMenu({ menu, onClose }: NodeContextMenuProps) {
+export function NodeContextMenu({ menu, viewOnly = false, onClose }: NodeContextMenuProps) {
     const t = useTranslations('repository.pipeline');
     const { deleteElements, getNodes } = useReactFlow();
     const { triggerAutoSave, setNodes, openDialogSettingNode } = usePipelineActions();
@@ -74,19 +75,28 @@ export function NodeContextMenu({ menu, onClose }: NodeContextMenuProps) {
         <ContextMenu onOpenChange={(open) => !open && onClose()}>
             <ContextMenuTrigger ref={triggerRef} />
             <ContextMenuContent onCloseAutoFocus={(e) => e.preventDefault()}>
-                <ContextMenuItem className={'text-xs'} onClick={handleToggleDisabled}>
-                    <Power className="size-3" />
-                    {disabled ? t('node.enable') : t('node.disable')}
-                </ContextMenuItem>
-                <ContextMenuItem className={'text-xs'} onClick={handleOpenSettingNode}>
-                    <Settings className="size-3" />
-                    {t('node.setting')}
-                </ContextMenuItem>
-                <ContextMenuSeparator />
-                <ContextMenuItem className={'text-xs'} onClick={handleDelete} variant="destructive">
-                    <Trash2 className="size-3" />
-                    {t('node.delete')}
-                </ContextMenuItem>
+                {viewOnly ? (
+                    <ContextMenuItem className={'text-xs'} onClick={handleOpenSettingNode}>
+                        <Eye className="size-3" />
+                        {t('node.view')}
+                    </ContextMenuItem>
+                ) : (
+                    <>
+                        <ContextMenuItem className={'text-xs'} onClick={handleToggleDisabled}>
+                            <Power className="size-3" />
+                            {disabled ? t('node.enable') : t('node.disable')}
+                        </ContextMenuItem>
+                        <ContextMenuItem className={'text-xs'} onClick={handleOpenSettingNode}>
+                            <Settings className="size-3" />
+                            {t('node.setting')}
+                        </ContextMenuItem>
+                        <ContextMenuSeparator />
+                        <ContextMenuItem className={'text-xs'} onClick={handleDelete} variant="destructive">
+                            <Trash2 className="size-3" />
+                            {t('node.delete')}
+                        </ContextMenuItem>
+                    </>
+                )}
             </ContextMenuContent>
         </ContextMenu>
     );

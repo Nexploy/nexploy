@@ -419,6 +419,8 @@
     "node": {
       "enable": "Activer le nœud",
       "disable": "Désactiver le nœud",
+      "setting": "Paramètres du nœud",
+      "view": "Voir le nœud",
       "delete": "Supprimer le nœud"
     },
     "templates": {

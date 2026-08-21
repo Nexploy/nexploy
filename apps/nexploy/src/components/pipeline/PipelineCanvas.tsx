@@ -218,7 +218,7 @@ export function PipelineCanvas() {
                 onNodeDragStop={isViewingBuild ? undefined : triggerAutoSave}
                 onNodeDoubleClick={(_, node) => openDialogSettingNode(node.id)}
                 onPaneClick={handleResetPanelNode}
-                onNodeContextMenu={isViewingBuild ? undefined : onNodeContextMenu}
+                onNodeContextMenu={onNodeContextMenu}
                 onSelectionContextMenu={isViewingBuild ? undefined : onSelectionContextMenu}
                 nodesDraggable={!isViewingBuild}
                 nodesConnectable={!isViewingBuild}
@@ -295,7 +295,9 @@ export function PipelineCanvas() {
                     </div>
                 )}
             </ReactFlow>
-            {contextMenu && <NodeContextMenu menu={contextMenu} onClose={() => setContextMenu(null)} />}
+            {contextMenu && (
+                <NodeContextMenu menu={contextMenu} viewOnly={isViewingBuild} onClose={() => setContextMenu(null)} />
+            )}
         </div>
     );
 }

@@ -419,6 +419,8 @@
     "node": {
       "enable": "Activar el nodo",
       "disable": "Desactivar el nodo",
+      "setting": "Ajustes del nodo",
+      "view": "Ver el nodo",
       "delete": "Eliminar el nodo"
     },
     "templates": {

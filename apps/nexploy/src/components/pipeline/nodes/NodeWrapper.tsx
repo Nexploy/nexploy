@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Power, Settings, Trash2 } from 'lucide-react';
+import { Eye, Power, Settings, Trash2 } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Button } from '@workspace/ui/components/button';
 import { useReactFlow } from '@xyflow/react';
@@ -76,7 +76,7 @@ export function NodeWrapper({ id, data, className, children }: NodeWrapperProps)
                         onClick={() => openDialogSettingNode(id)}
                         className="size-6 text-muted-foreground hover:text-foreground"
                     >
-                        <Settings className="size-3" />
+                        <Eye className="size-3" />
                     </Button>
                 </div>
             ) : (
