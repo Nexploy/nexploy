@@ -65,7 +65,7 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
                             </TabsTrigger>
                             <TabsTrigger value="env">
                                 <Key />
-                                {t('environments')}
+                                {t('variables')}
                             </TabsTrigger>
                         </div>
                     </TabsList>
@@ -82,22 +82,22 @@ export function RepositoryTabs({ children }: RepositoryTabsProps) {
             </TabsContent>
             <TabsContent value="builds" className={'flex flex-1 overflow-hidden'}>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="pb-5">{children.builds}</div>
+                    <div className="py-1 pb-5">{children.builds}</div>
                 </ScrollAreaWithShadow>
             </TabsContent>
             <TabsContent value="versions" className={'flex flex-1 overflow-hidden'}>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="pb-5">{children.versions}</div>
+                    <div className="py-1 pb-5">{children.versions}</div>
                 </ScrollAreaWithShadow>
             </TabsContent>
             <TabsContent value="env" className={'flex flex-1 overflow-hidden'}>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="pb-5">{children.env}</div>
+                    <div className="py-1 pb-5">{children.env}</div>
                 </ScrollAreaWithShadow>
             </TabsContent>
             <TabsContent value="setting" className={'flex flex-1 overflow-hidden'}>
                 <ScrollAreaWithShadow className="h-full overflow-hidden">
-                    <div className="pb-5">{children.setting}</div>
+                    <div className="py-1 pb-5">{children.setting}</div>
                 </ScrollAreaWithShadow>
             </TabsContent>
         </Tabs>

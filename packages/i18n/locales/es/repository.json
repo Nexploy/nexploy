@@ -31,7 +31,8 @@
     "domains": "Dominios",
     "deployment": "Despliegue",
     "pipeline": "Pipeline",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "variables": "Variables"
   },
   "delete": "Eliminar",
   "confirmDelete": "¿Seguro que quiere eliminar este repositorio?",
@@ -116,7 +117,7 @@
     },
     "customSource": {
       "urlLabel": "URL del repositorio",
-      "urlPlaceholder": "https://github.com/OpenLabs-so/openanalytics",
+      "urlPlaceholder": "https://github.com/user/repo",
       "check": "Comprobar",
       "publicOnly": "Solo repositorios públicos. No se guarda ninguna credencial ni se registra ningún webhook.",
       "branch": "Rama",
@@ -243,6 +244,13 @@
       "saveChanges": "Guardar",
       "addVariable": "Añadir variable",
       "importEnv": "Importar .env",
+      "importTitle": "Importar variables de entorno",
+      "importDescription": "Suelte un archivo .env, seleccione uno o pegue su contenido.",
+      "importDropzone": "Suelte un archivo .env aquí o haga clic para explorar",
+      "importHiddenFilesHint": "La ventana del sistema no muestra los archivos ocultos: pulse Cmd+Mayús+. (macOS) o Ctrl+H (Linux) para mostrarlos, o pegue el contenido abajo.",
+      "importPasteLabel": "O pegue el contenido de su archivo .env",
+      "importPastePlaceholder": "CLAVE=valor\nOTRA_CLAVE=otro valor",
+      "importSubmit": "Importar",
       "importSuccess": "{count} variable(s) importada(s)",
       "importError": "No se ha encontrado ninguna variable válida en el archivo",
       "importInvalidFile": "Solo se pueden importar archivos .env (.env, .env.local, .env.production…)",

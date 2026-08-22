@@ -31,7 +31,8 @@
     "domains": "Domains",
     "deployment": "Deployment",
     "pipeline": "Pipeline",
-    "settings": "Settings"
+    "settings": "Settings",
+    "variables": "Variables"
   },
   "delete": "Delete",
   "confirmDelete": "Are you sure you want to delete this repository?",
@@ -116,7 +117,7 @@
     },
     "customSource": {
       "urlLabel": "Repository URL",
-      "urlPlaceholder": "https://github.com/OpenLabs-so/openanalytics",
+      "urlPlaceholder": "https://github.com/user/repo",
       "check": "Check",
       "publicOnly": "Public repositories only. No credentials are stored, and no webhook is registered.",
       "branch": "Branch",
@@ -243,6 +244,13 @@
       "saveChanges": "Save",
       "addVariable": "Add variable",
       "importEnv": "Import .env",
+      "importTitle": "Import environment variables",
+      "importDescription": "Drop a .env file, choose one, or paste its content.",
+      "importDropzone": "Drop a .env file here or click to browse",
+      "importHiddenFilesHint": "Hidden files are not shown by the system dialog: press Cmd+Shift+. (macOS) or Ctrl+H (Linux) to reveal them, or paste the content below.",
+      "importPasteLabel": "Or paste the content of your .env file",
+      "importPastePlaceholder": "KEY=value\nOTHER_KEY=other value",
+      "importSubmit": "Import",
       "importSuccess": "{count} variable(s) imported",
       "importError": "No valid variables found in file",
       "importInvalidFile": "Only .env files can be imported (.env, .env.local, .env.production…)",

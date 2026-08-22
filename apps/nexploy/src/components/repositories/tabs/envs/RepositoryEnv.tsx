@@ -114,7 +114,7 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                 </div>
                 <div className="flex items-center gap-2">
                     {envVariables.length > 0 && (
-                        <Button variant="outline" size="sm" icon={areAllVisible ? EyeOff : Eye} onClick={toggleShowAll}>
+                        <Button variant="outline" size="xs" icon={areAllVisible ? EyeOff : Eye} onClick={toggleShowAll}>
                             {areAllVisible ? t('hideAll') : t('showAll')}
                         </Button>
                     )}
@@ -130,7 +130,7 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                                     });
                                 }}
                             />
-                            <Button size="sm" icon={Plus} onClick={handleAddNew}>
+                            <Button size="xs" icon={Plus} onClick={handleAddNew}>
                                 {t('addVariable')}
                             </Button>
                         </>

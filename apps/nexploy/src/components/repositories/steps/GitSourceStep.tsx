@@ -14,7 +14,7 @@ import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-
 import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover';
 import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';
-import { BookMarked, Check, ChevronDown, GitBranch as GitBranchIcon } from 'lucide-react';
+import { BookMarked, Check, ChevronDown, GitBranch as GitBranchIcon, PlugZap } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { useState } from 'react';
 import useSWR from 'swr';
@@ -26,7 +26,6 @@ import { GitAccountFormField } from '@/components/git/GitAccountFormField';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 import { CustomGitSource } from '@/components/repositories/steps/CustomGitSource';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { PlugZap } from 'lucide-react';
 
 export function GitSourceStep() {
     const { control, setValue } = useFormContext();
@@ -154,7 +153,7 @@ export function GitSourceStep() {
                                             <PopoverContent className="w-full p-0" align="start">
                                                 <Command>
                                                     <CommandInput
-                                                        className="pl-2"
+                                                        className="px-2"
                                                         placeholder={tSource('searchRepository')}
                                                     />
                                                     <ScrollAreaWithShadow viewportClassName="h-auto max-h-[300px] w-full">
