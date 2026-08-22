@@ -99,6 +99,7 @@ app.post('/stream/compose', async (c) => {
             const servicesToPull = preprocessed.servicesToPull;
 
             composeDir = preprocessed.composeDir;
+            envFileWritten = envFileWritten || Object.keys(effectiveEnvVars).length > 0;
             volumeTransformResult = preprocessed.volumeTransformResult;
             modifiedComposeFile = preprocessed.processedComposeFile;
 
@@ -205,7 +206,7 @@ app.post('/stream/compose', async (c) => {
 
             if (Object.keys(effectiveEnvVars).length > 0) {
                 sendLog(`Writing ${Object.keys(effectiveEnvVars).length} environment variable(s) to .env file...`);
-                writeEnvFile(workDir, effectiveEnvVars);
+                writeEnvFile(composeDir, effectiveEnvVars);
                 envFileWritten = true;
                 sendLog('Environment variables written successfully');
             }
@@ -299,8 +300,8 @@ app.post('/stream/compose', async (c) => {
             dockerEnvResult.cleanup?.();
 
             if (envFileWritten) {
-                cleanupEnvFile(workDir);
-                logger.info({ workDir }, 'Cleaned up .env file after compose deployment');
+                cleanupEnvFile(composeDir);
+                logger.info({ composeDir }, 'Cleaned up .env file after compose deployment');
             }
 
             if (modifiedComposeFile) {

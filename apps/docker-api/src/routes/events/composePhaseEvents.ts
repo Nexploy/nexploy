@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import dayjs from 'dayjs';
 import fs from 'fs';
+import path from 'path';
 import yaml from 'yaml';
 import { streamSSE } from 'hono/streaming';
 import type { SSEStreamingApi } from 'hono/streaming';
@@ -246,6 +247,10 @@ app.post('/stream/compose-build', async (c) => {
 
             fs.writeFileSync(processedComposeFile, yaml.stringify(composeContent), 'utf8');
         } finally {
+            if (Object.keys(effectiveEnvVars).length > 0) {
+                cleanupEnvFile(composeDir);
+            }
+
             if (volumeTransformResult) {
                 cleanupGeneratedDockerfiles(composeDir, volumeTransformResult.generatedDockerfiles.keys());
             }
@@ -296,7 +301,7 @@ app.post('/stream/compose-run', async (c) => {
 
         try {
             if (envVars && Object.keys(envVars).length > 0) {
-                writeEnvFile(workDir, envVars);
+                writeEnvFile(path.dirname(composeFile), envVars);
                 envFileWritten = true;
             }
 
@@ -332,7 +337,7 @@ app.post('/stream/compose-run', async (c) => {
             return { success: true, exitCode, service, projectName, composeFile };
         } finally {
             if (envFileWritten) {
-                cleanupEnvFile(workDir);
+                cleanupEnvFile(path.dirname(composeFile));
             }
         }
     });
@@ -380,7 +385,7 @@ app.post('/stream/compose-up', async (c) => {
 
             if (envVars && Object.keys(envVars).length > 0) {
                 sendLog(`Writing ${Object.keys(envVars).length} environment variable(s) to .env file...`);
-                writeEnvFile(workDir, envVars);
+                writeEnvFile(path.dirname(composeFile), envVars);
                 envFileWritten = true;
                 sendLog('Environment variables written successfully');
             }
@@ -442,8 +447,8 @@ app.post('/stream/compose-up', async (c) => {
             };
         } finally {
             if (envFileWritten) {
-                cleanupEnvFile(workDir);
-                logger.info({ workDir }, 'Cleaned up .env file after compose up');
+                cleanupEnvFile(path.dirname(composeFile));
+                logger.info({ composeFile }, 'Cleaned up .env file after compose up');
             }
 
             if (!keepComposeFile) {

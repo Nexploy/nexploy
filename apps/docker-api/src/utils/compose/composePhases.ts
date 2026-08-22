@@ -196,6 +196,11 @@ export async function preprocessComposeProject({
 
     ensureEnvIgnoredInBuildContext(workDir);
 
+    if (Object.keys(envVars).length > 0) {
+        writeEnvFile(composeDir, envVars);
+        sendLog(`Writing ${Object.keys(envVars).length} environment variable(s) to .env file...`);
+    }
+
     const composeFiles = discoverComposeFiles(composeFilePath);
 
     if (composeFiles.length > 1) {
