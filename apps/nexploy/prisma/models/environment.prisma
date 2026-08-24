@@ -31,6 +31,7 @@ model Environment {
   versions     Version[]    @relation("VersionEnvironment")
   stages       DeploymentStage[] @relation("StageEnvironment")
 
+  @@index([userId])
   @@map("environment")
 }
 

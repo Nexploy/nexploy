@@ -32,5 +32,7 @@ model Repository {
   @@index([organizationId])
   @@index([gitId])
   @@index([repositoryUrl])
+  @@index([userId])
+  @@index([gitAccountId])
   @@map("repository")
 }

@@ -20,5 +20,6 @@ model DnsCredential {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
+  @@index([userId])
   @@map("dns_credential")
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import { Build } from 'generated/client';
+import type { PipelineBuild } from '@workspace/typescript-interface/stores/pipelineStore';
 import { Hammer, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -17,7 +17,7 @@ const OVERSCAN = 6;
 interface BuildsHistoryListProps {
     repositoryId: string;
     stageId: string | null;
-    initialBuilds: Build[];
+    initialBuilds: PipelineBuild[];
     initialHasMore: boolean;
 }
 

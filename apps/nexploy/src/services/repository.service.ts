@@ -173,6 +173,16 @@ export async function getBuilds(repositoryId: string) {
             where: {
                 repositoryId,
             },
+            select: {
+                id: true,
+                status: true,
+                number: true,
+                branch: true,
+                commitHash: true,
+                commitMessage: true,
+                createdAt: true,
+                updatedAt: true,
+            },
             orderBy: { createdAt: 'desc' },
         });
     } catch (error: unknown) {

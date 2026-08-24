@@ -336,11 +336,24 @@ export async function cancelBuildRepository(buildId: string) {
     await publishBuildTaskFromDatabase(buildId);
 }
 
+const BUILD_LIST_SELECT = {
+    id: true,
+    status: true,
+    number: true,
+    branch: true,
+    commitHash: true,
+    commitMessage: true,
+    createdAt: true,
+    updatedAt: true,
+    pipelineSnapshot: true,
+} as const;
+
 export async function getBuildsPage(repositoryId: string, stageId?: string, cursor?: string, take = 20) {
     const t = await getErrorTranslator();
     try {
         return await prisma.build.findMany({
             where: { repositoryId, ...(stageId ? { stageId } : {}) },
+            select: BUILD_LIST_SELECT,
             orderBy: { createdAt: 'desc' },
             take,
             ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
