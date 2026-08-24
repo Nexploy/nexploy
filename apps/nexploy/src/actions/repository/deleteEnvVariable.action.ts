@@ -2,9 +2,10 @@
 
 import { authActionServer, requirePermission } from '@/lib/api/safe-action';
 import { setToastServer } from '@/lib/toastServer';
-import { updateEnvVariables } from '@/services/repository.service';
+import { deleteEnvVariable } from '@/services/repository/envVariable.service';
 import { deleteEnvVariableSchema } from '@workspace/schemas-zod/repository/deleteEnvVariable.schema';
 import { byRepositoryId } from '@/lib/auth/resolveOrgContext';
+import { revalidatePath } from 'next/cache';
 
 export const deleteEnvVariableAction = authActionServer
     .metadata({ name: 'repository.deleteEnvVariable' })
@@ -14,11 +15,8 @@ export const deleteEnvVariableAction = authActionServer
         const { repositoryId, envVariableId } = parsedInput;
 
         try {
-            await updateEnvVariables(repositoryId, {
-                updates: [],
-                creates: [],
-                deleteIds: [envVariableId],
-            });
+            await deleteEnvVariable(repositoryId, envVariableId);
+            revalidatePath('/repositories/[repositoryId]', 'page');
         } catch (error: unknown) {
             if (error instanceof Error) {
                 await setToastServer({ type: 'error', message: error.message });

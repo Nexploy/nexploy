@@ -15,8 +15,8 @@ import {
     getRepositorieById,
     getRepositories,
     getRepositorieWithEnv,
-    updateEnvVariables,
 } from '@/services/repository.service';
+import { updateEnvVariables } from '@/services/repository/envVariable.service';
 import { cancelBuildRepository, removeBuild, startBuildRepository } from '@/services/repository/build.service';
 import { fail, guardBuild, guardDestructiveRepository, guardOrganization, guardRepository, ok } from '../helpers';
 import { ToolContext, ToolGroup } from '../types';

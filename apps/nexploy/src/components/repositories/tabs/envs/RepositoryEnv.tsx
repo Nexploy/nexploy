@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
 import { Badge } from '@workspace/ui/components/badge';
@@ -32,22 +31,19 @@ interface RepositoryEnvTabProps {
 }
 
 export function RepositoryEnv({ repositoryId, stageId, envVariables }: RepositoryEnvTabProps) {
-    const router = useRouter();
     const t = useTranslations('repository.settings.envVars');
     const { can } = usePermissions();
     const canEdit = can('environment', 'update');
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
     const { openDialog, closeDialog } = useConfirmationDialogStore();
+    const [revealAll, setRevealAll] = useState(false);
     const [showValues, setShowValues] = useState<Record<string, boolean>>({});
 
     const rowIds = useMemo(() => envVariables.map((variable, index) => variable.id ?? `idx-${index}`), [envVariables]);
-    const areAllVisible = rowIds.length > 0 && rowIds.every((rowId) => showValues[rowId]);
+    const isValueVisible = (rowId: string) => showValues[rowId] ?? revealAll;
+    const areAllVisible = rowIds.length > 0 && rowIds.every((rowId) => isValueVisible(rowId));
 
-    const { execute: importVariables } = useAction(onEnvVariableAction, {
-        onSuccess: () => {
-            router.refresh();
-        },
-    });
+    const { execute: importVariables } = useAction(onEnvVariableAction);
 
     const handleAddNew = () => {
         openDialog({
@@ -56,7 +52,6 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
             content: <EnvVariableForm repositoryId={repositoryId} stageId={stageId} />,
             onSuccess: () => {
                 closeDialog();
-                router.refresh();
             },
         });
     };
@@ -68,7 +63,6 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
             content: <EnvVariableForm repositoryId={repositoryId} stageId={stageId} variable={variable} />,
             onSuccess: () => {
                 closeDialog();
-                router.refresh();
             },
         });
     };
@@ -87,18 +81,18 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                 });
                 if (!result?.serverError) {
                     toast.success(t('removeSuccess'));
-                    router.refresh();
                 }
             },
         });
     };
 
     const toggleShowValue = (rowId: string) => {
-        setShowValues((prev) => ({ ...prev, [rowId]: !prev[rowId] }));
+        setShowValues((prev) => ({ ...prev, [rowId]: !(prev[rowId] ?? revealAll) }));
     };
 
     const toggleShowAll = () => {
-        setShowValues(areAllVisible ? {} : Object.fromEntries(rowIds.map((rowId) => [rowId, true])));
+        setRevealAll(!areAllVisible);
+        setShowValues({});
     };
 
     return (
@@ -155,7 +149,7 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
                 <div className="flex flex-col divide-y overflow-hidden rounded-md border">
                     {envVariables.map((variable, index) => {
                         const rowId = rowIds[index]!;
-                        const isVisible = showValues[rowId];
+                        const isVisible = isValueVisible(rowId);
                         return (
                             <div
                                 key={rowId}

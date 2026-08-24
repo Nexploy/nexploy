@@ -94,7 +94,7 @@ export function EnvVariableForm({ repositoryId, stageId, variable }: EnvVariable
                                         className="absolute top-1/2 right-1 -translate-y-1/2"
                                         onClick={() => setShowValue((v) => !v)}
                                     >
-                                        {showValue ? <EyeOff /> : <Eye />}
+                                        {showValue ? <Eye /> : <EyeOff />}
                                     </Button>
                                 </div>
                             </FormControl>

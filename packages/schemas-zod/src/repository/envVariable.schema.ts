@@ -12,3 +12,5 @@ export const envVariableSchema = z.object({
     envVariables: z.array(envVariableItemSchema),
     deleteIds: z.array(z.string()),
 });
+
+export type EnvVariableSchemaType = z.infer<typeof envVariableSchema>;
