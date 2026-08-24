@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { auth, Session } from '@/lib/auth/auth';
 import { User } from 'better-auth';
 import { headers } from 'next/headers';
@@ -5,7 +6,7 @@ import { prisma } from '../../../prisma/prisma';
 import { getTranslations } from 'next-intl/server';
 import { TypeChangeUsernameFormSchema } from '@workspace/schemas-zod/auth/auth.schema';
 
-export async function getUserSession(headerCustom?: Headers): Promise<Session | null> {
+export const getUserSession = cache(async (headerCustom?: Headers): Promise<Session | null> => {
     try {
         const session = await auth.api.getSession({
             headers: headerCustom ?? (await headers()),
@@ -18,7 +19,7 @@ export async function getUserSession(headerCustom?: Headers): Promise<Session | 
     } catch {
         return null;
     }
-}
+});
 
 export async function signInUser(email: string, password: string): Promise<User> {
     const t = await getTranslations('auth');

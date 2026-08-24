@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { prisma } from '../../../prisma/prisma';
 import { BuildConfig, BuildLogEntry } from '@workspace/typescript-interface/repository/build';
 import { addBuildJob } from '@/inngest/jobs/queue';
@@ -348,7 +349,7 @@ const BUILD_LIST_SELECT = {
     pipelineSnapshot: true,
 } as const;
 
-export async function getBuildsPage(repositoryId: string, stageId?: string, cursor?: string, take = 20) {
+export const getBuildsPage = cache(async (repositoryId: string, stageId?: string, cursor?: string, take = 20) => {
     const t = await getErrorTranslator();
     try {
         return await prisma.build.findMany({
@@ -361,7 +362,7 @@ export async function getBuildsPage(repositoryId: string, stageId?: string, curs
     } catch {
         throw new Error(t('build.getPageFailed'));
     }
-}
+});
 
 export async function assertStageProtectionSatisfied(
     stageId: string,
