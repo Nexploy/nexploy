@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react';
 import { useAction } from 'next-safe-action/hooks';
 import { Button } from '@workspace/ui/components/button';
-import { Badge } from '@workspace/ui/components/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { Eye, EyeOff, Key, Pencil, Plus, Trash2 } from 'lucide-react';
 import { onEnvVariableAction } from '@/actions/repository/updateEnvVariables.action';
@@ -100,11 +99,6 @@ export function RepositoryEnv({ repositoryId, stageId, envVariables }: Repositor
             <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                     <h2 className="font-semibold text-xl">{t('title')}</h2>
-                    {envVariables.length > 0 && (
-                        <Badge variant="secondary" className="font-mono">
-                            {envVariables.length}
-                        </Badge>
-                    )}
                 </div>
                 <div className="flex items-center gap-2">
                     {envVariables.length > 0 && (

@@ -286,6 +286,11 @@
     "localDataPathLabel": "Percorso di archiviazione",
     "localDataPathDescription": "Percorso assoluto sull'host dove sono archiviate le immagini del registro",
     "localInsecureWarning": "Questo registro funziona senza TLS né autenticazione. Ogni daemon Docker che vi carica o scarica immagini deve dichiararlo come registro non sicuro.",
+    "localSecureLabel": "Proteggere il registro",
+    "localSecureDescription": "Esponga il registro tramite Traefik in HTTPS e richieda un nome utente e una password.",
+    "localDomainLabel": "Dominio",
+    "localDomainDescription": "Dominio che punta a questo server. Traefik emette il certificato TLS e gestisce l'autenticazione; nessuna porta viene pubblicata.",
+    "localSecureWarning": "Il registro è raggiungibile solo tramite Traefik su questo dominio. Verifichi che il record DNS punti qui prima di caricare immagini.",
     "localImageHint": "Il registro viene eseguito dall'immagine {image}."
   },
   "errors": {

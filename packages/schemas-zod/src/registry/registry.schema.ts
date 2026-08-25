@@ -54,17 +54,48 @@ const absoluteHostPath = z
     .refine((value) => value.startsWith('/'), 'Storage path must be absolute')
     .refine((value) => !value.includes('..'), 'Storage path must not contain ".."');
 
-export const createLocalRegistrySchema = z.object({
-    name: z.string().min(1, 'Name is required').max(100, 'Name must be at most 100 characters'),
-    containerName: z
-        .string()
-        .min(1, 'Container name is required')
-        .max(64, 'Container name must be at most 64 characters')
-        .regex(/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/, 'Container name contains invalid characters'),
-    host: registryHost,
-    port: z.coerce.number().min(1, 'Port must be between 1 and 65535').max(65535, 'Port must be between 1 and 65535'),
-    dataPath: absoluteHostPath,
-});
+export const createLocalRegistrySchema = z
+    .object({
+        name: z.string().min(1, 'Name is required').max(100, 'Name must be at most 100 characters'),
+        containerName: z
+            .string()
+            .min(1, 'Container name is required')
+            .max(64, 'Container name must be at most 64 characters')
+            .regex(/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/, 'Container name contains invalid characters'),
+        host: registryHost,
+        port: z.coerce
+            .number()
+            .min(1, 'Port must be between 1 and 65535')
+            .max(65535, 'Port must be between 1 and 65535')
+            .default(LOCAL_REGISTRY_CONTAINER_PORT),
+        dataPath: absoluteHostPath,
+        secure: z.boolean().default(false),
+        username: z.string().optional(),
+        password: z.string().optional(),
+    })
+    .superRefine((value, ctx) => {
+        if (!value.secure) return;
+
+        if (!value.host.includes('.')) {
+            ctx.addIssue({
+                code: 'custom',
+                path: ['host'],
+                message: 'A fully qualified domain is required for a secured registry',
+            });
+        }
+
+        if (!value.username || value.username.trim().length === 0) {
+            ctx.addIssue({ code: 'custom', path: ['username'], message: 'Username is required' });
+        }
+
+        if (!value.password || value.password.length < 8) {
+            ctx.addIssue({
+                code: 'custom',
+                path: ['password'],
+                message: 'Password must be at least 8 characters',
+            });
+        }
+    });
 
 export type CreateRegistryInput = z.infer<typeof createRegistrySchema>;
 export type UpdateRegistryInput = z.infer<typeof updateRegistrySchema>;

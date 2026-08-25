@@ -286,6 +286,11 @@
     "localDataPathLabel": "Storage path",
     "localDataPathDescription": "Absolute path on the host where the registry images are stored",
     "localInsecureWarning": "This registry runs without TLS or authentication. Every Docker daemon pushing or pulling from it must list it as an insecure registry.",
+    "localSecureLabel": "Secure the registry",
+    "localSecureDescription": "Expose the registry through Traefik with HTTPS and require a username and password.",
+    "localDomainLabel": "Domain",
+    "localDomainDescription": "Domain pointing to this server. Traefik issues the TLS certificate and handles authentication; no port is published.",
+    "localSecureWarning": "The registry is only reachable through Traefik on this domain. Make sure the DNS record points here before pushing images.",
     "localImageHint": "The registry runs from the {image} image."
   },
   "errors": {

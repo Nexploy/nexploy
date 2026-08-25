@@ -10,6 +10,7 @@ import { Input } from '@workspace/ui/components/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@workspace/ui/components/form';
 import { DialogFooter } from '@workspace/ui/components/dialog';
 import { Alert, AlertDescription } from '@workspace/ui/components/alert';
+import { Switch } from '@workspace/ui/components/switch';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -42,6 +43,9 @@ export function CreateLocalRegistryForm() {
                     host: defaultReachableHost(),
                     port: DEFAULT_PORT,
                     dataPath: DEFAULT_DATA_PATH,
+                    secure: false,
+                    username: '',
+                    password: '',
                 },
             },
             actionProps: {
@@ -54,6 +58,7 @@ export function CreateLocalRegistryForm() {
     );
 
     const isSubmitting = form.formState.isSubmitting;
+    const isSecure = form.watch('secure');
 
     return (
         <Form {...form}>
@@ -77,34 +82,38 @@ export function CreateLocalRegistryForm() {
                     name="host"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>{t('localHostLabel')}</FormLabel>
+                            <FormLabel>{isSecure ? t('localDomainLabel') : t('localHostLabel')}</FormLabel>
                             <FormControl>
                                 <Input placeholder={t('localHostPlaceholder')} disabled={isSubmitting} {...field} />
                             </FormControl>
-                            <p className="text-muted-foreground text-xs">{t('localHostDescription')}</p>
+                            <p className="text-muted-foreground text-xs">
+                                {isSecure ? t('localDomainDescription') : t('localHostDescription')}
+                            </p>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
 
-                <FormField
-                    control={form.control}
-                    name="port"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>{t('localPortLabel')}</FormLabel>
-                            <FormControl>
-                                <Input
-                                    type="number"
-                                    disabled={isSubmitting}
-                                    {...field}
-                                    value={String(field.value ?? '')}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                {!isSecure && (
+                    <FormField
+                        control={form.control}
+                        name="port"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('localPortLabel')}</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="number"
+                                        disabled={isSubmitting}
+                                        {...field}
+                                        value={String(field.value ?? '')}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
 
                 <FormField
                     control={form.control}
@@ -135,9 +144,76 @@ export function CreateLocalRegistryForm() {
                     )}
                 />
 
+                <FormField
+                    control={form.control}
+                    name="secure"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                            <div className="space-y-0.5 pr-4">
+                                <FormLabel>{t('localSecureLabel')}</FormLabel>
+                                <p className="text-muted-foreground text-xs">{t('localSecureDescription')}</p>
+                            </div>
+                            <FormControl>
+                                <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                    disabled={isSubmitting}
+                                />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
+
+                {isSecure && (
+                    <>
+                        <FormField
+                            control={form.control}
+                            name="username"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('usernameLabel')}</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder={t('usernamePlaceholder')}
+                                            autoComplete="off"
+                                            disabled={isSubmitting}
+                                            {...field}
+                                            value={field.value ?? ''}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('passwordLabel')}</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="password"
+                                            placeholder={t('passwordPlaceholder')}
+                                            autoComplete="new-password"
+                                            disabled={isSubmitting}
+                                            {...field}
+                                            value={field.value ?? ''}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </>
+                )}
+
                 <Alert variant="info">
                     <TriangleAlert />
-                    <AlertDescription>{t('localInsecureWarning')}</AlertDescription>
+                    <AlertDescription>
+                        {isSecure ? t('localSecureWarning') : t('localInsecureWarning')}
+                    </AlertDescription>
                 </Alert>
 
                 <p className="text-muted-foreground text-xs">{t('localImageHint', { image: LOCAL_REGISTRY_IMAGE })}</p>
