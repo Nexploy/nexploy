@@ -9,12 +9,13 @@ import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDial
 import { useAlertConfirmationDialogStore } from '@/stores/dialogs/useAlertConfirmationDialogStore';
 import { deleteRegistryAction } from '@/actions/registry/deleteRegistry.action';
 import { EditRegistryForm } from '@/components/registry/EditRegistryForm';
-import type { RegistryInfo } from '@/services/registry.service';
+import type { RegistryListItem } from '@/services/registry.service';
+import { DeleteRegistryDescription } from '@/components/registry/DeleteRegistryDescription';
 import { Separator } from '@workspace/ui/components/separator';
 import { Can } from '@/components/permission/Can';
 
 interface RegistryCardProps {
-    registry: RegistryInfo;
+    registry: RegistryListItem;
 }
 
 export function RegistryCard({ registry }: RegistryCardProps) {
@@ -25,13 +26,26 @@ export function RegistryCard({ registry }: RegistryCardProps) {
     const openAlertDialog = useAlertConfirmationDialogStore((state) => state.openAlertDialog);
 
     const handleDelete = () => {
+        const options = { removeContainer: false };
+
         openAlertDialog({
             title: t('deleteTitle'),
-            description: t('deleteDescription', { name: registry.name }),
+            description: (
+                <DeleteRegistryDescription
+                    name={registry.name}
+                    containerName={registry.containerName}
+                    onRemoveContainerChange={(value) => {
+                        options.removeContainer = value;
+                    }}
+                />
+            ),
             cancelLabel: tCommon('cancel'),
             actionLabel: t('delete'),
             onAction: async () => {
-                const result = await deleteRegistryAction({ id: registry.id });
+                const result = await deleteRegistryAction({
+                    id: registry.id,
+                    removeContainer: options.removeContainer,
+                });
                 if (!result?.serverError) {
                     toast.success(t('deleteSuccess'));
                     router.refresh();

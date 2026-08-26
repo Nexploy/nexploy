@@ -257,6 +257,8 @@
     "updateSuccess": "Registry updated successfully",
     "deleteTitle": "Delete Registry",
     "deleteDescription": "Are you sure you want to delete the registry {name}? This action cannot be undone.",
+    "deleteContainerLabel": "Also delete the registry container",
+    "deleteContainerDescription": "Removes the {container} container. The stored images stay on the host storage path.",
     "deleteSuccess": "Registry deleted",
     "mirrorTitle": "Mirror an Image",
     "mirrorDescription": "Pull an image from any registry and push it to a configured registry",

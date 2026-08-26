@@ -111,7 +111,8 @@
     "updateFailed": "Failed to update registry",
     "deleteFailed": "Failed to delete registry",
     "retrieveWithPasswordFailed": "Failed to retrieve registry with password",
-    "notFound": "Registry not found"
+    "notFound": "Registry not found",
+    "localCredentialsRequired": "A username and a password are required for a secured local registry"
   },
   "webhook": {
     "unsupportedProvider": "Unsupported git provider: {provider}",

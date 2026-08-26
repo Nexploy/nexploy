@@ -111,7 +111,8 @@
     "updateFailed": "Échec de la mise à jour du registre",
     "deleteFailed": "Échec de la suppression du registre",
     "retrieveWithPasswordFailed": "Échec de la récupération du registre avec son mot de passe",
-    "notFound": "Registre introuvable"
+    "notFound": "Registre introuvable",
+    "localCredentialsRequired": "Un identifiant et un mot de passe sont requis pour un registre local sécurisé"
   },
   "webhook": {
     "unsupportedProvider": "Fournisseur Git non pris en charge : {provider}",

@@ -18,6 +18,7 @@ import { BreadcrumbProvider } from '@/providers/BreadcrumbProvider';
 import { Separator } from '@workspace/ui/components/separator';
 import { ReassociateGitAccountDialog } from '@/components/repositories/reassociateGitAccount/ReassociateGitAccountDialog';
 import { PROVIDER_ICONS } from '@/components/git/providerIcons.tsx';
+import { cn } from '@workspace/ui/lib/utils';
 
 interface RepositoryIdPageProps {
     params: Promise<{
@@ -37,7 +38,7 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
     const selectedStage = await getFirstStage(repository.id, stage);
     const stageId = selectedStage?.id ?? '';
 
-    const hostname = getHostname(repository.gitAccount?.gitProvider?.baseUrl);
+    const hostname = getHostname(repository.gitAccount?.gitProvider?.baseUrl) ?? getHostname(repository.repositoryUrl);
     const ProviderIcon = PROVIDER_ICONS[repository.gitProvider];
 
     return (
@@ -45,14 +46,19 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
             <ReassociateGitAccountDialog
                 repositoryId={repository.id}
                 repositoryName={repository.name}
-                open={!repository.gitAccountId}
+                open={!repository.gitAccountId && repository.gitProvider !== 'CUSTOM'}
             />
             <div className="flex h-full w-full flex-1 flex-col">
                 <div className="flex flex-1 flex-col gap-4 overflow-hidden">
                     <div className="flex items-start justify-between gap-2 px-5">
                         <div className="flex gap-3">
                             <div className="mt-5 flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                                <ProviderIcon className="size-7 [&_path]:fill-primary" />
+                                <ProviderIcon
+                                    className={cn(
+                                        'size-7 text-primary',
+                                        repository.gitProvider !== 'CUSTOM' && '[&_path]:fill-primary',
+                                    )}
+                                />
                             </div>
                             <div className="mt-3.5 flex flex-col">
                                 <Link

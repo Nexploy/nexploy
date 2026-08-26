@@ -22,6 +22,7 @@ import { RunBuildButton } from '@/components/repositories/RunBuildButton';
 import { PROVIDER_ICONS } from '@/components/git/providerIcons.tsx';
 import { capitalizeFirstLetter } from '@/utils/capitalize';
 import { getHostname } from '@/utils/url';
+import { cn } from '@workspace/ui/lib/utils';
 import Github from '@thesvg/react/github';
 import Gitlab from '@thesvg/react/gitlab';
 import Gitea from '@thesvg/react/gitea';
@@ -35,6 +36,7 @@ type Repository = {
     id: string;
     name: string;
     gitProvider: GitProviderType;
+    repositoryUrl: string;
     build: { id: string; status: BuildStatus | null }[];
     gitAccount: {
         gitProvider: { baseUrl: string | null } | null;
@@ -172,7 +174,9 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                     {filtered.map((repository) => {
                         const lastDeployment = repository.build?.[0];
                         const ProviderIcon = PROVIDER_ICONS[repository.gitProvider];
-                        const hostname = getHostname(repository.gitAccount?.gitProvider?.baseUrl);
+                        const hostname =
+                            getHostname(repository.gitAccount?.gitProvider?.baseUrl) ??
+                            getHostname(repository.repositoryUrl);
 
                         return (
                             <Link href={`/repositories/${repository.id}`} key={repository.id}>
@@ -180,7 +184,12 @@ export function RepositoriesGrid({ repositories }: RepositoriesGridProps) {
                                     <CardHeader className="flex flex-row items-start justify-between px-4">
                                         <div className="flex w-full items-center gap-3">
                                             <div className="mt-4 flex size-10 items-center justify-center rounded-full bg-secondary/50 text-secondary-foreground ring-1 ring-border transition-colors group-hover:bg-primary/10 group-hover:text-primary group-has-[button:hover]:bg-secondary/50 group-has-[button:hover]:text-secondary-foreground">
-                                                <ProviderIcon className="size-5 [&_path]:fill-current" />
+                                                <ProviderIcon
+                                                    className={cn(
+                                                        'size-5',
+                                                        repository.gitProvider !== 'CUSTOM' && '[&_path]:fill-current',
+                                                    )}
+                                                />
                                             </div>
                                             <div className="mt-3 flex min-w-0 flex-1 flex-col">
                                                 <CardTitle className="truncate font-semibold text-base">

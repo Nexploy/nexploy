@@ -5,6 +5,10 @@ import { deleteRegistrySchema } from '@workspace/schemas-zod/registry/registry.s
 import { revalidatePath } from 'next/cache';
 import { kyDocker } from '@/lib/api/kyDocker.ts';
 import { deleteRegistry, getRegistryById } from '@/services/registry.service';
+import { deleteLocalRegistryTraefikConfig } from '@/services/localRegistry.service';
+import { hasPermission } from '@/lib/auth/permissions';
+import { ForbiddenError } from '@/lib/activity/forbiddenError';
+import { getTranslations } from 'next-intl/server';
 import { HTTPError } from 'ky';
 import { setToastServer } from '@/lib/toastServer.ts';
 
@@ -12,9 +16,16 @@ export const deleteRegistryAction = authActionServer
     .metadata({ name: 'registry.delete' })
     .use(requirePermission('registry', 'delete'))
     .inputSchema(deleteRegistrySchema)
-    .action(async ({ parsedInput }) => {
+    .action(async ({ parsedInput, ctx }) => {
         try {
             const registry = await getRegistryById(parsedInput.id);
+            const removeContainer = parsedInput.removeContainer && !!registry?.containerName;
+
+            if (removeContainer && !hasPermission(ctx.session.user.role as string, 'container', 'manage')) {
+                const t = await getTranslations('common');
+                await setToastServer({ type: 'error', message: t('forbidden') });
+                throw new ForbiddenError(t('forbidden'));
+            }
 
             await deleteRegistry(parsedInput.id);
 
@@ -25,6 +36,16 @@ export const deleteRegistryAction = authActionServer
                     });
                 } catch {
                     /* empty */
+                }
+            }
+
+            if (removeContainer) {
+                await kyDocker.delete('container/remove', {
+                    json: { containerIds: [registry!.containerName], force: true },
+                });
+
+                if (registry?.url) {
+                    await deleteLocalRegistryTraefikConfig(registry.url);
                 }
             }
 

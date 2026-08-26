@@ -257,6 +257,8 @@
     "updateSuccess": "Registre mis à jour avec succès",
     "deleteTitle": "Supprimer le registre",
     "deleteDescription": "Êtes-vous sûr de vouloir supprimer le registre {name} ? Cette action est irréversible.",
+    "deleteContainerLabel": "Supprimer aussi le conteneur du registre",
+    "deleteContainerDescription": "Supprime le conteneur {container}. Les images stockées restent dans le dossier de stockage de l'hôte.",
     "deleteSuccess": "Registre supprimé",
     "mirrorTitle": "Miroir d'une image",
     "mirrorDescription": "Tirer une image depuis n'importe quel registre et la pousser vers un registre configuré",

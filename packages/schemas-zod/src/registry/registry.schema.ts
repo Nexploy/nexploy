@@ -29,6 +29,7 @@ export const updateRegistrySchema = z.object({
 
 export const deleteRegistrySchema = z.object({
     id: z.string(),
+    removeContainer: z.boolean().default(false),
 });
 
 export const LOCAL_REGISTRY_IMAGE = 'registry:3';

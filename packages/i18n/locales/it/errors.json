@@ -111,7 +111,8 @@
     "updateFailed": "Aggiornamento del registry non riuscito",
     "deleteFailed": "Eliminazione del registry non riuscita",
     "retrieveWithPasswordFailed": "Recupero del registry con la password non riuscito",
-    "notFound": "Registry non trovato"
+    "notFound": "Registry non trovato",
+    "localCredentialsRequired": "Sono richiesti un nome utente e una password per un registro locale protetto"
   },
   "webhook": {
     "unsupportedProvider": "Provider Git non supportato: {provider}",

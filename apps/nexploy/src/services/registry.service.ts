@@ -6,6 +6,8 @@ import type { RegistryInfo } from '@nexploy/nodes/core/registryInfo';
 
 export type { RegistryInfo };
 
+export type RegistryListItem = RegistryInfo & { containerName: string | null };
+
 export async function getRegistryById(id: string) {
     return prisma.dockerRegistry.findUnique({
         where: { id },
@@ -15,12 +17,13 @@ export async function getRegistryById(id: string) {
             url: true,
             username: true,
             password: true,
+            containerName: true,
             createdAt: true,
         },
     });
 }
 
-export async function getRegistries(): Promise<RegistryInfo[]> {
+export async function getRegistries(): Promise<RegistryListItem[]> {
     const t = await getErrorTranslator();
     try {
         return prisma.dockerRegistry.findMany({
@@ -29,6 +32,7 @@ export async function getRegistries(): Promise<RegistryInfo[]> {
                 name: true,
                 url: true,
                 username: true,
+                containerName: true,
                 createdAt: true,
             },
             orderBy: { createdAt: 'asc' },
@@ -38,7 +42,7 @@ export async function getRegistries(): Promise<RegistryInfo[]> {
     }
 }
 
-export async function createRegistry(data: CreateRegistryInput): Promise<RegistryInfo> {
+export async function createRegistry(data: CreateRegistryInput & { containerName?: string }): Promise<RegistryInfo> {
     const t = await getErrorTranslator();
     try {
         return prisma.dockerRegistry.create({
@@ -47,6 +51,7 @@ export async function createRegistry(data: CreateRegistryInput): Promise<Registr
                 url: data.url,
                 username: data.username || null,
                 password: data.password ? encrypt(data.password) : null,
+                containerName: data.containerName || null,
             },
             select: {
                 id: true,

@@ -257,6 +257,8 @@
     "updateSuccess": "Registry actualizado correctamente",
     "deleteTitle": "Eliminar registry",
     "deleteDescription": "¿Seguro que quiere eliminar el registry {name}? Esta acción no se puede deshacer.",
+    "deleteContainerLabel": "Eliminar también el contenedor del registro",
+    "deleteContainerDescription": "Elimina el contenedor {container}. Las imágenes almacenadas permanecen en la ruta de almacenamiento del host.",
     "deleteSuccess": "Registry eliminado",
     "mirrorTitle": "Replicar una imagen",
     "mirrorDescription": "Descargue una imagen de cualquier registry y publíquela en un registry configurado",
