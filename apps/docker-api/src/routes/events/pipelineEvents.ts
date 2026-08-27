@@ -21,7 +21,11 @@ import {
 import type { VolumeTransformationResult } from '@workspace/typescript-interface/docker/docker.compose.volume';
 import { TRAEFIK_NETWORK_NAME } from '@/lib/config';
 import { networksStateManager } from '@/managers/list/networksStateManager';
-import { docker } from '@/utils/dockerClient';
+import { docker, defaultDocker } from '@/utils/dockerClient';
+import type Docker from 'dockerode';
+import { ensureImage } from '@/utils/ensureImage';
+import { resolveWorkspaceMount } from '@/utils/workspaceMount';
+import { createLineSplitter } from '@/utils/lineSplitter';
 
 const app = new Hono();
 
@@ -475,6 +479,154 @@ app.post('/stream/push', async (c) => {
             }
 
             await stream.close();
+        }
+    });
+});
+
+function wrapWorkspaceCommand(command: string, workDir: string, ownerUid?: number, ownerGid?: number): string {
+    if (ownerUid === undefined || ownerGid === undefined) return command;
+
+    return [
+        command,
+        'nexploy_status=$?',
+        `chown -R ${ownerUid}:${ownerGid} '${workDir}' 2>/dev/null || true`,
+        'exit $nexploy_status',
+    ].join('\n');
+}
+
+app.post('/stream/run-script', async (c) => {
+    const { workDir, image, command, workingDirectory, envVars, timeoutSeconds, labels, ownerUid, ownerGid } =
+        await c.req.json<{
+            workDir: string;
+            image: string;
+            command: string;
+            workingDirectory: string;
+            envVars?: Record<string, string>;
+            timeoutSeconds: number;
+            labels?: Record<string, string>;
+            ownerUid?: number;
+            ownerGid?: number;
+        }>();
+
+    return streamSSE(c, async (stream) => {
+        let isClientDisconnected = false;
+        const abortController = new AbortController();
+
+        c.req.raw.signal.addEventListener('abort', () => {
+            isClientDisconnected = true;
+            abortController.abort();
+        });
+
+        const sendLog = (message: string) => {
+            if (isClientDisconnected || c.req.raw.signal.aborted) return;
+
+            try {
+                stream.writeSSE({
+                    data: JSON.stringify({
+                        type: 'log',
+                        message: message.trimEnd(),
+                        timestamp: dayjs().toISOString(),
+                    }),
+                    event: 'run-script-log',
+                });
+            } catch (e) {}
+        };
+
+        let container: Docker.Container | null = null;
+
+        try {
+            if (workingDirectory !== workDir && !workingDirectory.startsWith(`${workDir}/`)) {
+                throw new Error('Working directory must stay inside the workspace');
+            }
+
+            const mount = await resolveWorkspaceMount(defaultDocker, workDir);
+
+            sendLog(`Preparing image ${image}...`);
+            await ensureImage(defaultDocker, image);
+
+            container = await defaultDocker.createContainer({
+                Image: image,
+                Cmd: ['/bin/sh', '-c', wrapWorkspaceCommand(command, workDir, ownerUid, ownerGid)],
+                WorkingDir: workingDirectory,
+                Env: Object.entries(envVars ?? {}).map(([key, value]) => `${key}=${value}`),
+                Labels: labels,
+                Tty: false,
+                HostConfig: {
+                    Mounts: [mount],
+                    AutoRemove: false,
+                },
+            });
+
+            const logStream = await container.attach({ stream: true, stdout: true, stderr: true });
+            const lineSplitter = createLineSplitter(sendLog);
+
+            defaultDocker.modem.demuxStream(logStream, lineSplitter, lineSplitter);
+
+            await container.start();
+
+            let timedOut = false;
+            const timer = setTimeout(() => {
+                timedOut = true;
+                void container?.kill().catch(() => {});
+            }, timeoutSeconds * 1000);
+
+            const onAbort = () => void container?.kill().catch(() => {});
+            abortController.signal.addEventListener('abort', onAbort, { once: true });
+
+            let exitCode: number;
+            try {
+                const waitResult = await container.wait();
+                exitCode = waitResult.StatusCode ?? -1;
+            } finally {
+                clearTimeout(timer);
+                abortController.signal.removeEventListener('abort', onAbort);
+            }
+
+            lineSplitter.end();
+
+            if (abortController.signal.aborted && !timedOut) {
+                await stream.close();
+                return;
+            }
+
+            if (!isClientDisconnected && !c.req.raw.signal.aborted) {
+                await stream.writeSSE({
+                    data: JSON.stringify({
+                        type: 'complete',
+                        result: { exitCode, timedOut },
+                    }),
+                    event: 'run-script-complete',
+                });
+            }
+
+            await stream.close();
+        } catch (error) {
+            if (error instanceof Error && error.name === 'AbortError') {
+                await stream.close();
+                return;
+            }
+
+            if (!isClientDisconnected && !c.req.raw.signal.aborted) {
+                try {
+                    await stream.writeSSE({
+                        data: JSON.stringify({
+                            type: 'error',
+                            message: error instanceof Error ? error.message : 'Unknown error',
+                        }),
+                        event: 'run-script-error',
+                    });
+                } catch (e) {}
+            }
+
+            await stream.close();
+        } finally {
+            if (container) {
+                try {
+                    await container.remove({ force: true });
+                } catch (removeError) {
+                    logger.warn({ error: removeError }, 'Failed to remove the run-script container');
+                }
+            }
         }
     });
 });

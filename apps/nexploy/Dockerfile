@@ -4,7 +4,7 @@ ENV TURBO_TELEMETRY_DISABLED=1
 ENV DO_NOT_TRACK=1
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
-RUN apk add --no-cache libc6-compat su-exec git bash
+RUN apk add --no-cache libc6-compat su-exec git
 RUN corepack enable && corepack prepare pnpm@11.9.0 --activate
 
 FROM base AS prepare
