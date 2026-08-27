@@ -411,6 +411,7 @@
     "palette": "Nodos",
     "search": "Buscar nodos...",
     "searchNoResults": "Ningún nodo coincide con su búsqueda",
+    "unsupportedByGitProvider": "No disponible para un repositorio añadido por URL: este nodo requiere una cuenta Git conectada.",
     "addNodeHint": "Arrastre o haga clic para añadirlo al lienzo",
     "categories": {
       "source": "Origen",

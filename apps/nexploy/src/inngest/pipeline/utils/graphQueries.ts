@@ -46,7 +46,9 @@ export function analyzeGraph(graph: PipelineGraph, triggerSource: 'manual' | 'we
         .filter((node) => node.data.isStartNode === true && node.data.type !== 'webhook-clone')
         .map((node) => node.id);
 
-    const webhookStartNodeIds = graph.nodes.filter((node) => node.data.type === 'webhook-clone').map((node) => node.id);
+    const webhookStartNodeIds = graph.nodes
+        .filter((node) => node.data.type === 'webhook-clone' && node.data.disabled !== true)
+        .map((node) => node.id);
 
     const startNodeIds = new Set(
         triggerSource === 'webhook'

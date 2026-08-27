@@ -25,14 +25,20 @@ import { assertDiskSpaceAvailable } from '@/services/docker/diskGuard.service';
 
 function pipelineAcceptsWebhookTrigger(nodes: unknown, trigger: WebhookTrigger, branch?: string): boolean {
     const webhookNodes = (Array.isArray(nodes) ? (nodes as PipelineNode[]) : []).filter(
-        (node) => node?.data?.type === 'webhook-clone' && !node.data.disabled,
+        (node) => node?.data?.type === 'webhook-clone',
     );
 
     if (webhookNodes.length === 0) {
         return trigger.event === 'push';
     }
 
-    return webhookNodes.some(
+    const enabledWebhookNodes = webhookNodes.filter((node) => !node.data.disabled);
+
+    if (enabledWebhookNodes.length === 0) {
+        return false;
+    }
+
+    return enabledWebhookNodes.some(
         (node) => matchesWebhookTrigger((node.data.config ?? {}) as WebhookCloneFilters, trigger, branch ?? '').matched,
     );
 }
@@ -58,7 +64,7 @@ export async function startBuildRepository(
           })
         : null;
 
-    if (!tokenOwner) {
+    if (!tokenOwner && repository.gitProvider !== 'CUSTOM') {
         throw new Error(t('build.noGitAccount'));
     }
 
@@ -98,13 +104,13 @@ export async function startBuildRepository(
     });
 
     const config: BuildConfig = {
-        userId: tokenOwner.userId,
+        userId: tokenOwner?.userId ?? userId,
         repositoryName: repository.name,
         gitBranch: branch,
         gitAccountId: repository.gitAccountId ?? undefined,
         repositoryId: repository.id,
         organizationId: repository.organizationId,
-        gitProvider: repository.gitProvider as BuildConfig['gitProvider'],
+        gitProvider: repository.gitProvider,
         gitUrl: repository.repositoryUrl,
         buildId: build.id,
         triggerSource,

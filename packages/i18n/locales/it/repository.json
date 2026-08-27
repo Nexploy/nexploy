@@ -411,6 +411,7 @@
     "palette": "Nodi",
     "search": "Cerca nodi...",
     "searchNoResults": "Nessun nodo corrisponde alla sua ricerca",
+    "unsupportedByGitProvider": "Non disponibile per un repository aggiunto tramite URL: questo nodo richiede un account Git collegato.",
     "addNodeHint": "Trascinare o cliccare per aggiungere all'area di lavoro",
     "categories": {
       "source": "Sorgente",

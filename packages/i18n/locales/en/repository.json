@@ -411,6 +411,7 @@
     "palette": "Nodes",
     "search": "Search nodes...",
     "searchNoResults": "No nodes match your search",
+    "unsupportedByGitProvider": "Unavailable for a repository added by URL: this node requires a connected Git account.",
     "addNodeHint": "Drag or click to add to the canvas",
     "categories": {
       "source": "Source",

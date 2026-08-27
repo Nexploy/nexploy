@@ -12,6 +12,7 @@ import {
     type VersionHostService,
 } from '@nexploy/nodes/core/nodeServices';
 import type { BuildConfig } from '@workspace/typescript-interface/repository/build';
+import type { GitProviderToken } from '@workspace/typescript-interface/git/git';
 import type { Domain } from '@workspace/schemas-zod/repository/domain.schema';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { getAllEnvsBuild, startBuildRepository, updateBuildGitInfo } from '@/services/repository/build.service';
@@ -55,7 +56,16 @@ const buildHostService: BuildHostService = {
     },
 };
 
+const ANONYMOUS_TOKEN: GitProviderToken = {
+    accessToken: null,
+    refreshToken: null,
+    accessTokenExpiresAt: null,
+};
+
 async function requireAccessToken(buildConfig: BuildConfig): Promise<string> {
+    if (buildConfig.gitProvider === 'CUSTOM') {
+        throw new Error('CUSTOM_PROVIDER_UNSUPPORTED_OPERATION');
+    }
     const stored = await getGitProviderToken(buildConfig.gitProvider, {
         gitAccountId: buildConfig.gitAccountId,
         requestedUserId: buildConfig.userId,
@@ -83,6 +93,9 @@ const gitHostService: GitHostService = {
                 accessTokenExpiresAt: null,
             };
         }
+        if (buildConfig.gitProvider === 'CUSTOM') {
+            return ANONYMOUS_TOKEN;
+        }
         const stored = await getGitProviderToken(buildConfig.gitProvider, {
             gitAccountId: buildConfig.gitAccountId,
             requestedUserId: buildConfig.userId,
@@ -91,6 +104,9 @@ const gitHostService: GitHostService = {
     },
 
     refreshToken(buildConfig, expiredToken) {
+        if (buildConfig.gitProvider === 'CUSTOM') {
+            return Promise.resolve(ANONYMOUS_TOKEN);
+        }
         return getValidToken(
             { ...expiredToken, accessTokenExpiresAt: dayjs(0).toDate() },
             buildConfig.gitProvider,

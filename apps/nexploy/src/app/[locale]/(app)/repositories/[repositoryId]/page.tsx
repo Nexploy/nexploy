@@ -92,7 +92,13 @@ export default async function RepositoryIdPage({ params, searchParams }: Reposit
 
                     <RepositoryTabs>
                         {{
-                            pipeline: <RepositoryPipelineTab repositoryId={repository.id} stageId={stageId} />,
+                            pipeline: (
+                                <RepositoryPipelineTab
+                                    repositoryId={repository.id}
+                                    stageId={stageId}
+                                    gitProvider={repository.gitProvider}
+                                />
+                            ),
                             builds: <RepositoryBuildsTab repositoryId={repository.id} stageId={stageId} />,
                             versions: <RepositoryVersionsTab repositoryId={repository.id} />,
                             env: <RepositoryEnvTab repositoryId={repository.id} stageId={stageId} />,

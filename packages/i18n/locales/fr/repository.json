@@ -411,6 +411,7 @@
     "palette": "Nœuds",
     "search": "Rechercher des nœuds...",
     "searchNoResults": "Aucun nœud ne correspond à votre recherche",
+    "unsupportedByGitProvider": "Indisponible pour un dépôt ajouté par URL : ce nœud nécessite un compte Git connecté.",
     "addNodeHint": "Glissez ou cliquez pour ajouter",
     "categories": {
       "source": "Source",

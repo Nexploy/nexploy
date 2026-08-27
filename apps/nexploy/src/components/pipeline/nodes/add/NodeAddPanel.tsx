@@ -22,6 +22,8 @@ import { useIsViewingBuild, usePipelineActions } from '@/stores/pipeline/usePipe
 import { usePipelineEditorStore } from '@/stores/pipeline/usePipelineEditorStore';
 import { ScrollAreaWithShadow } from '@workspace/ui/components/scroll-area-with-shadow';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { useRepositoryGitProvider } from '@/contexts/RepositoryGitProviderContext';
+import { isNodeSupportedByGitProvider } from '@/lib/pipeline/nodeProviderSupport';
 
 export function NodeAddPanel() {
     const t = useTranslations('repository.pipeline');
@@ -29,6 +31,9 @@ export function NodeAddPanel() {
     const { screenToFlowPosition } = useReactFlow();
     const { setNodes, triggerAutoSave, handleNodeAdded } = usePipelineActions();
     const isViewingBuild = useIsViewingBuild();
+    const gitProvider = useRepositoryGitProvider();
+
+    const isUnsupported = (id: NodeId) => !isNodeSupportedByGitProvider(id, gitProvider);
 
     const setActiveBuildId = usePipelineEditorStore((s) => s.setActiveBuildId);
 
@@ -53,12 +58,17 @@ export function NodeAddPanel() {
     };
 
     const onDragStart = (event: React.DragEvent, nodeType: NodeId) => {
+        if (isUnsupported(nodeType)) {
+            event.preventDefault();
+            return;
+        }
         if (isViewingBuild) setActiveBuildId(null);
         event.dataTransfer.setData('application/reactflow', nodeType);
         event.dataTransfer.effectAllowed = 'move';
     };
 
     const onClickAdd = (nodeType: NodeId) => {
+        if (isUnsupported(nodeType)) return;
         if (isViewingBuild) setActiveBuildId(null);
         const def = getNodeDefinition(nodeType);
         if (!def) return;
@@ -205,6 +215,8 @@ export function NodeAddPanel() {
                                                         description={descriptionFor(def.id)}
                                                         onDragStart={onDragStart}
                                                         onClick={() => onClickAdd(def.id)}
+                                                        disabled={isUnsupported(def.id)}
+                                                        disabledReason={t('unsupportedByGitProvider')}
                                                     />
                                                 ))}
                                             </div>
@@ -262,6 +274,8 @@ export function NodeAddPanel() {
                                         description={descriptionFor(def.id)}
                                         onDragStart={onDragStart}
                                         onClick={() => onClickAdd(def.id)}
+                                        disabled={isUnsupported(def.id)}
+                                        disabledReason={t('unsupportedByGitProvider')}
                                     />
                                 ))}
                             </div>

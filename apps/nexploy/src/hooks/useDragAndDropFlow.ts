@@ -6,11 +6,14 @@ import { getConfigDefaults } from '@/components/pipeline/nodeManifestRegistry';
 import { usePipelineActions } from '@/stores/pipeline/usePipelineStore';
 import { getTemplate } from '@/components/pipeline/nodes/template/pipelineTemplates';
 import { useApplyPipelineTemplate } from '@/hooks/useApplyPipelineTemplate';
+import { useRepositoryGitProvider } from '@/contexts/RepositoryGitProviderContext';
+import { isNodeSupportedByGitProvider } from '@/lib/pipeline/nodeProviderSupport';
 
 export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
     const [isDragOver, setIsDragOver] = useState(false);
     const { setNodes, triggerAutoSave, handleNodeAdded } = usePipelineActions();
     const applyTemplate = useApplyPipelineTemplate();
+    const gitProvider = useRepositoryGitProvider();
 
     const onDragOver = useCallback((event: React.DragEvent) => {
         event.preventDefault();
@@ -42,6 +45,8 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
             const nodeType = event.dataTransfer.getData('application/reactflow') as NodeId;
             if (!nodeType) return;
 
+            if (!isNodeSupportedByGitProvider(nodeType, gitProvider)) return;
+
             const def = getNodeDefinition(nodeType);
             if (!def) return;
 
@@ -64,7 +69,7 @@ export function useDragAndDropFlow(rfInstance: ReactFlowInstance | null) {
             triggerAutoSave();
             handleNodeAdded(nodeType, newNodeId);
         },
-        [rfInstance, setNodes, triggerAutoSave, handleNodeAdded, applyTemplate],
+        [rfInstance, setNodes, triggerAutoSave, handleNodeAdded, applyTemplate, gitProvider],
     );
 
     return { isDragOver, onDragOver, onDragLeave, onDrop };
