@@ -1,6 +1,6 @@
 {
   "name": "nexploy",
-  "version": "0.15.6",
+  "version": "0.15.7",
   "description": "Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker",
   "type": "module",
   "private": true,
