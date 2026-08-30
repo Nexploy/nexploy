@@ -21,4 +21,7 @@ export const NEXPLOY_APP_HEALTHCHECK = {
     StartPeriod: 60_000_000_000,
 };
 
-export const DISK_GUARD_PATH = process.env.DISK_GUARD_PATH ?? process.env.DEPLOYER_WORK_DIR ?? '/tmp/deployer';
+export const DEPLOYER_WORK_DIR = process.env.DEPLOYER_WORK_DIR ?? '/tmp/deployer';
+export const DEPLOYER_WORK_DIR_SOURCE = process.env.DEPLOYER_WORK_DIR_SOURCE ?? '';
+
+export const DISK_GUARD_PATH = process.env.DISK_GUARD_PATH ?? DEPLOYER_WORK_DIR;

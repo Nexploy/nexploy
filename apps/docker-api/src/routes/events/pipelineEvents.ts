@@ -483,6 +483,16 @@ app.post('/stream/push', async (c) => {
     });
 });
 
+function gitWorkspaceTrustEnv(workDir: string, envVars: Record<string, string>): Record<string, string> {
+    if (envVars.GIT_CONFIG_COUNT !== undefined) return {};
+
+    return {
+        GIT_CONFIG_COUNT: '1',
+        GIT_CONFIG_KEY_0: 'safe.directory',
+        GIT_CONFIG_VALUE_0: workDir,
+    };
+}
+
 function wrapWorkspaceCommand(command: string, workDir: string, ownerUid?: number, ownerGid?: number): string {
     if (ownerUid === undefined || ownerGid === undefined) return command;
 
@@ -548,7 +558,10 @@ app.post('/stream/run-script', async (c) => {
                 Image: image,
                 Cmd: ['/bin/sh', '-c', wrapWorkspaceCommand(command, workDir, ownerUid, ownerGid)],
                 WorkingDir: workingDirectory,
-                Env: Object.entries(envVars ?? {}).map(([key, value]) => `${key}=${value}`),
+                Env: Object.entries({
+                    ...gitWorkspaceTrustEnv(workDir, envVars ?? {}),
+                    ...(envVars ?? {}),
+                }).map(([key, value]) => `${key}=${value}`),
                 Labels: labels,
                 Tty: false,
                 HostConfig: {

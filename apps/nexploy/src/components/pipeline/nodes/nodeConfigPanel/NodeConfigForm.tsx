@@ -17,16 +17,24 @@ import { getConfigPanel, getConfigSchema, hasConfigSchema } from '@/components/p
 import { cn } from '@workspace/ui/lib/utils';
 import { usePermissions } from '@/contexts/PermissionContext';
 
+function acceptsTextValue(fieldSchema: any) {
+    return fieldSchema.safeParse('').success || fieldSchema.safeParse('a').success;
+}
+
 function computeDefaultValues(schema: any, nodeConfig: Record<string, unknown>) {
     const schemaDefaults: Record<string, unknown> = {};
     const shape: Record<string, any> | undefined = schema?.shape;
     if (shape) {
         for (const [key, fieldSchema] of Object.entries(shape)) {
             const result = (fieldSchema as any).safeParse(undefined);
-            schemaDefaults[key] = result.success ? result.data : undefined;
+            const fallback = acceptsTextValue(fieldSchema) ? '' : undefined;
+            schemaDefaults[key] = result.success ? (result.data ?? fallback) : fallback;
         }
     }
-    return { ...schemaDefaults, ...nodeConfig };
+
+    const config = Object.fromEntries(Object.entries(nodeConfig).filter(([, value]) => value !== undefined));
+
+    return { ...schemaDefaults, ...config };
 }
 
 interface NodeConfigFormProps {
