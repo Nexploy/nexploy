@@ -1,6 +1,6 @@
 {
   "name": "docker-api",
-  "version": "0.15.7",
+  "version": "0.15.8",
   "description": "Docker operations API service for Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker",
   "type": "module",
   "scripts": {

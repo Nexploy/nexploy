@@ -1,6 +1,6 @@
 {
   "name": "nexploy",
-  "version": "0.15.7",
+  "version": "0.15.8",
   "description": "Nexploy — Self-hosted alternative to Vercel/Netlify, powered by Docker",
   "type": "module",
   "private": true,
@@ -43,7 +43,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@monaco-editor/react": "^4.7.0",
-    "@nexploy/nodes": "^0.8.1",
+    "@nexploy/nodes": "^0.8.2",
     "@nexploy/shared": "^0.4.1",
     "@next-safe-action/adapter-react-hook-form": "^2.0.0",
     "@openrouter/ai-sdk-provider": "^2.9.0",
