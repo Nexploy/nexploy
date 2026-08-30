@@ -167,7 +167,7 @@ export class PipelineOrchestrator {
                     continue;
                 }
 
-                const { resolved: resolvedConfig, warnings: refWarnings } = resolveNodeConfig(
+                const { resolved: rawResolvedConfig, warnings: refWarnings } = resolveNodeConfig(
                     node.data.config ?? {},
                     allOutputs,
                     nodeTypeMap,
@@ -191,8 +191,10 @@ export class PipelineOrchestrator {
                     continue;
                 }
 
+                let resolvedConfig = rawResolvedConfig;
+
                 if (executor.configSchema) {
-                    const validation = executor.configSchema.safeParse(resolvedConfig);
+                    const validation = executor.configSchema.safeParse(rawResolvedConfig);
                     if (!validation.success) {
                         const issues = validation.error.issues.map((i) => i.message).join(', ');
                         await inngestStep.run(`node-${node.id}`, async () => {
@@ -209,6 +211,8 @@ export class PipelineOrchestrator {
                         pipelineFailureError = new Error(`Node ${node.data.type} is not configured`);
                         continue;
                     }
+
+                    resolvedConfig = validation.data as typeof rawResolvedConfig;
                 }
 
                 try {
