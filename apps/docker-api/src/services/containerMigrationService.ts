@@ -34,6 +34,11 @@ export async function resolveTargetClient(targetEnvironmentId: string): Promise<
 
     try {
         const client = await dockerClientRegistry.registerEnvironment(config);
+
+        if (!client) {
+            throw new Error('The agent of this environment is not connected.');
+        }
+
         await stateManagerFactory.initializeEnvironment(targetEnvironmentId);
         return client;
     } catch (err: any) {

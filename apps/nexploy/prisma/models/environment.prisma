@@ -28,6 +28,8 @@ model Environment {
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  agent        DockerAgent?
+
   versions     Version[]    @relation("VersionEnvironment")
   stages       DeploymentStage[] @relation("StageEnvironment")
 
@@ -39,4 +41,5 @@ enum DockerConnectionType {
   UNIX_SOCKET
   TCP
   TCP_TLS
+  AGENT
 }

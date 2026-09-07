@@ -52,6 +52,10 @@ export async function dockerEnvironmentMiddleware(c: Context, next: Next) {
             logger.info({ environmentId, name: environmentConfig.name }, 'Attempting to register environment');
             const client = await dockerClientRegistry.registerEnvironment(environmentConfig);
 
+            if (!client) {
+                throw new Error('The agent of this environment is not connected.');
+            }
+
             logger.info({ environmentId }, 'Initializing state managers for environment');
             await stateManagerFactory.initializeEnvironment(environmentId);
 

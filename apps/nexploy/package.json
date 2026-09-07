@@ -58,6 +58,7 @@
     "@thesvg/react": "^3.0.10",
     "@types/ws": "^8.18.1",
     "@workspace/i18n": "workspace:*",
+    "@workspace/agent-protocol": "workspace:*",
     "@workspace/schemas-zod": "workspace:*",
     "@workspace/typescript-interface": "workspace:*",
     "@workspace/ui": "workspace:*",

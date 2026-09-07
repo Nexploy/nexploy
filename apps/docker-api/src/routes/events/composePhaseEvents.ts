@@ -77,7 +77,10 @@ function runComposePhase(
                 sendLog,
                 abortController,
                 dockerEnv: dockerEnvResult.env,
-                isRemoteEnvironment: envConfig?.connectionType === 'TCP' || envConfig?.connectionType === 'TCP_TLS',
+                isRemoteEnvironment:
+                    envConfig?.connectionType === 'TCP' ||
+                    envConfig?.connectionType === 'TCP_TLS' ||
+                    envConfig?.connectionType === 'AGENT',
                 environmentId,
                 isDisconnected,
             });

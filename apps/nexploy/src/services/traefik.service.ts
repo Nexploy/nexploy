@@ -61,7 +61,8 @@ export async function generateTraefikConfig(inputDomains: TraefikDomainInput[]):
         const serviceName = key.replace(/^domain-/, 'svc-');
 
         const env = domain.environmentId ? await getEnvironmentById(domain.environmentId) : null;
-        const isRemote = env?.connectionType === 'TCP' || env?.connectionType === 'TCP_TLS';
+        const isRemote =
+            env?.connectionType === 'TCP' || env?.connectionType === 'TCP_TLS' || env?.connectionType === 'AGENT';
         const remoteHost = env?.host ?? undefined;
 
         let rule = `Host(\`${domain.host}\`)`;

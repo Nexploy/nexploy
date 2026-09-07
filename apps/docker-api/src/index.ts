@@ -21,6 +21,7 @@ import networkEvents from '@/routes/networks/events/networkEvents';
 import networksEvents from '@/routes/networks/events/networksEvents';
 import { createNodeWebSocket } from '@hono/node-ws';
 import { createTerminalRoutes } from '@/routes/terminalRoutes';
+import { createAgentTunnelRoutes } from '@/routes/agentTunnelRoutes';
 import volumesRoutes from '@/routes/volumes/volumesRoutes';
 import networksRoutes from '@/routes/networks/networksRoutes';
 import pipelineEvents from '@/routes/events/pipelineEvents';
@@ -45,6 +46,7 @@ import { securityHeadersMiddleware } from '@/middleware/securityHeaders.middlewa
 import { environmentProtectionMiddleware } from '@/middleware/environmentProtection.middleware';
 import { diskGuardMiddleware } from '@/middleware/diskGuard.middleware';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';
+import { agentTunnelRegistry } from '@/lib/agentTunnelRegistry';
 import { stateManagerFactory } from '@/managers/factory/StateManagerFactory';
 import { ContainersStateManager } from '@/managers/list/containersStateManager';
 import { ImagesStateManager } from '@/managers/list/imagesStateManager';
@@ -124,6 +126,7 @@ app.route('/api/registries', registriesRoutes);
 app.route('/api/system', systemRoutes);
 
 app.route('/ws/docker', createTerminalRoutes(upgradeWebSocket));
+app.route('/ws/agent', createAgentTunnelRoutes(upgradeWebSocket));
 
 app.onError((err, c) => {
     logger.error({ err }, 'Application error');
@@ -216,6 +219,7 @@ if (process.env.SELF_UPGRADE_TARGET_IMAGE) {
 } else {
     setupGracefulShutdown(async () => {
         logger.info('Shutting down Docker management services...');
+        await agentTunnelRegistry.shutdown();
         await stateManagerFactory.shutdownAll();
         await dockerClientRegistry.shutdown();
         logger.info('Docker management services stopped');

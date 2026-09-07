@@ -17,6 +17,13 @@ app.post(
 
         logger.info({ name: config.name }, 'Validating environment configuration');
 
+        if (config.connectionType === 'AGENT') {
+            return {
+                valid: true,
+                message: 'Agent environment, the connection is validated when the agent connects.',
+            };
+        }
+
         const tempClient = createDockerClient(config);
         try {
             await tempClient.ping();
@@ -44,7 +51,18 @@ app.post(
         logger.info({ environmentId: config.id, name: config.name }, 'Registering new environment');
 
         try {
-            await dockerClientRegistry.registerEnvironment(config);
+            const client = await dockerClientRegistry.registerEnvironment(config);
+
+            if (!client) {
+                logger.info({ environmentId: config.id }, 'Agent environment stored, waiting for the agent');
+
+                return {
+                    success: true,
+                    message: 'Agent environment stored, waiting for the agent to connect.',
+                    environmentId: config.id,
+                };
+            }
+
             await stateManagerFactory.initializeEnvironment(config.id!);
 
             logger.info({ environmentId: config.id }, 'Environment registered successfully');
@@ -142,18 +160,31 @@ app.patch(
             throw new HttpError('Environment ID mismatch.', 400);
         }
 
-        const tempClient = createDockerClient(config);
-        try {
-            await tempClient.ping();
-        } catch (err: any) {
-            throw new HttpError(
-                `Cannot connect to Docker host ${config.host ?? config.socketPath ?? 'unknown'}: ${err.message}`,
-                400,
-            );
+        if (config.connectionType !== 'AGENT') {
+            const tempClient = createDockerClient(config);
+            try {
+                await tempClient.ping();
+            } catch (err: any) {
+                throw new HttpError(
+                    `Cannot connect to Docker host ${config.host ?? config.socketPath ?? 'unknown'}: ${err.message}`,
+                    400,
+                );
+            }
         }
 
         await stateManagerFactory.shutdownEnvironment(environmentId);
         await dockerClientRegistry.reloadEnvironment(config);
+
+        if (!dockerClientRegistry.hasEnvironment(environmentId)) {
+            logger.info({ environmentId }, 'Agent environment updated, waiting for the agent to connect');
+
+            return {
+                success: true,
+                message: 'Agent environment updated, waiting for the agent to connect.',
+                environmentId,
+            };
+        }
+
         await stateManagerFactory.initializeEnvironment(environmentId);
 
         if (config.isDefault) {

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const dockerConnectionTypeSchema = z.enum(['UNIX_SOCKET', 'TCP', 'TCP_TLS']);
+export const dockerConnectionTypeSchema = z.enum(['UNIX_SOCKET', 'TCP', 'TCP_TLS', 'AGENT']);
 
 export const environmentSchema = z
     .object({

@@ -5,6 +5,7 @@ import { EnvironmentSchemaType } from '@workspace/schemas-zod/docker/environment
 import { Environment } from 'generated/client';
 import { kyDocker } from '@/lib/api/kyDocker';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';
+import { createDockerAgent } from '@/services/environment/dockerAgent.service';
 
 export async function getUserEnvironments(userId?: string) {
     const t = await getErrorTranslator();
@@ -66,12 +67,16 @@ export async function getDefaultEnvironment() {
 
 export async function createEnvironment(data: EnvironmentSchemaType, userId: string) {
     const t = await getErrorTranslator();
-    try {
-        await kyDocker.post('environments/validate', {
-            json: data,
-        });
-    } catch (error: any) {
-        throw new Error(t('environment.notAccessible'));
+    const usesAgent = data.connectionType === 'AGENT';
+
+    if (!usesAgent) {
+        try {
+            await kyDocker.post('environments/validate', {
+                json: data,
+            });
+        } catch {
+            throw new Error(t('environment.notAccessible'));
+        }
     }
 
     const environment = await prisma.environment.create({
@@ -84,6 +89,17 @@ export async function createEnvironment(data: EnvironmentSchemaType, userId: str
             tlsCa: data.tlsCa ? encrypt(data.tlsCa) : null,
         },
     });
+
+    let agentToken: string | undefined;
+
+    if (usesAgent) {
+        try {
+            agentToken = (await createDockerAgent(environment.id, userId)).token;
+        } catch (error: any) {
+            await prisma.environment.delete({ where: { id: environment.id } }).catch(() => {});
+            throw error;
+        }
+    }
 
     try {
         await kyDocker.post('environments/register', {
@@ -98,10 +114,12 @@ export async function createEnvironment(data: EnvironmentSchemaType, userId: str
     }
 
     if (data.isDefault) {
-        try {
-            await kyDocker.post(`environments/${environment.id}/set-default`);
-        } catch (error: any) {
-            throw new Error(error?.message);
+        if (!usesAgent) {
+            try {
+                await kyDocker.post(`environments/${environment.id}/set-default`);
+            } catch (error: any) {
+                throw new Error(error?.message);
+            }
         }
 
         await prisma.$transaction(async (tx) => {
@@ -118,7 +136,7 @@ export async function createEnvironment(data: EnvironmentSchemaType, userId: str
         environment.isDefault = true;
     }
 
-    return environment;
+    return { ...environment, agentToken };
 }
 
 export async function updateEnvironment(environmentData: EnvironmentSchemaType) {
@@ -131,14 +149,17 @@ export async function updateEnvironment(environmentData: EnvironmentSchemaType) 
         throw new Error(t('environment.notFound'));
     }
 
+    const usesAgent = (environmentData.connectionType ?? currentEnv.connectionType) === 'AGENT';
+
     const dockerConfigChanging =
-        environmentData.connectionType !== undefined ||
-        environmentData.socketPath !== undefined ||
-        environmentData.host !== undefined ||
-        environmentData.port !== undefined ||
-        environmentData.tlsCert !== undefined ||
-        environmentData.tlsKey !== undefined ||
-        environmentData.tlsCa !== undefined;
+        !usesAgent &&
+        (environmentData.connectionType !== undefined ||
+            environmentData.socketPath !== undefined ||
+            environmentData.host !== undefined ||
+            environmentData.port !== undefined ||
+            environmentData.tlsCert !== undefined ||
+            environmentData.tlsKey !== undefined ||
+            environmentData.tlsCa !== undefined);
 
     if (dockerConfigChanging) {
         const validationConfig = {

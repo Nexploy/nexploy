@@ -25,6 +25,7 @@ import { Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@workspace/ui/components/tooltip';
 import { DownloadCertScriptButton } from './DownloadCertScriptButton';
 import { DEFAULT_DOCKER_SOCKET_PATH } from '@/lib/constants';
+import { AgentEnvironmentPanel } from './AgentEnvironmentPanel';
 
 interface EditEnvironmentFormProps {
     environment: Environment;
@@ -33,6 +34,7 @@ interface EditEnvironmentFormProps {
 export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
     const { onSuccess } = useConfirmationDialogStore();
     const t = useTranslations('docker.environmentForm');
+    const tCommon = useTranslations('common');
 
     const { form, handleSubmitWithAction } = useHookFormAction(
         updateEnvironmentAction,
@@ -64,10 +66,14 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
     const host = form.watch('host');
 
     const handleConnectionTypeChange = (value: string) => {
-        const type = value as 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS';
+        const type = value as 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS' | 'AGENT';
         form.setValue('connectionType', type);
 
-        if (type === 'UNIX_SOCKET') {
+        if (type === 'AGENT') {
+            form.setValue('socketPath', undefined);
+            form.setValue('host', undefined);
+            form.setValue('port', undefined);
+        } else if (type === 'UNIX_SOCKET') {
             form.setValue('socketPath', DEFAULT_DOCKER_SOCKET_PATH);
             form.setValue('host', undefined);
             form.setValue('port', undefined);
@@ -140,6 +146,7 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                                             <SelectItem value="UNIX_SOCKET">{t('unixSocket')}</SelectItem>
                                             <SelectItem value="TCP">{t('tcp')}</SelectItem>
                                             <SelectItem value="TCP_TLS">{t('tcpTls')}</SelectItem>
+                                            <SelectItem value="AGENT">{t('agent')}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -148,6 +155,35 @@ export function EditEnvironmentForm({ environment }: EditEnvironmentFormProps) {
                         </FormItem>
                     )}
                 />
+
+                {connectionType === 'AGENT' && environment.connectionType === 'AGENT' && (
+                    <AgentEnvironmentPanel environmentId={environment.id} />
+                )}
+
+                {connectionType === 'AGENT' && (
+                    <FormField
+                        control={form.control}
+                        name="host"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>
+                                    {t('agentRoutingHost')}
+                                    <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        {...field}
+                                        value={field.value ?? ''}
+                                        placeholder={t('hostPlaceholder')}
+                                        disabled={form.formState.isSubmitting}
+                                    />
+                                </FormControl>
+                                <p className="text-muted-foreground text-xs">{t('agentRoutingHostDescription')}</p>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
 
                 {connectionType === 'UNIX_SOCKET' && (
                     <FormField

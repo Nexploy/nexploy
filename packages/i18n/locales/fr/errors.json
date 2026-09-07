@@ -249,7 +249,9 @@
     "unknownProvider": "Fournisseur inconnu",
     "providerNotConfigured": "Fournisseur non configuré",
     "unsupportedProvider": "Fournisseur non pris en charge",
-    "invitableUsersFetchFailed": "Échec de la recherche d'utilisateurs"
+    "invitableUsersFetchFailed": "Échec de la recherche d'utilisateurs",
+    "agentNotFound": "Agent introuvable",
+    "agentFetchFailed": "Échec de la récupération de l'agent"
   },
   "buildRunner": {
     "getFailed": "Impossible de récupérer les runners de build",
@@ -269,5 +271,10 @@
     "getFailed": "Impossible de récupérer les paramètres d'accès direct par IP",
     "updateFailed": "Impossible d'enregistrer les paramètres d'accès direct par IP",
     "getExposedFailed": "Impossible de lister les conteneurs exposés sur l'IP du serveur"
+  },
+  "dockerAgent": {
+    "createFailed": "Échec de la création de l'agent",
+    "regenerateFailed": "Échec de la régénération du jeton de l'agent",
+    "notFound": "Agent introuvable"
   }
 }

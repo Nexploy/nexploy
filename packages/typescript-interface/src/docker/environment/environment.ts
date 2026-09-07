@@ -1,7 +1,7 @@
 export interface EnvironmentConfig {
     id: string;
     name: string;
-    connectionType: 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS';
+    connectionType: 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS' | 'AGENT';
     socketPath?: string;
     host?: string;
     port?: number;

@@ -2,6 +2,7 @@ import Docker from 'dockerode';
 import { logger } from '@/utils/logger';
 import { defaultDocker } from '@/utils/dockerClient';
 import { DOCKER_SOCKET_PATH } from '@/lib/config';
+import { agentSocketPath } from '@/lib/agentBridge';
 import { EnvironmentSchemaType } from '@workspace/schemas-zod/docker/environment/environment.schema';
 import { EnvironmentConfig } from '@workspace/typescript-interface/docker/environment/environment';
 
@@ -10,6 +11,8 @@ class DockerClientRegistry {
     private configs: Map<string, EnvironmentConfig> = new Map();
     private defaultEnvironmentId: string | null = null;
     private healthCheckIntervals: Map<string, NodeJS.Timeout> = new Map();
+    private pendingAgentEnvironmentIds: Set<string> = new Set();
+    private agentBridgeReady: Set<string> = new Set();
 
     async initialize(environments: EnvironmentConfig[]): Promise<string[]> {
         logger.info({ count: environments.length }, 'Initializing Docker client registry');
@@ -20,11 +23,14 @@ class DockerClientRegistry {
 
         for (const config of environments) {
             try {
-                await this.registerEnvironment(config);
+                const client = await this.registerEnvironment(config);
 
                 if (config.isDefault) {
                     this.defaultEnvironmentId = config.id;
                 }
+
+                if (!client) continue;
+
                 registeredEnvironmentIds.push(config.id!);
                 successCount++;
             } catch (err) {
@@ -62,7 +68,19 @@ class DockerClientRegistry {
         return registeredEnvironmentIds;
     }
 
-    async registerEnvironment(config: EnvironmentSchemaType): Promise<Docker> {
+    async registerEnvironment(config: EnvironmentSchemaType): Promise<Docker | null> {
+        if (config.connectionType === 'AGENT' && !this.agentBridgeReady.has(config.id!)) {
+            this.configs.set(config.id!, config as EnvironmentConfig);
+            this.pendingAgentEnvironmentIds.add(config.id!);
+
+            logger.info(
+                { environmentId: config.id, name: config.name },
+                'Agent environment registered, waiting for the agent to connect',
+            );
+
+            return null;
+        }
+
         const client = this.createClient(config);
 
         try {
@@ -75,6 +93,7 @@ class DockerClientRegistry {
 
             this.clients.set(config.id!, client);
             this.configs.set(config.id!, config as EnvironmentConfig);
+            this.pendingAgentEnvironmentIds.delete(config.id!);
             this.startHealthCheck(config.id!);
 
             return client;
@@ -106,6 +125,8 @@ class DockerClientRegistry {
                     cert: config.tlsCert,
                     key: config.tlsKey,
                 });
+            case 'AGENT':
+                return new Docker({ socketPath: agentSocketPath(config.id!) });
             default:
                 throw new Error(`Unknown connection type: ${config.connectionType}`);
         }
@@ -114,6 +135,12 @@ class DockerClientRegistry {
     getClient(environmentId: string): Docker {
         const client = this.clients.get(environmentId);
         if (!client) {
+            if (this.pendingAgentEnvironmentIds.has(environmentId)) {
+                throw new Error(
+                    `The agent of environment ${environmentId} is not connected. Start the Nexploy agent on the target host.`,
+                );
+            }
+
             throw new Error(
                 `Environment not found: ${environmentId}. The environment may not be configured or the Docker daemon may be unreachable.`,
             );
@@ -153,6 +180,8 @@ class DockerClientRegistry {
         this.stopHealthCheck(environmentId);
         this.clients.delete(environmentId);
         this.configs.delete(environmentId);
+        this.pendingAgentEnvironmentIds.delete(environmentId);
+        this.agentBridgeReady.delete(environmentId);
         logger.info({ environmentId }, 'Environment unregistered');
     }
 
@@ -214,8 +243,31 @@ class DockerClientRegistry {
     }
 
     async reloadEnvironment(config: EnvironmentSchemaType): Promise<void> {
+        const bridgeWasReady = this.agentBridgeReady.has(config.id!);
+
         await this.unregisterEnvironment(config.id!);
+
+        if (bridgeWasReady) this.agentBridgeReady.add(config.id!);
+
         await this.registerEnvironment(config);
+    }
+
+    markAgentBridgeReady(environmentId: string): void {
+        this.agentBridgeReady.add(environmentId);
+    }
+
+    markAgentBridgeGone(environmentId: string): void {
+        this.agentBridgeReady.delete(environmentId);
+        this.stopHealthCheck(environmentId);
+        this.clients.delete(environmentId);
+
+        const config = this.configs.get(environmentId);
+
+        if (config) this.pendingAgentEnvironmentIds.add(environmentId);
+    }
+
+    isAgentEnvironment(environmentId: string): boolean {
+        return this.configs.get(environmentId)?.connectionType === 'AGENT';
     }
 
     async shutdown(): Promise<void> {
@@ -227,6 +279,8 @@ class DockerClientRegistry {
 
         this.clients.clear();
         this.configs.clear();
+        this.pendingAgentEnvironmentIds.clear();
+        this.agentBridgeReady.clear();
     }
 }
 

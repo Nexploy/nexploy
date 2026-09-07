@@ -249,7 +249,9 @@
     "unknownProvider": "Unknown provider",
     "providerNotConfigured": "Provider not configured",
     "unsupportedProvider": "Unsupported provider",
-    "invitableUsersFetchFailed": "Failed to search users"
+    "invitableUsersFetchFailed": "Failed to search users",
+    "agentNotFound": "Agent not found",
+    "agentFetchFailed": "Failed to fetch the agent"
   },
   "buildRunner": {
     "getFailed": "Failed to get build runners",
@@ -269,5 +271,10 @@
     "getFailed": "Failed to get the direct IP access settings",
     "updateFailed": "Failed to save the direct IP access settings",
     "getExposedFailed": "Failed to list the containers exposed on the server IP"
+  },
+  "dockerAgent": {
+    "createFailed": "Failed to create the agent",
+    "regenerateFailed": "Failed to regenerate the agent token",
+    "notFound": "Agent not found"
   }
 }

@@ -249,7 +249,9 @@
     "unknownProvider": "Proveedor desconocido",
     "providerNotConfigured": "Proveedor no configurado",
     "unsupportedProvider": "Proveedor no compatible",
-    "invitableUsersFetchFailed": "Error al buscar usuarios"
+    "invitableUsersFetchFailed": "Error al buscar usuarios",
+    "agentNotFound": "Agente no encontrado",
+    "agentFetchFailed": "No se pudo obtener el agente"
   },
   "buildRunner": {
     "getFailed": "No se han podido obtener los runners de compilación",
@@ -269,5 +271,10 @@
     "getFailed": "No se han podido obtener los ajustes de acceso directo por IP",
     "updateFailed": "No se han podido guardar los ajustes de acceso directo por IP",
     "getExposedFailed": "No se han podido listar los contenedores expuestos en la IP del servidor"
+  },
+  "dockerAgent": {
+    "createFailed": "No se pudo crear el agente",
+    "regenerateFailed": "No se pudo regenerar el token del agente",
+    "notFound": "Agente no encontrado"
   }
 }

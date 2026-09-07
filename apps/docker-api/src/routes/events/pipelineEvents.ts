@@ -83,7 +83,10 @@ app.post('/stream/compose', async (c) => {
             );
 
             const effectiveEnvVars: Record<string, string> = { ...(envVars || {}) };
-            const isRemoteEnvironment = envConfig?.connectionType === 'TCP' || envConfig?.connectionType === 'TCP_TLS';
+            const isRemoteEnvironment =
+                envConfig?.connectionType === 'TCP' ||
+                envConfig?.connectionType === 'TCP_TLS' ||
+                envConfig?.connectionType === 'AGENT';
 
             const preprocessed = await preprocessComposeProject({
                 workDir,

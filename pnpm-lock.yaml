@@ -57,6 +57,9 @@ importers:
       '@nexploy/shared':
         specifier: ^0.4.1
         version: 0.4.1
+      '@workspace/agent-protocol':
+        specifier: workspace:*
+        version: link:../../packages/agent-protocol
       '@workspace/schemas-zod':
         specifier: workspace:*
         version: link:../../packages/schemas-zod
@@ -226,6 +229,9 @@ importers:
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
+      '@workspace/agent-protocol':
+        specifier: workspace:*
+        version: link:../../packages/agent-protocol
       '@workspace/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
@@ -395,6 +401,22 @@ importers:
       vitest:
         specifier: ^4.1.10
         version: 4.1.10(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(vite@7.3.1(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3))
+
+  packages/agent-protocol:
+    dependencies:
+      zod:
+        specifier: ^4.5.4
+        version: 4.5.4
+    devDependencies:
+      '@types/node':
+        specifier: ^24.7.2
+        version: 24.7.2
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
 
   packages/i18n:
     dependencies:
@@ -7614,6 +7636,9 @@ packages:
   zod@4.3.6:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
+  zod@4.5.4:
+    resolution: {integrity: sha512-sC95tT5iHHH9gtpj6A81kh+NEaRAUFN+qlUPDUbRfOMvNf5QCBqsb3WgvnpVtK5Y+4UfA6KqufotuTvMGiTlsA==}
+
   zustand@4.5.7:
     resolution: {integrity: sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==}
     engines: {node: '>=12.7.0'}
@@ -8473,7 +8498,7 @@ snapshots:
       jose: 6.2.1
       kysely: 0.29.2
       nanostores: 1.2.0
-      zod: 4.3.6
+      zod: 4.5.4
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
 
@@ -15273,6 +15298,8 @@ snapshots:
   zod@3.25.76: {}
 
   zod@4.3.6: {}
+
+  zod@4.5.4: {}
 
   zustand@4.5.7(@types/react@19.2.2)(immer@11.0.1)(react@19.2.3):
     dependencies:

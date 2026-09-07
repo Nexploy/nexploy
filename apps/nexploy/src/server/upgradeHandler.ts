@@ -5,7 +5,9 @@ import { getDockerApiProxy, getInngestProxy } from '@/server/proxies';
 import { WS_PROXY_PREFIX, matchAndTransformWsUrl } from '@/server/wsRoutes';
 import { authorizeContainerUpgrade } from '@/server/wsAuthorization';
 import { handleRunnerUpgrade } from '@/server/runner/gateway';
+import { handleAgentUpgrade } from '@/server/agent/gateway';
 import { RUNNER_WS_PATH } from '@/server/runner/protocol';
+import { AGENT_WS_PATH } from '@workspace/agent-protocol';
 import { actorToHeaders } from '@nexploy/shared/actor';
 
 export type NextUpgradeHandler = (req: IncomingMessage, socket: Duplex, head: Buffer) => Promise<void>;
@@ -34,6 +36,11 @@ export async function handleUpgrade(req: IncomingMessage, socket: Socket, head: 
 
         if (pathname === RUNNER_WS_PATH) {
             await handleRunnerUpgrade(req, socket, head);
+            return;
+        }
+
+        if (pathname === AGENT_WS_PATH) {
+            await handleAgentUpgrade(req, socket, head);
             return;
         }
 

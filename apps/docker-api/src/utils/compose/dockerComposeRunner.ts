@@ -4,6 +4,7 @@ import os from 'os';
 import path from 'path';
 import type { EnvironmentConfig } from '@workspace/typescript-interface/docker/environment/environment';
 import { DOCKER_SOCKET_PATH } from '@/lib/config';
+import { agentSocketPath } from '@/lib/agentBridge';
 
 export interface DockerEnvResult {
     env: Record<string, string>;
@@ -51,6 +52,8 @@ export function buildDockerHostEnv(envConfig: EnvironmentConfig | null): DockerE
             const socketPath = envConfig.socketPath || DOCKER_SOCKET_PATH;
             return { env: { DOCKER_HOST: `unix://${socketPath}` } };
         }
+        case 'AGENT':
+            return { env: { DOCKER_HOST: `unix://${agentSocketPath(envConfig.id)}` } };
         case 'TCP':
             return { env: { DOCKER_HOST: `tcp://${envConfig.host}:${envConfig.port}` } };
         case 'TCP_TLS': {

@@ -26,9 +26,12 @@ import { DEFAULT_DOCKER_SOCKET_PATH } from '@/lib/constants';
 import { useConfirmationDialogStore } from '@/stores/dialogs/useConfirmationDialogStore';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import { AgentInstallInstructions } from './AgentInstallInstructions';
 
 export function CreateEnvironmentForm() {
-    const { onSuccess } = useConfirmationDialogStore();
+    const { onSuccess, closeDialog } = useConfirmationDialogStore();
+    const [agentToken, setAgentToken] = useState<string | null>(null);
     const t = useTranslations('docker.environmentForm');
     const tCommon = useTranslations('common');
 
@@ -49,6 +52,7 @@ export function CreateEnvironmentForm() {
                 onSuccess: ({ data }) => {
                     toast.success(t('createSuccess'));
                     if (data && onSuccess) onSuccess(data);
+                    if (data?.agentToken) setAgentToken(data.agentToken);
                 },
             },
         },
@@ -58,7 +62,7 @@ export function CreateEnvironmentForm() {
     const host = form.watch('host');
 
     const handleConnectionTypeChange = (value: string) => {
-        const type = value as 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS';
+        const type = value as 'UNIX_SOCKET' | 'TCP' | 'TCP_TLS' | 'AGENT';
         form.setValue('connectionType', type);
 
         form.setValue('socketPath', undefined);
@@ -75,6 +79,19 @@ export function CreateEnvironmentForm() {
             form.setValue('port', type === 'TCP_TLS' ? 2376 : 2375);
         }
     };
+
+    if (agentToken) {
+        return (
+            <div className="space-y-4">
+                <AgentInstallInstructions token={agentToken} />
+                <div className="flex justify-end pt-2">
+                    <Button type="button" onClick={closeDialog}>
+                        {tCommon('close')}
+                    </Button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <Form {...form}>
@@ -144,6 +161,7 @@ export function CreateEnvironmentForm() {
                                             <SelectItem value="UNIX_SOCKET">{t('unixSocket')}</SelectItem>
                                             <SelectItem value="TCP">{t('tcp')}</SelectItem>
                                             <SelectItem value="TCP_TLS">{t('tcpTls')}</SelectItem>
+                                            <SelectItem value="AGENT">{t('agent')}</SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -152,6 +170,36 @@ export function CreateEnvironmentForm() {
                         </FormItem>
                     )}
                 />
+                {connectionType === 'AGENT' && (
+                    <Alert variant="info">
+                        <Info />
+                        <AlertDescription>{t('agentNotice')}</AlertDescription>
+                    </Alert>
+                )}
+                {connectionType === 'AGENT' && (
+                    <FormField
+                        control={form.control}
+                        name="host"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>
+                                    {t('agentRoutingHost')}
+                                    <span className="text-muted-foreground text-xs">{tCommon('optional')}</span>
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        {...field}
+                                        value={field.value ?? ''}
+                                        placeholder={t('hostPlaceholder')}
+                                        disabled={form.formState.isSubmitting}
+                                    />
+                                </FormControl>
+                                <p className="text-muted-foreground text-xs">{t('agentRoutingHostDescription')}</p>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
                 {connectionType === 'UNIX_SOCKET' && (
                     <FormField
                         control={form.control}

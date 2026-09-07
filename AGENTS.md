@@ -385,6 +385,8 @@ This repo lives inside a larger workspace at `../` (i.e. `nexploy/`), alongside 
 - `../nodes` — `@nexploy/nodes`, the pipeline node library (published package, consumed here as a dependency)
 - `../shared` — `@nexploy/shared`, shared runtime helpers (actor, Docker constants, path safety)
 - `../cli` — the Nexploy CLI
+- `../agent` — `@nexploy/agent`, the Docker agent published as `nexploy/agent` (own repo, own release workflow)
+- `../build-runner` — `@nexploy/build-runner`, the remote build runner published as `nexploy/build-runner`
 - `../docs` — the fumadocs documentation site
 - `../website` — the marketing website
 
