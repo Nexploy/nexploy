@@ -8,7 +8,7 @@ import {
     AGENT_SYSTEM_HEADER,
     AGENT_TUNNEL_PATH,
     decodeAgentSystemInfo,
-} from '@workspace/agent-protocol';
+} from '@nexploy/agent/protocol';
 import {
     markDockerAgentOffline,
     markDockerAgentOnline,

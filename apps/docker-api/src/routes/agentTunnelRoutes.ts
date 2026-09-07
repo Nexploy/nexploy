@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import type { UpgradeWebSocket } from 'hono/ws';
 import type { WebSocket } from 'ws';
-import { MuxSession } from '@workspace/agent-protocol';
+import { MuxSession } from '@nexploy/agent/protocol';
 import { logger } from '@/utils/logger';
 import { agentTunnelRegistry } from '@/lib/agentTunnelRegistry';
 

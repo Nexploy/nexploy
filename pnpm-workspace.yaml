@@ -24,6 +24,7 @@ minimumReleaseAgeExclude:
   - '@better-auth/prisma-adapter@1.6.25'
   - '@better-auth/telemetry@1.6.25'
   - better-auth@1.6.25
+  - '@nexploy/agent'
   - '@nexploy/nodes'
   - '@nexploy/shared'
   - lucide-react@1.30.0

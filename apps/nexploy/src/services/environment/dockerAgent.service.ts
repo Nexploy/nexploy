@@ -1,6 +1,6 @@
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
-import { AGENT_TOKEN_PREFIX } from '@workspace/agent-protocol';
-import type { AgentSystemInfo } from '@workspace/agent-protocol';
+import { AGENT_TOKEN_PREFIX } from '@nexploy/agent/protocol';
+import type { AgentSystemInfo } from '@nexploy/agent/protocol';
 import type { DockerAgentInfo, DockerAgentWithToken } from '@workspace/typescript-interface/docker/agent/agent';
 import { prisma } from '../../../prisma/prisma';
 import { getErrorTranslator } from '@/lib/i18n/serverErrors';

@@ -17,6 +17,8 @@
     "nodes:npm": "node scripts/nodes-source.mjs npm",
     "shared:local": "node scripts/shared-source.mjs local",
     "shared:npm": "node scripts/shared-source.mjs npm",
+    "agent:local": "node scripts/agent-source.mjs local",
+    "agent:npm": "node scripts/agent-source.mjs npm",
     "version:set": "node scripts/set-version.mjs",
     "format": "biome format --write .",
     "check-types": "turbo run typecheck",

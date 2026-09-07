@@ -2,7 +2,7 @@ import { createServer, type Server } from 'node:net';
 import { unlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import type { MuxSession } from '@workspace/agent-protocol';
+import type { MuxSession } from '@nexploy/agent/protocol';
 import { logger } from '@/utils/logger';
 
 const BRIDGE_DIR = process.env.AGENT_BRIDGE_DIR || tmpdir();

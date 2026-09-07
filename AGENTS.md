@@ -385,9 +385,9 @@ This repo lives inside a larger workspace at `../` (i.e. `nexploy/`), alongside 
 - `../nodes` — `@nexploy/nodes`, the pipeline node library (published package, consumed here as a dependency)
 - `../shared` — `@nexploy/shared`, shared runtime helpers (actor, Docker constants, path safety)
 - `../cli` — the Nexploy CLI
-- `../agent` — `@nexploy/agent`, the Docker agent published as `nexploy/agent` (own repo, own release workflow)
+- `../agent` — `@nexploy/agent`, the Docker agent: the `nexploy/agent` Docker image plus the tunnel protocol this repo imports as `@nexploy/agent/protocol` (published package, own release workflow). Switch it to the local checkout with `pnpm agent:local` and back with `pnpm agent:npm`
 - `../build-runner` — `@nexploy/build-runner`, the remote build runner published as `nexploy/build-runner`
 - `../docs` — the fumadocs documentation site
 - `../website` — the marketing website
 
-You may read from and write to these sibling repositories when a change requires it. Note that `@nexploy/nodes` and `@nexploy/shared` are installed here as **published versions**, not workspace links — editing their source under `../nodes/src` or `../shared/src` does not affect this repo until the package is rebuilt, republished, and the dependency version bumped. Say so explicitly when a change spans that boundary.
+You may read from and write to these sibling repositories when a change requires it. Note that `@nexploy/nodes`, `@nexploy/shared` and `@nexploy/agent` are installed here as **published versions**, not workspace links — editing their source under `../nodes/src` or `../shared/src` does not affect this repo until the package is rebuilt, republished, and the dependency version bumped (or `pnpm <name>:local` is used). Say so explicitly when a change spans that boundary.

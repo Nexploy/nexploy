@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { unlinkSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { MuxSession } from '@workspace/agent-protocol';
+import { MuxSession } from '@nexploy/agent/protocol';
 
 function linkedSessions() {
     const initiator: MuxSession = new MuxSession(

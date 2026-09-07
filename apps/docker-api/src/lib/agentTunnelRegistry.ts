@@ -1,5 +1,5 @@
 import type { Server } from 'node:net';
-import type { MuxSession } from '@workspace/agent-protocol';
+import type { MuxSession } from '@nexploy/agent/protocol';
 import { logger } from '@/utils/logger';
 import { startAgentBridge, stopAgentBridge } from '@/lib/agentBridge';
 import { dockerClientRegistry } from '@/lib/dockerClientRegistry';

@@ -7,7 +7,7 @@ import { authorizeContainerUpgrade } from '@/server/wsAuthorization';
 import { handleRunnerUpgrade } from '@/server/runner/gateway';
 import { handleAgentUpgrade } from '@/server/agent/gateway';
 import { RUNNER_WS_PATH } from '@/server/runner/protocol';
-import { AGENT_WS_PATH } from '@workspace/agent-protocol';
+import { AGENT_WS_PATH } from '@nexploy/agent/protocol';
 import { actorToHeaders } from '@nexploy/shared/actor';
 
 export type NextUpgradeHandler = (req: IncomingMessage, socket: Duplex, head: Buffer) => Promise<void>;
