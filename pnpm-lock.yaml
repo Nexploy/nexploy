@@ -54,12 +54,12 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.8.0
         version: 0.8.0(hono@4.12.27)(zod@4.3.6)
+      '@nexploy/agent':
+        specifier: ^0.2.2
+        version: 0.2.2
       '@nexploy/shared':
         specifier: ^0.4.1
         version: 0.4.1
-      '@workspace/agent-protocol':
-        specifier: workspace:*
-        version: link:../../packages/agent-protocol
       '@workspace/schemas-zod':
         specifier: workspace:*
         version: link:../../packages/schemas-zod
@@ -187,6 +187,9 @@ importers:
       '@monaco-editor/react':
         specifier: ^4.7.0
         version: 4.7.0(monaco-editor@0.55.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@nexploy/agent':
+        specifier: ^0.2.2
+        version: 0.2.2
       '@nexploy/nodes':
         specifier: ^0.8.3
         version: 0.8.3(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(@xyflow/react@12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(dayjs@1.11.19)(dockerode@5.0.0)(lucide-react@1.30.0(react@19.2.3))(next-intl@4.9.1(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@7.0.2))(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)(zod@4.3.6)
@@ -229,9 +232,6 @@ importers:
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
-      '@workspace/agent-protocol':
-        specifier: workspace:*
-        version: link:../../packages/agent-protocol
       '@workspace/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
@@ -401,22 +401,6 @@ importers:
       vitest:
         specifier: ^4.1.10
         version: 4.1.10(@opentelemetry/api@1.9.0)(@types/node@24.7.2)(vite@7.3.1(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.3))
-
-  packages/agent-protocol:
-    dependencies:
-      zod:
-        specifier: ^4.5.4
-        version: 4.5.4
-    devDependencies:
-      '@types/node':
-        specifier: ^24.7.2
-        version: 24.7.2
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      typescript:
-        specifier: 7.0.2
-        version: 7.0.2
 
   packages/i18n:
     dependencies:
@@ -1988,6 +1972,11 @@ packages:
 
   '@mongodb-js/saslprep@1.4.6':
     resolution: {integrity: sha512-y+x3H1xBZd38n10NZF/rEBlvDOOMQ6LKUTHqr8R9VkJ+mmQOYtJFxIlkkK8fZrtOiL6VixbOBWMbZGBdal3Z1g==}
+
+  '@nexploy/agent@0.2.2':
+    resolution: {integrity: sha512-k4Gff/7otcgVeQW6WQHtvkabAqXriAoOa9wgYB/iXDaacaFuYk6f7tfgVMvvXrnymJUMYVG8iIbiPcddAN8wtw==}
+    engines: {node: '>=22.13'}
+    hasBin: true
 
   '@nexploy/nodes@0.8.3':
     resolution: {integrity: sha512-MUHUV3w2D+rtmT1UByPgTduUmMvrvZfD2wneT3SxqDfdH6yAUskXgzbUiVJLeaK5cVcOjnPvuCba6C6Z5vuvtw==}
@@ -6943,7 +6932,7 @@ packages:
 
   serialize-error-cjs@0.1.4:
     resolution: {integrity: sha512-6a6dNqipzbCPlTFgztfNP2oG+IGcflMe/01zSzGrQcxGMKbIjOemBBD85pH92klWaJavAUWxAh9Z0aU28zxW6A==}
-    deprecated: Rolling release, please update to 0.2.0
+    deprecated: Rolling release, please update to 0.3.0
 
   serve-static@2.2.1:
     resolution: {integrity: sha512-xRXBn0pPqQTVQiC8wyQrKs2MOlX24zQ0POGaj0kultvoOCstBQM5yvOhAVSUwOMjQtTvsPWoNCHfPGwaaQJhTw==}
@@ -9194,6 +9183,16 @@ snapshots:
     dependencies:
       sparse-bitfield: 3.0.3
     optional: true
+
+  '@nexploy/agent@0.2.2':
+    dependencies:
+      pino: 10.1.0
+      pino-pretty: 13.1.3
+      ws: 8.20.0
+      zod: 4.5.4
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   '@nexploy/nodes@0.8.3(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(@xyflow/react@12.11.1(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(immer@11.0.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(dayjs@1.11.19)(dockerode@5.0.0)(lucide-react@1.30.0(react@19.2.3))(next-intl@4.9.1(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(typescript@7.0.2))(next@16.2.12(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react-hook-form@7.68.0(react@19.2.3))(react@19.2.3)(zod@4.3.6)':
     dependencies:

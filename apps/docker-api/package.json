@@ -15,7 +15,7 @@
     "@hono/node-server": "2.0.6",
     "@hono/node-ws": "^1.3.1",
     "@hono/zod-validator": "^0.8.0",
-    "@nexploy/agent": "^0.1.0",
+    "@nexploy/agent": "^0.2.2",
     "@nexploy/shared": "^0.4.1",
     "@workspace/schemas-zod": "workspace:*",
     "@workspace/typescript-interface": "workspace:*",
@@ -43,5 +43,6 @@
     "typescript": "7.0.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^4.1.10"
-  }
+  },
+  "agentVersion": "^0.1.0"
 }

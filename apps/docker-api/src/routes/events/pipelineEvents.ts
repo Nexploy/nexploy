@@ -124,7 +124,7 @@ app.post('/stream/compose', async (c) => {
                     try {
                         const exitCode = await runDockerCompose(
                             ['-p', projectName, '-f', activeComposeFile, 'pull', serviceName],
-                            workDir,
+                            composeDir,
                             dockerEnv,
                             sendLog,
                             abortController.signal,
@@ -153,7 +153,7 @@ app.post('/stream/compose', async (c) => {
                 sendLog(`Building ${servicesToBuild.length} service(s): ${servicesToBuild.join(', ')}`);
                 const buildCode = await runDockerCompose(
                     ['-p', projectName, '-f', activeComposeFile, 'build', ...(noCache ? ['--no-cache'] : [])],
-                    workDir,
+                    composeDir,
                     dockerEnv,
                     sendLog,
                     abortController.signal,
@@ -200,7 +200,7 @@ app.post('/stream/compose', async (c) => {
             try {
                 const downCode = await runDockerCompose(
                     ['-p', projectName, '-f', deployComposeFile, 'down', '--remove-orphans'],
-                    workDir,
+                    composeDir,
                     dockerEnv,
                     sendLog,
                 );
@@ -221,7 +221,7 @@ app.post('/stream/compose', async (c) => {
             sendLog('Starting services...');
             const upCode = await runDockerCompose(
                 ['-p', projectName, '-f', deployComposeFile, 'up', '-d', '--remove-orphans'],
-                workDir,
+                composeDir,
                 dockerEnv,
                 sendLog,
                 abortController.signal,
