@@ -33,7 +33,7 @@ export class ImagesStateManager extends BaseStateManager {
         super({
             managerName: `Images State Manager [${environmentId}]`,
             environmentId,
-            pollIntervalMs: 10000,
+            pollIntervalMs: 60000,
             maxReconnectAttempts: 5,
             maxListeners: 100,
         });
